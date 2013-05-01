@@ -18,24 +18,24 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($this->getOrder()->getShippingCarrier()->isTrackingAvailable()) :?>
+<?php if($this->getOrder()->getShippingCarrier()->isTrackingAvailable()) : ?>
 <span class="field-row" id="order_tracking_info">
 <table cellpadding="0" cellspacing="0" width="100%">
     <tr>
-        <td><label id="tracking_number"><?=Mage::helper('sales')->__('Tracking Number')?></label></td>
+        <td><label id="tracking_number"><?php echo Mage::helper('sales')->__('Tracking Number') ?></label></td>
         <td width="100%">
-            <?if($_numbers = $this->getOrder()->getTrackingNumbers()):?>
+            <?php if($_numbers = $this->getOrder()->getTrackingNumbers()): ?>
 
-            <?foreach ($_numbers as $_number):?>
-                <a href="#" onclick="<?=$this->getViewLinkHtml($_number)?>"><?=$_number?></a>
-                <a href="#" onclick="<?=$this->getRemoveLinkHtml($_number)?>"><?=Mage::helper('sales')->__('Delete')?></a><br/>
-                <span id="order_tracking_info_response_<?=$_number?>"></span>
-            <?endforeach;?>
-            <?endif;?>
+            <?php foreach ($_numbers as $_number): ?>
+                <a href="#" onclick="<?php echo $this->getViewLinkHtml($_number) ?>"><?php echo $_number ?></a>
+                <a href="#" onclick="<?php echo $this->getRemoveLinkHtml($_number) ?>"><?php echo Mage::helper('sales')->__('Delete') ?></a><br/>
+                <span id="order_tracking_info_response_<?php echo $_number ?>"></span>
+            <?php endforeach; ?>
+            <?php endif; ?>
             <input class="input-text" type="text" id="tracking_number" name="tracking_number" value="" style="width:120px;"/>
-            <?=$this->getSaveButtonHtml()?>
+            <?php echo $this->getSaveButtonHtml() ?>
         </td>
     </tr>
 </table>
 </span>
-<?endif?>
+<?php endif ?>

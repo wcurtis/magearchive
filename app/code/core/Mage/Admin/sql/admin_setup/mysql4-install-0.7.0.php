@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('admin_assert')};
+-- DROP TABLE IF EXISTS {$this->getTable('admin_assert')};
 CREATE TABLE {$this->getTable('admin_assert')} (
   `assert_id` int(10) unsigned NOT NULL auto_increment,
   `assert_type` varchar(20) character set utf8 NOT NULL default '',
@@ -33,7 +33,7 @@ CREATE TABLE {$this->getTable('admin_assert')} (
   PRIMARY KEY  (`assert_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='ACL Asserts';
 
-DROP TABLE IF EXISTS {$this->getTable('admin_role')};
+-- DROP TABLE IF EXISTS {$this->getTable('admin_role')};
 CREATE TABLE {$this->getTable('admin_role')} (
   `role_id` int(10) unsigned NOT NULL auto_increment,
   `parent_id` int(10) unsigned NOT NULL default '0',
@@ -49,7 +49,7 @@ CREATE TABLE {$this->getTable('admin_role')} (
 
 insert  into {$this->getTable('admin_role')}(`role_id`,`parent_id`,`tree_level`,`sort_order`,`role_type`,`user_id`,`role_name`) values (1,0,1,1,'G',0,'Administrators'),(2,1,2,1,'U',1,'Administrator');
 
-DROP TABLE IF EXISTS {$this->getTable('admin_rule')};
+-- DROP TABLE IF EXISTS {$this->getTable('admin_rule')};
 CREATE TABLE {$this->getTable('admin_rule')} (
   `rule_id` int(10) unsigned NOT NULL auto_increment,
   `role_id` int(10) unsigned NOT NULL default '0',
@@ -66,7 +66,7 @@ CREATE TABLE {$this->getTable('admin_rule')} (
 
 insert into {$this->getTable('admin_rule')}(`rule_id`, `role_id`, `resource_id`, `privileges`, `assert_id`, `role_type`, `permission`) values (1,1,'all','',0,'G','allow');
 
-DROP TABLE IF EXISTS {$this->getTable('admin_user')};
+-- DROP TABLE IF EXISTS {$this->getTable('admin_user')};
 CREATE TABLE {$this->getTable('admin_user')} (
   `user_id` mediumint(9) unsigned NOT NULL auto_increment,
   `firstname` varchar(32) character set utf8 NOT NULL default '',
@@ -83,7 +83,7 @@ CREATE TABLE {$this->getTable('admin_user')} (
   PRIMARY KEY  (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Users';
 
-insert  into {$this->getTable('admin_user')}(`user_id`,`firstname`,`lastname`,`email`,`username`,`password`,`created`,`modified`,`logdate`,`lognum`,`reload_acl_flag`,`is_active`) values (1,'admin','admin','admin@magentocommerce.com','admin','4297f44b13955235245b2497399d7a93',NOW(),NOW(),NOW(),1,0,1);
+insert  into {$this->getTable('admin_user')}(`user_id`,`firstname`,`lastname`,`email`,`username`,`password`,`created`,`modified`,`logdate`,`lognum`,`reload_acl_flag`,`is_active`) values (1,'admin','admin','admin@your_domain.com','admin','4297f44b13955235245b2497399d7a93',NOW(),NOW(),NOW(),1,0,1);
 
     ");
 

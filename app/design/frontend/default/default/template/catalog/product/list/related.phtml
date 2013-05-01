@@ -18,47 +18,63 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($this->getItems()->getSize()):?>
+<?php if($this->getItems()->getSize()): ?>
 <div class="box base-mini mini-related-items">
     <div class="head">
-        <h4><?=$this->__('Related Products')?></h4>
+        <h4><?php echo $this->__('Related Products') ?></h4>
     </div>
     <div class="content">
-        <p><strong><?=$this->__('Check items to add to the cart or select all.')?></strong></p>
+        <p><strong><?php echo $this->__('Check items to add to the cart or ') ?><a href="#" onclick="selectAllRelated(this);return false;"><?php echo $this->__('select all') ?></a></strong></p>
         <ol>
-        <?foreach($this->getItems() as $_item):?>
-        <li<?if($_item->isSuper() || !$_item->isSaleable()):?> class="super-products"<?endif;?>>
+        <?php foreach($this->getItems() as $_item): ?>
+        <li<?php if($_item->isSuper() || !$_item->isSaleable()): ?> class="super-products"<?php endif; ?>>
             <div class="product-images">
-            <?if(!$_item->isSuper() && $_item->isSaleable()):?>
-                <input type="checkbox" class="related-checkbox left" id="related-checkbox<?=$_item->getId()?>" name="related_products[]" value="<?=$_item->getId()?>"/>
-            <?endif;?>
-                <a href="<?=$_item->getProductUrl()?>"><img src="<?=$this->helper('catalog/image')->init($_item, 'thumbnail')->resize(50)?>" alt="<?=$_item->getName()?>" width="50" height="50"/></a>
+            <?php if(!$_item->isSuper() && $_item->isSaleable()): ?>
+                <span class="checkbox-container">
+                    <input type="checkbox" class="related-checkbox left" id="related-checkbox<?php echo $_item->getId() ?>" name="related_products[]" value="<?php echo $_item->getId() ?>"/>
+                </span>
+            <?php else: ?>
+                <span class="checkbox-container">&nbsp;</span>
+            <?php endif; ?>
+                <a href="<?php echo $_item->getProductUrl() ?>"><img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(50) ?>" alt="<?php echo $_item->getName() ?>" width="50" height="50"/></a>
             </div>
             <div class="product-details">
-                    <a href="<?=$_item->getProductUrl()?>"><?=$_item->getName()?></a>
-                    <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
-                    <?if($_item->isSuper()):?>
-                        <a href="<?=$_item->getProductUrl()?>"><?=$this->__('View Details')?></a><br/>
-                    <?else:?>
-                        <?if ($this->helper('wishlist')->isAllow()) :?>
-                        <a href="<?=$this->getAddToWishlistUrl($_item)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
-                        <?endif;?>
-                    <?endif;?>
+                    <a href="<?php echo $_item->getProductUrl() ?>"><?php echo $_item->getName() ?></a>
+                    <?php echo $this->helper('catalog/product')->getPriceHtml($_item) ?>
+                    <?php if($_item->isSuper()): ?>
+                        <a href="<?php echo $_item->getProductUrl() ?>"><?php echo $this->__('View Details') ?></a><br/>
+                    <?php else: ?>
+                        <?php if ($this->helper('wishlist')->isAllow()) : ?>
+                        <a href="<?php echo $this->getAddToWishlistUrl($_item) ?>" class="link-cart"><?php echo $this->__('Add to Wishlist') ?></a>
+                        <?php endif; ?>
+                    <?php endif; ?>
             </div>
         </li>
-        <?endforeach?>
+        <?php endforeach ?>
         </ol>
     </div>
 </div>
 <script type="text/javascript">
+<!--
 $$('.related-checkbox').each(function(elem){
     Event.observe(elem, 'click', addRelatedToProduct)
 });
 
-function selectAllRelated(){
-    $$('.related-checkbox').each(function(elem){
-        elem.checked = true;
-    });
+var relatedProductsCheckFlag = false;
+function selectAllRelated(txt){
+    if (relatedProductsCheckFlag == false) {
+        $$('.related-checkbox').each(function(elem){
+            elem.checked = true;
+        });
+        relatedProductsCheckFlag = true;
+        txt.innerHTML="<?php echo $this->__('unselect all') ?>";
+    } else {
+        $$('.related-checkbox').each(function(elem){
+            elem.checked = false;
+        });
+        relatedProductsCheckFlag = false;
+        txt.innerHTML="<?php echo $this->__('select all') ?>";
+    }
     addRelatedToProduct();
 }
 
@@ -72,5 +88,6 @@ function addRelatedToProduct(){
         $('related-products-field').value = values.join(',');
     }
 }
+//-->
 </script>
-<?endif?>
+<?php endif ?>

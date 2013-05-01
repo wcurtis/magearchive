@@ -20,13 +20,13 @@
 ?>
 
 <div class="box">
-	<?if (strtolower(substr($this->getLinkUrl(),0,4))==='http'):?>
-		<a href="<?=$this->getLinkUrl()?>">
-	<?elseif($this->getLinkUrl()):?>
-		<a href="<?=$this->getUrl($this->getLinkUrl())?>">
-	<?endif?>
-    <img src="<?=$this->getSkinUrl($this->getImgSrc())?>" width="195" alt="<?=$this->__($this->getImgAlt())?>" style="display:block;" />
-	<?if ($this->getLinkUrl()):?>
+	<?php if (strtolower(substr($this->getLinkUrl(),0,4))==='http'): ?>
+		<a href="<?php echo $this->getLinkUrl() ?>">
+	<?php elseif($this->getLinkUrl()): ?>
+		<a href="<?php echo $this->getUrl($this->getLinkUrl()) ?>">
+	<?php endif ?>
+    <img src="<?php echo $this->getSkinUrl($this->getImgSrc()) ?>" width="195" alt="<?php echo $this->__($this->getImgAlt()) ?>" style="display:block;" />
+	<?php if ($this->getLinkUrl()): ?>
 	</a>
-	<?endif?>
+	<?php endif ?>
 </div>

@@ -18,22 +18,22 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($crumbs && is_array($crumbs)): ?>
-<h4 class="no-display"><?=$this->__("You're currently on:")?></h4>
+<?php if($crumbs && is_array($crumbs)): ?>
+<h4 class="no-display"><?php echo $this->__("You're currently on:") ?></h4>
 <ul class="breadcrumbs">
-    <?foreach($crumbs as $_crumbName=>$_crumbInfo):?>
-        <li class="<?=$_crumbName?>">
-        <?if($_crumbInfo['link']):?>
-            <a href="<?=$_crumbInfo['link']?>" title="<?=$_crumbInfo['title']?>"><?=$_crumbInfo['label']?></a>
-        <?elseif($_crumbInfo['last']):?>
-            <strong><?=$_crumbInfo['label']?></strong>
-        <?else:?>
-            <?=$_crumbInfo['label']?>
-        <?endif;?>
+    <?php foreach($crumbs as $_crumbName=>$_crumbInfo): ?>
+        <li class="<?php echo $_crumbName ?>">
+        <?php if($_crumbInfo['link']): ?>
+            <a href="<?php echo $_crumbInfo['link'] ?>" title="<?php echo $_crumbInfo['title'] ?>"><?php echo $_crumbInfo['label'] ?></a>
+        <?php elseif($_crumbInfo['last']): ?>
+            <strong><?php echo $_crumbInfo['label'] ?></strong>
+        <?php else: ?>
+            <?php echo $_crumbInfo['label'] ?>
+        <?php endif; ?>
         </li>
-        <?if(!$_crumbInfo['last']):?>
+        <?php if(!$_crumbInfo['last']): ?>
         <li> / </li>
-        <?endif;?>
-    <?endforeach;?>
+        <?php endif; ?>
+    <?php endforeach; ?>
 </ul>
-<?endif;?>
+<?php endif; ?>

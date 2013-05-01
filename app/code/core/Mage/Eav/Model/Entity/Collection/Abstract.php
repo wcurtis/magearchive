@@ -102,7 +102,8 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         if (is_null($entityModel)) {
             $entityModel = $model;
         }
-        $this->setEntity(Mage::getResourceModel($entityModel));
+        $entity = Mage::getResourceModel($entityModel);
+        $this->setEntity($entity);
         return $this;
     }
 
@@ -453,6 +454,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         if (is_string($bind)) {
             $bindAttribute = $this->getAttribute($bind);
         }
+        
         if (!$bindAttribute || (!$bindAttribute->getBackend()->isStatic() && !$bindAttribute->getId())) {
             throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('Invalid foreign key'));
         }
@@ -714,6 +716,23 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
     }
 
     /**
+     * Retrive all ids sql
+     *
+     * @return array
+     */
+    public function getAllIdsSql()
+    {
+        $idsSelect = clone $this->getSelect();
+        $idsSelect->reset(Zend_Db_Select::ORDER);
+        $idsSelect->reset(Zend_Db_Select::LIMIT_COUNT);
+        $idsSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
+        $idsSelect->reset(Zend_Db_Select::COLUMNS);
+        $idsSelect->reset(Zend_Db_Select::GROUP);
+        $idsSelect->from(null, 'e.'.$this->getEntity()->getIdFieldName());
+        return $idsSelect;
+    }
+
+    /**
      * Save all the entities in the collection
      *
      * @todo make batch save directly from collection
@@ -810,7 +829,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         $this->printLogQuery($printQuery, $logQuery);
 
         try {
-            $rows = $this->getConnection()->fetchAll($this->getSelect());
+            $rows = $this->_fetchAll($this->getSelect());
         } catch (Exception $e) {
             $this->printLogQuery(true, true, $this->getSelect());
             throw $e;
@@ -847,7 +866,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         foreach ($entity->getAttributesByTable() as $table=>$attributes) {
             $select = $this->_getLoadAttributesSelect($table);
             try {
-                $values = $this->getConnection()->fetchAll($select);
+                $values = $this->_fetchAll($select);
             } catch (Exception $e) {
                 $this->printLogQuery(true, true, $select);
                 throw $e;

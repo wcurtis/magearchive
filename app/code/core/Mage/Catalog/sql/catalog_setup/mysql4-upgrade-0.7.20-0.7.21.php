@@ -22,22 +22,23 @@ $installer = $this;
 /* @var $installer Mage_Catalog_Model_Resource_Eav_Mysql4_Setup */
 
 $attributes = array(
-    $installer->getAttribute('catalog_product', 'price'),
-    $installer->getAttribute('catalog_product', 'special_price'),
-    $installer->getAttribute('catalog_product', 'special_from_date'),
-    $installer->getAttribute('catalog_product', 'special_to_date'),
-    $installer->getAttribute('catalog_product', 'cost'),
-    $installer->getAttribute('catalog_product', 'tier_price'),
+    $installer->getAttributeId('catalog_product', 'price'),
+    $installer->getAttributeId('catalog_product', 'special_price'),
+    $installer->getAttributeId('catalog_product', 'special_from_date'),
+    $installer->getAttributeId('catalog_product', 'special_to_date'),
+    $installer->getAttributeId('catalog_product', 'cost'),
+    $installer->getAttributeId('catalog_product', 'tier_price'),
 );
 
-$installer->startSetup();
-foreach ($attributes as $attr) {
-    $attr['apply_to'] = array_flip(explode(',', $attr['apply_to']));
-    unset($attr['apply_to']['grouped']);
-    $attr['apply_to'] = implode(',', array_flip($attr['apply_to']));
+$sql    = $installer->getConnection()->quoteInto("SELECT * FROM `{$installer->getTable('eav_attribute')}` WHERE attribute_id IN (?)", $attributes);
+$data   = $installer->getConnection()->fetchAll($sql);
+
+foreach ($data as $row) {
+    $row['apply_to'] = array_flip(explode(',', $row['apply_to']));
+    unset($row['apply_to']['grouped']);
+    $row['apply_to'] = implode(',', array_flip($row['apply_to']));
 
     $installer->run("UPDATE `{$installer->getTable('eav_attribute')}`
-                SET `apply_to` = '{$attr['apply_to']}'
-                WHERE `attribute_id` = {$attr['attribute_id']}");
+                SET `apply_to` = '{$row['apply_to']}'
+                WHERE `attribute_id` = {$row['attribute_id']}");
 }
-$installer->endSetup();

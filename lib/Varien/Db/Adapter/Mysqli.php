@@ -184,4 +184,88 @@ class Varien_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         }
         return true;
 	}
+	
+	/**
+     * ADD CONSTRAINT
+     *
+     *
+     * @param string $fkName
+     * @param string $tableName
+     * @param string $keyName
+     * @param string $refTableName
+     * @param string $refKeyName
+     * @param string $onUpdate
+     * @param string $onDelete
+     */
+    public function addConstraint($fkName, $tableName, $keyName, $refTableName, $refKeyName, $onDelete = 'cascade', $onUpdate = 'cascade')
+    {
+        if (substr($fkName, 0, 3) != 'FK_') {
+            $fkName = 'FK_' . $fkName;
+        }
+
+        $sql = 'ALTER TABLE `'.$tableName.'` ADD CONSTRAINT `'.$fkName.'`'
+            . 'FOREIGN KEY (`'.$keyName.'`) REFERENCES `'.$refTableName.'` (`'.$refKeyName.'`)';
+        if (!is_null($onDelete)) {
+            $sql .= ' ON DELETE ' . strtoupper($onDelete);
+        }
+        if (!is_null($onUpdate)) {
+            $sql .= ' ON UPDATE ' . strtoupper($onUpdate);
+        }
+
+        return $this->raw_query($sql);
+    }
+
+    public function tableColumnExists($tableName, $columnName)
+    {
+        foreach ($this->fetchAll('DESCRIBE `'.$tableName.'`') as $row) {
+            if ($row['Field'] == $columnName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function addColumn($tableName, $columnName, $definition)
+    {
+        if ($this->tableColumnExists($tableName, $columnName)) {
+            return true;
+        }
+        $result = $this->raw_query("alter table `$tableName` add column `$columnName` ".$definition);
+        return $result;
+    }
+
+    public function dropColumn($tableName, $columnName)
+    {
+        if (!$this->tableColumnExists($tableName, $columnName)) {
+            return true;
+        }
+
+        $create = $this->raw_fetchRow('SHOW CREATE TABLE `'.$tableName.'`', 'Create Table');
+
+        $alterDrop = array();
+        $alterDrop[] = 'DROP COLUMN `'.$columnName.'`';
+
+        /**
+         * find foreign keys for column
+         */
+        $matches = array();
+        preg_match_all('/CONSTRAINT `([^`]*)` FOREIGN KEY \(`([^`]*)`\)/', $create, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            if ($match[2] == $columnName) {
+                $alterDrop[] = 'DROP FOREIGN KEY `'.$match[1].'`';
+            }
+        }
+
+        return $this->raw_query('ALTER TABLE `'.$tableName.'` ' . join(', ', $alterDrop));
+    }
+
+    /**
+     * Creates and returns a new Zend_Db_Select object for this adapter.
+     *
+     * @return Varien_Db_Select
+     */
+    public function select()
+    {
+        return new Varien_Db_Select($this);
+    }
 }

@@ -77,8 +77,10 @@ class Mage_Core_Model_Mysql4_Design extends Mage_Core_Model_Mysql4_Abstract
 
     public function loadChange($storeId, $date = null)
     {
-        if (is_null($date))
-            $date = new Zend_Db_Expr('NOW()');
+        if (is_null($date)) {
+            //$date = new Zend_Db_Expr('NOW()');
+            $date = now();
+        }
 
         $select = $this->_getReadAdapter()->select()
             ->from(array('main_table'=>$this->getTable('design_change')))

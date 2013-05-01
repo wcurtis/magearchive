@@ -22,18 +22,18 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en">
 		<head>
-			<title><?=Mage::helper('adminhtml')->__('Magento Commerce - Administrative Panel')?></title>
+			<title><?php echo Mage::helper('adminhtml')->__('Magento Commerce - Administrative Panel') ?></title>
 			<style type="text/css" media="all">
-				/*<![CDATA[*/ @import "<?=$this->getSkinUrl('styles.css')?>"; /*]]>*/
+				/*<![CDATA[*/ @import "<?php echo $this->getSkinUrl('styles.css') ?>"; /*]]>*/
 			</style>
-			<link rel="stylesheet" type="text/css" media="screen, projection" href="<?=$this->getSkinUrl('menu-top.css')?>" />
-			<!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('iestyles.css')?>" type="text/css" media="all" /> <![endif]-->
-			<!--[if lt IE 7]><script defer type="text/javascript" src="<?=$baseUrl?>js/lib/ds-sleight.js"></script><![endif]-->
-			<script type="text/javascript" src="<?=$baseUrl?>js/lib/dropdown.js"></script>
+			<link rel="stylesheet" type="text/css" media="screen, projection" href="<?php echo $this->getSkinUrl('menu-top.css') ?>" />
+			<!--[if IE]> <link rel="stylesheet" href="<?php echo $this->getSkinUrl('iestyles.css') ?>" type="text/css" media="all" /> <![endif]-->
+			<!--[if lt IE 7]><script defer type="text/javascript" src="<?php echo $baseUrl ?>js/lib/ds-sleight.js"></script><![endif]-->
+			<script type="text/javascript" src="<?php echo $baseUrl ?>js/lib/dropdown.js"></script>
 		</head>
 		<body>
 			<div class="header">
-				<a href="#"><img src="<?=$this->getSkinUrl('images/logo.gif')?>" alt="Magento logo" class="logo"/></a>
+				<a href="#"><img src="<?php echo $this->getSkinUrl('images/logo.gif') ?>" alt="Magento logo" class="logo"/></a>
 				<div class="header-right">
 					<p>Today is: June 01, 2007<span class="separator">|</span><strong>Minu Oh</strong> (Administrator)<span class="separator">|</span><a href="#">Logout</a></p>
 					<fieldset>
@@ -42,7 +42,7 @@
 				</div>
 				<div class="clear"></div>
 
-				<?=$this->getLayout()->createBlock('adminhtml/page_menu')->toHtml()?>
+				<?php echo $this->getLayout()->createBlock('adminhtml/page_menu')->toHtml() ?>
 
 			</div>
 			<div class="middle">
@@ -133,9 +133,9 @@
 								<br/>
 								<h3>Sales Stat</h3>
 								<dl class="accordion">
-									<dt><a href="#"><img src="<?=$this->getSkinUrl('images/accordion_open.png')?>" alt="" class="v-mid"/></a><strong>Last 5 Orders</strong></dt>
+									<dt><a href="#"><img src="<?php echo $this->getSkinUrl('images/accordion_open.png') ?>" alt="" class="v-mid"/></a><strong>Last 5 Orders</strong></dt>
 									<dd></dd>
-									<dt><a href="#"><img src="<?=$this->getSkinUrl('images/accordion_open.png')?>" alt="" class="v-mid"/></a><strong>Wishlist</strong> (5 items)</dt>
+									<dt><a href="#"><img src="<?php echo $this->getSkinUrl('images/accordion_open.png') ?>" alt="" class="v-mid"/></a><strong>Wishlist</strong> (5 items)</dt>
 									<dd class="grid open">
 										<table cellspacing="0" class="data">
 											<thead>
@@ -184,9 +184,9 @@
 												</tr>
 											</tbody>
 										</table></dd>
-									<dt><a href="#"><img src="<?=$this->getSkinUrl('accordion_open.png')?>" alt="" class="v-mid"/></a><strong>Gift Registries</strong> (0 items)</dt>
+									<dt><a href="#"><img src="<?php echo $this->getSkinUrl('accordion_open.png') ?>" alt="" class="v-mid"/></a><strong>Gift Registries</strong> (0 items)</dt>
 									<dd></dd>
-									<dt><a href="#"><img src="<?=$this->getSkinUrl('images/accordion_open.png')?>" alt="" class="v-mid"/></a><strong>Shopping Cart</strong> (1 item)</dt>
+									<dt><a href="#"><img src="<?php echo $this->getSkinUrl('images/accordion_open.png') ?>" alt="" class="v-mid"/></a><strong>Shopping Cart</strong> (1 item)</dt>
 									<dd></dd>
 								</dl>
 							

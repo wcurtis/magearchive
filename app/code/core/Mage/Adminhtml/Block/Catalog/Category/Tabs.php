@@ -24,19 +24,19 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Category_Tabs extends Mage_Adminhtml_Block_Widget_Tabs 
+class Mage_Adminhtml_Block_Catalog_Category_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setId('category_info_tabs');
         $this->setDestElementId('category_tab_content');
         $this->setTitle(Mage::helper('catalog')->__('Category Data'));
                 $this->setTemplate('widget/tabshoriz.phtml');
-        
+
         //$this->setDestElementId('category_tab_content');
     }
-    
+
     protected function _prepareLayout()
     {
         $this->addTab('general', array(

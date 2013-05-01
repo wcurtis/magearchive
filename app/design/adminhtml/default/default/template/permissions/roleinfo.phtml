@@ -21,17 +21,17 @@
 <div class="content-header">
     <table cellspacing="0">
         <tr>
-            <td style="width:50%;"><h3 class="icon-head head-permissions-role"><?=($this->getRoleId() > 0 ) ? ($this->__('Edit Role') . " '{$this->getRoleInfo()->getRoleName()}'") : $this->__('Add New Role')?></h3></td>
+            <td style="width:50%;"><h3 class="icon-head head-permissions-role"><?php echo ($this->getRoleId() > 0 ) ? ($this->__('Edit Role') . " '{$this->getRoleInfo()->getRoleName()}'") : $this->__('Add New Role') ?></h3></td>
             <td class="form-buttons">
-			<?=$this->getBackButtonHtml()?>
-			<?=$this->getResetButtonHtml()?>
-			<?=$this->getDeleteButtonHtml()?>
-			<?=$this->getSaveButtonHtml()?>
+			<?php echo $this->getBackButtonHtml() ?>
+			<?php echo $this->getResetButtonHtml() ?>
+			<?php echo $this->getDeleteButtonHtml() ?>
+			<?php echo $this->getSaveButtonHtml() ?>
             </td>
         </tr>
     </table>
 </div>
-<form action="<?=$this->getUrl('*/*/saverole')?>" method="post" id="role_edit_form">
+<form action="<?php echo $this->getUrl('*/*/saverole') ?>" method="post" id="role_edit_form">
 </form>
 <script type="text/javascript" language="javascript">
     var roleForm = new varienForm('role_edit_form');

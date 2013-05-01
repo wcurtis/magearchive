@@ -22,7 +22,7 @@
 <config>
     <modules>
     <Mage_Log>
-        <version>0.7.1</version>
+        <version>0.7.2</version>
         <depends>
             <Mage_Core />
             <Mage_Customer />
@@ -131,7 +131,7 @@
                     </log>
                 </observers>
             </customer_logout>
-            <checkout_quote_init>
+            <sales_quote_save_after>
                 <observers>
                     <log>
                         <type>singleton</type>
@@ -139,7 +139,7 @@
                         <method>bindQuoteCreate</method>
                     </log>
                 </observers>
-            </checkout_quote_init>
+            </sales_quote_save_after>
             <checkout_quote_destroy>
                 <observers>
                     <log>

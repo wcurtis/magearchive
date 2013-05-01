@@ -26,13 +26,18 @@ class Mage_Sales_Model_Quote_Address_Total_Shipping extends Mage_Sales_Model_Quo
         $oldWeight = $address->getWeight();
         $address->setWeight(0);
         $address->setShippingAmount(0);
+        $address->setFreeMethodWeight(0);
+
+        $items = $address->getAllItems();
+        if (!count($items)) {
+            return $this;
+        }
 
         $method = $address->getShippingMethod();
 
         $freeAddress = $address->getFreeShipping();
-        $address->setFreeMethodWeight(0);
 
-        foreach ($address->getAllItems() as $item) {
+        foreach ($items as $item) {
             $item->calcRowWeight();
             $address->setWeight($address->getWeight() + $item->getRowWeight());
 

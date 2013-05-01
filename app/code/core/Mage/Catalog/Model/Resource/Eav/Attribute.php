@@ -55,7 +55,11 @@ class Mage_Catalog_Model_Resource_Eav_Attribute extends Mage_Eav_Model_Entity_At
 
     public function getApplyTo()
     {
-        return explode(',', $this->getData('apply_to'));
+        if ($this->getData('apply_to')) {
+            return explode(',', $this->getData('apply_to'));
+        } else {
+            return array();
+        }
     }
 
     public function getSourceModel()
@@ -67,5 +71,11 @@ class Mage_Catalog_Model_Resource_Eav_Attribute extends Mage_Eav_Model_Entity_At
             }
         }
         return $model;
+    }
+
+    public function isAllowedForRuleCondition()
+    {
+        $allowedInputTypes = array('text', 'multiselect', 'textarea', 'date', 'datetime', 'select', 'boolean', 'price');
+        return $this->getIsVisible() && in_array($this->getFrontendInput(), $allowedInputTypes);
     }
 }

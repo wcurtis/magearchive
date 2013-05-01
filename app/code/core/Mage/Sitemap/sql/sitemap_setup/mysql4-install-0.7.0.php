@@ -24,7 +24,7 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
-DROP TABLE IF EXISTS `{$this->getTable('sitemap')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('sitemap')}`;
 CREATE TABLE IF NOT EXISTS `{$this->getTable('sitemap')}` (
   `sitemap_id` int(11) NOT NULL auto_increment,
   `sitemap_type` varchar(32) default NULL,

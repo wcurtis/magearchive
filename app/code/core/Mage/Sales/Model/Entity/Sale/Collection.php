@@ -71,38 +71,22 @@ class Mage_Sales_Model_Entity_Sale_Collection extends Varien_Object implements I
         $this->_select = $this->_read->select();
         $entityTable= $this->getEntity()->getEntityTable();
         $paidTable  = $this->getAttribute('grand_total')->getBackend()->getTable();
-        $rateTable  = $this->getAttribute('store_to_order_rate')->getBackend()->getTable();
         $idField    = $this->getEntity()->getIdFieldName();
         $this->getSelect()
-            ->from(array('sales' => $entityTable),  array('store_id'))
-            ->join(array('paid' => $paidTable),
-                'paid.' . $idField . '=sales.' . $idField
-                . ' and paid.attribute_id='. $this->getAttribute('grand_total')->getId(),
+            ->from(array('sales' => $entityTable),
                 array(
-                    'lifetime'  => 'sum(paid.value * rate.value)',
-                    'avgsale'   => 'avg(paid.value * rate.value)',
-                    'num_orders'=> 'count(paid.entity_id)'
+                    'store_id',
+                    'lifetime'  => 'sum(sales.base_grand_total)',
+                    'avgsale'   => 'avg(sales.base_grand_total)',
+                    'num_orders'=> 'count(sales.base_grand_total)'
                 )
-            )
-            ->join(
-                array('rate' => $rateTable),
-                'rate.' . $idField . '=sales.' . $idField
-                . ' and rate.attribute_id='. $this->getAttribute('store_to_order_rate')->getId(),
-                array('value')
             )
             ->where('sales.entity_type_id=?', $this->getEntity()->getTypeId())
             ->group('sales.store_id')
         ;
         if ($this->_customer instanceof Mage_Customer_Model_Customer) {
             $this->getSelect()
-                ->join(
-                    array('customer' => $this->getAttribute('customer_id')->getBackend()->getTable()),
-                    'customer.' . $idField . '=sales.' . $idField
-                    . ' and customer.attribute_id='. $this->getAttribute('customer_id')->getId(),
-                    array('value')
-                )
-                ->where('customer.value=?', $this->_customer->getId())
-            ;
+                ->where('sales.customer_id=?', $this->_customer->getId());
         }
 
         $this->printLogQuery($printQuery, $logQuery);

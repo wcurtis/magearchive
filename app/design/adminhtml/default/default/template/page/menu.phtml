@@ -23,23 +23,23 @@
 
 <!-- menu end -->
 <div class="nav-bar">
-<?drawMenuLevel($this->getMenuArray());?>
-<?function drawMenuLevel($_menu, $_level=0) {?>
-    <ul <?if(!$_level):?>id="nav"<?endif?>>
-        <?foreach ($_menu as $_item):?>
-        <li <?if(!empty($_item['children'])):?>onmouseover="Element.addClassName(this,'over')" onmouseout="Element.removeClassName(this,'over')"<?endif?> class="<?=(!$_level && !empty($_item['active']))?'active':''?> <?=!empty($_item['children'])?' parent':''?><?=(!empty($_level) && !empty($_item['last']))?' last':''?> level<?=$_level?>">
+<?php drawMenuLevel($this->getMenuArray()); ?>
+<?php function drawMenuLevel($_menu, $_level=0) { ?>
+    <ul <?php if(!$_level): ?>id="nav"<?php endif ?>>
+        <?php foreach ($_menu as $_item): ?>
+        <li <?php if(!empty($_item['children'])): ?>onmouseover="Element.addClassName(this,'over')" onmouseout="Element.removeClassName(this,'over')"<?php endif ?> class="<?php echo (!$_level && !empty($_item['active']))?'active':'' ?> <?php echo !empty($_item['children'])?' parent':'' ?><?php echo (!empty($_level) && !empty($_item['last']))?' last':'' ?> level<?php echo $_level ?>">
 
-            <a href="<?=$_item['url']?>" <?if(!empty($_item['title'])):?>title="<?=$_item['title']?>"<?endif?> <?if(!empty($_item['click'])):?>onclick="<?=$_item['click'];?>"<?endif?> class="<?=($_level===0 && !empty($_item['active']))?'active':''?>">
+            <a href="<?php echo $_item['url'] ?>" <?php if(!empty($_item['title'])): ?>title="<?php echo $_item['title'] ?>"<?php endif ?> <?php if(!empty($_item['click'])): ?>onclick="<?php echo $_item['click']; ?>"<?php endif ?> class="<?php echo ($_level===0 && !empty($_item['active']))?'active':'' ?>">
 
-                <span><?=$_item['label']?><?if(!$_level):?><em></em><?endif?></span>
+                <span><?php echo $_item['label'] ?><?php if(!$_level): ?><em></em><?php endif ?></span>
             </a>
 
-            <?if(!empty($_item['children'])):?>
-                <?drawMenuLevel($_item['children'], $_level+1);?>
-            <?endif;?>
+            <?php if(!empty($_item['children'])): ?>
+                <?php drawMenuLevel($_item['children'], $_level+1); ?>
+            <?php endif; ?>
         </li>
-        <?endforeach;?>
+        <?php endforeach; ?>
     </ul>
-<?}//function?>
+<?php }//function ?>
 </div>
 

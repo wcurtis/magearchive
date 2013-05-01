@@ -20,24 +20,24 @@
 ?>
 
     <div class="page-head">
-        <h3><?=$this->__('Shipping Information')?></h3>
+        <h3><?php echo $this->__('Shipping Information') ?></h3>
     </div>
-    <h4><?=$this->__('Shipping Address')?> | <a href=""><?=$this->__('Change Shipping Address')?></a></h4>
+    <h4><?php echo $this->__('Shipping Address') ?> | <a href=""><?php echo $this->__('Change Shipping Address') ?></a></h4>
     <address>
-            <strong><?=$address->getFirstname()?> <?=$address->getLastname()?></strong><br/>
-            <?=$address->getCompany()?><br/>
-            <?=$address->getPostcode()?>, <?=$address->getCity()?><br/>
-            <?=$address->getStreet()?><br/>
-            <?if($address->getTelephone()):?>T| <?=$address->getTelephone()?><br/><?endif?>
-            <?if($address->getFax()):?>F| <?=$address->getFax()?><br/><?endif?>
+            <strong><?php echo $address->getFirstname() ?> <?php echo $address->getLastname() ?></strong><br/>
+            <?php echo $address->getCompany() ?><br/>
+            <?php echo $address->getPostcode() ?>, <?php echo $address->getCity() ?><br/>
+            <?php echo $address->getStreet() ?><br/>
+            <?php if($address->getTelephone()): ?>T| <?php echo $address->getTelephone() ?><br/><?php endif ?>
+            <?php if($address->getFax()): ?>F| <?php echo $address->getFax() ?><br/><?php endif ?>
     </address>
-    <h4><?=$this->__('Shipping Method')?></h4>
-    <form action="<?=$action?>" method="post">
+    <h4><?php echo $this->__('Shipping Method') ?></h4>
+    <form action="<?php echo $action ?>" method="post">
             <fieldset>
-                    <legend><?=$this->__('Shipping Method')?></legend>
+                    <legend><?php echo $this->__('Shipping Method') ?></legend>
             </fieldset>
             <div class="button-set">
-                    <a href="#" onclick="window.location='<?=$this->getUrl('checkout/cart')?>'" class="left">&laquo;</a>
-                    <button class="form-button" type="submit"><span><?=$this->__('Continue')?></span></button>
+                    <a href="#" onclick="window.location='<?php echo $this->getUrl('checkout/cart') ?>'" class="left">&laquo;</a>
+                    <button class="form-button" type="submit"><span><?php echo $this->__('Continue') ?></span></button>
             </div>
     </form>

@@ -145,8 +145,11 @@ class Mage_Catalog_Helper_Product_Compare extends Mage_Core_Helper_Url
 				$this->_itemCollection->setVisitorId(Mage::getSingleton('log/visitor')->getId());
 			}
 
+			Mage::getSingleton('catalog/product_visibility')->addVisibleInSiteFilterToCollection($this->_itemCollection);
+
 			$this->_itemCollection->addAttributeToSelect('name')
 				->useProductItem()
+                ->addUrlRewrite()
 				->load();
         }
         return $this->_itemCollection;

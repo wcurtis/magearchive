@@ -28,7 +28,11 @@ class Mage_SalesRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
 
     public function _beforeSave(Mage_Core_Model_Abstract $object)
     {
-        $object->setFromDate($this->formatDate($object->getFromDate()));
+        $startDate = $object->getFromDate();
+        if ($startDate=='') {
+            $startDate = Mage::getModel('core/date')->gmtDate();
+        }
+        $object->setFromDate($this->formatDate($startDate));
         $object->setToDate($this->formatDate($object->getToDate()));
         if (!$object->getDiscountQty()) {
             $object->setDiscountQty(new Zend_Db_Expr('NULL'));

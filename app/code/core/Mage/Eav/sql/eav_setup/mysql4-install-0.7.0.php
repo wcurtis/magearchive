@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('eav_attribute')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_attribute')};
 CREATE TABLE {$this->getTable('eav_attribute')} (
   `attribute_id` smallint(5) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -56,7 +56,7 @@ CREATE TABLE {$this->getTable('eav_attribute')} (
   CONSTRAINT `FK_eav_attribute` FOREIGN KEY (`entity_type_id`) REFERENCES `{$this->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('eav_attribute_group')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_attribute_group')};
 CREATE TABLE {$this->getTable('eav_attribute_group')} (
   `attribute_group_id` smallint(5) unsigned NOT NULL auto_increment,
   `attribute_set_id` smallint(5) unsigned NOT NULL default '0',
@@ -68,7 +68,7 @@ CREATE TABLE {$this->getTable('eav_attribute_group')} (
   CONSTRAINT `FK_eav_attribute_group` FOREIGN KEY (`attribute_set_id`) REFERENCES `{$this->getTable('eav_attribute_set')}` (`attribute_set_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('eav_attribute_option')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_attribute_option')};
 CREATE TABLE {$this->getTable('eav_attribute_option')} (
   `option_id` int(10) unsigned NOT NULL auto_increment,
   `attribute_id` smallint(5) unsigned NOT NULL default '0',
@@ -78,7 +78,7 @@ CREATE TABLE {$this->getTable('eav_attribute_option')} (
   CONSTRAINT `FK_ATTRIBUTE_OPTION_ATTRIBUTE` FOREIGN KEY (`attribute_id`) REFERENCES `{$this->getTable('eav_attribute')}` (`attribute_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Attributes option (for source model)';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_attribute_option_value')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_attribute_option_value')};
 CREATE TABLE {$this->getTable('eav_attribute_option_value')} (
   `value_id` int(10) unsigned NOT NULL auto_increment,
   `option_id` int(10) unsigned NOT NULL default '0',
@@ -91,7 +91,7 @@ CREATE TABLE {$this->getTable('eav_attribute_option_value')} (
   CONSTRAINT `FK_ATTRIBUTE_OPTION_VALUE_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Attribute option values per store';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_attribute_set')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_attribute_set')};
 CREATE TABLE {$this->getTable('eav_attribute_set')} (
   `attribute_set_id` smallint(5) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -103,7 +103,7 @@ CREATE TABLE {$this->getTable('eav_attribute_set')} (
   CONSTRAINT `FK_eav_attribute_set` FOREIGN KEY (`entity_type_id`) REFERENCES `{$this->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity')};
 CREATE TABLE {$this->getTable('eav_entity')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -121,7 +121,7 @@ CREATE TABLE {$this->getTable('eav_entity')} (
   CONSTRAINT `FK_eav_entity_store` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Entityies';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_attribute')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_attribute')};
 CREATE TABLE {$this->getTable('eav_entity_attribute')} (
   `entity_attribute_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -140,7 +140,7 @@ CREATE TABLE {$this->getTable('eav_entity_attribute')} (
   CONSTRAINT `FK_EAV_ENTITY_ATTRIVUTE_GROUP` FOREIGN KEY (`attribute_group_id`) REFERENCES `{$this->getTable('eav_attribute_group')}` (`attribute_group_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_datetime')};
 CREATE TABLE {$this->getTable('eav_entity_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -160,7 +160,7 @@ CREATE TABLE {$this->getTable('eav_entity_datetime')} (
   CONSTRAINT `FK_EAV_ENTITY_DATETIME_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Datetime values of attributes';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_decimal')};
 CREATE TABLE {$this->getTable('eav_entity_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -180,7 +180,7 @@ CREATE TABLE {$this->getTable('eav_entity_decimal')} (
   CONSTRAINT `FK_EAV_ENTITY_DECIMAL_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Decimal values of attributes';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_int')};
 CREATE TABLE {$this->getTable('eav_entity_int')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -200,7 +200,7 @@ CREATE TABLE {$this->getTable('eav_entity_int')} (
   CONSTRAINT `FK_EAV_ENTITY_INT_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Integer values of attributes';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_store')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_store')};
 CREATE TABLE {$this->getTable('eav_entity_store')} (
   `entity_store_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -214,7 +214,7 @@ CREATE TABLE {$this->getTable('eav_entity_store')} (
   CONSTRAINT `FK_eav_entity_store_store` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_text')};
 CREATE TABLE {$this->getTable('eav_entity_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -232,7 +232,7 @@ CREATE TABLE {$this->getTable('eav_entity_text')} (
   CONSTRAINT `FK_EAV_ENTITY_TEXT_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Text values of attributes';
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_type')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_type')};
 CREATE TABLE {$this->getTable('eav_entity_type')} (
   `entity_type_id` smallint(5) unsigned NOT NULL auto_increment,
   `entity_type_code` varchar(50) NOT NULL default '',
@@ -250,7 +250,7 @@ CREATE TABLE {$this->getTable('eav_entity_type')} (
   KEY `entity_name` (`entity_type_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('eav_entity_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('eav_entity_varchar')};
 CREATE TABLE {$this->getTable('eav_entity_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',

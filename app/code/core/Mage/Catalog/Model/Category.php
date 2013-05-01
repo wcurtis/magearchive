@@ -33,6 +33,12 @@ class Mage_Catalog_Model_Category extends Mage_Catalog_Model_Abstract
     const DM_PAGE           = 'PAGE';
     const DM_MIXED          = 'PRODUCTS_AND_PAGE';
 
+    const CACHE_TAG         = 'catalog_category';
+    protected $_cacheTag    = 'catalog_category';
+
+    protected $_eventPrefix = 'catalog_category';
+    protected $_eventObject = 'category';
+
     protected static $_url;
     protected static $_urlRewrite;
 
@@ -119,7 +125,7 @@ class Mage_Catalog_Model_Category extends Mage_Catalog_Model_Abstract
      */
     public function getDefaultAttributeSetId()
     {
-        return $this->getResource()->getConfig()->getDefaultAttributeSetId();
+        return $this->getResource()->getEntityType()->getDefaultAttributeSetId();
     }
 
     /**
@@ -214,26 +220,37 @@ class Mage_Catalog_Model_Category extends Mage_Catalog_Model_Abstract
      *
      * @return string
      */
-    public function getCategoryUrl()
+    public function getUrl()
     {
-        Varien_Profiler::start('REWRITE: '.__METHOD__);
-        $rewrite = $this->getUrlRewrite();
-        if ($this->getStoreId()) {
-            $rewrite->setStoreId($this->getStoreId());
+        $url = $this->getData('url');
+        if (is_null($url)) {
+	        if ($this->hasData('request_path') && $this->getRequestPath() != '') {
+	            $url = $this->getUrlInstance()->getBaseUrl().$this->getRequestPath();
+	            $this->setUrl($url);
+	            return $url;
+	        }
+
+	        Varien_Profiler::start('REWRITE: '.__METHOD__);
+	        $rewrite = $this->getUrlRewrite();
+	        if ($this->getStoreId()) {
+	            $rewrite->setStoreId($this->getStoreId());
+	        }
+	        $idPath = 'category/'.$this->getId();
+
+	        $rewrite->loadByIdPath($idPath);
+
+	        if ($rewrite->getId()) {
+	            $url = $this->getUrlInstance()->getBaseUrl().$rewrite->getRequestPath();
+	        Varien_Profiler::stop('REWRITE: '.__METHOD__);
+	            $this->setUrl($url);
+	            return $url;
+	        }
+	        Varien_Profiler::stop('REWRITE: '.__METHOD__);
+
+	        $url = $this->getCategoryIdUrl();
+	        $this->setUrl($url);
+	        return $url;
         }
-        $idPath = 'category/'.$this->getId();
-
-        $rewrite->loadByIdPath($idPath);
-
-        if ($rewrite->getId()) {
-            $url = $this->getUrlInstance()->getBaseUrl().$rewrite->getRequestPath();
-        Varien_Profiler::stop('REWRITE: '.__METHOD__);
-            return $url;
-        }
-        Varien_Profiler::stop('REWRITE: '.__METHOD__);
-
-        $url = $this->getCategoryIdUrl();
-
         return $url;
     }
 
@@ -341,5 +358,34 @@ class Mage_Catalog_Model_Category extends Mage_Catalog_Model_Abstract
             $result[] = $item->getId();
         }
         return implode(',', $result);
+    }
+
+    /**
+     * Check category id exising
+     *
+     * @param   int $id
+     * @return  bool
+     */
+    public function checkId($id)
+    {
+        return $this->_getResource()->checkId($id);
+    }
+
+    public function getPathIds()
+    {
+        $ids = $this->getData('path_ids');
+        if (is_null($ids)) {
+            $ids = explode('/', $this->getPath());
+            $this->setData('path_ids', $ids);
+        }
+        return $ids;
+    }
+
+    public function getLevel()
+    {
+        if (!$this->hasLevel()) {
+            return count(explode('/', $this->getPath())) - 1;
+        }
+        return $this->getData('level');
     }
 }

@@ -27,7 +27,7 @@ $installer->run("
 
 /*Table structure for table `sales_counter` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_counter')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_counter')};
 CREATE TABLE {$this->getTable('sales_counter')} (
   `counter_id` int(10) unsigned NOT NULL auto_increment,
   `store_id` int(10) unsigned NOT NULL default '0',
@@ -41,7 +41,7 @@ CREATE TABLE {$this->getTable('sales_counter')} (
 
 /*Table structure for table `sales_discount_coupon` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_discount_coupon')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_discount_coupon')};
 
 CREATE TABLE {$this->getTable('sales_discount_coupon')} (
   `coupon_id` int(10) unsigned NOT NULL auto_increment,
@@ -64,7 +64,7 @@ insert  into {$this->getTable('sales_discount_coupon')}(`coupon_id`,`coupon_code
 
 /*Table structure for table `sales_giftcert` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_giftcert')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_giftcert')};
 
 CREATE TABLE {$this->getTable('sales_giftcert')} (
   `giftcert_id` int(10) unsigned NOT NULL auto_increment,
@@ -80,7 +80,7 @@ insert  into {$this->getTable('sales_giftcert')}(`giftcert_id`,`giftcert_code`,`
 
 /*Table structure for table `sales_invoice_entity` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity')};
 
 CREATE TABLE {$this->getTable('sales_invoice_entity')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
@@ -103,7 +103,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity')} (
 
 /*Table structure for table `sales_invoice_entity_datetime` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_datetime')};
 CREATE TABLE {$this->getTable('sales_invoice_entity_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -126,7 +126,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity_datetime')} (
 
 /*Table structure for table `sales_invoice_entity_decimal` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_decimal')};
 
 CREATE TABLE {$this->getTable('sales_invoice_entity_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
@@ -150,7 +150,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity_decimal')} (
 
 /*Table structure for table `sales_invoice_entity_int` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_int')};
 
 CREATE TABLE {$this->getTable('sales_invoice_entity_int')} (
   `value_id` int(11) NOT NULL auto_increment,
@@ -174,7 +174,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity_int')} (
 
 /*Table structure for table `sales_invoice_entity_text` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_text')};
 CREATE TABLE {$this->getTable('sales_invoice_entity_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -197,7 +197,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity_text')} (
 
 /*Table structure for table `sales_invoice_entity_varchar` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_invoice_entity_varchar')};
 CREATE TABLE {$this->getTable('sales_invoice_entity_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -220,7 +220,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity_varchar')} (
 
 /*Table structure for table `sales_order_entity` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_order_entity')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_order_entity')};
 CREATE TABLE {$this->getTable('sales_order_entity')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -242,7 +242,7 @@ CREATE TABLE {$this->getTable('sales_order_entity')} (
 
 /*Table structure for table `sales_order_entity_datetime` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_datetime')};
 CREATE TABLE {$this->getTable('sales_order_entity_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -265,7 +265,7 @@ CREATE TABLE {$this->getTable('sales_order_entity_datetime')} (
 
 /*Table structure for table `sales_order_entity_decimal` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_decimal')};
 CREATE TABLE {$this->getTable('sales_order_entity_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -288,7 +288,7 @@ CREATE TABLE {$this->getTable('sales_order_entity_decimal')} (
 
 /*Table structure for table `sales_order_entity_int` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_int')};
 CREATE TABLE {$this->getTable('sales_order_entity_int')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -311,7 +311,7 @@ CREATE TABLE {$this->getTable('sales_order_entity_int')} (
 
 /*Table structure for table `sales_order_entity_text` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_text')};
 CREATE TABLE {$this->getTable('sales_order_entity_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -334,7 +334,7 @@ CREATE TABLE {$this->getTable('sales_order_entity_text')} (
 
 /*Table structure for table `sales_order_entity_varchar` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_order_entity_varchar')};
 CREATE TABLE {$this->getTable('sales_order_entity_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -357,7 +357,7 @@ CREATE TABLE {$this->getTable('sales_order_entity_varchar')} (
 
 /*Table structure for table `sales_quote_entity` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity')};
 CREATE TABLE {$this->getTable('sales_quote_entity')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -377,7 +377,7 @@ CREATE TABLE {$this->getTable('sales_quote_entity')} (
 
 /*Table structure for table `sales_quote_entity_datetime` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_datetime')};
 CREATE TABLE {$this->getTable('sales_quote_entity_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -400,7 +400,7 @@ CREATE TABLE {$this->getTable('sales_quote_entity_datetime')} (
 
 /*Table structure for table `sales_quote_entity_decimal` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_decimal')};
 CREATE TABLE {$this->getTable('sales_quote_entity_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -422,7 +422,7 @@ CREATE TABLE {$this->getTable('sales_quote_entity_decimal')} (
 
 /*Table structure for table `sales_quote_entity_int` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_int')};
 CREATE TABLE {$this->getTable('sales_quote_entity_int')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -444,7 +444,7 @@ CREATE TABLE {$this->getTable('sales_quote_entity_int')} (
 
 /*Table structure for table `sales_quote_entity_text` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_text')};
 CREATE TABLE {$this->getTable('sales_quote_entity_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -467,7 +467,7 @@ CREATE TABLE {$this->getTable('sales_quote_entity_text')} (
 
 /*Table structure for table `sales_quote_entity_varchar` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_entity_varchar')};
 CREATE TABLE {$this->getTable('sales_quote_entity_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -488,7 +488,7 @@ CREATE TABLE {$this->getTable('sales_quote_entity_varchar')} (
 
 /*Table structure for table `sales_quote_rule` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_rule')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_rule')};
 CREATE TABLE {$this->getTable('sales_quote_rule')} (
   `quote_rule_id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
@@ -512,7 +512,7 @@ CREATE TABLE {$this->getTable('sales_quote_rule')} (
 
 /*Table structure for table `sales_quote_temp` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp')};
 CREATE TABLE {$this->getTable('sales_quote_temp')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -534,7 +534,7 @@ CREATE TABLE {$this->getTable('sales_quote_temp')} (
 
 /*Table structure for table `sales_quote_temp_datetime` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_datetime')};
 CREATE TABLE {$this->getTable('sales_quote_temp_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -557,7 +557,7 @@ CREATE TABLE {$this->getTable('sales_quote_temp_datetime')} (
 
 /*Table structure for table `sales_quote_temp_decimal` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_decimal')};
 CREATE TABLE {$this->getTable('sales_quote_temp_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -580,7 +580,7 @@ CREATE TABLE {$this->getTable('sales_quote_temp_decimal')} (
 
 /*Table structure for table `sales_quote_temp_int` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_int')};
 CREATE TABLE {$this->getTable('sales_quote_temp_int')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -603,7 +603,7 @@ CREATE TABLE {$this->getTable('sales_quote_temp_int')} (
 
 /*Table structure for table `sales_quote_temp_text` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_text')};
 CREATE TABLE {$this->getTable('sales_quote_temp_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -626,7 +626,7 @@ CREATE TABLE {$this->getTable('sales_quote_temp_text')} (
 
 /*Table structure for table `sales_quote_temp_varchar` */
 
-DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('sales_quote_temp_varchar')};
 CREATE TABLE {$this->getTable('sales_quote_temp_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',

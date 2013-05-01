@@ -39,6 +39,15 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
         $this->_removeButton('delete');
         $this->_updateButton('save', 'label', Mage::helper('sales')->__('Send Tracking Information'));
         $this->_updateButton('save', 'onclick', "setLocation('".$this->getEmailUrl()."')");
+        
+        if ($this->getShipment()->getId()) {
+            $this->_addButton('print', array(
+                'label'     => Mage::helper('sales')->__('Print'),
+                'class'     => 'save',
+                'onclick'   => 'setLocation(\''.$this->getPrintUrl().'\')'
+                )
+            );
+        }
     }
 
     /**
@@ -77,7 +86,13 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
 
     public function getEmailUrl()
     {
-        return $this->getUrl('*/*/email', array('shipment_id'  => $this->getShipment()->getId()));
+        return $this->getUrl('*/sales_order_shipment/email', array('shipment_id'  => $this->getShipment()->getId()));
+    }
+
+    public function getPrintUrl()
+    {
+        return $this->getUrl('*/*/print', array(
+            'invoice_id' => $this->getShipment()->getId()
+        ));
     }
 }
-

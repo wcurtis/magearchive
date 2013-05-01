@@ -79,7 +79,7 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
                 $value = $attribute->getFrontend()->getValue($product);
                 if (strlen($value)) {
                     $data[$attribute->getAttributeCode()] = array(
-                       'label' => $this->__($attribute->getFrontend()->getLabel()),
+                       'label' => $attribute->getFrontend()->getLabel(),
                        'value' => $attribute->getFrontend()->getValue($product)//$product->getData($attribute->getAttributeCode())
                     );
                 }

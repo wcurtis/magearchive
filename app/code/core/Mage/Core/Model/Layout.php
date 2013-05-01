@@ -146,7 +146,23 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
      */
     public function generateXml()
     {
-        $this->setXml($this->getUpdate()->asSimplexml());
+        $xml = $this->getUpdate()->asSimplexml();
+        $removeInstructions = $xml->xpath("//remove");
+        foreach ($removeInstructions as $infoNode) {
+        	$attributes = $infoNode->attributes();
+        	if ($blockName = (string)$attributes->name) {
+                $ignoreNodes = $xml->xpath("//block[@name='".$blockName."']");
+                foreach ($ignoreNodes as $block) {
+                	$block->addAttribute('ignore', true);
+                }
+                $ignoreNodes = $xml->xpath("//reference[@name='".$blockName."']");
+                foreach ($ignoreNodes as $block) {
+                	$block->addAttribute('ignore', true);
+                }
+        	}
+        }
+
+        $this->setXml($xml);
         return $this;
     }
 
@@ -161,6 +177,10 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
             $parent = $this->getNode();
         }
         foreach ($parent as $node) {
+            $attributes = $node->attributes();
+            if ((bool)$attributes->ignore) {
+                continue;
+            }
             switch ($node->getName()) {
                 case 'block':
                     $this->_generateBlock($node, $parent);
@@ -174,7 +194,6 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
                 case 'action':
                     $this->_generateAction($node, $parent);
                     break;
-
             }
         }
     }

@@ -21,9 +21,9 @@
 <div class="content-header">
     <table cellspacing="0">
     	<tr>
-    		<td style="width:50%;"><h3 class="icon-head head-tax"><?=$header?></h3></td>
+    		<td style="width:50%;"><h3 class="icon-head head-tax"><?php echo $header ?></h3></td>
         	<td class="form-buttons">
-            	<button class="scalable add" onclick="window.location='<?=$createUrl?>'"><span><?=Mage::helper('tax')->__('Add New Tax Rate')?></span></button>
+            	<button class="scalable add" onclick="window.location='<?php echo $createUrl ?>'"><span><?php echo Mage::helper('tax')->__('Add New Tax Rate') ?></span></button>
         	</td>
     	</tr>
     </table>

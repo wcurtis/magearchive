@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('cms_block')};
+-- DROP TABLE IF EXISTS {$this->getTable('cms_block')};
 CREATE TABLE {$this->getTable('cms_block')} (
   `block_id` smallint(6) NOT NULL auto_increment,
   `title` varchar(255) NOT NULL default '',
@@ -40,7 +40,7 @@ CREATE TABLE {$this->getTable('cms_block')} (
 
 insert into {$this->getTable('cms_block')}(`block_id`,`title`,`identifier`,`content`,`creation_time`,`update_time`,`is_active`,`store_id`) values (5,'Footer Links','footer_links','<ul>\r\n<li><a href=\"{{store url=\"\"}}about-magento-demo-store\">About Us</a></li>\r\n<li class=\"last\"><a href=\"{{store url=\"\"}}customer-service\">Customer Service</a></li>\r\n</ul>',NOW(),NOW(),1,0);
 
-DROP TABLE IF EXISTS {$this->getTable('cms_page')};
+-- DROP TABLE IF EXISTS {$this->getTable('cms_page')};
 CREATE TABLE {$this->getTable('cms_page')} (
   `page_id` smallint(6) NOT NULL auto_increment,
   `title` varchar(255) NOT NULL default '',

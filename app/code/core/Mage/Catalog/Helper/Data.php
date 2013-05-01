@@ -47,7 +47,7 @@ class Mage_Catalog_Helper_Data extends Mage_Core_Helper_Abstract
                     if (isset($categories[$categoryId]) && $categories[$categoryId]->getName()) {
                         $path['category'.$categoryId] = array(
                             'label' => $categories[$categoryId]->getName(),
-                            'link' => $this->_isCategoryLink($categoryId) ? $categories[$categoryId]->getCategoryUrl() : ''
+                            'link' => $this->_isCategoryLink($categoryId) ? $categories[$categoryId]->getUrl() : ''
                         );
                     }
                 }

@@ -465,22 +465,30 @@ class Varien_Object
     {
         switch (substr($method, 0, 3)) {
             case 'get' :
+//                Varien_Profiler::start('GETTER: '.get_class($this).'::'.$method);
                 $key = $this->_underscore(substr($method,3));
                 $data = $this->getData($key, isset($args[0]) ? $args[0] : null);
+//                Varien_Profiler::stop('GETTER: '.get_class($this).'::'.$method);
                 return $data;
 
             case 'set' :
+//                Varien_Profiler::start('SETTER: '.get_class($this).'::'.$method);
                 $key = $this->_underscore(substr($method,3));
                 $result = $this->setData($key, isset($args[0]) ? $args[0] : null);
+//                Varien_Profiler::stop('SETTER: '.get_class($this).'::'.$method);
                 return $result;
 
             case 'uns' :
+//                Varien_Profiler::start('UNS: '.get_class($this).'::'.$method);
                 $key = $this->_underscore(substr($method,3));
                 $result = $this->unsetData($key);
+//                Varien_Profiler::stop('UNS: '.get_class($this).'::'.$method);
                 return $result;
 
             case 'has' :
+//                Varien_Profiler::start('HAS: '.get_class($this).'::'.$method);
                 $key = $this->_underscore(substr($method,3));
+//                Varien_Profiler::stop('HAS: '.get_class($this).'::'.$method);
                 return isset($this->_data[$key]);
         }
         throw new Varien_Exception("Invalid method ".get_class($this)."::".$method."(".print_r($args,1).")");
@@ -655,5 +663,15 @@ class Varien_Object
         }
         return $this;
     }
+/*
+    public function __sleep()
+    {
+        return array('_data', '_idFieldName');
+    }
 
+    public function __wakeup()
+    {
+        $this->_construct();
+    }
+*/
 }

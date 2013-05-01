@@ -22,7 +22,7 @@
 <config>
    <modules>
       <Mage_Admin>
-         <version>0.7.0</version>
+         <version>0.7.1</version>
          <depends>
             <Mage_Core />
          </depends>

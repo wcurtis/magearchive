@@ -212,4 +212,20 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection extends Mage_Ca
         return $this;
     }
 
+    /**
+     * Joins url rewrite rules to collection
+     *
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection
+     */
+    public function joinUrlRewrite()
+    {
+        $this->joinTable(
+            'core/url_rewrite',
+            'category_id=entity_id',
+            array('request_path'),
+            '{{table}}.is_system="1" AND {{table}}.product_id IS NULL AND {{table}}.store_id="'.Mage::app()->getStore()->getId().'"',
+            'left'
+        );
+        return $this;
+    }
 }

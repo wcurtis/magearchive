@@ -40,9 +40,10 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Filter_Store extends Mage_Adminhtm
 
         $html  = '<select name="' . ($this->getColumn()->getName() ? $this->getColumn()->getName() : $this->getColumn()->getId()) . '" ' . $this->getColumn()->getValidateClass() . '">';
         $value = $this->getColumn()->getValue();
-        $html .= '<option value=""' . ((!$value || $value == 0 && !$allShow) ? ' selected="true"' : '') . '></option>';
         if ($allShow) {
             $html .= '<option value="0"' . ($value == 0 ? ' selected="true"' : '') . '>' . Mage::helper('adminhtml')->__('All Store Views') . '</option>';
+        } else {
+            $html .= '<option value=""' . (!$value ? ' selected="true"' : '') . '></option>';
         }
         foreach ($websiteCollection as $website) {
             $websiteShow = false;

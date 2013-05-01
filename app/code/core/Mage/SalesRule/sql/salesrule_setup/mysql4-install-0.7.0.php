@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('salesrule')};
+-- DROP TABLE IF EXISTS {$this->getTable('salesrule')};
 CREATE TABLE {$this->getTable('salesrule')} (
   `rule_id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
@@ -52,7 +52,7 @@ CREATE TABLE {$this->getTable('salesrule')} (
   KEY `sort_order` (`is_active`,`sort_order`,`to_date`,`from_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('salesrule_customer')};
+-- DROP TABLE IF EXISTS {$this->getTable('salesrule_customer')};
 CREATE TABLE {$this->getTable('salesrule_customer')} (
   `rule_customer_id` int(10) unsigned NOT NULL auto_increment,
   `rule_id` int(10) unsigned NOT NULL default '0',
@@ -65,7 +65,7 @@ CREATE TABLE {$this->getTable('salesrule_customer')} (
   CONSTRAINT `FK_salesrule_customer_rule` FOREIGN KEY (`rule_id`) REFERENCES {$this->getTable('salesrule')} (`rule_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('salesrule_product')};
+-- DROP TABLE IF EXISTS {$this->getTable('salesrule_product')};
 CREATE TABLE {$this->getTable('salesrule_product')} (
   `rule_product_id` int(10) unsigned NOT NULL auto_increment,
   `rule_id` int(10) unsigned NOT NULL default '0',
@@ -86,7 +86,7 @@ CREATE TABLE {$this->getTable('salesrule_product')} (
   CONSTRAINT `FK_salesrule_product_store` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('salesrule_product_action')};
+-- DROP TABLE IF EXISTS {$this->getTable('salesrule_product_action')};
 CREATE TABLE {$this->getTable('salesrule_product_action')} (
   `rule_product_action_id` int(10) unsigned NOT NULL auto_increment,
   `rule_product_id` int(10) unsigned NOT NULL default '0',

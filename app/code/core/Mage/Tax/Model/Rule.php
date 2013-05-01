@@ -24,6 +24,30 @@ class Mage_Tax_Model_Rule extends Mage_Core_Model_Abstract
     {
         $this->_init('tax/rule');
     }
+
+    protected function _beforeSave()
+    {
+        $this->cleanCache();
+        parent::_beforeSave();
+    }
+
+    protected function _beforeDelete()
+    {
+        $this->cleanCache();
+        parent::_beforeDelete();
+    }
+
+    public function cleanCache()
+    {
+        $ids = Mage::getModel('catalog/product')->getCollection()
+            ->addAttributeToFilter('tax_class_id', $this->getTaxProductClassId())
+            ->getAllIds();
+        $tags = array();
+        foreach ($ids as $id) {
+            $tags[] = 'catalog_product_'.$id;
+        }
+        Mage::app()->cleanCache($tags);
+    }
 //    public function __construct($rule=false)
 //    {
 //        parent::__construct();

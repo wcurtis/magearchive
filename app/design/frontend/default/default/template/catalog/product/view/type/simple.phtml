@@ -24,51 +24,51 @@
  * @see Mage_Catalog_Block_Product_View_Type_Simple
  */
 ?>
-<?$_product = $this->getProduct()?>
+<?php $_product = $this->getProduct() ?>
 
-<?$_tierPrices = $this->getTierPrices()?>
-<?if(count($_tierPrices)>0):?>
+<?php $_tierPrices = $this->getTierPrices() ?>
+<?php if(count($_tierPrices)>0): ?>
     <div class="product-pricing">
         <ul class="bare">
-        <?foreach($_tierPrices as $_price):?>
-            <li><?=$this->__('Buy %s for %s each', $_price['price_qty'], $_price['formated_price'])?>
-            <?if(($_product->getPrice() == $_product->getFinalPrice() && $_product->getPrice() > $_price['price'])
-            || ($_product->getPrice() != $_product->getFinalPrice() &&  $_product->getFinalPrice() > $_price['price'])):?>
-                <?=$this->__('and')?> <strong><?=$this->__('save %s%%', $_price['savePercent'])?>
-            <?endif?></strong>
+        <?php foreach($_tierPrices as $_price): ?>
+            <li><?php echo $this->__('Buy %s for %s each', $_price['price_qty'], $_price['formated_price']) ?>
+            <?php if(($_product->getPrice() == $_product->getFinalPrice() && $_product->getPrice() > $_price['price'])
+            || ($_product->getPrice() != $_product->getFinalPrice() &&  $_product->getFinalPrice() > $_price['price'])): ?>
+                <?php echo $this->__('and') ?> <strong><?php echo $this->__('save %s%%', $_price['savePercent']) ?>
+            <?php endif ?></strong>
             </li>
-        <?endforeach?>
+        <?php endforeach ?>
         </ul>
     </div>
-<?endif;?>
+<?php endif; ?>
 
-<?if($_product->isSaleable()):?>
-    <p><small><?=$this->__('Availability: In stock.')?></small></p>
-<?else:?>
-    <p><small><?=$this->__('Availability: Out of stock.')?></small></p>
-<?endif;?>
+<?php if($_product->isSaleable()): ?>
+    <p><small><?php echo $this->__('Availability: In stock.') ?></small></p>
+<?php else: ?>
+    <p><small><?php echo $this->__('Availability: Out of stock.') ?></small></p>
+<?php endif; ?>
 
-<?=$this->helper('catalog/product')->getPriceHtml($_product)?>
+<?php echo $this->helper('catalog/product')->getPriceHtml($_product) ?>
 
-<?if($_product->isSaleable()):?>
+<?php if($_product->isSaleable()): ?>
     <fieldset class="add-to-cart-box">
-        <legend><?=$this->__('Add Items to Cart')?></legend>
-        <span class="qty-box"><label for="qty"><?=$this->__('Qty')?>:</label>
-        <input name="qty" type="text" class="input-text qty" id="qty" maxlength="12" value="<?=$this->getMinimalQty($_product)?>"/></span>
-        <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button>
-        <?if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
-            <strong><?=$this->__('OR')?></strong>
-        <?endif;?>
+        <legend><?php echo $this->__('Add Items to Cart') ?></legend>
+        <span class="qty-box"><label for="qty"><?php echo $this->__('Qty') ?>:</label>
+        <input name="qty" type="text" class="input-text qty" id="qty" maxlength="12" value="<?php echo $this->getMinimalQty($_product) ?>"/></span>
+        <button class="form-button" onclick="productAddToCartForm.submit()"><span><?php echo $this->__('Add to Cart') ?></span></button>
+        <?php if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+            <strong><?php echo $this->__('OR') ?></strong>
+        <?php endif; ?>
     </fieldset>
-<?endif;?>
+<?php endif; ?>
 
 <div class="add-to-box">
-<?if ($this->helper('wishlist')->isAllow()) :?>
-    <a href="<?=$this->helper('wishlist')->getAddUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a><br/>
-<?endif;?>
+<?php if ($this->helper('wishlist')->isAllow()) : ?>
+    <a href="<?php echo $this->helper('wishlist')->getAddUrl($_product) ?>"><?php echo $this->__('Add to Wishlist') ?></a><br/>
+<?php endif; ?>
 
-<?if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product) ):?>
-    <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
-<?endif;?>
+<?php if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product) ): ?>
+    <a href="<?php echo $_compareUrl ?>"><?php echo $this->__('Add to Compare') ?></a>
+<?php endif; ?>
 </div>
 

@@ -27,7 +27,7 @@ $installer->run("
 
 /*Table structure for table `tax_class` */
 
-DROP TABLE IF EXISTS {$this->getTable('tax_class')};
+-- DROP TABLE IF EXISTS {$this->getTable('tax_class')};
 CREATE TABLE {$this->getTable('tax_class')} (
   `class_id` smallint(6) NOT NULL auto_increment,
   `class_name` varchar(255) NOT NULL default '',
@@ -41,7 +41,7 @@ insert  into {$this->getTable('tax_class')}(`class_id`,`class_name`,`class_type`
 
 /*Table structure for table `tax_rate` */
 
-DROP TABLE IF EXISTS {$this->getTable('tax_rate')};
+-- DROP TABLE IF EXISTS {$this->getTable('tax_rate')};
 
 CREATE TABLE {$this->getTable('tax_rate')} (
   `tax_rate_id` tinyint(4) NOT NULL auto_increment,
@@ -57,7 +57,7 @@ insert  into {$this->getTable('tax_rate')}(`tax_rate_id`,`tax_county_id`,`tax_re
 
 /*Table structure for table `tax_rate_data` */
 
-DROP TABLE IF EXISTS {$this->getTable('tax_rate_data')};
+-- DROP TABLE IF EXISTS {$this->getTable('tax_rate_data')};
 
 CREATE TABLE {$this->getTable('tax_rate_data')} (
   `tax_rate_data_id` tinyint(4) NOT NULL auto_increment,
@@ -78,7 +78,7 @@ insert  into {$this->getTable('tax_rate_data')}(`tax_rate_data_id`,`tax_rate_id`
 
 /*Table structure for table `tax_rate_type` */
 
-DROP TABLE IF EXISTS {$this->getTable('tax_rate_type')};
+-- DROP TABLE IF EXISTS {$this->getTable('tax_rate_type')};
 CREATE TABLE {$this->getTable('tax_rate_type')} (
   `type_id` tinyint(4) NOT NULL auto_increment,
   `type_name` varchar(255) NOT NULL default '',
@@ -91,7 +91,7 @@ insert  into {$this->getTable('tax_rate_type')}(`type_id`,`type_name`) values (1
 
 /*Table structure for table `tax_rule` */
 
-DROP TABLE IF EXISTS {$this->getTable('tax_rule')};
+-- DROP TABLE IF EXISTS {$this->getTable('tax_rule')};
 CREATE TABLE {$this->getTable('tax_rule')} (
   `tax_rule_id` tinyint(4) NOT NULL auto_increment,
   `tax_customer_class_id` smallint(6) NOT NULL default '0',

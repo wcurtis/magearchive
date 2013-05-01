@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Cms>
-            <version>0.7.4</version>
+            <version>0.7.5</version>
         </Mage_Cms>
     </modules>
     <frontend>
@@ -132,9 +132,15 @@
                     <page>
                         <table>cms_page</table>
                     </page>
+                    <page_store>
+                        <table>cms_page_store</table>
+                    </page_store>
                     <block>
                         <table>cms_block</table>
                     </block>
+                    <block_store>
+                        <table>cms_block_store</table>
+                    </block_store>
                 </entities>
             </cms_mysql4>
         </models>

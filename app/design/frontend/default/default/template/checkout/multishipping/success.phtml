@@ -19,20 +19,20 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('Order Success')?></h3>
+    <h3><?php echo $this->__('Order Success') ?></h3>
 </div>
 <div class="content-box">
-    <p><strong><?=$this->__('Thank you for your purchase!')?></strong><br/></p>
+    <p><strong><?php echo $this->__('Thank you for your purchase!') ?></strong><br/></p>
     <p>
-        <?=$this->__('We are processing your order and you will soon receive an email with details of the order. Once the order has shipped you will receive another email with a link to track its progress.')?>
+        <?php echo $this->__('We are processing your order and you will soon receive an email with details of the order. Once the order has shipped you will receive another email with a link to track its progress.') ?>
     </p>
-    <?if($_orderIds = $this->getOrderIds()):?>
-        <?=$this->__('Your order number is %s', $_orderIds)?>
-    <?endif;?>
+    <?php if($_orderIds = $this->getOrderIds()): ?>
+        <?php echo $this->__('Your order number is %s', $_orderIds) ?>
+    <?php endif; ?>
     <p>
-        <a href="<?=$this->getUrl('customer/account/')?>"><?=$this->__('My Account')?></a>
+        <a href="<?php echo $this->getUrl('customer/account/') ?>"><?php echo $this->__('My Account') ?></a>
     </p>
 </div>
 <div class="button-set">
-    <button  class="form-button" onclick="setLocation('<?=$this->getContinueUrl()?>')"><span><?=$this->__('Continue Shopping')?></span></button>
+    <button  class="form-button" onclick="setLocation('<?php echo $this->getContinueUrl() ?>')"><span><?php echo $this->__('Continue Shopping') ?></span></button>
 </div>

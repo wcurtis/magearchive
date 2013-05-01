@@ -123,7 +123,8 @@ class Mage_Checkout_Block_Multishipping_Billing extends Mage_Payment_Block_Form_
      */
     public function getPostActionUrl()
     {
-        return $this->getUrl('*/*/billingPost');
+        //return $this->getUrl('*/*/billingPost');
+        return $this->getUrl('*/*/overview');
     }
 
     /**

@@ -215,24 +215,6 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
                 )
             ));
 
-            /**
-             * Check is single store mode
-             */
-            if (!Mage::app()->isSingleStoreMode()) {
-                $this->getMassactionBlock()->addItem('visible_in', array(
-                    'label'         => Mage::helper('review')->__('Set visible in'),
-                    'url'           => $this->getUrl('*/*/massVisibleIn'),
-                    'additional'    => array(
-                        'status'    => array(
-                            'name'      => 'stores',
-                            'type'      => 'multiselect',
-                            'class'     => 'required-entry',
-                            'label'     => Mage::helper('review')->__('Store(s)'),
-                            'values'    => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm()
-                        )
-                    )
-                ));
-            }
         }
     }
 

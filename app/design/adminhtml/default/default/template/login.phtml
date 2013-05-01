@@ -21,21 +21,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en">
 <head>
-    <title><?=Mage::helper('adminhtml')->__('Log into Magento Admin Page')?></title>
+    <title><?php echo Mage::helper('adminhtml')->__('Log into Magento Admin Page') ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" ></meta>
-    <style type="text/css" media="all">
-        /*<![CDATA[*/ @import "<?=$this->getSkinUrl('styles.css')?>"; /*]]>*/
-    </style>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('reset.css')?>" media="all"/>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('boxes.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo $this->getSkinUrl('reset.css') ?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo $this->getSkinUrl('boxes.css') ?>" media="all"/>
 
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/prototype.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/validation.js"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/form.js')?>"></script>
+    <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>proxy.php/x.js?f=prototype/prototype.js,prototype/validation.js,mage/adminhtml/form.js"></script>
 
-    <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('iestyles.css')?>" type="text/css" media="all" /> <![endif]-->
-    <!--[if lt IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('below_ie7.css')?>" type="text/css" media="all" /> <![endif]-->
-    <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('ie7.css')?>" type="text/css" media="all" /> <![endif]-->
+    <!--[if IE]> <link rel="stylesheet" href="<?php echo $this->getSkinUrl('iestyles.css') ?>" type="text/css" media="all" /> <![endif]-->
+    <!--[if lt IE 7]> <link rel="stylesheet" href="<?php echo $this->getSkinUrl('below_ie7.css') ?>" type="text/css" media="all" /> <![endif]-->
+    <!--[if IE 7]> <link rel="stylesheet" href="<?php echo $this->getSkinUrl('ie7.css') ?>" type="text/css" media="all" /> <![endif]-->
 </head>
 <body id="page-login">
     <div class="login-container">
@@ -43,20 +38,20 @@
             <form method="post" action="" id="loginForm">
 
                 <fieldset class="login-form">
-                    <h2><?=Mage::helper('adminhtml')->__('Log in to Admin Panel')?></h2>
+                    <h2><?php echo Mage::helper('adminhtml')->__('Log in to Admin Panel') ?></h2>
                     <div id="messages">
-                        <?=$this->getMessagesBlock()->getGroupedHtml()?>
+                        <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
                     </div>
-                    <div class="input-box"><label for="#"><?=Mage::helper('adminhtml')->__('User Name:')?></label><br/>
-                        <input type="text" name="login[username]" value="<?=$username?>" class="required-entry input-text"/></div>
-                    <div class="input-box"><label for="#"><?=Mage::helper('adminhtml')->__('Password:')?></label><br/>
+                    <div class="input-box"><label for="#"><?php echo Mage::helper('adminhtml')->__('User Name:') ?></label><br/>
+                        <input type="text" name="login[username]" value="<?php echo $username ?>" class="required-entry input-text"/></div>
+                    <div class="input-box"><label for="#"><?php echo Mage::helper('adminhtml')->__('Password:') ?></label><br/>
                         <input type="password" name="login[password]" class="required-entry input-text" value="" /></div>
                     <div class="clear"></div>
                     <div class="form-buttons">
-                        <input onclick="loginForm.submit()" type="image" src="<?=$this->getSkinUrl('images/btn_login.gif')?>" value="<?=Mage::helper('adminhtml')->__('Login')?>"/>
+                        <input onclick="loginForm.submit()" type="image" src="<?php echo $this->getSkinUrl('images/btn_login.gif') ?>" value="<?php echo Mage::helper('adminhtml')->__('Login') ?>"/>
                     </div>
                 </fieldset>
-                <p class="legal"><?=Mage::helper('adminhtml')->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y'))?></p>
+                <p class="legal"><?php echo Mage::helper('adminhtml')->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y')) ?></p>
             </form>
             <div class="bottom"></div>
             <script type="text/javascript">

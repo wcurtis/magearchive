@@ -32,7 +32,7 @@ require_once 'Zend/Validate/Interface.php';
  * @subpackage Element
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Element.php 8288 2008-02-22 15:59:52Z matthew $
+ * @version    $Id: Element.php 8756 2008-03-11 19:56:04Z matthew $
  */
 class Zend_Form_Element implements Zend_Validate_Interface
 {
@@ -80,6 +80,12 @@ class Zend_Form_Element implements Zend_Validate_Interface
      * @var string
      */
     protected $_description;
+
+    /**
+     * Should we disable loading the default decorators?
+     * @var bool
+     */
+    protected $_disableLoadDefaultDecorators = false;
 
     /**
      * Validation errors
@@ -147,6 +153,12 @@ class Zend_Form_Element implements Zend_Validate_Interface
     protected $_translator;
 
     /**
+     * Is translation disabled?
+     * @var bool
+     */
+    protected $_translatorDisabled = false;
+
+    /**
      * Element type
      * @var string
      */
@@ -211,7 +223,29 @@ class Zend_Form_Element implements Zend_Validate_Interface
         /**
          * Register ViewHelper decorator by default
          */
-        $this->_loadDefaultDecorators();
+        $this->loadDefaultDecorators();
+    }
+
+    /**
+     * Set flag to disable loading default decorators
+     * 
+     * @param  bool $flag 
+     * @return Zend_Form_Element
+     */
+    public function setDisableLoadDefaultDecorators($flag)
+    {
+        $this->_disableLoadDefaultDecorators = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Should we load the default decorators?
+     * 
+     * @return bool
+     */
+    public function loadDefaultDecoratorsIsDisabled()
+    {
+        return $this->_disableLoadDefaultDecorators;
     }
 
     /**
@@ -219,8 +253,12 @@ class Zend_Form_Element implements Zend_Validate_Interface
      * 
      * @return void
      */
-    protected function _loadDefaultDecorators()
+    public function loadDefaultDecorators()
     {
+        if ($this->loadDefaultDecoratorsIsDisabled()) {
+            return;
+        }
+
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             $this->addDecorator('ViewHelper')
@@ -309,6 +347,10 @@ class Zend_Form_Element implements Zend_Validate_Interface
      */
     public function getTranslator()
     {
+        if ($this->translatorIsDisabled()) {
+            return null;
+        }
+
         if (null === $this->_translator) {
             require_once 'Zend/Form.php';
             return Zend_Form::getDefaultTranslator();
@@ -316,6 +358,27 @@ class Zend_Form_Element implements Zend_Validate_Interface
         return $this->_translator;
     }
 
+    /**
+     * Indicate whether or not translation should be disabled
+     * 
+     * @param  bool $flag 
+     * @return Zend_Form_Element
+     */
+    public function setDisableTranslator($flag)
+    {
+        $this->_translatorDisabled = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Is translation disabled?
+     * 
+     * @return bool
+     */
+    public function translatorIsDisabled()
+    {
+        return $this->_translatorDisabled;
+    }
 
     // Metadata
 
@@ -910,15 +973,25 @@ class Zend_Form_Element implements Zend_Validate_Interface
             if (empty($options)) {
                 $validator = new $name;
             } else {
+                $messages = false;
+                if (isset($options['messages'])) {
+                    $messages = $options['messages'];
+                    unset($options['messages']);
+                }
+
                 $r = new ReflectionClass($name);
                 if ($r->hasMethod('__construct')) {
-                    $validator = $r->newInstanceArgs($options);
+                    $validator = $r->newInstanceArgs((array) $options);
                 } else {
                     $validator = $r->newInstance();
                 }
 
-                if (isset($options['messages']) && is_array($options['messages'])) {
-                    $validator->setMessages($options['messages']);
+                if ($messages) {
+                    if (is_array($messages)) {
+                        $validator->setMessages($messages);
+                    } elseif (is_string($messages)) {
+                        $validator->setMessage($messages);
+                    }
                 }
             }
         } else {
@@ -926,7 +999,10 @@ class Zend_Form_Element implements Zend_Validate_Interface
             throw new Zend_Form_Exception('Invalid validator provided to addValidator; must be string or Zend_Validate_Interface');
         }
 
-        $validator->zfBreakChainOnFailure = $breakChainOnFailure;
+        if (!isset($validator->zfBreakChainOnFailure)) {
+            $validator->zfBreakChainOnFailure = $breakChainOnFailure;
+        }
+
         $this->_validators[$name] = $validator;
 
         return $this;
@@ -1171,7 +1247,7 @@ class Zend_Form_Element implements Zend_Validate_Interface
             } else {
                 $r = new ReflectionClass($name);
                 if ($r->hasMethod('__construct')) {
-                    $filter = $r->newInstanceArgs($options);
+                    $filter = $r->newInstanceArgs((array) $options);
                 } else {
                     $filter = $r->newInstance();
                 }

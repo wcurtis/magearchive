@@ -18,21 +18,21 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<dl id="dl-<?=$id?>" class="accordion">
-<?foreach ($sections as $sectionId=>$section):?>
-    <dt id="dt-<?=$id?>-<?=$sectionId?>">
-        <strong><?=$section['title']?></strong>
+<dl id="dl-<?php echo $id ?>" class="accordion">
+<?php foreach ($sections as $sectionId=>$section): ?>
+    <dt id="dt-<?php echo $id ?>-<?php echo $sectionId ?>">
+        <strong><?php echo $section['title'] ?></strong>
     </dt>
-    <dd id="dd-<?=$id?>-<?=$section['id']?>" class="section-menu <?=!empty($section['active'])?'open':''?>">
+    <dd id="dd-<?php echo $id ?>-<?php echo $section['id'] ?>" class="section-menu <?php echo !empty($section['active'])?'open':'' ?>">
         <ul>
-        <?foreach ($section['children'] as $menuId=>$menuItem):?>
-            <li id="li-<?=$id?>-<?=$sectionId?>-<?=$menuId?>">
-                <a href="#" title="<?=$menuItem['title']?>">
-                    <span><?=$menuItem['label']?></span>
+        <?php foreach ($section['children'] as $menuId=>$menuItem): ?>
+            <li id="li-<?php echo $id ?>-<?php echo $sectionId ?>-<?php echo $menuId ?>">
+                <a href="#" title="<?php echo $menuItem['title'] ?>">
+                    <span><?php echo $menuItem['label'] ?></span>
                 </a>
             </li>
-        <?endforeach?>
+        <?php endforeach ?>
         </ul>
     </dd>
-<?endforeach?>
+<?php endforeach ?>
 </dl>

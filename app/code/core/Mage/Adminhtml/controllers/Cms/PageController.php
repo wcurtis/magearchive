@@ -74,14 +74,14 @@ class Mage_Adminhtml_Cms_PageController extends Mage_Adminhtml_Controller_Action
 
         // 2. Initial checking
         if ($id) {
-            $model->load($id);
+            $model->load($id);/*die('<br>#stop');*/
             if (! $model->getId()) {
                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('cms')->__('This page no longer exists'));
                 $this->_redirect('*/*/');
                 return;
             }
         }
-
+//print '<pre>';var_dump($model->getData());
         // 3. Set entered data if was error when we do save
         $data = Mage::getSingleton('adminhtml/session')->getFormData(true);
         if (! empty($data)) {
@@ -108,6 +108,7 @@ class Mage_Adminhtml_Cms_PageController extends Mage_Adminhtml_Controller_Action
         if ($data = $this->getRequest()->getPost()) {
             // init model and set data
             $model = Mage::getModel('cms/page');
+
 //            if ($id = $this->getRequest()->getParam('page_id')) {
 //                $model->load($id);
 //                if ($id != $model->getId()) {
@@ -117,12 +118,14 @@ class Mage_Adminhtml_Cms_PageController extends Mage_Adminhtml_Controller_Action
 //                    return;
 //                }
 //            }
+
             $model->setData($data);
 
             // try to save it
             try {
                 // save the data
                 $model->save();
+
                 // display success message
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cms')->__('Page was successfully saved'));
                 // clear previously saved data from session

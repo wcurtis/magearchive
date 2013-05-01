@@ -20,7 +20,7 @@
 ?>
 <div id="tree-div" class="tree"></div>
 
-<?if($this->getRootNode() && $this->getRootNode()->hasChildren()):?>
+<?php if($this->getRootNode() && $this->getRootNode()->hasChildren()): ?>
 <script type="text/javascript">
 Ext.EventManager.onDocumentReady(function() {
 	var tree = new Ext.tree.TreePanel('tree-div', {
@@ -30,25 +30,25 @@ Ext.EventManager.onDocumentReady(function() {
         containerScroll: true,
 		rootUIProvider: Ext.tree.CheckboxNodeUI,
 		selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
-		rootVisible: '<?=$this->getRootNode()->getIsVisible()?>'
+		rootVisible: '<?php echo $this->getRootNode()->getIsVisible() ?>'
 	});
 
 	tree.on('check', function(node, checked) {
-		<?=$this->getJsFormObject()?>.updateElement.value = this.getChecked().join(', ');
+		<?php echo $this->getJsFormObject() ?>.updateElement.value = this.getChecked().join(', ');
 		varienElementMethods.setHasChanges(node.getUI().checkbox);
 	}, tree);
 
 	// set the root node
     var root = new Ext.tree.TreeNode({
-        text: '<?=$this->getRootNode()->getName()?>',
+        text: '<?php echo $this->getRootNode()->getName() ?>',
         draggable:false,
-        checked:'<?=$this->getRootNode()->getChecked()?>',
-        id:'<?=$this->getRootNode()->getId()?>',
+        checked:'<?php echo $this->getRootNode()->getChecked() ?>',
+        id:'<?php echo $this->getRootNode()->getId() ?>',
         uiProvider: Ext.tree.CheckboxNodeUI
     });
 
 	tree.setRootNode(root);
-	bildCategoryTree(root, <?=$this->getTreeJson()?>);
+	bildCategoryTree(root, <?php echo $this->getTreeJson() ?>);
     tree.addListener('click', categoryClick.createDelegate(this));
 
     // render the tree
@@ -77,4 +77,4 @@ function categoryClick(node, e){
     //varienElementMethods.setHasChanges(Event.element(e), e);
 };
 </script>
-<?endif;?>
+<?php endif; ?>

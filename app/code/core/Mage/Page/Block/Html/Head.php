@@ -26,7 +26,7 @@
  */
 class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
 {
-    protected $_additionalCssJs = array();
+    protected $_items = array();
 
     protected function _construct()
     {
@@ -35,7 +35,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
 
     public function addCss($name, $params="")
     {
-        $this->addItem('css', $name, $params);
+        $this->addItem('skin_css', $name, $params);
         return $this;
     }
 
@@ -47,7 +47,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
 
     public function addCssIe($name, $params="")
     {
-        $this->addItem('css', $name, $params, 'IE');
+        $this->addItem('skin_css', $name, $params, 'IE');
         return $this;
     }
 
@@ -57,58 +57,88 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
         return $this;
     }
 
-    public function addItem($type, $name, $params=null, $if=null)
+    public function addItem($type, $name, $params=null, $if=null, $cond=null)
     {
-        if ($type==='css' && empty($params)) {
+        if ($type==='skin_css' && empty($params)) {
             $params = 'media="all"';
         }
-        $this->_additionalCssJs[$type.'/'.$name] = array(
+        $this->_items[$type.'/'.$name] = array(
             'type'   => $type,
             'name'   => $name,
             'params' => $params,
-            'if'     => $if
+            'if'     => $if,
+            'cond'   => $cond,
        );
         return $this;
     }
 
     public function removeItem($type, $name)
     {
-        unset($this->_additionalCssJs[$type.'/'.$name]);
+        unset($this->_items[$type.'/'.$name]);
         return $this;
     }
 
-    public function getAdditionalCssJs()
+    public function getCssJsHtml()
     {
-        $lines = '';
+//        return '';
+        $lines = array();
+        $baseJs = Mage::getBaseUrl('js');
+        $html = '';
 
-        foreach ($this->_additionalCssJs as $item) {
-            if (!empty($item['if'])) {
-                $lines .= '<!--[if '.$item['if'].']>';
+        $script = '<script type="text/javascript" src="%s" %s></script>';
+        $stylesheet = '<link type="text/css" rel="stylesheet" href="%s" %s></link>';
+        $alternate = '<link rel="alternate" type="%s" href="%s" %s></link>';
+
+        foreach ($this->_items as $item) {
+            if (!is_null($item['cond']) && !$this->getData($item['cond'])) {
+                continue;
             }
-
+            $if = !empty($item['if']) ? $item['if'] : '';
             switch ($item['type']) {
                 case 'js':
-                    $lines .= '<script type="text/javascript" src="'.Mage::getBaseUrl('js').$item['name'].'" '.$item['params'].'></script>';
+                    #$lines[$if]['other'][] = sprintf($script, $baseJs.$item['name'], $item['params']);
+                    $lines[$if]['script'][] = $item['name'];
                     break;
 
-                case 'skinJs':
-                    $lines .= '<script type="text/javascript" src="'.$this->getSkinUrl('js/'.$item['name']).'" '.$item['params'].'></script>';
+                case 'js_css':
+                    //proxying css will require real-time prepending path to all image urls, should we do it?
+                    $lines[$if]['other'][] = sprintf($stylesheet, $baseJs.$item['name'], $item['params']);
+                    #$lines[$if]['stylesheet'][] = $item['name'];
                     break;
 
-                case 'css':
-                    $lines .= '<link type="text/css" rel="stylesheet" href="'.$this->getSkinUrl('css/'.$item['name']).'" '.$item['params'].'></link>';
+                case 'skin_js':
+                    $lines[$if]['other'][] = sprintf($script, $this->getSkinUrl($item['name']), $item['params']);
+                    break;
+
+                case 'skin_css':
+                    $lines[$if]['other'][] = sprintf($stylesheet, $this->getSkinUrl($item['name']), $item['params']);
                     break;
 
                 case 'rss':
-                    $lines .= '<link rel="alternate" type="application/rss+xml" href="'.$item['name'].'" '.$item['params'].'></link>';
+                    $lines[$if]['other'][] = sprintf($alternate, 'application/rss+xml'/*'text/xml' for IE?*/, $item['name'], $item['params']);
                     break;
             }
-            if (!empty($item['if'])) {
-                $lines .= '<![endif]-->';
-            }
-            $lines .= "\n";
         }
-        return $lines;
+
+        foreach ($lines as $if=>$items) {
+            if (!empty($if)) {
+                $html .= '<!--[if '.$if.']>'."\n";
+            }
+            if (!empty($items['script'])) {
+                $html .= sprintf($script, $baseJs.'proxy.php/x.js?f='.join(',',$items['script']), '')."\n";
+            }
+            if (!empty($items['stylesheet'])) {
+                $html .= sprintf($stylesheet, $baseJs.'proxy.php/x.css?f='.join(',',$items['stylesheet']), '')."\n";
+            }
+            if (!empty($items['other'])) {
+                $html .= join("\n", $items['other'])."\n";
+            }
+            if (!empty($if)) {
+                $html .= '<![endif]-->'."\n";
+            }
+        }
+
+        return $html;
     }
 
     public function setContentType($contentType)

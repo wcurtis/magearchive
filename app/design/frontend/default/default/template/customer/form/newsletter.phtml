@@ -22,12 +22,12 @@
 <div class="page-head">
     <h3>Newsletter Subscription</h3>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
-<form action="<?=$this->getAction()?>" method="post" id="form-validate">
-    <p><input type="checkbox" name="is_subscribed" value="1" title="<?=$this->__('General Subscription')?>"  <?if($this->getIsSubscribed()):?> checked<?endif?>/> <label for="subscription"><?=$this->__('General Subscription')?></label></p>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<form action="<?php echo $this->getAction() ?>" method="post" id="form-validate">
+    <p><input type="checkbox" name="is_subscribed" id="subscription" value="1" title="<?php echo $this->__('General Subscription') ?>"  <?php if($this->getIsSubscribed()): ?> checked="checked"<?php endif ?>/> <label for="subscription"><?php echo $this->__('General Subscription') ?></label></p>
 <div class="button-set">
-    <a href="<?=$this->getUrl('customer/account')?>" class="left">&laquo; Back</a>
-    <button type="submit" class="form-button"><span><?=$this->__('Save Subscription')?></span></button>
+    <a href="<?php echo $this->getUrl('customer/account') ?>" class="left">&laquo; Back</a>
+    <button type="submit" class="form-button"><span><?php echo $this->__('Save Subscription') ?></span></button>
 </div>
 </form>
 <script type="text/javascript">

@@ -729,7 +729,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     }
 
     /**
-     * Enter description here...
+     * Get Key for caching block content
      *
      * @return string
      */
@@ -742,7 +742,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     }
 
     /**
-     * Enter description here...
+     * Get tags array for saving cache
      *
      * @return array
      */
@@ -758,7 +758,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     }
 
     /**
-     * Enter description here...
+     * Get block cache life time
      *
      * @return int
      */

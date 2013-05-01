@@ -52,18 +52,17 @@ class Mage_Adminhtml_Block_Urlrewrite_Edit_Form extends Mage_Adminhtml_Block_Wid
                 'value'     => $model->getId()
             ));
 
-            $fieldset->addField('type', 'select', array(
+            $fieldset->addField('is_system', 'select', array(
                 'label'     => $this->__('Type'),
                 'title'     => $this->__('Type'),
-                'name'      => 'type',
+                'name'      => 'is_system',
                 'required'  => true,
                 'options'   => array(
-                    Mage_Core_Model_Url_Rewrite::TYPE_CATEGORY  => $this->__('Category'),
-                    Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT  => $this->__('Product'),
-                    Mage_Core_Model_Url_Rewrite::TYPE_CUSTOM  => $this->__('Custom')
+                    1 => $this->__('System'),
+                    0 => $this->__('Custom')
                 ),
-                'disabled'  => $model->getId() ? true: false,
-                'value'     => $model->getType()
+                'disabled'  => true,
+                'value'     => $model->getIsSystem()
             ));
 
             if (!Mage::app()->isSingleStoreMode()) {
@@ -95,17 +94,17 @@ class Mage_Adminhtml_Block_Urlrewrite_Edit_Form extends Mage_Adminhtml_Block_Wid
 
         }
         else {
-            $fieldset->addField('type', 'select', array(
+            $fieldset->addField('is_system', 'select', array(
                 'label'     => $this->__('Type'),
                 'title'     => $this->__('Type'),
-                'name'      => 'type',
+                'name'      => 'is_system',
                 'required'  => true,
                 'options'   => array(
-                    Mage_Core_Model_Url_Rewrite::TYPE_CATEGORY  => $this->__('Category'),
-                    Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT  => $this->__('Product'),
-                    Mage_Core_Model_Url_Rewrite::TYPE_CUSTOM  => $this->__('Custom')
+                    1 => $this->__('System'),
+                    0 => $this->__('Custom')
                 ),
-                'value'     => $model->getType()
+                'disabled'  => true,
+                'value'     => $model->getIsSystem()
             ));
 
             if (!Mage::app()->isSingleStoreMode()) {

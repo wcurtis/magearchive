@@ -112,10 +112,10 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
 
     public function asHtml()
     {
-        $str = Mage::helper('rule')->__("Name: %s", $this->getName()) ."<br>"
-             . Mage::helper('rule')->__("Start at: %s", $this->getStartAt()) ."<br>"
-             . Mage::helper('rule')->__("Expire at: %s", $this->getExpireAt()) ."<br>"
-             . Mage::helper('rule')->__("Description: %s", $this->getDescription()) .'<br>'
+        $str = Mage::helper('rule')->__("Name: %s", $this->getName()) ."<br/>"
+             . Mage::helper('rule')->__("Start at: %s", $this->getStartAt()) ."<br/>"
+             . Mage::helper('rule')->__("Expire at: %s", $this->getExpireAt()) ."<br/>"
+             . Mage::helper('rule')->__("Description: %s", $this->getDescription()) .'<br/>'
              . '<ul class="rule-conditions">'.$this->getConditions()->asHtmlRecursive().'</ul>'
              . '<ul class="rule-actions">'.$this->getActions()->asHtmlRecursive()."</ul>";
         return $str;
@@ -209,7 +209,10 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
         }
 
         $this->setWebsiteIds(explode(',',$this->getWebsiteIds()));
-        $this->setCustomerGroupIds(explode(',',$this->getCustomerGroupIds()));
+        $groupIds = $this->getCustomerGroupIds();
+        if (is_string($groupIds)) {
+            $this->setCustomerGroupIds(explode(',',$groupIds));
+        }
     }
 
     protected function _beforeSave()

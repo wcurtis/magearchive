@@ -18,16 +18,16 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Template for Mage_Adminhtml_Block_Widget_Accordion
  */
 ?>
-<dl id="<?=$this->getHtmlId()?>" class="accordion">
-<?foreach ($this->getItems() as $_item):?>
-    <?=$this->getChildHtml($_item->getId())?>
-<?endforeach?>
+<dl id="<?php echo $this->getHtmlId() ?>" class="accordion">
+<?php foreach ($this->getItems() as $_item): ?>
+    <?php echo $this->getChildHtml($_item->getId()) ?>
+<?php endforeach ?>
 </dl>
 <script type="text/javascript">
-    <?=$this->getHtmlId()?>AccordionJs = new varienAccordion('<?=$this->getHtmlId()?>', '<?=$this->getShowOnlyOne()?>');
+    <?php echo $this->getHtmlId() ?>AccordionJs = new varienAccordion('<?php echo $this->getHtmlId() ?>', '<?php echo $this->getShowOnlyOne() ?>');
 </script>

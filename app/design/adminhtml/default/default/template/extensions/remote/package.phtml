@@ -20,32 +20,32 @@
 ?>
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Package Information")?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__("Package Information") ?></h4>
     </div>
     <fieldset>
-        <legend><?=$this->__("Package Information")?></legend>
+        <legend><?php echo $this->__("Package Information") ?></legend>
         <table class="" cellspacing="5">
             <tbody>
-                <tr><th><?=$this->__("Name:")?></th><td><?=$this->getPkg()->getName()?></td></tr>
-                <tr><th><?=$this->__("Channel:")?></th><td><?=$this->getPkg()->getChannel()?></td></tr>
-                <tr><th><?=$this->__("Summary:")?></th><td><?=$this->getPkg()->getSummary()?></td></tr>
-                <tr><th><?=$this->__("Description:")?></th><td><?=nl2br($this->getPkg()->getDescription())?></td></tr>
+                <tr><th><?php echo $this->__("Name:") ?></th><td><?php echo $this->getPkg()->getName() ?></td></tr>
+                <tr><th><?php echo $this->__("Channel:") ?></th><td><?php echo $this->getPkg()->getChannel() ?></td></tr>
+                <tr><th><?php echo $this->__("Summary:") ?></th><td><?php echo $this->getPkg()->getSummary() ?></td></tr>
+                <tr><th><?php echo $this->__("Description:") ?></th><td><?php echo nl2br($this->getPkg()->getDescription()) ?></td></tr>
             </tbody>
         </table>
     </fieldset>
 
     <div class="entry-edit-head">
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Current Release Information")?></h4>
+    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__("Current Release Information") ?></h4>
     </div>
     <fieldset>
-        <legend><?=$this->__("Current Release Information")?></legend>
+        <legend><?php echo $this->__("Current Release Information") ?></legend>
         <table class="" cellspacing="5">
             <tbody>
-                <tr><th><?=$this->__("Done By:")?></th><td><?=$this->getRelease()->getDoneby()?></td></tr>
-                <tr><th><?=$this->__("Date:")?></th><td><?=$this->getRelease()->getReleasedate()?></td></tr>
-                <tr><th><?=$this->__("Version:")?></th><td><?=$this->getPkg()->getStable()?> (<?=$this->getRelease()->getState()?>)</td></tr>
-                <tr><th><?=$this->__("License:")?></th><td><?=$this->getRelease()->getLicense()?></td></tr>
-                <tr><th><?=$this->__("Notes:")?></th><td><?=nl2br($this->getRelease()->getReleasenotes())?></td></tr>
+                <tr><th><?php echo $this->__("Done By:") ?></th><td><?php echo $this->getRelease()->getDoneby() ?></td></tr>
+                <tr><th><?php echo $this->__("Date:") ?></th><td><?php echo $this->getRelease()->getReleasedate() ?></td></tr>
+                <tr><th><?php echo $this->__("Version:") ?></th><td><?php echo $this->getPkg()->getStable() ?> (<?php echo $this->getRelease()->getState() ?>)</td></tr>
+                <tr><th><?php echo $this->__("License:") ?></th><td><?php echo $this->getRelease()->getLicense() ?></td></tr>
+                <tr><th><?php echo $this->__("Notes:") ?></th><td><?php echo nl2br($this->getRelease()->getReleasenotes()) ?></td></tr>
             </tbody>
         </table>
     </fieldset>

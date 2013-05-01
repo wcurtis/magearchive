@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Shopping cart template
  *
@@ -26,15 +26,15 @@
  */
 ?>
 <div class="page-head-alt button-level">
-    <h3><?=$this->__('Shopping Cart')?></h3>
-    <?if(!$this->hasError()):?>
+    <h3><?php echo $this->__('Shopping Cart') ?></h3>
+    <?php if(!$this->hasError()): ?>
     <ul class="checkout-types">
-        <?=$this->getChildHtml('top_methods')?>
+        <?php echo $this->getChildHtml('top_methods') ?>
     </ul>
-    <?endif;?>
+    <?php endif; ?>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
-<form action="<?=$this->getUrl('checkout/cart/updatePost')?>" method="post">
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<form action="<?php echo $this->getUrl('checkout/cart/updatePost') ?>" method="post">
 <table cellspacing="0" id="shopping-cart-table" class="data-table box-table shopping-cart">
     <col width="75"/>
     <col/>
@@ -45,64 +45,64 @@
     <thead>
         <tr>
             <th>&nbsp;</th>
-            <th><?=$this->__('Product Name')?></th>
-            <th class="a-center"><?=$this->__('Remove Product')?></th>
-            <?if ($this->helper('wishlist')->isAllowInCart()) :?>
-            <th class="a-center"><?=$this->__('Move to Wishlist')?></th>
-            <?endif?>
-            <th class="a-right"><?=$this->__('Unit Price')?></th>
-            <th class="a-center"><?=$this->__('Qty')?></th>
-            <th class="a-right"><?=$this->__('Subtotal')?></th>
+            <th><?php echo $this->__('Product Name') ?></th>
+            <th class="a-center"><?php echo $this->__('Remove Product') ?></th>
+            <?php if ($this->helper('wishlist')->isAllowInCart()) : ?>
+            <th class="a-center"><?php echo $this->__('Move to Wishlist') ?></th>
+            <?php endif ?>
+            <th class="a-right"><?php echo $this->__('Unit Price') ?></th>
+            <th class="a-center"><?php echo $this->__('Qty') ?></th>
+            <th class="a-right"><?php echo $this->__('Subtotal') ?></th>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <td colspan="100" class="a-right">
-                <?if($this->getContinueShoppingUrl()):?>
-                    <button class="form-button-alt continue-shopping" onclick="setLocation('<?=$this->getContinueShoppingUrl()?>')" type="button"><span><?=$this->__('Continue Shopping')?></span></button>
-                <?endif;?>
-                <button class="form-button-alt" type="submit"><span><?=$this->__('Update Shopping Cart')?></span></button>
+                <?php if($this->getContinueShoppingUrl()): ?>
+                    <button class="form-button-alt continue-shopping" onclick="setLocation('<?php echo $this->getContinueShoppingUrl() ?>')" type="button"><span><?php echo $this->__('Continue Shopping') ?></span></button>
+                <?php endif; ?>
+                <button class="form-button-alt" type="submit"><span><?php echo $this->__('Update Shopping Cart') ?></span></button>
             </td>
         </tr>
     </tfoot>
     <tbody>
-    <?foreach($this->getItems() as $_item):?>
+    <?php foreach($this->getItems() as $_item): ?>
         <tr>
             <td>
-                <a href="<?=$this->getItemUrl($_item)?>">
-                    <img src="<?=$this->helper('catalog/image')->init($this->getItemProduct($_item), 'thumbnail')->resize(75);?>" alt="<?=$this->htmlEscape($this->getItemName($_item))?>" width="75"/>
+                <a href="<?php echo $this->getItemUrl($_item) ?>">
+                    <img src="<?php echo $this->helper('catalog/image')->init($this->getItemProduct($_item), 'thumbnail')->resize(75); ?>" alt="<?php echo $this->htmlEscape($this->getItemName($_item)) ?>" width="75"/>
                 </a>
             </td>
             <td class="attributes-col">
-                <a href="<?=$this->getItemUrl($_item)?>"><strong><?=$this->getItemName($_item)?></strong></a>
-                <?=$this->getItemDescription($_item)?>
-                <?if($_item->getMessage()):?>
-                <div style="font-size:95%;margin-top:6px;" class="shopping-cart-item-message <?if($_item->getHasError()):?>error<?else:?>notice<?endif;?>">
-                    * <?=$_item->getMessage()?>
+                <a href="<?php echo $this->getItemUrl($_item) ?>"><strong><?php echo $this->getItemName($_item) ?></strong></a>
+                <?php echo $this->getItemDescription($_item) ?>
+                <?php if($_item->getMessage()): ?>
+                <div style="font-size:95%;margin-top:6px;" class="shopping-cart-item-message <?php if($_item->getHasError()): ?>error<?php else: ?>notice<?php endif; ?>">
+                    * <?php echo $_item->getMessage() ?>
                 </div>
-                <?endif;?>
+                <?php endif; ?>
             </td>
             <td class="a-center">
-                <a href="<?=$this->getItemDeleteUrl($_item)?>">
-                    <img src="<?=$this->getSkinUrl('images/btn_trash.gif')?>" width="16" height="16" alt="Remove item"/>
+                <a href="<?php echo $this->getItemDeleteUrl($_item) ?>">
+                    <img src="<?php echo $this->getSkinUrl('images/btn_trash.gif') ?>" width="16" height="16" alt="Remove item"/>
                 </a>
             </td>
-            <?if ($this->helper('wishlist')->isAllowInCart()) :?>
+            <?php if ($this->helper('wishlist')->isAllowInCart()) : ?>
             <td class="a-center">
-                <input type="checkbox" value="1" name="cart[<?=$_item->getId()?>][wishlist]"/>
+                <input type="checkbox" value="1" name="cart[<?php echo $_item->getId() ?>][wishlist]"/>
             </td>
-            <?endif?>
+            <?php endif ?>
             <td class="a-right">
-                <?=$this->helper('checkout')->formatPrice($_item->getCalculationPrice())?>
+                <?php echo $this->helper('checkout')->formatPrice($_item->getCalculationPrice()) ?>
             </td>
             <td class="a-center">
-                <input name="cart[<?=$_item->getId()?>][qty]" value="<?=$this->getItemQty($_item)?>" size="2" class="input-text qty" maxlength="12"/>
+                <input name="cart[<?php echo $_item->getId() ?>][qty]" value="<?php echo $this->getItemQty($_item) ?>" size="2" class="input-text qty" maxlength="12"/>
             </td>
             <td class="a-right">
-                <?=$this->helper('checkout')->formatPrice($_item->getRowTotal())?>
+                <?php echo $this->helper('checkout')->formatPrice($_item->getRowTotal()) ?>
             </td>
         </tr>
-    <?endforeach?>
+    <?php endforeach ?>
     </tbody>
 </table>
 <script type="text/javascript">decorateTable('shopping-cart-table')</script>
@@ -110,42 +110,42 @@
 
 <div class="shopping-cart-collaterals">
     <div class="col2-set">
-        <?=$this->getChildHtml('crosssell')?>
+        <?php echo $this->getChildHtml('crosssell') ?>
         <div class="col-2">
-            <?=$this->getChildHtml('coupon')?>
-            <?=$this->getChildHtml('shipping')?>
+            <?php echo $this->getChildHtml('coupon') ?>
+            <?php echo $this->getChildHtml('shipping') ?>
         </div>
     </div>
 </div>
 
 <div class="shopping-cart-totals">
     <table cellspacing="0" id="shoping-cart-totals-table">
-        <tbody>
-        <?foreach($this->getTotals() as $total):?>
-            <?if(!$total->getArea()):?>
-            <tr>
-                <td style="<?=$total->getStyle()?>"><?=$total->getTitle()?></td>
-                <td style="<?=$total->getStyle()?>"><?=$this->helper('checkout')->formatPrice($total->getValue())?></td>
-            </tr>
-            <?endif?>
-        <?endforeach?>
-        </tbody>
         <tfoot>
-        <?foreach($this->getTotals() as $total):?>
-            <?if($total->getArea()=='footer'):?>
+        <?php foreach($this->getTotals() as $total): ?>
+            <?php if($total->getArea()=='footer'): ?>
             <tr>
-                <td><strong><?=$total->getTitle()?></strong></td>
-                <td class="nowrap"><strong><?=$this->helper('checkout')->formatPrice($total->getValue())?></strong></td>
+                <td><strong><?php echo $total->getTitle() ?></strong></td>
+                <td class="nowrap"><strong><?php echo $this->helper('checkout')->formatPrice($total->getValue()) ?></strong></td>
             </tr>
-            <?endif?>
-        <?endforeach?>
+            <?php endif ?>
+        <?php endforeach ?>
         </tfoot>
+        <tbody>
+        <?php foreach($this->getTotals() as $total): ?>
+            <?php if(!$total->getArea()): ?>
+            <tr>
+                <td style="<?php echo $total->getStyle() ?>"><?php echo $total->getTitle() ?></td>
+                <td style="<?php echo $total->getStyle() ?>"><?php echo $this->helper('checkout')->formatPrice($total->getValue()) ?></td>
+            </tr>
+            <?php endif ?>
+        <?php endforeach ?>
+        </tbody>
     </table>
     <script type="text/javascript">decorateTable('shoping-cart-totals-table')</script>
-    <?if(!$this->hasError()):?>
+    <?php if(!$this->hasError()): ?>
     <ul class="checkout-types">
-        <?=$this->getChildHtml('methods')?>
+        <?php echo $this->getChildHtml('methods') ?>
     </ul>
-    <?endif;?>
+    <?php endif; ?>
 </div>
 <div class="clear"></div>

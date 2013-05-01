@@ -73,6 +73,9 @@ Layout for customer login page
 
     <customer_account_login>
         <!-- Mage_Customer -->
+        <remove name="right"/>
+        <remove name="left"/>
+
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
@@ -87,6 +90,9 @@ Layout for customer log out page
 
     <customer_account_logoutsuccess>
         <!-- Mage_Customer -->
+        <remove name="right"/>
+        <remove name="left"/>
+
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
@@ -101,6 +107,9 @@ New customer registration
 
     <customer_account_create>
         <!-- Mage_Customer -->
+        <remove name="right"/>
+        <remove name="left"/>
+
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
@@ -110,6 +119,9 @@ New customer registration
     </customer_account_create>
 
     <customer_account_forgotpassword>
+        <remove name="right"/>
+        <remove name="left"/>
+
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
             <action method="setHeaderTitle" translate="title" module="customer"><title>Password forgotten</title></action>
@@ -197,7 +209,7 @@ Customer account address edit page
 
     <customer_address_form>
         <!-- Mage_Customer -->
-		<update handle="customer_account"/>
+        <update handle="customer_account"/>
         <reference name="content">
             <block type="customer/address_edit" name="customer_address_edit" template="customer/address/edit.phtml"/>
         </reference>

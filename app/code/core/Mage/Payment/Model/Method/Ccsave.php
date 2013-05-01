@@ -21,20 +21,6 @@
 
 class Mage_Payment_Model_Method_Ccsave extends Mage_Payment_Model_Method_Cc
 {
-    protected $_code  = 'ccsave';
-
-    /**
-     * Parepare info instance for save
-     *
-     * @return Mage_Payment_Model_Abstract
-     */
-    public function prepareSave()
-    {
-        $info = $this->getInfoInstance();
-        $info->setCcNumberEnc($info->encrypt($info->getCcNumber()));
-        $info->setCcCidEnc($info->encrypt($info->getCcCid()));
-        $info->setCcNumber(null)
-            ->setCcCid(null);
-        return $this;
-    }
+    protected $_code        = 'ccsave';
+    protected $_canSaveCc   = true;
 }

@@ -21,36 +21,36 @@
 ?>
 <div style="width:587px;margin:20px;position:relative;margin-left:-294px;left:50%">
     <div style="position:absolute;right:1px;top:0px;left: expression(parentNode.offsetWidth - offsetWidth - 1 + 'px');">
-        <div style="padding:5px;height:15px;width:15px;background-color:#F4F4F4" id="dashboard_<?=$this->getHtmlId()?>_cal_div"><img src="<?=Mage::getDesign()->getSkinUrl('images/grid-cal.gif')?>" onclick="toggleCal('<?=$this->getHtmlId()?>')" /></div>
-        <div style="padding:5px;display:none;width:200px;" id="dashboard_<?=$this->getHtmlId()?>_range_div" class="switcher">
-            <?=$this->__('Select Range')?>:
-            <select name="period" id="order_<?=$this->getHtmlId()?>_period" onchange="changePeriod(this)">
-                <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
-        	        <?if(in_array($_value, array('custom'))) continue;?>
-        	        <option value="<?=$_value?>" <?if($this->getRequest()->getParam('period')==$_value):?> selected<?endif;?>><?=$_label?></option>
-        	    <?endforeach;?>
+        <div style="padding:5px;height:15px;width:15px;background-color:#F4F4F4" id="dashboard_<?php echo $this->getHtmlId() ?>_cal_div"><img src="<?php echo Mage::getDesign()->getSkinUrl('images/grid-cal.gif') ?>" onclick="toggleCal('<?php echo $this->getHtmlId() ?>')" /></div>
+        <div style="padding:5px;display:none;width:200px;" id="dashboard_<?php echo $this->getHtmlId() ?>_range_div" class="switcher">
+            <?php echo $this->__('Select Range') ?>:
+            <select name="period" id="order_<?php echo $this->getHtmlId() ?>_period" onchange="changePeriod(this)">
+                <?php foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label): ?>
+        	        <?php if(in_array($_value, array('custom'))) continue; ?>
+        	        <option value="<?php echo $_value ?>" <?php if($this->getRequest()->getParam('period')==$_value): ?> selected<?php endif; ?>><?php echo $_label ?></option>
+        	    <?php endforeach; ?>
             </select>
-            <img src="<?=Mage::getDesign()->getSkinUrl('images/dashboard-close.gif')?>" onclick="toggleCal('<?=$this->getHtmlId()?>')" />
+            <img src="<?php echo Mage::getDesign()->getSkinUrl('images/dashboard-close.gif') ?>" onclick="toggleCal('<?php echo $this->getHtmlId() ?>')" />
         </div>
     </div>
-    <?if($this->getCount()):?>
-    <img src="<?=$this->getChartUrl()?>" />
-    <?else:?>
-    <div align="center" style="width:587px;height:300px;"><?=$this->__('No Data Found')?></div>
-    <?endif;?>
+    <?php if($this->getCount()): ?>
+    <img src="<?php echo $this->getChartUrl() ?>" />
+    <?php else: ?>
+    <div align="center" style="width:587px;height:300px;"><?php echo $this->__('No Data Found') ?></div>
+    <?php endif; ?>
 </div>
-<?*/?>
+<?php */ ?>
 <div style="margin:20px;">
-    <p class="switcher a-right" style="padding:5px 10px;"><?=$this->__('Select Range')?>:
-    <select name="period" id="order_<?=$this->getHtmlId()?>_period" onchange="changePeriod(this)">
-        <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
-            <?if(in_array($_value, array('custom'))) continue;?>
-            <option value="<?=$_value?>" <?if($this->getRequest()->getParam('period')==$_value):?> selected<?endif;?>><?=$_label?></option>
-        <?endforeach;?>
+    <p class="switcher a-right" style="padding:5px 10px;"><?php echo $this->__('Select Range') ?>:
+    <select name="period" id="order_<?php echo $this->getHtmlId() ?>_period" onchange="changePeriod(this)">
+        <?php foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label): ?>
+            <?php if(in_array($_value, array('custom'))) continue; ?>
+            <option value="<?php echo $_value ?>" <?php if($this->getRequest()->getParam('period')==$_value): ?> selected<?php endif; ?>><?php echo $_label ?></option>
+        <?php endforeach; ?>
     </select></p><br/>
-    <?if($this->getCount()):?>
-    <p><img src="<?=$this->getChartUrl()?>" /></p>
-    <?else:?>
-    <p class="a-center" style="width:<?=$this->getWidth()?>px;height:<?=$this->getHeight()?>px;"><?=$this->__('No Data Found')?></p>
-    <?endif;?>
+    <?php if($this->getCount()): ?>
+    <p><img src="<?php echo $this->getChartUrl() ?>" /></p>
+    <?php else: ?>
+    <p class="a-center" style="width:<?php echo $this->getWidth() ?>px;height:<?php echo $this->getHeight() ?>px;"><?php echo $this->__('No Data Found') ?></p>
+    <?php endif; ?>
 </div>

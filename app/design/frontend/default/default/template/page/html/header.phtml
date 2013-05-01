@@ -21,19 +21,19 @@
 
 <div class="header-top-container">
     <div class="header-top">
-        <h1 id="logo"><a href="<?=$this->getUrl('')?>"><img src="<?=$this->getLogoSrc()?>" alt="<?=$this->getLogoAlt()?>"/></a></h1>
-        <p class="no-display"><a href="#main"><strong><?=$this->__('Skip to Main Content')?> &raquo;</strong></a></p>
+        <h1 id="logo"><a href="<?php echo $this->getUrl('') ?>"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>"/></a></h1>
+        <p class="no-display"><a href="#main"><strong><?php echo $this->__('Skip to Main Content') ?> &raquo;</strong></a></p>
 
-        <?=$this->getChildHtml('topSearch')?>
+        <?php echo $this->getChildHtml('topSearch') ?>
 
         <div class="quick-access">
-            <strong><?=$this->getWelcome()?></strong><br/>
+            <strong><?php echo $this->getWelcome() ?></strong><br/>
             <div class="shop-access">
-                <?=$this->getChildHtml('topLinks')?>
+                <?php echo $this->getChildHtml('topLinks') ?>
             </div>
-            <?=$this->getChildHtml('store_language')?>
+            <?php echo $this->getChildHtml('store_language') ?>
         </div>
 
     </div>
 </div>
-<?=$this->getChildHtml('topMenu')?>
+<?php echo $this->getChildHtml('topMenu') ?>

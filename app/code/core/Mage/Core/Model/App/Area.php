@@ -128,7 +128,8 @@ class Mage_Core_Model_App_Area
 
     protected function _initEvents()
     {
-        Mage::app()->getConfig()->loadEventObservers($this->_code);
+        Mage::app()->addEventArea($this->_code);
+        #Mage::app()->getConfig()->loadEventObservers($this->_code);
         return $this;
     }
 

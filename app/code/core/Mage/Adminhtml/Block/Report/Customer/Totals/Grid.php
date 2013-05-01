@@ -64,7 +64,9 @@ class Mage_Adminhtml_Block_Report_Customer_Totals_Grid extends Mage_Adminhtml_Bl
             'sortable'  => false,
             'type'      => 'currency',
             'currency_code'  => $baseCurrencyCode,
-            'index'     => 'orders_avg_amount'
+            'index'     => 'orders_avg_amount',
+            'total'     => 'orders_sum_amount/orders_count',
+            'renderer'  => 'adminhtml/report_grid_column_renderer_currency'
         ));
 
         $this->addColumn('orders_sum_amount', array(
@@ -76,7 +78,7 @@ class Mage_Adminhtml_Block_Report_Customer_Totals_Grid extends Mage_Adminhtml_Bl
             'currency_code'  => $baseCurrencyCode,
             'index'     => 'orders_sum_amount',
             'total'     => 'sum',
-            'renderer'  =>'adminhtml/report_grid_column_renderer_currency'
+            'renderer'  => 'adminhtml/report_grid_column_renderer_currency'
         ));
 
         $this->addExportType('*/*/exportTotalsCsv', Mage::helper('reports')->__('CSV'));

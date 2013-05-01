@@ -353,7 +353,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
             }
         }
 
-        $this->_requestUri = urldecode($requestUri);
+        $this->_requestUri = $requestUri;
         return $this;
     }
 
@@ -736,6 +736,92 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     {
         if ('POST' == $this->getMethod()) {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Was the request made by GET?
+     *
+     * @return boolean
+     */
+    public function isGet()
+    {
+        if ('GET' == $this->getMethod()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Was the request made by PUT?
+     *
+     * @return boolean
+     */
+    public function isPut()
+    {
+        if ('PUT' == $this->getMethod()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Was the request made by DELETE?
+     *
+     * @return boolean
+     */
+    public function isDelete()
+    {
+        if ('DELETE' == $this->getMethod()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Was the request made by HEAD?
+     *
+     * @return boolean
+     */
+    public function isHead()
+    {
+        if ('HEAD' == $this->getMethod()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Was the request made by OPTIONS?
+     *
+     * @return boolean
+     */
+    public function isOptions()
+    {
+        if ('OPTIONS' == $this->getMethod()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the raw body of the request, if present
+     *
+     * @return string|false Raw body, or false if not present
+     */
+    public function getRawBody()
+    {
+        $body = file_get_contents('php://input');
+
+        if (strlen(trim($body)) > 0) {
+            return $body;
         }
 
         return false;

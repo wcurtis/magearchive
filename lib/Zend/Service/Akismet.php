@@ -17,9 +17,14 @@
  * @subpackage Akismet
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Akismet.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Akismet.php 8502 2008-03-01 19:56:46Z weppos $
  */
 
+
+/**
+ * @see Zend_Version
+ */
+require_once 'Zend/Version.php';
 
 /**   
  * @see Zend_Service_Abstract
@@ -67,7 +72,7 @@ class Zend_Service_Akismet extends Zend_Service_Abstract
      * User Agent string to send in requests
      * @var string
      */
-    protected $_userAgent = 'Zend Framework/0.7.0 | Akismet/1.11';
+    protected $_userAgent;
 
     /**
      * Constructor
@@ -79,7 +84,8 @@ class Zend_Service_Akismet extends Zend_Service_Abstract
     public function __construct($apiKey, $blog)
     {
         $this->setBlogUrl($blog)
-            ->setApiKey($apiKey);
+             ->setApiKey($apiKey)
+             ->setUserAgent('Zend Framework/' . Zend_Version::VERSION . ' | Akismet/1.11');
     }
 
     /**

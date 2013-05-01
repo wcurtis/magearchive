@@ -44,6 +44,15 @@
                 <class>Mage_Adminhtml_Block</class>
             </adminhtml>
         </blocks>
+        <template>
+            <email>
+                <system_emails_forgot_email_template translate="label" module="adminhtml">
+                    <label>New password</label>
+                    <file>admin_password_new.html</file>
+                    <type>html</type>
+                </system_emails_forgot_email_template>
+            </email>
+        </template>
     </global>
 
     <admin>
@@ -140,7 +149,7 @@
                         </children>
                     </convert>
                     <currency translate="title" module="adminhtml">
-                        <title>Manage Currency</title>
+                        <title>Manage Currency Rates</title>
                         <action>adminhtml/system_currency</action>
                     </currency>
                     <email_template translate="title" module="adminhtml">

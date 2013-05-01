@@ -17,7 +17,7 @@
  * @package    Zend_Validate
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Date.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Date.php 8552 2008-03-05 16:37:36Z darby $
  */
 
 
@@ -64,14 +64,14 @@ class Zend_Validate_Date extends Zend_Validate_Abstract
     /**
      * Optional format
      *
-     * @var mixed
+     * @var string|null
      */
     protected $_format;
 
     /**
      * Optional locale
      *
-     * @var mixed
+     * @var string|Zend_Locale|null
      */
     protected $_locale;
 
@@ -91,7 +91,7 @@ class Zend_Validate_Date extends Zend_Validate_Abstract
     /**
      * Returns the locale option
      *
-     * @return string||null
+     * @return string|Zend_Locale|null
      */
     public function getLocale()
     {
@@ -120,7 +120,7 @@ class Zend_Validate_Date extends Zend_Validate_Abstract
     /**
      * Returns the locale option
      *
-     * @return string||null
+     * @return string|null
      */
     public function getFormat()
     {

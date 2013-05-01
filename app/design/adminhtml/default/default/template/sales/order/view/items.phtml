@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_order=$this->getOrder()?>
+<?php $_order=$this->getOrder() ?>
 <div class="grid">
     <table cellspacing="0" class="data">
         <col/>
@@ -32,38 +32,38 @@
         <col width="100"/>
         <thead>
             <tr class="headings">
-                <th><?=$this->helper('sales')->__('Product')?></th>
-                <th><?=$this->helper('sales')->__('Item Status')?></th>
-                <th><?=$this->helper('sales')->__('Original Price')?></th>
-                <th><?=$this->helper('sales')->__('Price')?></th>
-                <th><?=$this->helper('sales')->__('Qty')?></th>
-                <th><?=$this->helper('sales')->__('Subtotal')?></th>
-                <th><?=$this->helper('sales')->__('Tax Amount')?></th>
-                <th><?=$this->helper('sales')->__('Discount Amount')?></th>
-                <th class="last"><?=$this->helper('sales')->__('Row Total')?></th>
+                <th><?php echo $this->helper('sales')->__('Product') ?></th>
+                <th><?php echo $this->helper('sales')->__('Item Status') ?></th>
+                <th><?php echo $this->helper('sales')->__('Original Price') ?></th>
+                <th><?php echo $this->helper('sales')->__('Price') ?></th>
+                <th><?php echo $this->helper('sales')->__('Qty') ?></th>
+                <th><?php echo $this->helper('sales')->__('Subtotal') ?></th>
+                <th><?php echo $this->helper('sales')->__('Tax Amount') ?></th>
+                <th><?php echo $this->helper('sales')->__('Discount Amount') ?></th>
+                <th class="last"><?php echo $this->helper('sales')->__('Row Total') ?></th>
             </tr>
         </thead>
         <tbody>
-            <?$_items = $this->getItemsCollection()?>
-            <?$i=0;foreach ($_items as $_item):$i++?>
-                <?$this->setPriceDataObject($_item)?>
-                <tr class="<?=($i%2==0)?'even':'odd'?>">
-                    <td class="giftmessage-single-item"><?=$this->renderInfoColumn($_item)?></td>
-                    <td><?=$_item->getStatus()?></td>
-                    <td class="price"><?=$this->displayPriceAttribute('original_price')?></td>
-                    <td class="price"><?=$this->displayPriceAttribute('price')?></td>
-                    <td><?=$this->getQtyHtml($_item)?></td>
-                    <td class="price"><?=$this->displayPriceAttribute('row_total')?></td>
-                    <td class="price"><?=$this->displayPriceAttribute('tax_amount')?></td>
-                    <td class="price"><?=$this->displayPriceAttribute('discount_amount')?></td>
+            <?php $_items = $this->getItemsCollection() ?>
+            <?php $i=0;foreach ($_items as $_item):$i++ ?>
+                <?php $this->setPriceDataObject($_item) ?>
+                <tr class="<?php echo ($i%2==0)?'even':'odd' ?>">
+                    <td class="giftmessage-single-item"><?php echo $this->renderInfoColumn($_item) ?></td>
+                    <td><?php echo $_item->getStatus() ?></td>
+                    <td class="price"><?php echo $this->displayPriceAttribute('original_price') ?></td>
+                    <td class="price"><?php echo $this->displayPriceAttribute('price') ?></td>
+                    <td><?php echo $this->getQtyHtml($_item) ?></td>
+                    <td class="price"><?php echo $this->displayPriceAttribute('row_total') ?></td>
+                    <td class="price"><?php echo $this->displayPriceAttribute('tax_amount') ?></td>
+                    <td class="price"><?php echo $this->displayPriceAttribute('discount_amount') ?></td>
                     <td class="last price">
-                        <?=$this->displayPrices(
+                        <?php echo $this->displayPrices(
                             $_item->getBaseRowTotal()-$_item->getBaseDiscountAmount()+$_item->getBaseTaxAmount(),
                             $_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount()
-                        )?>
+                        ) ?>
                     </td>
                 </tr>
-            <?endforeach;?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>

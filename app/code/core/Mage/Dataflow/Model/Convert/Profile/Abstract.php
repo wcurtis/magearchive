@@ -40,6 +40,8 @@ abstract class Mage_Dataflow_Model_Convert_Profile_Abstract
 
     protected $_containerCollectionDefaultClass = 'Mage_Dataflow_Model_Convert_Container_Collection';
 
+    protected $_dataflow_prfile = null;
+
     public function addAction(Mage_Dataflow_Model_Convert_Action_Interface $action=null)
     {
         if (is_null($action)) {
@@ -126,4 +128,13 @@ abstract class Mage_Dataflow_Model_Convert_Profile_Abstract
         return $this;
     }
 
+    function setDataflowProfile($profile) {
+        if (is_array($profile))
+            $this->_dataflow_prfile = $profile;
+    }
+
+    function getDataflowProfile()
+    {
+        return $this->_dataflow_prfile;
+    }
 }

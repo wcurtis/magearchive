@@ -26,6 +26,9 @@
  */
 class Mage_Checkout_Model_Cart extends Varien_Object
 {
+    protected $_cacheKey;
+    protected $_cacheData;
+
     protected function _getResource()
     {
         return Mage::getResourceSingleton('checkout/cart');
@@ -51,21 +54,43 @@ class Mage_Checkout_Model_Cart extends Varien_Object
         return Mage::getSingleton('customer/session');
     }
 
+    public function getItems()
+    {
+        if (!$this->getQuote()->getId()) {
+            return array();
+        }
+        return $this->getQuote()->getItemsCollection();
+    }
+
 
     public function getItemsCount()
     {
-        if (!$this->hasItemsCount()) {
+        /*if (!$this->hasItemsCount()) {
             $this->setItemsCount($this->getQuote()->getItemsCollection()->getSize());
         }
-        return $this->getData('items_count');
+        return $this->getData('items_count');*/
+        return $this->getQuote()->getItemsCount();
     }
 
     public function getItemsQty()
     {
-        if (!$this->hasItemsQty()) {
-            $this->setItemsQty($this->_getResource()->getItemsQty($this));
+        /*if (!$this->hasItemsQty()) {
+            Varien_Profiler::start('TEST1: '.__METHOD__);
+            $quote = $this->getQuote();
+            Varien_Profiler::stop('TEST1: '.__METHOD__);
+            Varien_Profiler::start('TEST2: '.__METHOD__);
+            $items = $quote->getItemsCollection();
+            Varien_Profiler::stop('TEST2: '.__METHOD__);
+            $qty = 0;
+            Varien_Profiler::start('TEST3: '.__METHOD__);
+            foreach ($items as $item) {
+                $qty += $item->getQty();
+            }
+            $this->setItemsQty($qty);
+            Varien_Profiler::stop('TEST3: '.__METHOD__);
         }
-        return $this->getData('items_qty');
+        return $this->getData('items_qty');*/
+        return $this->getQuote()->getItemsQty();
     }
 
     /**
@@ -147,26 +172,27 @@ class Mage_Checkout_Model_Cart extends Varien_Object
      */
     public function addProduct($product, $qty=1)
     {
+        $item = false;
         if ($product->getId() && $product->isVisibleInCatalog()) {
             switch ($product->getTypeId()) {
-                case Mage_Catalog_Model_Product_Type::TYPE_SIMPLE:
-                    $this->_addSimpleProduct($product, $qty);
-                    break;
                 case Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE:
-                    $this->_addConfigurableProduct($product, $qty);
+                    $item = $this->_addConfigurableProduct($product, $qty);
                     break;
                 case Mage_Catalog_Model_Product_Type::TYPE_GROUPED:
-                    $this->_addGroupedProduct($product, $qty);
+                    $item = $this->_addGroupedProduct($product, $qty);
                     break;
                 default:
-                    Mage::throwException(Mage::helper('checkout')->__('Indefinite product type'));
+                    $item = $this->_addProduct($product, $qty);
                     break;
             }
         }
         else {
             Mage::throwException(Mage::helper('checkout')->__('Product does not exist'));
         }
-
+        /**
+         * $item can be false, array and Mage_Sales_Model_Quote_Item
+         */
+        Mage::dispatchEvent('checkout_cart_product_add_after', array('quote_item'=>$item, 'product'=>$product));
         $this->getCheckoutSession()->setLastAddedProductId($product->getId());
         return $this;
     }
@@ -178,14 +204,14 @@ class Mage_Checkout_Model_Cart extends Varien_Object
      * @param   int $qty
      * @return  Mage_Checkout_Model_Cart
      */
-    protected function _addSimpleProduct(Mage_Catalog_Model_Product $product, $qty)
+    protected function _addProduct(Mage_Catalog_Model_Product $product, $qty)
     {
         $item = $this->getQuote()->addCatalogProduct($product, $qty);
         if ($item->getHasError()) {
             $this->setLastQuoteMessage($item->getQuoteMessage());
             Mage::throwException($item->getMessage());
         }
-        return $this;
+        return $item;
     }
 
     /**
@@ -205,12 +231,13 @@ class Mage_Checkout_Model_Cart extends Varien_Object
         }
 
         $added = false;
+        $items = array();
         foreach($product->getTypeInstance()->getAssociatedProducts() as $subProduct) {
             if(isset($groupedProducts[$subProduct->getId()])) {
                 $qty =  $groupedProducts[$subProduct->getId()];
                 if (!empty($qty)) {
                     $subProduct->setSuperProduct($product);
-                    $this->getQuote()->addCatalogProduct($subProduct, $qty);
+                    $items[] = $this->getQuote()->addCatalogProduct($subProduct, $qty);
                     $added = true;
                 }
             }
@@ -218,7 +245,7 @@ class Mage_Checkout_Model_Cart extends Varien_Object
         if (!$added) {
             Mage::throwException(Mage::helper('checkout')->__('Please specify the product(s) quantity'));
         }
-        return $this;
+        return $items;
     }
 
     /**
@@ -236,7 +263,7 @@ class Mage_Checkout_Model_Cart extends Varien_Object
         } else {
             $subProduct = false;
         }
-
+        $item = false;
         if($subProduct) {
             $subProduct->setSuperProduct($product);
             $item = $this->getQuote()->addCatalogProduct($subProduct, $qty);
@@ -250,7 +277,7 @@ class Mage_Checkout_Model_Cart extends Varien_Object
             $this->getCheckoutSession()->setUseNotice(true);
             Mage::throwException(Mage::helper('checkout')->__('Please specify the- product option(s)'));
         }
-        return $this;
+        return $item;
     }
 
     /**
@@ -368,9 +395,14 @@ class Mage_Checkout_Model_Cart extends Varien_Object
      */
     public function save()
     {
-        $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
-        $this->getQuote()->collectTotals()
-            ->save();
+        $address = $this->getQuote()->getShippingAddress();
+        $total = $address->getGrandTotal();
+        $address->setCollectShippingRates(true);
+        $this->getQuote()->collectTotals();
+        $this->getQuote()->save();
+        /*if ($total!=$address->getGrandTotal()) {
+            $this->getQuote()->save();
+        }*/
         $this->getCheckoutSession()->setQuoteId($this->getQuote()->getId());
         return $this;
     }

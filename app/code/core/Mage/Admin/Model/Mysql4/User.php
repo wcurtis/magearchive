@@ -36,17 +36,17 @@ class Mage_Admin_Model_Mysql4_User
      * @var Zend_Auth_Adapter_Interface
      */
     protected $_authAdapter = null;
-    
-    public function __construct() 
+
+    public function __construct()
     {
         $this->_userTable = Mage::getSingleton('core/resource')->getTableName('admin/user');
         $this->_read = Mage::getSingleton('core/resource')->getConnection('admin_read');
         $this->_write = Mage::getSingleton('core/resource')->getConnection('admin_write');
     }
-    
+
     public function getAuthAdapter()
     {
-        return new Zend_Auth_Adapter_DbTable($this->_read, $this->_userTable, 'username', 'password', 'md5(?)');
+        return new Mage_Admin_Model_Auth_Adapter($this->_read, $this->_userTable, 'username', 'password', 'md5(?)');
     }
 
     /**
@@ -66,14 +66,20 @@ class Mage_Admin_Model_Mysql4_User
         $this->_write->update($this->_userTable, $data, $condition);
         return $this;
     }
-    
+
     public function load($userId)
     {
         $select = $this->_read->select()->from($this->_userTable)
             ->where("user_id=?", $userId);
-        return $this->_read->fetchRow($select);
+        $data = $this->_read->fetchRow($select);
+        if (isset($data['extra'])) {
+            $data['extra'] = unserialize($data['extra']);
+        } else {
+            $data['extra'] = array();
+        }
+        return $data;
     }
-    
+
     public function loadByUsername($username)
     {
         $select = $this->_read->select()->from($this->_userTable)
@@ -91,7 +97,8 @@ class Mage_Admin_Model_Mysql4_User
                 'lastname'  => $user->getLastname(),
                 'email'     => $user->getEmail(),
                 'username'  => $user->getUsername(),
-                'modified'  => now()
+                'modified'  => now(),
+                'extra'     => serialize($user->getExtra())
             );
 
             if ( !is_null($user->getReloadAclFlag()) ) {
@@ -100,11 +107,11 @@ class Mage_Admin_Model_Mysql4_User
             if ($user->getPassword()) {
                 $data['password'] = $this->_encryptPassword($user->getPassword());
             }
-         
+
             if ($user->getId()) {
                 $condition = $this->_write->quoteInto('user_id=?', $user->getId());
                 $this->_write->update($this->_userTable, $data, $condition);
-            } else { 
+            } else {
                 $data['created'] = now();
                 $this->_write->insert($this->_userTable, $data);
                 $user->setUserId($this->_write->lastInsertId());
@@ -117,32 +124,32 @@ class Mage_Admin_Model_Mysql4_User
             $this->_write->rollback();
             throw $e;
         }
-        
+
         return $user;
     }
-    
+
     public function delete()
     {
-            
+
     }
 
     public function hasAssigned2Role($userId)
     {
         if ( $userId > 0 ) {
-    		$dbh          = $this->_read;
-    		$roleTable    = Mage::getSingleton('core/resource')->getTableName('admin/role');
-    		$select = $dbh->select();
-        	$select->from($roleTable)
-        		->where("parent_id > 0 AND user_id = {$userId}");
-        	return $dbh->fetchAll($select);
-    	} else {
-    		return null;
-    	}
+            $dbh          = $this->_read;
+            $roleTable    = Mage::getSingleton('core/resource')->getTableName('admin/role');
+            $select = $dbh->select();
+            $select->from($roleTable)
+                ->where("parent_id > 0 AND user_id = {$userId}");
+            return $dbh->fetchAll($select);
+        } else {
+            return null;
+        }
     }
 
     private function _encryptPassword($pwStr)
     {
-        return md5($pwStr);
+        return Mage::helper('core')->getHash($pwStr, 2);
     }
 
 }

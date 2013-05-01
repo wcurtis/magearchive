@@ -20,14 +20,14 @@
 ?>
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Product Categories')?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Product Categories') ?></h4>
     </div>
     <fieldset id="grop_fields">
-        <input type="hidden" name="category_ids" id="product_categories" value="<?=$this->getIdsString()?>">
+        <input type="hidden" name="category_ids" id="product_categories" value="<?php echo $this->getIdsString() ?>">
         <div id="tree-div" class="tree"></div>
     </fieldset>
 </div>
-<?if($this->getRootNode() && $this->getRootNode()->hasChildren()):?>
+<?php if($this->getRootNode() && $this->getRootNode()->hasChildren()): ?>
 <script type="text/javascript">
 Ext.EventManager.onDocumentReady(function() {
 	var tree = new Ext.tree.TreePanel('tree-div', {
@@ -37,7 +37,7 @@ Ext.EventManager.onDocumentReady(function() {
         containerScroll: true,
 		rootUIProvider: Ext.tree.CheckboxNodeUI,
 		selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
-		rootVisible: '<?=$this->getRootNode()->getIsVisible()?>'
+		rootVisible: '<?php echo $this->getRootNode()->getIsVisible() ?>'
 	});
 
 	tree.on('check', function(node) {
@@ -50,15 +50,15 @@ Ext.EventManager.onDocumentReady(function() {
 
 	// set the root node
     var root = new Ext.tree.TreeNode({
-        text: '<?=$this->getRootNode()->getName()?>',
+        text: '<?php echo $this->getRootNode()->getName() ?>',
         draggable:false,
-        checked:'<?=$this->getRootNode()->getChecked()?>',
-        id:'<?=$this->getRootNode()->getId()?>',
+        checked:'<?php echo $this->getRootNode()->getChecked() ?>',
+        id:'<?php echo $this->getRootNode()->getId() ?>',
         uiProvider: Ext.tree.CheckboxNodeUI
     });
 
 	tree.setRootNode(root);
-	bildCategoryTree(root, <?=$this->getTreeJson()?>);
+	bildCategoryTree(root, <?php echo $this->getTreeJson() ?>);
     tree.addListener('click', categoryClick.createDelegate(this));
 
     // render the tree
@@ -97,4 +97,4 @@ function categoryRemove(id) {
     $('product_categories').value = ids.join(',');
 }
 </script>
-<?endif;?>
+<?php endif; ?>

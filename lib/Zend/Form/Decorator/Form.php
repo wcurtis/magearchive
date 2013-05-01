@@ -39,7 +39,7 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @subpackage Decorator
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Form.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Form.php 8487 2008-02-29 21:33:49Z matthew $
  */
 class Zend_Form_Decorator_Form extends Zend_Form_Decorator_Abstract
 {
@@ -126,6 +126,6 @@ class Zend_Form_Decorator_Form extends Zend_Form_Decorator_Abstract
         }
 
         $helper  = $this->getHelper();
-        return $view->$helper($form->getName(), $content, $this->getOptions()); 
+        return $view->$helper($form->getName(), $this->getOptions(), $content); 
     }
 }

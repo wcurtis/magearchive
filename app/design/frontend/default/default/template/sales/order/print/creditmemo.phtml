@@ -18,177 +18,177 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_order = $this->getOrder()?>
+<?php $_order = $this->getOrder() ?>
 <!--<div class="page-head button-level">
-    <h2><?=$this->__('Refunds')?></h2>
-    <button class="form-button" onclick="window.print();"><span><?=$this->__('Print All Refunds')?></span></button>
+    <h2><?php echo $this->__('Refunds') ?></h2>
+    <button class="form-button" onclick="window.print();"><span><?php echo $this->__('Print All Refunds') ?></span></button>
 </div>-->
-<h3><?=$this->__('Order #%s', $_order->getRealOrderId())?></h3>
-<?$_creditmemo = $this->getCreditmemo()?>
-<?if($_creditmemo):?>
-    <?$_creditmemos = array($_creditmemo);?>
-<?else:?>
-    <?$_creditmemos = $_order->getCreditmemosCollection()?>
-<?endif;?>
-<?foreach ($_creditmemos as $_creditmemo):?>
+<h3><?php echo $this->__('Order #%s', $_order->getRealOrderId()) ?></h3>
+<?php $_creditmemo = $this->getCreditmemo() ?>
+<?php if($_creditmemo): ?>
+    <?php $_creditmemos = array($_creditmemo); ?>
+<?php else: ?>
+    <?php $_creditmemos = $_order->getCreditmemosCollection() ?>
+<?php endif; ?>
+<?php foreach ($_creditmemos as $_creditmemo): ?>
     <div class="divider"></div>
     <div class="head">
-        <h3><?=$this->__('Refund #%s', $_creditmemo->getIncrementId())?></h3>
-        <!--<a href="#"><?=$this->__('Print Invoice')?></a>-->
+        <h3><?php echo $this->__('Refund #%s', $_creditmemo->getIncrementId()) ?></h3>
+        <!--<a href="#"><?php echo $this->__('Print Invoice') ?></a>-->
     </div>
     <div class="col2-set">
         <div class="col-1">
-            <h4><?=$this->__('Shipping Address')?></h4>
-            <?$_shipping = $_creditmemo->getShippingAddress()?>
-            <address><?=$_shipping->getFirstname()?> <?=$_shipping->getLastname()?><br/>
-            <?=$_shipping->getCompany()?><br/>
-            <?=$_shipping->getStreet()?><br/>
-            <?=$_shipping->getCity()?>, <?=$_shipping->getRegion()?> <?=$_shipping->getPostcode()?><br/>
-            <strong>T</strong> | <?=$_shipping->getTelephone();
-            if ($_shipping->getFax()):?><br /><strong>F</strong> | <?=$_shipping->getFax()?><?endif;?></address>
+            <h4><?php echo $this->__('Shipping Address') ?></h4>
+            <?php $_shipping = $_creditmemo->getShippingAddress() ?>
+            <address><?php echo $_shipping->getFirstname() ?> <?php echo $_shipping->getLastname() ?><br/>
+            <?php echo $_shipping->getCompany() ?><br/>
+            <?php echo $_shipping->getStreet() ?><br/>
+            <?php echo $_shipping->getCity() ?>, <?php echo $_shipping->getRegion() ?> <?php echo $_shipping->getPostcode() ?><br/>
+            <strong>T</strong> | <?php echo $_shipping->getTelephone();
+            if ($_shipping->getFax()): ?><br /><strong>F</strong> | <?php echo $_shipping->getFax() ?><?php endif; ?></address>
         </div>
         <div class="col-2">
-            <h4><?=$this->__('Billing Address')?></h4>
-            <?$_billing = $_creditmemo->getbillingAddress()?>
-            <address><?=$_order->getBillingAddress()->format('html')?></address>
+            <h4><?php echo $this->__('Billing Address') ?></h4>
+            <?php $_billing = $_creditmemo->getbillingAddress() ?>
+            <address><?php echo $_order->getBillingAddress()->format('html') ?></address>
         </div>
     </div>
     <br/>
     <div class="col2-set">
         <div class="col-1">
-            <h4><?=$this->__('Shipping Method')?></h4>
-             <?=$_order->getShippingDescription()?>
+            <h4><?php echo $this->__('Shipping Method') ?></h4>
+             <?php echo $_order->getShippingDescription() ?>
         </div>
         <div class="col-2">
-            <h4><?=$this->__('Payment Method')?></h4>
-            <?=$this->getPaymentInfoHtml()?>
+            <h4><?php echo $this->__('Payment Method') ?></h4>
+            <?php echo $this->getPaymentInfoHtml() ?>
         </div>
     </div>
     <br/>
-    <h4><?=$this->__('Items Ordered')?></h4>
+    <h4><?php echo $this->__('Items Ordered') ?></h4>
     <table cellspacing="0" class="data-table" id="my-orders-table">
     <thead>
         <tr>
-            <th><?=$this->__('Product Name')?></th>
-            <th width="10%"><?=$this->__('SKU')?></th>
-            <th width="10%"><?=$this->__('Price')?></th>
-            <th class="a-center" width="5%"><?=$this->__('Qty')?></th>
-            <th><?=$this->__('Subtotal')?></th>
-            <th class="wrap" width="7%"><?=$this->__('Tax Amount')?></th>
-            <th class="wrap" width="7%"><?=$this->__('Discount Amount')?></th>
-            <th class="wrap"><?=$this->__('Row Total')?></th>
+            <th><?php echo $this->__('Product Name') ?></th>
+            <th width="10%"><?php echo $this->__('SKU') ?></th>
+            <th width="10%"><?php echo $this->__('Price') ?></th>
+            <th class="a-center" width="5%"><?php echo $this->__('Qty') ?></th>
+            <th><?php echo $this->__('Subtotal') ?></th>
+            <th class="wrap" width="7%"><?php echo $this->__('Tax Amount') ?></th>
+            <th class="wrap" width="7%"><?php echo $this->__('Discount Amount') ?></th>
+            <th class="wrap"><?php echo $this->__('Row Total') ?></th>
         </tr>
     </thead>
     <tbody>
-        <?$_items = $_creditmemo->getAllItems();?>
-        <?$_count = count($_items);?>
-        <?$_index = 0;?>
-        <?foreach ($_items as $_item):?>
-            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-row-<?=$_item->getId()?>">
+        <?php $_items = $_creditmemo->getAllItems(); ?>
+        <?php $_count = count($_items); ?>
+        <?php $_index = 0; ?>
+        <?php foreach ($_items as $_item): ?>
+            <tr <?php echo ($_index++ > $_count ? ' class="last"' : '') ?> id="order-item-row-<?php echo $_item->getId() ?>">
                 <td>
-                    <?=$_item->getName()?>
-                    <?=$_item->getDescription()?>
+                    <?php echo $_item->getName() ?>
+                    <?php echo $_item->getDescription() ?>
                 </td>
-                <td><?=$_item->getSku()?></td>
-                <td class="a-right nowrap"><?=$_order->formatPrice($_item->getPrice())?> </td>
-                <td><?=$_item->getQty()*1?></td>
-                <td class="a-right"><?=$_order->formatPrice($_item->getRowTotal())?></td>
-                <td class="a-right"><?=$_order->formatPrice($_item->getTaxAmount())?></td>
-                <td class="a-right"><?=$_order->formatPrice(-$_item->getDiscountAmount())?></td>
+                <td><?php echo $_item->getSku() ?></td>
+                <td class="a-right nowrap"><?php echo $_order->formatPrice($_item->getPrice()) ?> </td>
+                <td><?php echo $_item->getQty()*1 ?></td>
+                <td class="a-right"><?php echo $_order->formatPrice($_item->getRowTotal()) ?></td>
+                <td class="a-right"><?php echo $_order->formatPrice($_item->getTaxAmount()) ?></td>
+                <td class="a-right"><?php echo $_order->formatPrice(-$_item->getDiscountAmount()) ?></td>
                 <td class="last a-right nowrap">
-                    <?=$_order->formatPrice($_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount())?>
+                    <?php echo $_order->formatPrice($_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount()) ?>
                 </td>
             </tr>
-        <?endforeach;?>
+        <?php endforeach; ?>
 
     </tbody>
     <tfoot>
-            <?if ((float) $_creditmemo->getSubtotal()):?>
+            <?php if ((float) $_creditmemo->getSubtotal()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Subtotal')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getSubtotal())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Subtotal') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_creditmemo->getSubtotal()) ?></td>
         </tr>
-        <?endif;?>
-        <?if ((float) $_creditmemo->getTaxAmount()):?>
+        <?php endif; ?>
+        <?php if ((float) $_creditmemo->getTaxAmount()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Tax')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getTaxAmount())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Tax') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_creditmemo->getTaxAmount()) ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_creditmemo->getShippingAmount() || $_creditmemo->getShippingDescription()):?>
+        <?php if ((float) $_creditmemo->getShippingAmount() || $_creditmemo->getShippingDescription()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Shipping')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getShippingAmount())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Shipping') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_creditmemo->getShippingAmount()) ?></td>
         </tr>
-        <?endif;?>
-        <?if ((float) $_creditmemo->getDiscountAmount()):?>
+        <?php endif; ?>
+        <?php if ((float) $_creditmemo->getDiscountAmount()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Discount')?></td>
-            <td class="last a-right"><?=$_order->formatPrice(-$_creditmemo->getDiscountAmount())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Discount') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice(-$_creditmemo->getDiscountAmount()) ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_creditmemo->getGiftcertAmount()):?>
+        <?php if ((float) $_creditmemo->getGiftcertAmount()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Gift Certificate')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getGiftcertAmount())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Gift Certificate') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_creditmemo->getGiftcertAmount()) ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_creditmemo->getAdjustmentPositive()):?>
+        <?php if ((float) $_creditmemo->getAdjustmentPositive()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Adjustment Refund')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getAdjustmentPositive())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Adjustment Refund') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_creditmemo->getAdjustmentPositive()) ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_creditmemo->getAdjustmentNegative()):?>
+        <?php if ((float) $_creditmemo->getAdjustmentNegative()): ?>
         <tr>
-            <td colspan="7" class="a-right"><?=$this->__('Adjustment Fee')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getAdjustmentNegative())?></td>
+            <td colspan="7" class="a-right"><?php echo $this->__('Adjustment Fee') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_creditmemo->getAdjustmentNegative()) ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
          <tr>
             <td colspan="7" class="a-right">
-                <strong><?=$this->__('Grand Total')?></strong>
+                <strong><?php echo $this->__('Grand Total') ?></strong>
             </td>
             <td class="last a-right">
-                <strong><?=$_order->formatPrice($_creditmemo->getGrandTotal())?></strong>
+                <strong><?php echo $_order->formatPrice($_creditmemo->getGrandTotal()) ?></strong>
             </td>
         </tr>
-        <?if ($this->getCanDisplayTotalPaid()):?>
+        <?php if ($this->getCanDisplayTotalPaid()): ?>
         <tr>
             <td colspan="7" class="a-right">
-                <strong><?=$this->__('Total Paid')?></strong>
+                <strong><?php echo $this->__('Total Paid') ?></strong>
             </td>
             <td class="last a-right">
-                <strong><?=$_order->formatPrice($_creditmemo->getTotalPaid())?></strong>
+                <strong><?php echo $_order->formatPrice($_creditmemo->getTotalPaid()) ?></strong>
             </td>
         </tr>
-        <?endif;?>
-        <?if ($this->getCanDisplayTotalRefunded()):?>
+        <?php endif; ?>
+        <?php if ($this->getCanDisplayTotalRefunded()): ?>
         <tr>
             <td colspan="7" class="a-right">
-                <strong><?=$this->__('Total Refunded')?></strong>
+                <strong><?php echo $this->__('Total Refunded') ?></strong>
             </td>
             <td class="last a-right">
-                <strong><?=$_order->formatPrice($_creditmemo->getTotalRefunded())?></strong>
+                <strong><?php echo $_order->formatPrice($_creditmemo->getTotalRefunded()) ?></strong>
             </td>
         </tr>
-        <?endif;?>
-        <?if ($this->getCanDisplayTotalDue()):?>
+        <?php endif; ?>
+        <?php if ($this->getCanDisplayTotalDue()): ?>
         <tr>
             <td colspan="7" class="a-right">
-                <strong><?=$this->__('Total Due')?></strong>
+                <strong><?php echo $this->__('Total Due') ?></strong>
             </td>
             <td class="last a-right">
-                <strong><?=$_order->formatPrice($_creditmemo->getTotalDue())?></strong>
+                <strong><?php echo $_order->formatPrice($_creditmemo->getTotalDue()) ?></strong>
             </td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
     </tfoot>
 </table>
     <br/>
-<?endforeach;?>
+<?php endforeach; ?>
 <script type="text/javascript">window.print();</script>

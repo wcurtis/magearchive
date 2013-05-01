@@ -18,62 +18,62 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 
 $numColumns = sizeof($this->getColumns());
 ?>
-<?if($this->getCollection()):?>
+<?php if($this->getCollection()): ?>
 
 <div class="grid" style="padding:0px;">
-<table cellspacing="0" style="border:0;" id="<?=$this->getId()?>_table">
-    <?foreach ($this->getColumns() as $_column):?>
-    <col <?=$_column->getHtmlProperty()?>>
-    <?endforeach;?>
-    <?if ($this->getHeadersVisibility() || $this->getFilterVisibility()):?>
+<table cellspacing="0" style="border:0;" id="<?php echo $this->getId() ?>_table">
+    <?php foreach ($this->getColumns() as $_column): ?>
+    <col <?php echo $_column->getHtmlProperty() ?>>
+    <?php endforeach; ?>
+    <?php if ($this->getHeadersVisibility() || $this->getFilterVisibility()): ?>
         <thead>
-            <?if ($this->getHeadersVisibility()):?>
+            <?php if ($this->getHeadersVisibility()): ?>
                 <tr class="headings">
-                <?foreach ($this->getColumns() as $_column):?>
-                    <th <?=$_column->getHeaderHtmlProperty()?>><span class="nobr"><?=$_column->getHeaderHtml()?></span></th>
-                <?endforeach;?>
+                <?php foreach ($this->getColumns() as $_column): ?>
+                    <th <?php echo $_column->getHeaderHtmlProperty() ?>><span class="nobr"><?php echo $_column->getHeaderHtml() ?></span></th>
+                <?php endforeach; ?>
                 </tr>
-            <?endif;?>
+            <?php endif; ?>
         </thead>
-    <?endif;?>
+    <?php endif; ?>
     <tbody>
-    <?if (($this->getCollection()->getSize()>0) && (!$this->getIsCollapsed())):?>
-    <?foreach ($this->getCollection() as $_index=>$_item):?>
-        <tr id="<?=$this->getRowId($_item)?>">
-        <?$i=0;foreach ($this->getColumns() as $_column):?>
-            <td class="<?=$_column->getCssProperty()?> <?=++$i==$numColumns?'last':''?>"><?=(($_html = $_column->getRowField($_item)) != '' ? $_html : '&nbsp;')?></td>
-        <?endforeach;?>
+    <?php if (($this->getCollection()->getSize()>0) && (!$this->getIsCollapsed())): ?>
+    <?php foreach ($this->getCollection() as $_index=>$_item): ?>
+        <tr id="<?php echo $this->getRowId($_item) ?>">
+        <?php $i=0;foreach ($this->getColumns() as $_column): ?>
+            <td class="<?php echo $_column->getCssProperty() ?> <?php echo ++$i==$numColumns?'last':'' ?>"><?php echo (($_html = $_column->getRowField($_item)) != '' ? $_html : '&nbsp;') ?></td>
+        <?php endforeach; ?>
         </tr>
-    <?endforeach;?>
-    <?elseif ($this->getEmptyText()):?>
+    <?php endforeach; ?>
+    <?php elseif ($this->getEmptyText()): ?>
     	<tr>
-    		<td class="empty-text <?=$this->getEmptyTextClass()?>" colspan="100"><?=$this->getEmptyText()?></td>
+    		<td class="empty-text <?php echo $this->getEmptyTextClass() ?>" colspan="100"><?php echo $this->getEmptyText() ?></td>
     	</tr>
-    <?endif;?>
+    <?php endif; ?>
     </tbody>
 </table>
 </div>
-<?if($this->canDisplayContainer()):?>
+<?php if($this->canDisplayContainer()): ?>
 <script type="text/javascript" language="javascript">
-    <?=$this->getJsObjectName()?> = new varienGrid('<?=$this->getId()?>', '<?=$this->getGridUrl()?>', '<?=$this->getVarNamePage()?>', '<?=$this->getVarNameSort()?>', '<?=$this->getVarNameDir()?>', '<?=$this->getVarNameFilter()?>');
-    <?=$this->getJsObjectName()?>.useAjax = '<?=$this->getUseAjax()?>';
-    <?if($this->getRowClickCallback()):?>
-        <?=$this->getJsObjectName()?>.rowClickCallback = <?=$this->getRowClickCallback()?>;
-    <?endif;?>
-    <?if($this->getCheckboxCheckCallback()):?>
-        <?=$this->getJsObjectName()?>.checkboxCheckCallback = <?=$this->getCheckboxCheckCallback()?>;
-    <?endif;?>
-    <?if($this->getRowInitCallback()):?>
-        <?=$this->getJsObjectName()?>.initRowCallback = <?=$this->getRowInitCallback()?>;
-        <?=$this->getJsObjectName()?>.rows.each(function(row){<?=$this->getRowInitCallback()?>(<?=$this->getJsObjectName()?>, row)});
-    <?endif;?>
-    <?if($this->getMassactionBlock()->isAvailable()):?>
-    <?=$this->getMassactionBlock()->getJavaScript()?>
-    <?endif?>
+    <?php echo $this->getJsObjectName() ?> = new varienGrid('<?php echo $this->getId() ?>', '<?php echo $this->getGridUrl() ?>', '<?php echo $this->getVarNamePage() ?>', '<?php echo $this->getVarNameSort() ?>', '<?php echo $this->getVarNameDir() ?>', '<?php echo $this->getVarNameFilter() ?>');
+    <?php echo $this->getJsObjectName() ?>.useAjax = '<?php echo $this->getUseAjax() ?>';
+    <?php if($this->getRowClickCallback()): ?>
+        <?php echo $this->getJsObjectName() ?>.rowClickCallback = <?php echo $this->getRowClickCallback() ?>;
+    <?php endif; ?>
+    <?php if($this->getCheckboxCheckCallback()): ?>
+        <?php echo $this->getJsObjectName() ?>.checkboxCheckCallback = <?php echo $this->getCheckboxCheckCallback() ?>;
+    <?php endif; ?>
+    <?php if($this->getRowInitCallback()): ?>
+        <?php echo $this->getJsObjectName() ?>.initRowCallback = <?php echo $this->getRowInitCallback() ?>;
+        <?php echo $this->getJsObjectName() ?>.rows.each(function(row){<?php echo $this->getRowInitCallback() ?>(<?php echo $this->getJsObjectName() ?>, row)});
+    <?php endif; ?>
+    <?php if($this->getMassactionBlock()->isAvailable()): ?>
+    <?php echo $this->getMassactionBlock()->getJavaScript() ?>
+    <?php endif ?>
 </script>
-<?endif;?>
-<?endif?>
+<?php endif; ?>
+<?php endif ?>

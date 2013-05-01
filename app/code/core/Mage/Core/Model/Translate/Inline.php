@@ -60,6 +60,14 @@ class Mage_Core_Model_Translate_Inline
     public function processResponseBody(&$bodyArray)
     {
         if (!$this->isAllowed()) {
+            // TODO: move translations from exceptions and errors to output
+            if (Mage::getDesign()->getArea()==='adminhtml') {
+                foreach ($bodyArray as $i=>&$body) {
+                    if (strpos($body,'{{{')!==false) {
+                        $body = preg_replace('#'.$this->_tokenRegex.'#', '$1', $body);
+                    }
+                }
+            }
             return;
         }
 
@@ -80,20 +88,25 @@ class Mage_Core_Model_Translate_Inline
         ob_start();
 
 ?>
-<!-- script type="text/javascript" src="<?=$baseJsUrl?>prototype/effects.js"></script -->
-<script type="text/javascript" src="<?=$baseJsUrl?>prototype/window.js"></script>
-<link rel="stylesheet" type="text/css" href="<?=$baseJsUrl?>prototype/windows/themes/default.css"/>
-<link rel="stylesheet" type="text/css" href="<?=$baseJsUrl?>prototype/windows/themes/magento.css"/>
+<!-- script type="text/javascript" src="<?php echo $baseJsUrl ?>prototype/effects.js"></script -->
+<script type="text/javascript" src="<?php echo $baseJsUrl ?>prototype/window.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $baseJsUrl ?>prototype/windows/themes/default.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo $baseJsUrl ?>prototype/windows/themes/magento.css"/>
 
-<script type="text/javascript" src="<?=$baseJsUrl?>mage/translate_inline.js"></script>
-<link rel="stylesheet" type="text/css" href="<?=$baseJsUrl?>mage/translate_inline.css"/>
+<script type="text/javascript" src="<?php echo $baseJsUrl ?>mage/translate_inline.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $baseJsUrl ?>mage/translate_inline.css"/>
 
-<div id="translate-inline-trig"><img src="<?=$trigImg?>" alt="[TR]"/></div>
+<div id="translate-inline-trig"><img src="<?php echo $trigImg ?>" alt="[TR]"/></div>
 <script type="text/javascript">
-    new TranslateInline('translate-inline-trig', '<?=$ajaxUrl?>');
+    new TranslateInline('translate-inline-trig', '<?php echo $ajaxUrl ?>', '<?php echo Mage::getDesign()->getArea() ?>');
 </script>
-<?
+<?php
         $bodyArray[] = ob_get_clean();
+    }
+
+    protected function _escape($string)
+    {
+        return str_replace("'", "\\'", htmlspecialchars($string));
     }
 
     protected function _tagAttributes()
@@ -111,11 +124,11 @@ class Mage_Core_Model_Translate_Inline
             while (preg_match('#'.$this->_tokenRegex.'#i',
                 $tagHtml, $m, PREG_OFFSET_CAPTURE, $next)) {
 
-                $trArr[] = '{shown:\''.htmlspecialchars($m[1][0]).'\','
-                    .'translated:\''.htmlspecialchars($m[2][0]).'\','
-                    .'original:\''.htmlspecialchars($m[3][0]).'\','
+                $trArr[] = '{shown:\''.$this->_escape($m[1][0]).'\','
+                    .'translated:\''.$this->_escape($m[2][0]).'\','
+                    .'original:\''.$this->_escape($m[3][0]).'\','
                     .'location:\'Tag attribute (ALT, TITLE, etc.)\','
-                    .'scope:\''.htmlspecialchars($m[4][0]).'\'}';
+                    .'scope:\''.$this->_escape($m[4][0]).'\'}';
                 $tagHtml = substr_replace($tagHtml, $m[1][0], $m[0][1], strlen($m[0][0]));
                 $next = $m[0][1];
             }
@@ -172,11 +185,11 @@ class Mage_Core_Model_Translate_Inline
             while (preg_match('#'.$this->_tokenRegex.'#i',
                 $tagHtml, $m, PREG_OFFSET_CAPTURE, $next)) {
 
-                $trArr[] = '{shown:\''.htmlspecialchars($m[1][0]).'\','
-                    .'translated:\''.htmlspecialchars($m[2][0]).'\','
-                    .'original:\''.htmlspecialchars($m[3][0]).'\','
+                $trArr[] = '{shown:\''.$this->_escape($m[1][0]).'\','
+                    .'translated:\''.$this->_escape($m[2][0]).'\','
+                    .'original:\''.$this->_escape($m[3][0]).'\','
                     .'location:\''.$location[strtolower($tagMatch[1][0])].'\','
-                    .'scope:\''.htmlspecialchars($m[4][0]).'\'}';
+                    .'scope:\''.$this->_escape($m[4][0]).'\'}';
 
                 $tagHtml = substr_replace($tagHtml, $m[1][0], $m[0][1], strlen($m[0][0]));
 
@@ -232,11 +245,11 @@ class Mage_Core_Model_Translate_Inline
             $this->_content, $m, PREG_OFFSET_CAPTURE, $next)) {
 #echo '<xmp>'.print_r($m[0][0],1).'</xmp><hr/>';
 
-            $tr = '{shown:\''.htmlspecialchars($m[2][0]).'\','
-                .'translated:\''.htmlspecialchars($m[3][0]).'\','
-                .'original:\''.htmlspecialchars($m[4][0]).'\','
+            $tr = '{shown:\''.$this->_escape($m[2][0]).'\','
+                .'translated:\''.$this->_escape($m[3][0]).'\','
+                .'original:\''.$this->_escape($m[4][0]).'\','
                 .'location:\'Text\','
-                .'scope:\''.htmlspecialchars($m[5][0]).'\'}';
+                .'scope:\''.$this->_escape($m[5][0]).'\'}';
             $spanHtml = '<span translate="['.$tr.']">'.$m[2][0].'</span>';
 
             $this->_content = substr_replace($this->_content, $spanHtml, $m[0][1], strlen($m[0][0]));

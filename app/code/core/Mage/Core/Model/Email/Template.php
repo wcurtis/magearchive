@@ -342,8 +342,14 @@ class Mage_Core_Model_Email_Template extends Varien_Object
 //}
     		throw Mage::exception('Mage_Core', Mage::helper('core')->__('Invalid transactional email code: '.$templateId));
     	}
-    	$this->setSenderName(Mage::getStoreConfig('trans_email/ident_'.$sender.'/name', $storeId));
-    	$this->setSenderEmail(Mage::getStoreConfig('trans_email/ident_'.$sender.'/email', $storeId));
+    	if (!is_array($sender)) {
+    	    $this->setSenderName(Mage::getStoreConfig('trans_email/ident_'.$sender.'/name', $storeId));
+    	    $this->setSenderEmail(Mage::getStoreConfig('trans_email/ident_'.$sender.'/email', $storeId));
+    	} else {
+    	    $this->setSenderName($sender['name']);
+    	    $this->setSenderEmail($sender['email']);
+    	}
+
     	$this->send($email, $name, $vars);
     	return $this;
 	}

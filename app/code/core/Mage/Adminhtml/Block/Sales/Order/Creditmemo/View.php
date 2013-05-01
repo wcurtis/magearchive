@@ -65,6 +65,15 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View extends Mage_Adminhtml_Bl
                 )
             );
         }
+        
+        if ($this->getCreditmemo()->getId()) {
+            $this->_addButton('print', array(
+                'label'     => Mage::helper('sales')->__('Print'),
+                'class'     => 'save',
+                'onclick'   => 'setLocation(\''.$this->getPrintUrl().'\')'
+                )
+            );
+        }
     }
 
     /**
@@ -120,4 +129,10 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View extends Mage_Adminhtml_Bl
         return $this->getUrl('*/*/cancel', array('creditmemo_id'=>$this->getCreditmemo()->getId()));
     }
 
+    public function getPrintUrl()
+    {
+        return $this->getUrl('*/*/print', array(
+            'invoice_id' => $this->getCreditmemo()->getId()
+        ));
+    }
 }

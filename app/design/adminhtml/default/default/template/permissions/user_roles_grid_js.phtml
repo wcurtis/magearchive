@@ -1,10 +1,10 @@
 <script type="text/javascript">
 <!--
-<?$myBlock = $this->getLayout()->getBlock('user.roles.grid');?>
-<?if( is_object($myBlock) && $myBlock->getJsObjectName()):?>
+<?php $myBlock = $this->getLayout()->getBlock('user.roles.grid'); ?>
+<?php if( is_object($myBlock) && $myBlock->getJsObjectName()): ?>
     var radioBoxes = $H({});
     var warning = false;
-    var userRoles = $H(<?=$myBlock->_getSelectedRoles(true)?>);
+    var userRoles = $H(<?php echo $myBlock->_getSelectedRoles(true) ?>);
     if (userRoles.size() > 0) warning = true;
     $('user_user_roles').value = userRoles.toQueryString();
 
@@ -27,7 +27,7 @@
             if(checkbox[0] && !checkbox[0].checked){
                 var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
                 if (checked && warning && radioBoxes.size() > 0) {
-                    if ( !confirm("<?=$this->__('Warning!\r\nThis action will remove this user from already assigned role\r\nAre you sure?')?>") ) {
+                    if ( !confirm("<?php echo $this->__('Warning!\r\nThis action will remove this user from already assigned role\r\nAre you sure?') ?>") ) {
                         checkbox[0].checked = false;
                         for(i in radioBoxes) {
                             if( radioBoxes[i].status == 1) {
@@ -38,7 +38,7 @@
                     }
                     warning = false;
                 }
-                <?=$myBlock->getJsObjectName()?>.setCheckboxChecked(checkbox[0], checked);
+                <?php echo $myBlock->getJsObjectName() ?>.setCheckboxChecked(checkbox[0], checked);
             }
         }
     }
@@ -50,10 +50,10 @@
         }
     }
 
-<?=$myBlock->getJsObjectName()?>.rowClickCallback = roleRowClick;
-<?=$myBlock->getJsObjectName()?>.initRowCallback = rolesRowInit;
-<?=$myBlock->getJsObjectName()?>.checkboxCheckCallback = registerUserRole;
-<?=$myBlock->getJsObjectName()?>.rows.each(function(row){rolesRowInit(<?=$myBlock->getJsObjectName()?>, row)});
-<?endif;?>
+<?php echo $myBlock->getJsObjectName() ?>.rowClickCallback = roleRowClick;
+<?php echo $myBlock->getJsObjectName() ?>.initRowCallback = rolesRowInit;
+<?php echo $myBlock->getJsObjectName() ?>.checkboxCheckCallback = registerUserRole;
+<?php echo $myBlock->getJsObjectName() ?>.rows.each(function(row){rolesRowInit(<?php echo $myBlock->getJsObjectName() ?>, row)});
+<?php endif; ?>
 //-->
 </script>

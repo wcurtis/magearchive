@@ -65,7 +65,7 @@ class Mage_Adminhtml_Model_Customer_Renderer_Region implements Varien_Data_Form_
             $html.= '<td class="value"><select id="'.$element->getHtmlId().'" name="'.$element->getName().'" '
                  .$element->serialize($element->getHtmlAttributes()).'>'."\n";
             foreach ($regionCollection as $region) {
-                $selected = ($regionId==$region->getId()) ? ' selected' : '';
+                $selected = ($regionId==$region->getId()) ? ' selected="selected"' : '';
             	$html.= '<option value="'.$region->getId().'"'.$selected.'>'.$region->getName().'</option>';
             }
             $html.= '</select></td>';

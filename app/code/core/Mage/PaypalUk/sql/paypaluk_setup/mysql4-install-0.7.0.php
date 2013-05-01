@@ -26,7 +26,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('paypaluk_api_debug')};
+-- DROP TABLE IF EXISTS {$this->getTable('paypaluk_api_debug')};
 
 CREATE TABLE {$this->getTable('paypaluk_api_debug')} (
   `debug_id` int(10) unsigned NOT NULL auto_increment,

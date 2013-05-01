@@ -20,46 +20,46 @@
 ?>
 <div class="account-box">
     <div class="page-head">
-        <h3><?=$this->__('My Tags')?></h3>
+        <h3><?php echo $this->__('My Tags') ?></h3>
     </div>
-    <?=$this->getMessagesBlock()->getGroupedHtml()?>
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
     <p>
-        <?=$this->__('Tag Name: %s', $this->getTagInfo()->getName())?> ( <a href="<?=$this->getTagInfo()->getEditTagUrl();?>"><small><?=$this->__('Edit Tag')?></small></a><span class="separator">|</span><a href="<?=$this->getTagInfo()->getRemoveTagUrl();?>" onclick="return confirm('<?=$this->__('Are you sure you want to delete this tag?')?>');"><?=$this->__('Delete Tag')?></a> )
+        <?php echo $this->__('Tag Name: %s', $this->getTagInfo()->getName()) ?> ( <a href="<?php echo $this->getTagInfo()->getEditTagUrl(); ?>"><small><?php echo $this->__('Edit Tag') ?></small></a><span class="separator">|</span><a href="<?php echo $this->getTagInfo()->getRemoveTagUrl(); ?>" onclick="return confirm('<?php echo $this->__('Are you sure you want to delete this tag?') ?>');"><?php echo $this->__('Delete Tag') ?></a> )
     </p>
-    <?=$this->getToolbarHtml()?>
+    <?php echo $this->getToolbarHtml() ?>
     <table class="data-table box-table" id="my-tags-table" cellspacing="0">
-    <?if( sizeof($this->getMyProducts()) > 0 ):?>
-        <col width="100">
-        <col>
-        <col width="75">
+    <?php if( sizeof($this->getMyProducts()) > 0 ): ?>
+        <col width="100"/>
+        <col/>
+        <col width="75"/>
         <tbody>
-        <?$iterator = 0?>
-        <?foreach($this->getMyProducts() as $_product):?>
-            <tr <?if($iterator % 2 == 0):?>class="odd"<?$iterator++;endif;?>>
-                <td><a href="<?=$_product->getProductUrl();?>"><img src="<?=$this->helper('catalog/image')->init($_product, 'small_image')->resize(100, 100);?>" alt="" height="100" width="100"></a></td>
+        <?php $iterator = 0 ?>
+        <?php foreach($this->getMyProducts() as $_product): ?>
+            <tr <?php if($iterator % 2 == 0): ?>class="odd"<?php $iterator++;endif; ?>>
+                <td><a href="<?php echo $_product->getProductUrl(); ?>"><img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(100, 100); ?>" alt="" height="100" width="100"></a></td>
                 <td>
-                    <h5><a href="<?=$_product->getProductUrl()?>"><?=$_product->getName()?></a></h5>
-                    <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
-                    <?=$this->helper('review/product')->getSummaryHtml($_product, 'short')?>
-                    <p><?=$_product->getDescription()?></p>
+                    <h5><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getName() ?></a></h5>
+                    <?php echo $this->helper('catalog/product')->getPriceHtml($_product) ?>
+                    <?php echo $this->helper('review/product')->getSummaryHtml($_product, 'short') ?>
+                    <p><?php echo $_product->getDescription() ?></p>
                 </td>
                 <td class="a-center">
-                    <?if($_product->isSaleable()):?>
-                        <button class="form-button" onclick="setLocation('<?=$this->getUrl('checkout/cart/add',array('product'=>$_product->getId()))?>')"><span><?=$this->__('Add to Cart')?></span></button>
-                    <?endif;?>
-                    <?if ($this->helper('wishlist')->isAllow()) :?>
-                    <br><a href="<?=$this->getUrl('wishlist/index/add',array('product'=>$_product->getId()))?>"><?=$this->__('Add to Wishlist')?></a>
-                    <?endif;?>
+                    <?php if($_product->isSaleable()): ?>
+                        <button class="form-button" onclick="setLocation('<?php echo $this->getUrl('checkout/cart/add',array('product'=>$_product->getId())) ?>')"><span><?php echo $this->__('Add to Cart') ?></span></button>
+                    <?php endif; ?>
+                    <?php if ($this->helper('wishlist')->isAllow()) : ?>
+                    <br/><a href="<?php echo $this->getUrl('wishlist/index/add',array('product'=>$_product->getId())) ?>"><?php echo $this->__('Add to Wishlist') ?></a>
+                    <?php endif; ?>
                 </td>
             </tr>
-        <?endforeach;?>
+        <?php endforeach; ?>
         </tbody>
-    <?else:?>
+    <?php else: ?>
             <tr>
-            <td><p><?=$this->__("Unable to find any products tagged with '%s' in the current store", $this->getTagInfo()->getName() )?></p></td>
+            <td><p><?php echo $this->__("Unable to find any products tagged with '%s' in the current store", $this->getTagInfo()->getName() ) ?></p></td>
             </tr>
-    <?endif;?>
+    <?php endif; ?>
     </table>
     <script type="text/javascript">decorateTable('my-tags-table')</script>
-    <?=$this->getToolbarHtml()?>
+    <?php echo $this->getToolbarHtml() ?>
 </div>

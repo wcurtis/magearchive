@@ -89,7 +89,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
         if ($node) {
             $options[] = array(
                'value' => $node->getPathId(),
-               'label' => str_repeat('&nbsp;', max(0, 3*($node->getLevel()-1))) . $node->getName(),
+               'label' => str_repeat('&nbsp;', max(0, 3*($node->getLevel()))) . $node->getName(),
             );
 
             foreach ($node->getChildren() as $child) {

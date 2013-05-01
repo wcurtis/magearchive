@@ -14,6 +14,22 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+function toggleMenu(el, over)
+{
+	if (Element.childElements(el)) {
+	var uL = Element.childElements(el)[1];
+	var iS = true;
+	}
+    if (over) {
+        Element.addClassName(el, 'over');
+		
+		if(iS){ uL.addClassName('shown-sub')};
+    }
+    else {
+        Element.removeClassName(el, 'over');
+		if(iS){ uL.removeClassName('shown-sub')};
+    }
+}
 
 ieHover = function() {
 	var ieULs, iframe, li;

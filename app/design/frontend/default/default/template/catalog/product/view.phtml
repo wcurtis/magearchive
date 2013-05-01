@@ -24,37 +24,33 @@
  * @see Mage_Catalog_Block_Product_View
  */
 ?>
-<div id="messages_product_view"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-<?$_product=$this->getProduct()?>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<?php $_product=$this->getProduct() ?>
 <div class="product-info-box">
     <div class="product-essential">
 
         <div class="product-img-box">
-            <?=$this->getChildHtml('media')?>
+            <?php echo $this->getChildHtml('media') ?>
         </div>
 
         <div class="product-shop">
-            <h3 class="product-name"><?=$_product->getName()?></h3>
+            <h3 class="product-name"><?php echo $_product->getName() ?></h3>
 
-            <?if ($this->canEmailToFriend()):?>
-                <a href="<?=$this->helper('catalog/product')->getEmailToFriendUrl($_product)?>"><?=$this->__('Email to a Friend')?></a><br />
-            <?endif;?>
+            <?php if ($this->canEmailToFriend()): ?>
+                <a href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a><br />
+            <?php endif; ?>
 
-            <?=$this->helper('review/product')->getSummaryHtml($_product, null, 1)?>
+            <?php echo $this->helper('review/product')->getSummaryHtml($_product, null, 1) ?>
 
-            <form action="<?=$this->getAddToCartUrl($_product)?>" method="post" id="product_addtocart_form">
-                <input type="hidden" name="product" value="<?=$_product->getId()?>"/>
-                <input type="hidden" name="related_product" id="related-products-field" value=""/>
+            <form action="<?php echo $this->getAddToCartUrl($_product) ?>" method="post" id="product_addtocart_form">
+            <fieldset>
+            <input type="hidden" name="product" value="<?php echo $_product->getId() ?>"/>
+            <input type="hidden" name="related_product" id="related-products-field" value=""/>
+            </fieldset>
 
-                <?=$this->getChildHtml('alert_urls')?>
+                <?php echo $this->getChildHtml('alert_urls') ?>
 
-                <?if ($_product->isGrouped()) :?>
-                    <?=$this->getChildHtml('grouped_data')?>
-                <?elseif ($_product->isConfigurable()): ?>
-                    <?=$this->getChildHtml('configurable_data')?>
-                <?else:?>
-                    <?=$this->getChildHtml('simple_data')?>
-                <?endif;?>
+                <?php echo $this->getChildHtml('product_type_data') ?>
 
             </form>
 
@@ -70,8 +66,8 @@
             <div class="clear"></div>
             <div class="divider"></div>
 
-            <h4><?=$this->__('Quick Overview')?></h4>
-            <div class="short-description"><?=$_product->getShortDescription()?></div>
+            <h4><?php echo $this->__('Quick Overview') ?></h4>
+            <div class="short-description"><?php echo nl2br($_product->getShortDescription()) ?></div>
 
         </div>
     </div>
@@ -80,29 +76,29 @@
 
         <div class="collateral-box">
             <div class="head">
-                <h4><?=$this->__('Product Description')?></h4>
+                <h4><?php echo $this->__('Product Description') ?></h4>
             </div>
-            <div class="product-specs"><?=$_product->getDescription()?></div>
+            <div class="product-specs"><?php echo nl2br($_product->getDescription()) ?></div>
         </div>
 
-        <?if($_additional = $this->getAdditionalData()):?>
+        <?php if($_additional = $this->getAdditionalData()): ?>
         <div class="collateral-box attribute-specs">
             <div class="head">
-                <h4><?=$this->__('Additional Information')?></h4>
+                <h4><?php echo $this->__('Additional Information') ?></h4>
             </div>
             <table cellspacing="0" class="data-table" id="product-attribute-specs-table">
-            <?foreach ($_additional as $_data):?>
+            <?php foreach ($_additional as $_data): ?>
             <tr>
-                <td class="label"><?=$_data['label']?></td>
-                <td class="data"><?=$_data['value']?></td>
+                <td class="label"><?php echo $_data['label'] ?></td>
+                <td class="data"><?php echo $_data['value'] ?></td>
             </tr>
-            <?endforeach;?>
+            <?php endforeach; ?>
             </table>
             <script type="text/javascript">decorateTable('product-attribute-specs-table')</script>
         </div>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?=$this->getChildHtml('upsell_products')?>
-        <?=$this->getChildHtml('product_additional_data')?>
+        <?php echo $this->getChildHtml('upsell_products') ?>
+        <?php echo $this->getChildHtml('product_additional_data') ?>
     </div>
 </div>

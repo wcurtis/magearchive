@@ -18,6 +18,9 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+/** Zend_Validate_Interface */
+require_once 'Zend/Validate/Interface.php';
+
 /**
  * Zend_Form
  * 
@@ -25,9 +28,9 @@
  * @package    Zend_Form
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Form.php 8240 2008-02-21 04:37:46Z matthew $
+ * @version    $Id: Form.php 8633 2008-03-07 17:54:43Z matthew $
  */
-class Zend_Form implements Iterator, Countable
+class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
 {
     /**#@+
      * Plugin loader type constants
@@ -70,6 +73,12 @@ class Zend_Form implements Iterator, Countable
     protected $_description;
 
     /**
+     * Should we disable loading the default decorators?
+     * @var bool
+     */
+    protected $_disableLoadDefaultDecorators = false;
+
+    /**
      * Display group prefix paths
      * @var array
      */
@@ -98,6 +107,12 @@ class Zend_Form implements Iterator, Countable
      * @var string
      */
     protected $_elementsBelongTo;
+
+    /**
+     * Are there errors in the form?
+     * @var bool
+     */
+    protected $_errorsExist = false;
 
     /**
      * Form order
@@ -165,6 +180,12 @@ class Zend_Form implements Iterator, Countable
     protected static $_translatorDefault;
 
     /**
+     * is the translator disabled?
+     * @var bool
+     */
+    protected $_translatorDisabled = false;
+
+    /**
      * @var Zend_View_Interface
      */
     protected $_view;
@@ -185,7 +206,7 @@ class Zend_Form implements Iterator, Countable
             $this->setConfig($options);
         }
 
-        $this->_loadDefaultDecorators();
+        $this->loadDefaultDecorators();
     }
 
     /**
@@ -229,6 +250,11 @@ class Zend_Form implements Iterator, Countable
         if (isset($options['elementsBelongTo'])) {
             $elementsBelongTo = $options['elementsBelongTo'];
             unset($options['elementsBelongTo']);
+        }
+
+        if (isset($options['attribs'])) {
+            $this->addAttribs($options['attribs']);
+            unset($options['attribs']);
         }
 
         $forbidden = array(
@@ -967,7 +993,7 @@ class Zend_Form implements Iterator, Countable
     public function clearElements()
     {
         foreach (array_keys($this->_elements) as $key) {
-            if (isset($this->_order[$key])) {
+            if (array_key_exists($key, $this->_order)) {
                 unset($this->_order[$key]);
             }
         }
@@ -990,8 +1016,6 @@ class Zend_Form implements Iterator, Countable
         foreach ($this->getElements() as $name => $element) {
             if (array_key_exists($name, $defaults)) {
                 $this->setDefault($name, $defaults[$name]);
-            } else {
-                $this->setDefault($name, null);
             }
         }
         foreach ($this->getSubForms() as $name => $form) {
@@ -1339,7 +1363,7 @@ class Zend_Form implements Iterator, Countable
     public function clearSubForms()
     {
         foreach (array_keys($this->_subForms) as $key) {
-            if (isset($this->_order[$key])) {
+            if (array_key_exists($key, $this->_order)) {
                 unset($this->_order[$key]);
             }
         }
@@ -1575,7 +1599,7 @@ class Zend_Form implements Iterator, Countable
     public function clearDisplayGroups()
     {
         foreach ($this->_displayGroups as $key => $group) {
-            if (isset($this->_order[$key])) {
+            if (array_key_exists($key, $this->_order)) {
                 unset($this->_order[$key]);
             }
             foreach ($group as $name => $element) {
@@ -1640,8 +1664,12 @@ class Zend_Form implements Iterator, Countable
      * @param  array $data 
      * @return boolean
      */
-    public function isValid(array $data)
+    public function isValid($data)
     {
+        if (!is_array($data)) {
+            require_once 'Zend/Form/Exception.php';
+            throw new Zend_Form_Exception(__CLASS__ . '::' . __METHOD__ . ' expects an array');
+        }
         $translator = $this->getTranslator();
         $valid      = true;
 
@@ -1673,6 +1701,8 @@ class Zend_Form implements Iterator, Countable
                 }
             }
         }
+
+        $this->_errorsExist = !$valid;
         return $valid;
     }
 
@@ -1724,6 +1754,8 @@ class Zend_Form implements Iterator, Countable
                 }
             }
         }
+
+        $this->_errorsExist = !$valid;
         return $valid;
     }
 
@@ -1749,6 +1781,16 @@ class Zend_Form implements Iterator, Countable
 
     public function persistData()
     {
+    }
+
+    /**
+     * Are there errors in the form?
+     * 
+     * @return bool
+     */
+    public function isErrors()
+    {
+        return $this->_errorsExist;
     }
 
     /**
@@ -2179,6 +2221,10 @@ class Zend_Form implements Iterator, Countable
      */
     public function getTranslator()
     {
+        if ($this->translatorIsDisabled()) {
+            return null;
+        }
+
         if (null === $this->_translator) {
             return self::getDefaultTranslator();
         }
@@ -2205,6 +2251,28 @@ class Zend_Form implements Iterator, Countable
             }
         }
         return self::$_translatorDefault;
+    }
+
+    /**
+     * Indicate whether or not translation should be disabled
+     * 
+     * @param  bool $flag 
+     * @return Zend_Form
+     */
+    public function setDisableTranslator($flag)
+    {
+        $this->_translatorDisabled = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Is translation disabled?
+     * 
+     * @return bool
+     */
+    public function translatorIsDisabled()
+    {
+        return $this->_translatorDisabled;
     }
 
     /**
@@ -2312,7 +2380,7 @@ class Zend_Form implements Iterator, Countable
             return $this->getDisplayGroup($key);
         } else {
             require_once 'Zend/Form/Exception.php';
-            throw new Zend_Form_Exception('Corruption detected in form; invalid key found in internal iterator');
+            throw new Zend_Form_Exception(sprintf('Corruption detected in form; invalid key ("%s") found in internal iterator', (string) $key));
         }
     }
 
@@ -2371,12 +2439,38 @@ class Zend_Form implements Iterator, Countable
     }
 
     /**
+     * Set flag to disable loading default decorators
+     * 
+     * @param  bool $flag 
+     * @return Zend_Form
+     */
+    public function setDisableLoadDefaultDecorators($flag)
+    {
+        $this->_disableLoadDefaultDecorators = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Should we load the default decorators?
+     * 
+     * @return bool
+     */
+    public function loadDefaultDecoratorsIsDisabled()
+    {
+        return $this->_disableLoadDefaultDecorators;
+    }
+
+    /**
      * Load the default decorators
      * 
      * @return void
      */
-    protected function _loadDefaultDecorators()
+    public function loadDefaultDecorators()
     {
+        if ($this->loadDefaultDecoratorsIsDisabled()) {
+            return;
+        }
+
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             $this->addDecorator('FormElements')
@@ -2397,11 +2491,15 @@ class Zend_Form implements Iterator, Countable
             $index = 0;
             foreach ($this->_order as $key => $order) {
                 if (null === $order) {
-                    if (array_search($index, $this->_order, true)) {
+                    if (null === ($order = $this->{$key}->getOrder())) {
+                        if (array_search($index, $this->_order, true)) {
+                            ++$index;
+                        }
+                        $items[$index] = $key;
                         ++$index;
+                    } else {
+                        $items[$order] = $key;
                     }
-                    $items[$index] = $key;
-                    ++$index;
                 } else {
                     $items[$order] = $key;
                 }

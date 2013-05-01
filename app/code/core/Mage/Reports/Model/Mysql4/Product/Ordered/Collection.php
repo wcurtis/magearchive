@@ -27,13 +27,6 @@
 
 class Mage_Reports_Model_Mysql4_Product_Ordered_Collection extends Mage_Reports_Model_Mysql4_Product_Collection
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-        return $this;
-    }
-
     protected function _joinFields($from = '', $to = '')
     {
         $this->addAttributeToSelect('*')

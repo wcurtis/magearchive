@@ -18,19 +18,19 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if( $this->getRating() && $this->getRating()->getSize()):?>
+<?php if( $this->getRating() && $this->getRating()->getSize()): ?>
     <div class="ratings-container">
-        <?foreach ($this->getRating() as $_rating):?>
-        <?if($_rating->getPercent()):?>
+        <?php foreach ($this->getRating() as $_rating): ?>
+        <?php if($_rating->getPercent()): ?>
         	<div class="ratings">
-        	   <?=$_rating->getRatingCode()?>
+        	   <?php echo $_rating->getRatingCode() ?>
         		<div class="rating-box">
-        			<div class="rating" style="width:<?=ceil($_rating->getPercent())?>%;"></div>
+        			<div class="rating" style="width:<?php echo ceil($_rating->getPercent()) ?>%;"></div>
         		</div>
         	</div>
-        <?endif;?>
-        <?endforeach;?>
+        <?php endif; ?>
+        <?php endforeach; ?>
     </div>
-<?else:?>
-    <?=Mage::helper('rating')->__("Rating isn't Available")?>
-<?endif;?>
+<?php else: ?>
+    <?php echo Mage::helper('rating')->__("Rating isn't Available") ?>
+<?php endif; ?>

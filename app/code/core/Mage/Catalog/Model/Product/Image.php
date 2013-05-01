@@ -121,6 +121,12 @@ class Mage_Catalog_Model_Product_Image extends Mage_Core_Model_Abstract
         }
 
         $imageInfo = getimagesize($file);
+
+        if (!isset($imageInfo['channels'])) {
+            // if there is no info about this parameter lets set it for maximum
+            $imageInfo['channels'] = 4;
+        }
+
         return round(($imageInfo[0] * $imageInfo[1] * $imageInfo['bits'] * $imageInfo['channels'] / 8 + Pow(2, 16)) * 1.65);
     }
 
@@ -282,8 +288,8 @@ class Mage_Catalog_Model_Product_Image extends Mage_Core_Model_Abstract
     public function getUrl()
     {
         $baseDir = Mage::getBaseDir('media');
-        $path = str_replace("{$baseDir}/", "", $this->_newFile);
-        return Mage::getBaseUrl('media') . $path;
+        $path = str_replace($baseDir . DS, "", $this->_newFile);
+        return Mage::getBaseUrl('media') . str_replace(DS, '/', $path);
     }
 
     public function push()

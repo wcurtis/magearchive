@@ -44,12 +44,10 @@ class Mage_Page_Block_Switch extends Mage_Core_Block_Template
     public function getRawGroups()
     {
         if (!$this->hasData('raw_groups')) {
-            $collection = Mage::getModel('core/store_group')
-                ->getCollection()
-                ->addWebsiteFilter($this->getCurrentWebsiteId())
-                ->load();
+            $websiteGroups = Mage::app()->getWebsite()->getGroups();
+
             $groups = array();
-            foreach ($collection as $group) {
+            foreach ($websiteGroups as $group) {
                 $groups[$group->getId()] = $group;
             }
             $this->setData('raw_groups', $groups);
@@ -60,13 +58,12 @@ class Mage_Page_Block_Switch extends Mage_Core_Block_Template
     public function getRawStores()
     {
         if (!$this->hasData('raw_stores')) {
-            $collection = Mage::getModel('core/store')
-                ->getCollection()
-                ->addWebsiteFilter($this->getCurrentWebsiteId())
-                ->addFilter('is_active', 1)
-                ->load();
+            $websiteStores = Mage::app()->getWebsite()->getStores();
             $stores = array();
-            foreach ($collection as $store) {
+            foreach ($websiteStores as $store) {
+                if (!$store->getIsActive()) {
+                    continue;
+                }
                 $store->setLocaleCode(Mage::getStoreConfig('general/locale/code', $store->getId()));
                 $store->setHomeUrl($store->getBaseUrl().'?store='.$store->getCode());
                 $stores[$store->getGroupId()][$store->getId()] = $store;

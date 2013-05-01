@@ -33,16 +33,25 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Attribute_Backend_Tierprice
         $this->_init('catalog/product_attribute_tier_price', 'value_id');
     }
 
-    public function loadProductPrices($product)
+    public function loadProductPrices($product, $attribute)
     {
         $select = $this->_getReadAdapter()->select()
             ->from($this->getMainTable(), array(
-               'all_groups',
-               'customer_group_id AS cust_group',
-               'qty AS price_qty',
-               'value AS price'
+                'website_id',
+                'all_groups',
+                'customer_group_id AS cust_group',
+                'qty AS price_qty',
+                'value AS price'
             ))
             ->where('entity_id=?', $product->getId());
+        if ($attribute->isScopeGlobal()) {
+            $select->where('website_id=?', 0);
+        }
+        else {
+            if ($storeId = $product->getStoreId()) {
+                $select->where('website_id IN (?)', array(0, Mage::app()->getStore($storeId)->getWebsiteId()));
+            }
+        }
         return $this->_getReadAdapter()->fetchAll($select);
     }
 

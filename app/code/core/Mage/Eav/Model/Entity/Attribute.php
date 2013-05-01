@@ -21,6 +21,9 @@
 
 class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Abstract
 {
+    const CACHE_TAG         = 'EAV_ATTRIBUTE';
+    protected $_cacheTag    = 'EAV_ATTRIBUTE';
+
     protected function _getDefaultBackendModel()
     {
         switch ($this->getAttributeCode()) {

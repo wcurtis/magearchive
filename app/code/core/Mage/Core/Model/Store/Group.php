@@ -27,6 +27,9 @@
 
 class Mage_Core_Model_Store_Group extends Mage_Core_Model_Abstract
 {
+    const CACHE_TAG = 'store_group';
+    protected $_cacheTag = 'store_group';
+
     /**
      * Group Store collection array
      *

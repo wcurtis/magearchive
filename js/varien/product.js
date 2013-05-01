@@ -44,6 +44,13 @@ Product.Zoom.prototype = {
             this.ceilingZoom = this.imageDim.height / this.containerDim.height;
         }
 
+        if (this.imageDim.width < this.containerDim.width
+            && this.imageDim.height < this.containerDim.height) {
+            this.trackEl.up().hide();
+            this.containerEl.removeClassName('main-product-img');
+            return;
+        }
+
         this.imageX = 0;
         this.imageY = 0;
         this.imageZoom = 1;
@@ -122,7 +129,7 @@ Product.Zoom.prototype = {
     startZoomIn: function()
     {
         this.zoomBtnPressed = true;
-        this.sliderAccel = .004;
+        this.sliderAccel = .002;
         this.periodicalZoom();
         this.zoomer = new PeriodicalExecuter(this.periodicalZoom.bind(this), .05);
         return this;
@@ -131,7 +138,7 @@ Product.Zoom.prototype = {
     startZoomOut: function()
     {
         this.zoomBtnPressed = true;
-        this.sliderAccel = -.004;
+        this.sliderAccel = -.002;
         this.periodicalZoom();
         this.zoomer = new PeriodicalExecuter(this.periodicalZoom.bind(this), .05);
         return this;
@@ -200,6 +207,7 @@ Product.Config.prototype = {
         this.settings   = $$('.super-attribute-select');
         this.state      = new Hash();
         this.priceTemplate = new Template(this.config.template);
+        this.prices     = config.prices;
 
         this.settings.each(function(element){
             Event.observe(element, 'change', this.configure.bind(this))
@@ -347,7 +355,12 @@ Product.Config.prototype = {
                 str+= '+';
             }
         }
-        str+= this.priceTemplate.evaluate({price:price.toFixed(2)});
+        if (this.prices && this.prices[price]) {
+            str+= this.prices[price];
+        }
+        else {
+            str+= this.priceTemplate.evaluate({price:price.toFixed(2)});
+        }
         return str;
     },
 

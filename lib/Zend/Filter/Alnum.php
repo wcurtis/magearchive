@@ -17,7 +17,7 @@
  * @package    Zend_Filter
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Alnum.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Alnum.php 8731 2008-03-10 15:08:03Z darby $
  */
 
 
@@ -77,8 +77,11 @@ class Zend_Filter_Alnum implements Zend_Filter_Interface
         if (!self::$_unicodeEnabled) {
             // POSIX named classes are not supported, use alternative a-zA-Z0-9 match
             $pattern = '/[^a-zA-Z0-9' . $whiteSpace . ']/';
+        } else if (extension_loaded('mbstring')) {
+            // Unicode safe filter for the value with mbstring
+            $pattern = '/[^[:alnum:]'  . $whiteSpace . ']/u';
         } else {
-            // Unicode safe filter for the value
+            // Unicode safe filter for the value without mbstring
             $pattern = '/[^\p{L}\p{N}' . $whiteSpace . ']/u';
         }
 

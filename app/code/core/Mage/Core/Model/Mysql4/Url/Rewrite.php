@@ -35,19 +35,19 @@ class Mage_Core_Model_Mysql4_Url_Rewrite extends Mage_Core_Model_Mysql4_Abstract
         $this->_init('core/url_rewrite', 'url_rewrite_id');
         $this->_tagTable = $this->getTable('url_rewrite_tag');
         $this->_uniqueFields = array(
-            array(
-                'field' => array('target_path','store_id'),
-                'title' => Mage::helper('core')->__('Target path for specified store')
-            ),
-
 //            array(
-//                'field' => array('id_path','store_id'),
-//                'title' => Mage::helper('core')->__('Id path for specified store')
+//                'field' => array('target_path','store_id'),
+//                'title' => Mage::helper('core')->__('Target path for specified store')
 //            ),
-//            array(
-//                 'field' => array('request_path','store_id'),
-//                 'title' => Mage::helper('core')->__('Request path for specified store'),
-//            )
+//
+            array(
+                'field' => array('id_path','store_id','is_system'),
+                'title' => Mage::helper('core')->__('Id path for specified store')
+            ),
+            array(
+                 'field' => array('request_path','store_id'),
+                 'title' => Mage::helper('core')->__('Request path for specified store'),
+            )
         );
     }
 
@@ -68,45 +68,5 @@ class Mage_Core_Model_Mysql4_Url_Rewrite extends Mage_Core_Model_Mysql4_Abstract
         }
 
         return $select;
-    }
-
-    public function _afterLoad(Mage_Core_Model_Abstract $object)
-    {
-        parent::_afterLoad($object);
-
-        $read = $this->_getReadAdapter();
-        if ($read) {
-            $tags = $read->fetchCol(
-                'select tag from '.$this->_tagTable.' where url_rewrite_id=?', $object->getId());
-            $object->setTags($tags ? $tags : array());
-        }
-
-        return $this;
-    }
-
-    /**
-    * @todo optimize tags save to leave untouched tags
-    */
-    protected function _afterSave(Mage_Core_Model_Abstract $object)
-    {
-        parent::_afterSave($object);
-
-        if ($object->getOrigData('tags')!==$object->getTags()) {
-            $write = $this->_getWriteAdapter();
-            $write->delete($this->_tagTable, $write->quoteInto('url_rewrite_id=?', $object->getId()));
-
-            $tags = $object->getTags();
-            if (!is_string($tags)) {
-                $tags = explode(',', $tags);
-            }
-
-            if (!empty($tags) && is_array($tags)) {
-                foreach ($tags as $tag) {
-                    $write->insert($this->_tagTable, array('url_rewrite_id'=>$object->getId(), 'tag'=>$tag));
-                }
-            }
-        }
-
-        return $this;
     }
 }

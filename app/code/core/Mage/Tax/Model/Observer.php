@@ -21,20 +21,19 @@
 
 class Mage_Tax_Model_Observer
 {
-    public function catalog_block_product_list_collection($observer)
+    public function catalog_product_collection_load_after($observer)
     {
         $collection = $observer->getEvent()->getCollection();
-
-        $hlp = Mage::helper('tax');
-        if (!$hlp->showInCatalog($collection->getStoreId())) {
-            return $this;
+        foreach ($collection as $product) break;
+        if (count($collection)==0 || !$product->hasPrice()) {
+            return;
         }
 
-        foreach ($collection as $product) {
-            $hlp->updateProductTax($product);
-        }
-
-        return $this;
+        $collection->walk(array(Mage::helper('tax'), 'updateProductTax'));
     }
 
+    public function catalog_block_product_view($observer)
+    {
+        Mage::helper('tax')->updateProductTax($observer->getEvent()->getProduct());
+    }
 }

@@ -19,33 +19,14 @@
  */
 
 
+/**
+ * Enter description here...
+ *
+ * @category   Mage
+ * @package    Mage_Paypal
+ *
+ */
 class Mage_Paypal_Model_Mysql4_Setup extends Mage_Eav_Model_Entity_Setup
 {
-    public function getDefaultEntities()
-    {
-        return array(
-            'quote_payment' => array(
-                'table'=>'sales/quote',
-                'attributes' => array(
-                    'paypal_payer_id' => array(),
-                    'paypal_payer_status' => array(),
-                    'paypal_correlation_id' => array(),
-                ),
-            ),
 
-            'order_payment' => array(
-                'table'=>'sales/order',
-                'attributes' => array(
-
-                ),
-            ),
-
-            'invoice_payment' => array(
-                'table'=>'sales/invoice',
-                'attributes' => array(
-
-                ),
-            ),
-        );
-    }
 }

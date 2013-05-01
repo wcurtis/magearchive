@@ -34,7 +34,7 @@ class Mage_Dataflow_Model_Convert_Iterator_Http extends Mage_Dataflow_Model_Conv
 <form method="POST" enctype="multipart/form-data">
 File to upload: <input type="file" name="io_file"/> <input type="submit" value="Upload"/>
 </form>
-<?
+<?php
             exit;
         }
         if (!empty($_FILES['io_file']['tmp_name'])) {

@@ -71,6 +71,8 @@ class Mage_Sitemap_Model_Observer
         /* @var $collection Mage_Sitemap_Model_Mysql4_Sitemap_Collection */
         $collection->load();
 
+        $io = new Varien_Io_File();
+        $io->setAllowCreateFolders(true);
         foreach ($collection as $sitemap){
             /* @var $sitemap Mage_Sitemap_Model_Sitemap */
             try {
@@ -79,9 +81,10 @@ class Mage_Sitemap_Model_Observer
                     // generate sitemap
                     $xml = $sitemap->generateXml();
                     // save it to a file
-                    $fp = fopen($sitemap->getPreparedFilename(), 'w');
-                    fputs($fp, $xml);
-                    fclose($fp);
+
+                    $destinationFolder['path'] = $io->getDestinationFolder($sitemap->getPreparedFilename());
+                    $io->open($destinationFolder);
+                    $io->write($sitemap->getPreparedFilename(), $xml);
                 }
 
             } catch (Exception $e) {
@@ -89,7 +92,6 @@ class Mage_Sitemap_Model_Observer
                 $errors[] = Mage::helper('sitemap')->__('ERROR:') . ' ' . $e->getMessage();
             }
         }
-
         if ( sizeof($errors)  ) {
             $emailTemplate = Mage::getModel('core/email_template');
             /* @var $emailTemplate Mage_Core_Model_Email_Template */

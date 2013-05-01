@@ -30,6 +30,11 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
 {
     protected $_labelTable;
     protected $_priceTable;
+    /**
+     * Product instance
+     *
+     * @var Mage_Catalog_Model_Product
+     */
     protected $_product;
 
     protected function _construct()
@@ -66,8 +71,33 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
     protected function _afterLoad()
     {
         parent::_afterLoad();
+        $this->_addProductAttributes();
+        $this->_addAssociatedProductFilters();
         $this->_loadLabels();
         $this->_loadPrices();
+        return $this;
+    }
+
+    /**
+     * Add product attributes to collection items
+     *
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute_Collection
+     */
+    protected function _addProductAttributes()
+    {
+        foreach ($this->_items as $item) {
+            $productAttribute = $this->getProduct()->getTypeInstance()
+                                    ->getAttributeById($item->getAttributeId());
+            $item->setProductAttribute($productAttribute);
+        }
+
+        return $this;
+    }
+
+    public function _addAssociatedProductFilters()
+    {
+        $this->getProduct()->getTypeInstance()
+            ->getUsedProducts($this->getColumnValues('attribute_id')); // Filter associated products
         return $this;
     }
 
@@ -106,7 +136,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
     protected function _loadPrices()
     {
         if ($this->count()) {
-            $select = $this->getConnection()->select()
+            /*$select = $this->getConnection()->select()
                 ->from(array('price'=>$this->_priceTable))
                 ->join(array('option'=>$this->getTable('eav/attribute_option')),
                     'option.option_id=price.value_index'
@@ -124,11 +154,71 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
                 )
                 ->where('price.product_super_attribute_id IN (?)', array_keys($this->_items))
                 ->where('option_default_label.store_id=0')
-                ->order('option.sort_order asc');
-            foreach ($this->getConnection()->fetchAll($select) as $data) {
+                ->order('option.sort_order asc');  OLD */
+
+
+
+            $select = $this->getConnection()->select()
+                ->from(array('price'=>$this->_priceTable))
+                ->where('price.product_super_attribute_id IN (?)', array_keys($this->_items))
+                ->where('price.pricing_value IS NOT NULL');
+
+            $pricings = $this->getConnection()->fetchAll($select);
+
+            $values = array();
+
+
+            foreach ($this->_items as $item) {
+               $productAttribute = $item->getProductAttribute();
+               $options = $productAttribute->getFrontend()->getSelectOptions();
+               foreach ($options as $option) {
+                   foreach ($this->getProduct()->getTypeInstance()->getUsedProducts() as $associatedProduct) {
+                        if (!empty($option['value'])
+                            && $option['value'] == $associatedProduct->getData(
+                                                        $productAttribute->getAttributeCode())) {
+                            // If option aviable in associated product
+                            if (!isset($values[$item->getId() . ':' . $option['value']])) {
+                                // If option not added, we will add it.
+                                $values[$item->getId() . ':' . $option['value']] = array(
+                                    'product_super_attribute_id' => $item->getId(),
+                                    'value_index'                => $option['value'],
+                                    'label'                      => $option['label'],
+                                    'default_label'              => $option['label'],
+                                    'store_label'                => $option['label'],
+                                    'is_percent'                 => 0,
+                                    'pricing_value'              => null
+                                );
+                            }
+                        }
+                   }
+               }
+            }
+
+
+            foreach ($pricings as $pricing) {
+                // Addding pricing to options
+                $valueKey = $pricing['product_super_attribute_id'] . ':' . $pricing['value_index'];
+                if (isset($values[$valueKey])) {
+                    $values[$valueKey]['pricing_value'] = $pricing['pricing_value'];
+                    $values[$valueKey]['is_percent']    = $pricing['is_percent'];
+                    $values[$valueKey]['value_id']      = $pricing['value_id'];
+                }
+            }
+
+            foreach ($values as $data) {
                 $this->getItemById($data['product_super_attribute_id'])->addPrice($data);
             }
         }
         return $this;
+    }
+
+    /**
+     * Retrive product instance
+     *
+     * @return Mage_Catalog_Model_Product
+     */
+    public function getProduct()
+    {
+        return $this->_product;
     }
 }

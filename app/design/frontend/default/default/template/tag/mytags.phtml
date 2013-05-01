@@ -58,12 +58,12 @@ function deleteTag(id) {
 
 <?php foreach ($collection->getItems() as $tag) { /* $tag = $tag->getData();*/ ?> 
 	<span>
-		<a style="font-size:<?=$collection->getFSize($tag->getTag_id());?>" href="/tag/index/show?tag=<?=$tag->getTagname();?>">
-			<?=$tag->getTagname();?>
+		<a style="font-size:<?php echo $collection->getFSize($tag->getTag_id()); ?>" href="/tag/index/show?tag=<?php echo $tag->getTagname(); ?>">
+			<?php echo $tag->getTagname(); ?>
 		</a> 
 		<span>
-			<a href="#" title="edit tag" onclick="editTag(<?=$tag->getTag_id();?>, '<?=$tag->getTagname();?>'); return false;">e</a> 
-			<a href="#" title="delete tag" onclick="deleteTag(<?=$tag->getTag_id();?>); return false;">d</a>
+			<a href="#" title="edit tag" onclick="editTag(<?php echo $tag->getTag_id(); ?>, '<?php echo $tag->getTagname(); ?>'); return false;">e</a> 
+			<a href="#" title="delete tag" onclick="deleteTag(<?php echo $tag->getTag_id(); ?>); return false;">d</a>
 		</span>
 	</span>
 <?php } ?>

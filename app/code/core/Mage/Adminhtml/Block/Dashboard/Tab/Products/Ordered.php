@@ -47,10 +47,10 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Products_Ordered extends Mage_Adminhtml
         }
 
         $collection = Mage::getResourceModel('reports/product_collection')
+            ->addOrderedQty()
             ->addAttributeToSelect('*')
             ->setStoreId($storeId)
             ->addStoreFilter($storeId)
-            ->addOrderedQty()
             ->setOrder('ordered_qty', 'desc');
 
         $this->setCollection($collection);

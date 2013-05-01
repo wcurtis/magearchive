@@ -29,6 +29,8 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
 {
     protected $_fields;
 
+    protected $_mapfields = array();
+
     public function parse()
     {
         // fixed for multibyte characters
@@ -58,6 +60,16 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
             fseek($fh, 0);
         }
 
+        // fix for field mapping
+        if ($mapfields = $this->getProfile()->getDataflowProfile()) {
+            $this->_mapfields = array_values($mapfields['gui_data']['map'][$mapfields['entity_type']]['db']);
+        } // end
+
+        if (!$this->getVar('fieldnames') && !$this->_mapfields) {
+            $this->addException('Please define field mapping', Mage_Dataflow_Model_Convert_Exception::FATAL);
+            return;
+        }
+
         if ($this->getVar('adapter') && $this->getVar('method')) {
             $adapter = Mage::getModel($this->getVar('adapter'));
         }
@@ -65,6 +77,11 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
         $i = 0;
         while (($line = fgetcsv($fh, null, $fDel, $fEnc)) !== FALSE) {
             $row = $this->parseRow($i, $line);
+
+            if (!$this->getVar('fieldnames') && $i == 0 && $row) {
+                $i = 1;
+            }
+
             if ($row) {
                 $loadMethod = $this->getVar('method');
                 $adapter->$loadMethod(compact('i', 'row'));
@@ -85,10 +102,12 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
                 return;
             } else {
                 foreach ($line as $j=>$f) {
-                    $this->_fields[$j] = 'column'.($j+1);
+//                    $this->_fields[$j] = 'column'.($j+1);
+                    $this->_fields[$j] = $this->_mapfields[$j];
                 }
             }
         }
+
         $resultRow = array();
 
         foreach ($this->_fields as $j=>$f) {

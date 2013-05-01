@@ -27,6 +27,9 @@
 
 class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
 {
+    const CACHE_TAG = 'website';
+    protected $_cacheTag = 'website';
+
     /**
      * Cache configuration array
      *

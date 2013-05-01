@@ -43,7 +43,7 @@ class Mage_Adminhtml_System_DesignController extends Mage_Adminhtml_Controller_A
     {
         $this->loadLayout();
         $this->_setActiveMenu('system');
-        $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
+        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
         $id  = (int) $this->getRequest()->getParam('id');
         $design    = Mage::getModel('core/design');

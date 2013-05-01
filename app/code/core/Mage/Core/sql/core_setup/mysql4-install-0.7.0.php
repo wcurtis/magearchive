@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('core_config_data')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_config_data')};
 CREATE TABLE {$this->getTable('core_config_data')} (
   `config_id` int(10) unsigned NOT NULL auto_increment,
   `scope` enum('default','websites','stores','config') NOT NULL default 'default',
@@ -36,7 +36,7 @@ CREATE TABLE {$this->getTable('core_config_data')} (
   UNIQUE KEY `config_scope` (`scope`,`scope_id`,`path`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('core_email_template')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_email_template')};
 CREATE TABLE {$this->getTable('core_email_template')} (
   `template_id` int(7) unsigned NOT NULL auto_increment,
   `template_code` varchar(150) default NULL,
@@ -53,7 +53,7 @@ CREATE TABLE {$this->getTable('core_email_template')} (
   KEY `modified_at` (`modified_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Email templates';
 
-DROP TABLE IF EXISTS {$this->getTable('core_language')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_language')};
 CREATE TABLE {$this->getTable('core_language')} (
   `language_code` varchar(2) NOT NULL default '',
   `language_title` varchar(32) NOT NULL default '',
@@ -62,14 +62,14 @@ CREATE TABLE {$this->getTable('core_language')} (
 
 insert  into {$this->getTable('core_language')}(`language_code`,`language_title`) values ('aa','Afar'),('ab','Abkhazian'),('af','Afrikaans'),('am','Amharic'),('ar','Arabic'),('as','Assamese'),('ay','Aymara'),('az','Azerbaijani'),('ba','Bashkir'),('be','Byelorussian'),('bg','Bulgarian'),('bh','Bihari'),('bi','Bislama'),('bn','Bengali'),('bo','Tibetan'),('br','Breton'),('ca','Catalan'),('co','Corsican'),('cs','Czech'),('cy','Welsh'),('da','Danish'),('de','German'),('dz','Bhutani'),('el','Greek'),('en','English'),('eo','Esperanto'),('es','Spanish'),('et','Estonian'),('eu','Basque'),('fa','Persian'),('fi','Finnish'),('fj','Fiji'),('fo','Faeroese'),('fr','French'),('fy','Frisian'),('ga','Irish'),('gd','Gaelic'),('gl','Galician'),('gn','Guarani'),('gu','Gujarati'),('ha','Hausa'),('hi','Hindi'),('hr','Croatian'),('hu','Hungarian'),('hy','Armenian'),('ia','Interlingua'),('ie','Interlingue'),('ik','Inupiak'),('in','Indonesian'),('is','Icelandic'),('it','Italian'),('iw','Hebrew'),('ja','Japanese'),('ji','Yiddish'),('jw','Javanese'),('ka','Georgian'),('kk','Kazakh'),('kl','Greenlandic'),('km','Cambodian'),('kn','Kannada'),('ko','Korean'),('ks','Kashmiri'),('ku','Kurdish'),('ky','Kirghiz'),('la','Latin'),('ln','Lingala'),('lo','Laothian'),('lt','Lithuanian'),('lv','Latvian'),('mg','Malagasy'),('mi','Maori'),('mk','Macedonian'),('ml','Malayalam'),('mn','Mongolian'),('mo','Moldavian'),('mr','Marathi'),('ms','Malay'),('mt','Maltese'),('my','Burmese'),('na','Nauru'),('ne','Nepali'),('nl','Dutch'),('no','Norwegian'),('oc','Occitan'),('om','Oromo'),('or','Oriya'),('pa','Punjabi'),('pl','Polish'),('ps','Pashto'),('pt','Portuguese'),('qu','Quechua'),('rm','Rhaeto-Romance'),('rn','Kirundi'),('ro','Romanian'),('ru','Russian'),('rw','Kinyarwanda'),('sa','Sanskrit'),('sd','Sindhi'),('sg','Sangro'),('sh','Serbo-Croatian'),('si','Singhalese'),('sk','Slovak'),('sl','Slovenian'),('sm','Samoan'),('sn','Shona'),('so','Somali'),('sq','Albanian'),('sr','Serbian'),('ss','Siswati'),('st','Sesotho'),('su','Sudanese'),('sv','Swahili'),('sw','Swedish'),('ta','Tamil'),('te','Tegulu'),('tg','Tajik'),('th','Thai'),('ti','Tigrinya'),('tk','Turkmen'),('tl','Tagalog'),('tn','Setswana'),('to','Tonga'),('tr','Turkish'),('ts','Tsonga'),('tt','Tatar'),('tw','Twi'),('uk','Ukrainian'),('ur','Urdu'),('uz','Uzbek'),('vi','Vietnamese'),('vo','Volapuk'),('wo','Wolof'),('xh','Xhosa'),('yo','Yoruba'),('zh','Chinese'),('zu','Zulu');
 
-DROP TABLE IF EXISTS {$this->getTable('core_resource')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_resource')};
 CREATE TABLE {$this->getTable('core_resource')} (
   `code` varchar(50) NOT NULL default '',
   `version` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Resource version registry';
 
-DROP TABLE IF EXISTS {$this->getTable('core_session')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_session')};
 CREATE TABLE {$this->getTable('core_session')} (
   `session_id` varchar(255) NOT NULL default '',
   `website_id` smallint(5) unsigned default NULL,
@@ -80,7 +80,7 @@ CREATE TABLE {$this->getTable('core_session')} (
   CONSTRAINT `FK_SESSION_WEBSITE` FOREIGN KEY (`website_id`) REFERENCES {$this->getTable('core_website')} (`website_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Session data store';
 
-DROP TABLE IF EXISTS {$this->getTable('core_store')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_store')};
 CREATE TABLE {$this->getTable('core_store')} (
   `store_id` smallint(5) unsigned NOT NULL auto_increment,
   `code` varchar(32) NOT NULL default '',
@@ -100,7 +100,7 @@ CREATE TABLE {$this->getTable('core_store')} (
 
 insert  into {$this->getTable('core_store')}(`store_id`,`code`,`language_code`,`website_id`,`name`,`sort_order`,`is_active`) values (0,'default','en',0,'Default',0,1),(1,'base','en',1,'English',0,1);
 
-DROP TABLE IF EXISTS {$this->getTable('core_translate')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_translate')};
 CREATE TABLE {$this->getTable('core_translate')} (
   `key_id` int(10) unsigned NOT NULL auto_increment,
   `string` varchar(255) NOT NULL default '',
@@ -113,7 +113,7 @@ CREATE TABLE {$this->getTable('core_translate')} (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Translation data';
 
 
-DROP TABLE IF EXISTS {$this->getTable('core_website')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_website')};
 CREATE TABLE {$this->getTable('core_website')} (
   `website_id` smallint(5) unsigned NOT NULL auto_increment,
   `code` varchar(32) NOT NULL default '',
@@ -127,7 +127,7 @@ CREATE TABLE {$this->getTable('core_website')} (
 
 insert  into {$this->getTable('core_website')}(`website_id`,`code`,`name`,`sort_order`,`is_active`) values (0,'default','Default',0,1),(1,'base','Main Website',0,1);
 
-DROP TABLE IF EXISTS {$this->getTable('core_layout_update')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_layout_update')};
 CREATE TABLE {$this->getTable('core_layout_update')} (
   `layout_update_id` int(10) unsigned NOT NULL auto_increment,
   `handle` varchar(255) default NULL,
@@ -136,7 +136,7 @@ CREATE TABLE {$this->getTable('core_layout_update')} (
   KEY `handle` (`handle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('core_layout_link')};
+-- DROP TABLE IF EXISTS {$this->getTable('core_layout_link')};
 CREATE TABLE {$this->getTable('core_layout_link')} (
   `layout_link_id` int(10) unsigned NOT NULL auto_increment,
   `store_id` smallint(5) unsigned NOT NULL default '0',
@@ -150,7 +150,7 @@ CREATE TABLE {$this->getTable('core_layout_link')} (
   CONSTRAINT `FK_core_layout_link_update` FOREIGN KEY (`layout_update_id`) REFERENCES {$this->getTable('core_layout_update')} (`layout_update_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-drop table if exists {$this->getTable('core_url_rewrite')};
+-- DROP TABLE if exists {$this->getTable('core_url_rewrite')};
 create table {$this->getTable('core_url_rewrite')} (
     `url_rewrite_id` int unsigned not null auto_increment primary key,
     `store_id` smallint unsigned not null,
@@ -166,7 +166,7 @@ create table {$this->getTable('core_url_rewrite')} (
     foreign key (`store_id`) references {$this->getTable('core_store')} (`store_id`) on delete cascade on update cascade
 ) engine=InnoDB default charset=utf8;
 
-drop table if exists {$this->getTable('core_url_rewrite_tag')};
+-- DROP TABLE if exists {$this->getTable('core_url_rewrite_tag')};
 create table {$this->getTable('core_url_rewrite_tag')} (
     `url_rewrite_tag_id` int unsigned not null auto_increment primary key,
     `url_rewrite_id` int unsigned not null,
@@ -176,7 +176,7 @@ create table {$this->getTable('core_url_rewrite_tag')} (
     foreign key (`url_rewrite_id`) references {$this->getTable('core_url_rewrite')} (`url_rewrite_id`) on delete cascade on update cascade
 ) engine=InnoDB default charset=utf8;
 
-drop table if exists {$this->getTable('design_change')};
+-- DROP TABLE if exists {$this->getTable('design_change')};
 CREATE TABLE {$this->getTable('design_change')} (
 `design_change_id` INT NOT NULL AUTO_INCREMENT,
 `store_id` smallint(5) unsigned NOT NULL ,

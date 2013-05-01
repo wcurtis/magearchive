@@ -27,13 +27,6 @@
 
 class Mage_Reports_Model_Mysql4_Shopcart_Product_Collection extends Mage_Reports_Model_Mysql4_Product_Collection
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_joinFields();
-    }
-
     protected function _joinFields()
     {
         parent::_joinFields();

@@ -102,9 +102,13 @@ class Mage_GoogleCheckout_Model_Api_Xml_Callback extends Mage_GoogleCheckout_Mod
         if ($gRequestMethods = $this->getData('root/calculate/shipping/method')) {
             $carriers = array();
             foreach (Mage::getStoreConfig('carriers') as $carrierCode=>$carrierConfig) {
+                if (!isset($carrierConfig['title'])) {
+                    continue;
+                }
+                $title = $carrierConfig['title'];
                 foreach ($gRequestMethods as $method) {
-                    $title = (string)$carrierConfig->title;
-                    if ($title && strpos($method['name'], $title)===0) {
+                    $methodName = is_array($method) ? $method['name'] : $method;
+                    if ($title && $method && strpos($methodName, $title)===0) {
                         $carriers[$carrierCode] = $title;
                     }
                 }
@@ -125,7 +129,7 @@ class Mage_GoogleCheckout_Model_Api_Xml_Callback extends Mage_GoogleCheckout_Mod
             }
 
             foreach ($gRequestMethods as $method) {
-                $methodName = $method['name'];
+                $methodName = is_array($method) ? $method['name'] : $method;
                 $result = new GoogleResult($addressId);
                 if (!empty($errors)) {
                     $continue = false;
@@ -162,6 +166,15 @@ class Mage_GoogleCheckout_Model_Api_Xml_Callback extends Mage_GoogleCheckout_Mod
     protected function _responseNewOrderNotification()
     {
         $this->getGResponse()->SendAck();
+
+        // LOOK FOR EXISTING ORDER TO AVOID DUPLICATES
+
+        $orders = Mage::getModel('sales/order')->getCollection()
+            ->addAttributeToFilter('ext_order_id', $this->getGoogleOrderNumber());
+
+        if (count($orders)) {
+            return;
+        }
 
         // IMPORT GOOGLE ORDER DATA INTO QUOTE
 

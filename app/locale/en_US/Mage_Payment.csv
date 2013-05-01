@@ -17,7 +17,6 @@
 "Enabled","Enabled"
 "Expiration Date","Expiration Date"
 "Expiration Date: %s/%s","Expiration Date: %s/%s"
-"Free","Free"
 "Make Check payable to","Make Check payable to"
 "Make Check payable to: %s","Make Check payable to: %s"
 "Month","Month"
@@ -37,3 +36,4 @@
 "Title","Title"
 "What is this?","What is this?"
 "Year","Year"
+"Zero Subtotal Checkout","Zero Subtotal Checkout"

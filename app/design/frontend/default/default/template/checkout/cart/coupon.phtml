@@ -19,11 +19,11 @@
  */
 ?>
 <div class="discount-codes box">
-    <form action="<?=$this->getUrl('checkout/cart/couponPost')?>" method="post">
+    <form action="<?php echo $this->getUrl('checkout/cart/couponPost') ?>" method="post">
     <fieldset>
-    <h4><?=$this->__('Discount Codes')?></h4>
-    <p><?=$this->__('Enter your coupon code if you have the one.')?></p>
-    <input class="input-text left" id="coupon_code" name="coupon_code" value="<?=$this->getCouponCode()?>" name="do"/> &nbsp;<button class="form-button-alt" type="submit" name="do" value="<?=$this->__('Apply Coupon')?>"><span><?=$this->__('Apply Coupon')?></span></button>
+    <h4><?php echo $this->__('Discount Codes') ?></h4>
+    <p><?php echo $this->__('Enter your coupon code if you have the one.') ?></p>
+    <input class="input-text left" id="coupon_code" name="coupon_code" value="<?php echo $this->getCouponCode() ?>" name="do"/> &nbsp;<button class="form-button-alt" type="button" onclick="if ($('coupon_code').value.length > 0) { return this.form.submit(); } else { alert('<?php echo $this->__("Please enter a coupon code.") ?>'); }" name="do" value="<?php echo $this->__('Apply Coupon') ?>"><span><?php echo $this->__('Apply Coupon') ?></span></button>
     <div class="clear"></div>
     </fieldset>
 </form>

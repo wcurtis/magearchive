@@ -18,38 +18,38 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Template for block Mage_Adminhtml_Block_Customer_Edit_Tab_View
  */
 ?>
 <div class="entry-edit">
-	<div class="entry-edit-head"><h4 class="icon-head head-customer-view"><?=Mage::helper('customer')->__('Personal Information')?></h4></div>
+	<div class="entry-edit-head"><h4 class="icon-head head-customer-view"><?php echo Mage::helper('customer')->__('Personal Information') ?></h4></div>
 	<fieldset>
         <table cellspacing="2" class="box-left">
             <tr>
-                <td><strong><?=$this->__('Last Logged In:')?></strong></td>
-                <td><?=$this->getLastLoginDate()?> (<?=$this->getCurrentStatus()?>)</td>
+                <td><strong><?php echo $this->__('Last Logged In:') ?></strong></td>
+                <td><?php echo $this->getLastLoginDate() ?> (<?php echo $this->getCurrentStatus() ?>)</td>
             </tr>
             <tr>
-                <td><strong><?=$this->__('Account Created on:')?></strong></td>
-                <td><?=$this->getCreateDate()?></td>
+                <td><strong><?php echo $this->__('Account Created on:') ?></strong></td>
+                <td><?php echo $this->getCreateDate() ?></td>
             </tr>
             <tr>
-                <td><strong><?=$this->__('Account Created in:')?></strong></td>
-                <td><?=$this->getCreatedInStore()?></td>
+                <td><strong><?php echo $this->__('Account Created in:') ?></strong></td>
+                <td><?php echo $this->getCreatedInStore() ?></td>
             </tr>
             <tr>
-                <td><strong><?=$this->__('Customer Group:')?></strong></td>
-                <td><?=$this->getGroupName()?></td>
+                <td><strong><?php echo $this->__('Customer Group:') ?></strong></td>
+                <td><?php echo $this->getGroupName() ?></td>
             </tr>
         </table>
 		<address class="box-right">
-		<strong><?=$this->__('Primary Billing Address')?></strong><br/>
-		<?=$this->getBillingAddressHtml()?>
+		<strong><?php echo $this->__('Primary Billing Address') ?></strong><br/>
+		<?php echo $this->getBillingAddressHtml() ?>
 	</fieldset>
 </div>
-<?=$this->getSalesHtml();?>
+<?php echo $this->getSalesHtml(); ?>
 <div class="clear"></div>
 <br/>
-<?=$this->getAccordionHtml()?>
+<?php echo $this->getAccordionHtml() ?>

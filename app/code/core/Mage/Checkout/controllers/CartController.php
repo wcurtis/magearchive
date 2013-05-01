@@ -58,14 +58,26 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
 
     public function indexAction()
     {
+        Varien_Profiler::start('TEST1: '.__METHOD__);
+        $this->getQuote()->setCacheKey(false); // cache is not used for cart page
+        Varien_Profiler::stop('TEST1: '.__METHOD__);
+        Varien_Profiler::start('TEST2: '.__METHOD__);
         $cart = $this->_getCart();
+        Varien_Profiler::stop('TEST2: '.__METHOD__);
+        Varien_Profiler::start('TEST3: '.__METHOD__);
         $cart->init();
+        Varien_Profiler::stop('TEST3: '.__METHOD__);
+        Varien_Profiler::start('TEST4: '.__METHOD__);
         $cart->save();
+        Varien_Profiler::stop('TEST4: '.__METHOD__);
+        Varien_Profiler::start('TEST5: '.__METHOD__);
 
         $this->loadLayout();
         $this->_initLayoutMessages('checkout/session');
+        $this->_initLayoutMessages('catalog/session');
 
         $this->renderLayout();
+        Varien_Profiler::stop('TEST5: '.__METHOD__);
     }
 
     public function addgroupAction()

@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Template for Mage_Page_Block_Html
  */
@@ -27,27 +27,27 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><?=$this->__('Magento Installation Wizard')?></title>
+    <title><?php echo $this->__('Magento Installation Wizard') ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <link rel="icon" href="<?=$this->getSkinUrl('favicon.ico')?>" type="image/x-icon"/>
-    <link rel="shortcut icon" href="<?=$this->getSkinUrl('favicon.ico')?>" type="image/x-icon"/>
+    <link rel="icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" type="image/x-icon"/>
+    <link rel="shortcut icon" href="<?php echo $this->getSkinUrl('favicon.ico') ?>" type="image/x-icon"/>
 
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/prototype.js" ></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/validation.js" ></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>mage/translate.js" ></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/js.js" ></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/form.js" ></script>
-    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/styles.css')?>" type="text/css" media="all"/>
-    <!--[if IE]><link rel="stylesheet" href="<?=$this->getSkinUrl('css/iestyles.css')?>" type="text/css" media="all"/><![endif]-->
+    <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>prototype/prototype.js" ></script>
+    <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>prototype/validation.js" ></script>
+    <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>mage/translate.js" ></script>
+    <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>varien/js.js" ></script>
+    <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>varien/form.js" ></script>
+    <link rel="stylesheet" href="<?php echo $this->getSkinUrl('css/styles.css') ?>" type="text/css" media="all"/>
+    <!--[if IE]><link rel="stylesheet" href="<?php echo $this->getSkinUrl('css/iestyles.css') ?>" type="text/css" media="all"/><![endif]-->
     <!--[if lt IE 7]>
-        <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7minus.css')?>" type="text/css" media="all"/>
-        <script type="text/javascript" src="<?=$this->getJsUrl()?>lib/ds-sleight.js" ></script>
-        <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/iehover-fix.js" ></script>
+        <link rel="stylesheet" href="<?php echo $this->getSkinUrl('css/ie7minus.css') ?>" type="text/css" media="all"/>
+        <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>lib/ds-sleight.js" ></script>
+        <script type="text/javascript" src="<?php echo $this->getJsUrl() ?>varien/iehover-fix.js" ></script>
     <![endif]-->
 
-    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/clears.css')?>" type="text/css" media="print" />
-    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/print.css')?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php echo $this->getSkinUrl('css/clears.css') ?>" type="text/css" media="print" />
+    <link rel="stylesheet" href="<?php echo $this->getSkinUrl('css/print.css') ?>" type="text/css" media="all" />
 </head>
 
 <body>
@@ -56,44 +56,44 @@
         <div class="header-top-container">
             <div class="header-top">
                 <h1 id="logo">
-                    <a href="<?=$this->getUrl('')?>"><img src="<?=$this->getSkinUrl('images/logo.gif')?>" alt="<?=$this->__('Magento')?>"/></a>
+                    <a href="<?php echo $this->getUrl('') ?>"><img src="<?php echo $this->getSkinUrl('images/logo.gif') ?>" alt="<?php echo $this->__('Magento') ?>"/></a>
                 </h1>
 
-                <?=$this->getChildHtml('topSearch')?>
+                <?php echo $this->getChildHtml('topSearch') ?>
 
                 <div class="quick-access">
                     <div class="account-access">
-                       <strong><?=$this->getWelcome()?></strong> <?=$this->getChildHtml('topLeftLinks')?>
+                       <strong><?php echo $this->getWelcome() ?></strong> <?php echo $this->getChildHtml('topLeftLinks') ?>
                     </div>
                     <div class="shop-access">
-                        <?=$this->getChildHtml('topRightLinks')?>
+                        <?php echo $this->getChildHtml('topRightLinks') ?>
                     </div>
                 </div>
 
             </div>
         </div>
-        <?=$this->getChildHtml('topMenu')?>
+        <?php echo $this->getChildHtml('topMenu') ?>
     </div>
 <!-- [end] header -->
 
         <!-- [start] middle -->
-       <?=$this->getChildHtml('store')?>
+       <?php echo $this->getChildHtml('store') ?>
     <div class="middle-container">
         <div class="middle col-2-left-layout">
-            <?=$this->getChildHtml('breadcrumbs')?>
+            <?php echo $this->getChildHtml('breadcrumbs') ?>
 
 
 
             <!-- [start] left -->
             <div class="col-left side-col">
-                <?=$this->getChildHtml('left')?>&nbsp;
+                <?php echo $this->getChildHtml('left') ?>&nbsp;
             </div>
             <div id="main" class="col-main">
             <!-- [start] global messages -->
-                <?=$this->getChildHtml('global_messages')?>
+                <?php echo $this->getChildHtml('global_messages') ?>
             <!-- [end] global messages -->
             <!-- [start] content -->
-                <?=$this->getChildHtml('content')?>
+                <?php echo $this->getChildHtml('content') ?>
             <!-- [end] content -->
             </div>
         </div>
@@ -105,8 +105,11 @@
     <div class="footer-container">
         <div class="footer">
         <p class="legality">
-            <?=$this->__('Help Us to Keep Magento Healthy')?> - <a href="http://www.magentocommerce.com/bug-tracking" target="varien_external"><strong><?=$this->__('Report All Bugs')?></strong></a> <?=$this->__('(ver. %s)', Mage::getVersion())?><br/>
-            <?=$this->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y'))?>
+            <?php echo $this->__('Help Us to Keep Magento Healthy') ?> - <a href="http://www.magentocommerce.com/bug-tracking" id="bug_tracking_link"><strong><?php echo $this->__('Report All Bugs') ?></strong></a> <?php echo $this->__('(ver. %s)', Mage::getVersion()) ?><br/>
+<script type="text/javascript">
+    $('bug_tracking_link').target = "varien_external";
+</script>
+            <?php echo $this->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y')) ?>
         </p>
         </div>
     </div>

@@ -25,8 +25,8 @@
  * attributes:
  * - customer_class_id
  * - product_class_id
+ * - country_id
  * - region_id
- * - county_id
  * - postcode
  */
 class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
@@ -52,10 +52,9 @@ class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
 
         $cacheKey = $this->getCustomerClassId()
             .'|'.$this->getProductClassId()
+            .'|'.$this->getCountryId()
             .'|'.$this->getRegionId()
-            .'|'.$this->getPostcode()
-            .'|'.$this->getCountyId()
-            .'|'.$this->getCountryId();
+            .'|'.$this->getPostcode();
 
         if (!isset($this->_cache[$cacheKey])) {
             $this->_cache[$cacheKey] = $this->_getResource()->fetchRate($this);

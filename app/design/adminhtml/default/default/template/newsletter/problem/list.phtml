@@ -21,7 +21,7 @@
 <div class="content-header">
 	<table cellspacing="0">
 		<tr>
-			<td style="width:50%;"><h3 class="icon-head head-newsletter-report"><?=Mage::helper('newsletter')->__('Newsletter Problem Reports')?></h3></td>
+			<td style="width:50%;"><h3 class="icon-head head-newsletter-report"><?php echo Mage::helper('newsletter')->__('Newsletter Problem Reports') ?></h3></td>
 			<td class="form-buttons">
 			
 			</td>
@@ -29,14 +29,14 @@
 	</table>
 </div>
 <div>
-    <?=$this->getChildHtml('grid')?>
+    <?php echo $this->getChildHtml('grid') ?>
 </div>
-<?if($this->getShowButtons()):?> 
+<?php if($this->getShowButtons()): ?> 
 <div class="form-buttons">
-	<?=$this->getUnsubscribeButtonHtml();?>
-	<?=$this->getDeleteButtonHtml();?>
+	<?php echo $this->getUnsubscribeButtonHtml(); ?>
+	<?php echo $this->getDeleteButtonHtml(); ?>
 </div>
-<?endif?>
+<?php endif ?>
 <script type="text/javascript">
 <!--
 	var problemController = {

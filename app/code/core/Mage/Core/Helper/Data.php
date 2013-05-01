@@ -169,6 +169,45 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
         return $this->_crypt;
     }
 
+    public function getRandomString($len, $chars=null)
+    {
+        if (is_null($chars)) {
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        }
+		mt_srand(10000000*(double)microtime());
+		for ($i = 0, $str = '', $lc = strlen($chars)-1; $i < $len; $i++) {
+			$str .= $chars[mt_rand(0, $lc)];
+		}
+		return $str;
+    }
+
+    /**
+     * Generate salted hash from password
+     *
+     * @param string $password
+     * @param string|integer|boolean $salt
+     */
+    public function getHash($password, $salt=false)
+    {
+        if (is_integer($salt)) {
+            $salt = $this->getRandomString($salt);
+        }
+        return $salt===false ? md5($password) : md5($salt.$password).':'.$salt;
+    }
+
+    public function validateHash($password, $hash)
+    {
+        $hashArr = explode(':', $hash);
+        switch (count($hashArr)) {
+            case 1:
+                return md5($password) === $hash;
+            case 2:
+                return md5($hashArr[1].$password) === $hashArr[0];
+            default:
+                Mage::throwException('Invalid hash: '.$hash);
+        }
+    }
+
     /**
      * Retrieve store identifier
      *
@@ -234,11 +273,23 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
         $allowedIps = Mage::getStoreConfig('dev/restrict/allow_ips', $storeId);
         if (!empty($allowedIps) && isset($_SERVER['REMOTE_ADDR'])) {
             $allowedIps = preg_split('#\s*,\s*#', $allowedIps, null, PREG_SPLIT_NO_EMPTY);
-            if (array_search($_SERVER['REMOTE_ADDR'], $allowedIps)===false) {
+            if (array_search($_SERVER['REMOTE_ADDR'], $allowedIps)===false
+                && array_search($_SERVER['HTTP_HOST'], $allowedIps)===false) {
                 $allow = false;
             }
         }
 
         return $allow;
     }
+
+    public function getCacheTypes()
+    {
+        $types = array();
+        $config = Mage::getConfig()->getNode('global/cache/types');
+        foreach ($config->children() as $type=>$node) {
+            $types[$type] = (string)$node->label;
+        }
+        return $types;
+    }
+
 }

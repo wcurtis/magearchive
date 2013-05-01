@@ -97,11 +97,8 @@ class Mage_Adminhtml_System_BackupController extends Mage_Adminhtml_Controller_A
             $fileName = 'backup-' . date('YmdHis', $backup->getTime()) . '.sql';
             $fileContent = $backup->getFile();
         }
-
-        header("Content-Disposition: attachment; filename=$fileName");
-        header("Content-Type: application/octet-stream");
-        header("Content-Length: ".strlen($fileContent));
-        $this->getResponse()->setBody($fileContent);
+        
+        $this->_prepareDownloadResponse($fileName, $fileContent);
     }
 
     /**

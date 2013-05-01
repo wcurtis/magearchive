@@ -16,7 +16,7 @@
  * @package    Zend_Locale
  * @subpackage Format
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Format.php 8229 2008-02-20 22:19:48Z thomas $
+ * @version    $Id: Format.php 8884 2008-03-17 06:59:24Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -411,7 +411,8 @@ class Zend_Locale_Format
             $number = $value;
         }
 
-        $prec   = call_user_func(Zend_Locale_Math::$sub, $value, $number, $options['precision']);
+        $prec = call_user_func(Zend_Locale_Math::$sub, $value, $number, $options['precision']);
+        $prec = Zend_Locale_Math::normalize($prec);
         if (iconv_strpos($prec, '-') !== false) {
             $prec = iconv_substr($prec, 1);
         }
@@ -496,6 +497,8 @@ class Zend_Locale_Format
      */
     public static function isNumber($input, array $options = array())
     {
+        $options = array_merge(self::$_Options, self::checkOptions($options));
+
         // Get correct signs for this locale
         $symbols = Zend_Locale_Data::getList($options['locale'],'symbols');
 

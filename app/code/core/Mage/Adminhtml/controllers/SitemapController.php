@@ -27,7 +27,6 @@
  */
 class Mage_Adminhtml_SitemapController extends  Mage_Adminhtml_Controller_Action
 {
-
     /**
      * Init actions
      *
@@ -206,9 +205,11 @@ class Mage_Adminhtml_SitemapController extends  Mage_Adminhtml_Controller_Action
             // generate sitemap
             $xml = $sitemap->generateXml();
             // save it to a file
-            $fp = fopen($sitemap->getPreparedFilename(), 'w');
-            fputs($fp, $xml);
-            fclose($fp);
+            $io = new Varien_Io_File();
+            $io->setAllowCreateFolders(true);
+            $destinationFolder['path'] = $io->getDestinationFolder($sitemap->getPreparedFilename());
+            $io->open($destinationFolder);
+            $io->write($sitemap->getPreparedFilename(), $xml);
         }
         // go to grid
         $this->_redirect('*/*/');

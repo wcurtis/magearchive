@@ -19,16 +19,16 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__("Products tagged with '%s' (<a href='%s'>RSS</a>)", $query, '/tag/index/xml?tag='.$query)?></h3>
+    <h3><?php echo $this->__("Products tagged with '%s' (<a href='%s'>RSS</a>)", $query, '/tag/index/xml?tag='.$query) ?></h3>
 </div>
-<?php if (!empty($collection)) {?>
+<?php if (!empty($collection)) { ?>
 <ol>
 <?php foreach ($collection as $item) { ?>
     <li>
-        <?=$item['name'];?>
+        <?php echo $item['name']; ?>
         <strong>Tags:</strong>
             <?php foreach ($item['tags'] as $tag) { ?>
-                <A href="/tag/index/search?q=<?=$tag['tagname'];?>"><?=$tag['tagname'];?></a> 
+                <A href="/tag/index/search?q=<?php echo $tag['tagname']; ?>"><?php echo $tag['tagname']; ?></a> 
             <?php } ?>
     </li>
 <?php } ?>

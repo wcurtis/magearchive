@@ -100,7 +100,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Compare_Item_Collection ext
         }
 
 
-        $attributesCollection = $this->getEntity()->getConfig()->getAttributeCollection();
+        $attributesCollection = $this->getEntity()->getEntityType()->getAttributeCollection();
 
         $websiteId = Mage::app($this->getStoreId())->getStore()->getWebsiteId();
 

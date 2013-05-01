@@ -13,7 +13,7 @@
  * so we can mail you a copy immediately.
  *
  * @package    Zend_View
- * @subpackage Helpers
+ * @subpackage Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -31,7 +31,7 @@ require_once 'Zend/View/Exception.php';
  * @see        http://www.w3.org/TR/xhtml1/dtds.html
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
- * @subpackage Helpers
+ * @subpackage Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -328,7 +328,7 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
     public function toString($indent = null)
     {
         $indent = (null !== $indent)
-                ? $this->_getWhitespace($indent)
+                ? $this->getWhitespace($indent)
                 : $this->getIndent();
 
         $items = array();

@@ -100,6 +100,11 @@
     margin-top:-7px;
     padding-bottom:3px;
     padding-top:1px;
+	border-top:1px solid #2d444f;	
+}
+
+#nav ul ul  {
+border-top:none;
 }
 
 /* Show menu */
@@ -140,7 +145,7 @@
 
 /* Show menu */
 #nav ul ul ul { left:-10000px; }
-#nav li.over ul li.over ul ul { left:-10000px; }
+#nav li.over ul li.over ul ul { left:-10000px;}
 #nav li.over ul li.over ul li.over ul { left:100px; }
 
 #nav ul ul {
@@ -174,16 +179,13 @@
     }
 
 
-
-
-
-
 /* Fix for the IE fix bug */
 
 #nav iframe {
 position: absolute;
-left: -1px;
-top: 0;
+left: 0px;
+top: -1px;
 z-index: -1;
+background:red;
 filter: progid:DXImageTransform.Microsoft.Alpha(style=0,opacity=0);
 }

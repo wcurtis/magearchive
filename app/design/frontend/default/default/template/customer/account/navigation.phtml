@@ -20,19 +20,19 @@
 ?>
 <div class="box account-nav">
     <div class="head">
-        <h3><?=$this->__('My Account');?></h3>
+        <h3><?php echo $this->__('My Account'); ?></h3>
     </div>
             <ul>
-                <?$_links = $this->getLinks();?>
-                <?$_index = 1;?>
-                <?$_count = count($_links);?>
-                <?foreach ($_links as $_link):?>
-                    <?$_last = ($_index++ >= $_count);?>
-                    <?if ($this->isActive($_link)):?>
-                        <li class="on<?=($_last ? ' last' : '')?>"><?=$_link->getLabel()?></li>
-                    <?else:?>
-                        <li<?=($_last ? ' class="last"' : '')?>><a href="<?=$_link->getUrl()?>"><?=$_link->getLabel()?></a></li>
-                    <?endif;?>
-                <?endforeach;?>
+                <?php $_links = $this->getLinks(); ?>
+                <?php $_index = 1; ?>
+                <?php $_count = count($_links); ?>
+                <?php foreach ($_links as $_link): ?>
+                    <?php $_last = ($_index++ >= $_count); ?>
+                    <?php if ($this->isActive($_link)): ?>
+                        <li class="on<?php echo ($_last ? ' last' : '') ?>"><?php echo $_link->getLabel() ?></li>
+                    <?php else: ?>
+                        <li<?php echo ($_last ? ' class="last"' : '') ?>><a href="<?php echo $_link->getUrl() ?>"><?php echo $_link->getLabel() ?></a></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </ul>
 </div>

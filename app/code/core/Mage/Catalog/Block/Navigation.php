@@ -27,6 +27,25 @@
  */
 class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
 {
+    protected $_categoryInstance = null;
+
+    protected function _construct()
+    {
+        $this->addData(array(
+            'cache_lifetime'    => false,
+            'cache_tags'        => array(Mage_Catalog_Model_Category::CACHE_TAG, Mage_Core_Model_Store_Group::CACHE_TAG),
+        ));
+    }
+
+    public function getCacheKey()
+    {
+        $key = 'CATALOG_NAVIGATION' . md5($this->getTemplate());
+        if ($this->getCurrentCategory()) {
+            $key.=  md5($this->getCurrentCategory()->getPath());
+        }
+        $key.= Mage::app()->getStore()->getId();
+        return $key;
+    }
 
     /**
      * Get catagories of current store
@@ -36,7 +55,6 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
     public function getStoreCategories()
     {
         $helper = Mage::helper('catalog/category');
-        /* @var $helper Mage_Catalog_Helper_Category */
         return $helper->getStoreCategories();
     }
 
@@ -56,14 +74,13 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('is_anchor')
             ->addIdFilter($category->getChildren())
+            ->joinUrlRewrite()
             ->load();
 
         $productCollection = Mage::getResourceModel('catalog/product_collection');
         $layer->prepareProductCollection($productCollection);
         $productCollection->addCountToCategories($collection);
         return $collection;
-        /*$parent = $this->getRequest()->getParam('id');
-        return $this->_getChildCategories($parent, 1);*/
     }
 
     /**
@@ -74,11 +91,22 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
      */
     public function isCategoryActive($category)
     {
+        if ($this->getCurrentCategory()) {
+            return in_array($category->getId(), $this->getCurrentCategory()->getPathIds());
+        }
         return false;
     }
 
+    protected function _getCategoryInstance()
+    {
+        if (is_null($this->_categoryInstance)) {
+            $this->_categoryInstance = Mage::getModel('catalog/category');
+        }
+        return $this->_categoryInstance;
+    }
+
     /**
-     * Enter description here...
+     * Get url for category data
      *
      * @param Mage_Catalog_Model_Category $category
      * @return string
@@ -86,11 +114,11 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
     public function getCategoryUrl($category)
     {
         if ($category instanceof Mage_Catalog_Model_Category) {
-            $url = $category->getCategoryUrl();
+            $url = $category->getUrl();
         } else {
-            $url = Mage::getModel('catalog/category')
+            $url = $this->_getCategoryInstance()
                 ->setData($category->getData())
-                ->getCategoryUrl();
+                ->getUrl();
         }
         return $url;
     }
@@ -143,7 +171,9 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
             $j = 0;
             $htmlChildren = '';
             foreach ($children as $child) {
-                $htmlChildren.= $this->drawItem($child, $level+1, ++$j >= $cnt);
+                if ($child->getIsActive()) {
+                    $htmlChildren.= $this->drawItem($child, $level+1, ++$j >= $cnt);
+                }
             }
 
             if (!empty($htmlChildren)) {
@@ -164,7 +194,10 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
      */
     public function getCurrentCategory()
     {
-        return Mage::getSingleton('catalog/layer')->getCurrentCategory();
+        if (Mage::getSingleton('catalog/layer')) {
+            return Mage::getSingleton('catalog/layer')->getCurrentCategory();
+        }
+        return false;
     }
 
     /**
@@ -174,7 +207,10 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
      */
     public function getCurrentCategoryPath()
     {
-        return explode(',', $this->getCurrentCategory()->getPathInStore());
+        if ($this->getCurrentCategory()) {
+            return explode(',', $this->getCurrentCategory()->getPathInStore());
+        }
+        return array();
     }
 
     /**

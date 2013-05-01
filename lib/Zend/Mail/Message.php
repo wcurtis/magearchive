@@ -16,7 +16,7 @@
  * @package    Zend_Mail
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Message.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Message.php 8569 2008-03-06 14:30:57Z nico $
  */
 
 
@@ -25,6 +25,10 @@
  */
 require_once 'Zend/Mail/Part.php';
 
+/**
+ * Zend_Mail_Message_Interface
+ */
+require_once 'Zend/Mail/Message/Interface.php';
 
 /**
  * @category   Zend
@@ -32,7 +36,7 @@ require_once 'Zend/Mail/Part.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Mail_Message extends Zend_Mail_Part
+class Zend_Mail_Message extends Zend_Mail_Part implements Zend_Mail_Message_Interface
 {
     /**
      * flags for this message

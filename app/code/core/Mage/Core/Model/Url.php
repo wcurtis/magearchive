@@ -181,7 +181,7 @@ class Mage_Core_Model_Url extends Varien_Object
     public function getRequest()
     {
         if (!$this->_request) {
-            $this->_request = Mage::app()->getFrontController()->getRequest();
+            $this->_request = Mage::app()->getRequest();
         }
         return $this->_request;
     }

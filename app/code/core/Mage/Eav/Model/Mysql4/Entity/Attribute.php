@@ -27,15 +27,28 @@
  */
 class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abstract
 {
+    protected static $_entityAttributes = null;
 
-    /**
-     * Enter description here...
-     *
-     */
     protected function _construct()
     {
         $this->_init('eav/attribute', 'attribute_id');
-        $this->_uniqueFields = array( array('field' => array('attribute_code','entity_type_id'), 'title' => Mage::helper('eav')->__('Attribute with the same code') ) );
+        $this->_uniqueFields = array(
+            array('field' => array('attribute_code','entity_type_id'),
+                'title' => Mage::helper('eav')->__('Attribute with the same code')
+        ));
+    }
+
+    protected function _loadTypeAttributes($entityTypeId)
+    {
+        if (!isset(self::$_entityAttributes[$entityTypeId])) {
+            $select = $this->_getReadAdapter()->select()->from($this->getMainTable())
+                ->where('entity_type_id=?', $entityTypeId);
+            $data = $this->_getReadAdapter()->fetchAll($select);
+            foreach ($data as $row) {
+            	self::$_entityAttributes[$entityTypeId][$row['attribute_code']] = $row;
+            }
+        }
+        return $this;
     }
 
     /**
@@ -48,16 +61,11 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
      */
     public function loadByCode(Mage_Core_Model_Abstract $object, $entityTypeId, $code)
     {
-        $read = $this->_getReadAdapter();
-        $select = $read->select()->from($this->getMainTable())
-            ->where('entity_type_id=?', $entityTypeId)
-            ->where('attribute_code=?', $code);
-        $data = $read->fetchRow($select);
-
+        $this->_loadTypeAttributes($entityTypeId);
+        $data = isset(self::$_entityAttributes[$entityTypeId][$code]) ? self::$_entityAttributes[$entityTypeId][$code] : array();
         if (!$data) {
             return false;
         }
-
         $object->setData($data);
         $this->_afterLoad($object);
         return true;
@@ -146,9 +154,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 ->save();
         }
         $applyTo = $object->getApplyTo();
+
         if (is_array($applyTo)) {
             $object->setApplyTo(implode(',', $applyTo));
         }
+
+
         /**
          * @todo need use default source model of entity type !!!
          */

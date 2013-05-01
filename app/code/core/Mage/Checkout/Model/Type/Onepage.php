@@ -188,6 +188,7 @@ class Mage_Checkout_Model_Type_Onepage
                 $shipping->addData($billing->getData())
                     ->setSameAsBilling(1)
                     ->setCollectShippingRates(true);
+                $this->getQuote()->collectTotals();
                 $this->getCheckout()->setStepData('shipping', 'complete', true);
                 break;
             case 0:
@@ -236,7 +237,7 @@ class Mage_Checkout_Model_Type_Onepage
         }
         $address->implodeStreetAddress();
         $address->setCollectShippingRates(true);
-        $this->getQuote()->save();
+        $this->getQuote()->collectTotals()->save();
 
         $this->getCheckout()
             ->setStepData('shipping', 'complete', true)
@@ -275,6 +276,7 @@ class Mage_Checkout_Model_Type_Onepage
         }
         $payment = $this->getQuote()->getPayment();
         $payment->importData($data);
+
         $this->getQuote()->save();
         $this->getCheckout()
             ->setStepData('payment', 'complete', true)
@@ -404,15 +406,19 @@ class Mage_Checkout_Model_Type_Onepage
             $customer->sendNewAccountEmail();
         }
 
-        $order->save();
-
-        Mage::dispatchEvent('checkout_type_onepage_save_order_after', array('order'=>$order, 'quote'=>$this->getQuote()));
-
         /**
          * a flag to set that there will be redirect to third party after confirmation
          * eg: paypal standard ipn
          */
         $redirectUrl = $this->getQuote()->getPayment()->getOrderPlaceRedirectUrl();
+        if(!$redirectUrl){
+            $order->setEmailSent(true);
+        }
+
+        $order->save();
+
+        Mage::dispatchEvent('checkout_type_onepage_save_order_after', array('order'=>$order, 'quote'=>$this->getQuote()));
+
 
         /**
          * need to have somelogic to set order as new status to make sure order is not finished yet

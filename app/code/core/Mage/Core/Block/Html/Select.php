@@ -109,7 +109,7 @@ class Mage_Core_Block_Html_Select extends Mage_Core_Block_Abstract
                 $label = $option;
                 $isArrayOption = false;
             }
-            $selected = in_array($value, $values) ? ' selected' : '';
+            $selected = in_array($value, $values) ? ' selected="selected"' : '';
             $html.= '<option value="'.$value.'"'.$selected.'>'.$label.'</option>';
         }
         $html.= '</select>';

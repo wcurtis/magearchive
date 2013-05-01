@@ -19,23 +19,23 @@
  */
 ?>
 
-<?$_width=$this->getImageWidth()?>
-<div class="a-center"><?if($_prevUrl = $this->getPreviusImageUrl()):?>
-<a href="<?=$_prevUrl?>" class="product-gallery-nav"><strong>&laquo; <?=$this->__('Prev')?></strong></a>
-<?endif;?>
-<?if($_nextUrl = $this->getNextImageUrl()):?>
-<a href="<?=$_nextUrl?>" class="product-gallery-nav"><strong><?=$this->__('Next')?> &raquo;</strong></a>
-<?endif;?>
+<?php $_width=$this->getImageWidth() ?>
+<div class="a-center"><?php if($_prevUrl = $this->getPreviusImageUrl()): ?>
+<a href="<?php echo $_prevUrl ?>" class="product-gallery-nav"><strong>&laquo; <?php echo $this->__('Prev') ?></strong></a>
+<?php endif; ?>
+<?php if($_nextUrl = $this->getNextImageUrl()): ?>
+<a href="<?php echo $_nextUrl ?>" class="product-gallery-nav"><strong><?php echo $this->__('Next') ?> &raquo;</strong></a>
+<?php endif; ?>
 </div>
-<div class="a-left"><?=$this->htmlEscape($this->getCurrentImage()->getLabel())?></div>
+<div class="a-left"><?php echo $this->htmlEscape($this->getCurrentImage()->getLabel()) ?></div>
 <div class="clear"></div>
-<p><img <?if($_width):?>width="<?=$_width?>"<?endif;?> src="<?=$this->helper('catalog/image')->init($this->getProduct(), 'image', $this->getImageFile());?>" alt="<?=$this->htmlEscape($this->getCurrentImage()->getLabel())?>" title="<?=$this->htmlEscape($this->getCurrentImage()->getLabel())?>" id="product-gallery-image"/></p>
-<div class="a-center"><?if($_prevUrl = $this->getPreviusImageUrl()):?>
-<a href="<?=$_prevUrl?>" class="product-gallery-nav"><strong>&laquo; <?=$this->__('Prev')?></strong></a>
-<?endif;?>
-<?if($_nextUrl = $this->getNextImageUrl()):?>
-<a href="<?=$_nextUrl?>" class="product-gallery-nav"><strong><?=$this->__('Next')?> &raquo;</strong></a>
-<?endif;?>
+<p><img <?php if($_width): ?>width="<?php echo $_width ?>"<?php endif; ?> src="<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'image', $this->getImageFile()); ?>" alt="<?php echo $this->htmlEscape($this->getCurrentImage()->getLabel()) ?>" title="<?php echo $this->htmlEscape($this->getCurrentImage()->getLabel()) ?>" id="product-gallery-image"/></p>
+<div class="a-center"><?php if($_prevUrl = $this->getPreviusImageUrl()): ?>
+<a href="<?php echo $_prevUrl ?>" class="product-gallery-nav"><strong>&laquo; <?php echo $this->__('Prev') ?></strong></a>
+<?php endif; ?>
+<?php if($_nextUrl = $this->getNextImageUrl()): ?>
+<a href="<?php echo $_nextUrl ?>" class="product-gallery-nav"><strong><?php echo $this->__('Next') ?> &raquo;</strong></a>
+<?php endif; ?>
 </div>
 
 <script type="text/javascript">

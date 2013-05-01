@@ -18,10 +18,10 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($this->getRatingSummary()->getCount()):?>
+<?php if($this->getRatingSummary()->getCount()): ?>
     <div class="rating-box">
-        <div class="rating" style="width: <?=ceil($this->getRatingSummary()->getSum() / ($this->getRatingSummary()->getCount()))?>%;"></div>
+        <div class="rating" style="width: <?php echo ceil($this->getRatingSummary()->getSum() / ($this->getRatingSummary()->getCount())) ?>%;"></div>
     </div>
-<?else:?>
-    <?=Mage::helper('rating')->__("Rating isn't Available")?>
-<?endif;?>
+<?php else: ?>
+    <?php echo Mage::helper('rating')->__("Rating isn't Available") ?>
+<?php endif; ?>

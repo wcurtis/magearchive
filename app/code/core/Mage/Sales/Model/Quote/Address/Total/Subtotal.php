@@ -35,12 +35,11 @@ class Mage_Sales_Model_Quote_Address_Total_Subtotal extends Mage_Sales_Model_Quo
         $address->setTotalQty(0);
 
         $items = $address->getAllItems();
-        if (count($items)) {
-            foreach ($items as $item) {
-            	if (!$this->_initItem($address, $item) || $item->getQty()<=0) {
-            	    $this->_removeItem($address, $item);
-            	}
-            }
+
+        foreach ($items as $item) {
+        	if (!$this->_initItem($address, $item) || $item->getQty()<=0) {
+        	    $this->_removeItem($address, $item);
+        	}
         }
 
         $address->setGrandTotal($address->getSubtotal());

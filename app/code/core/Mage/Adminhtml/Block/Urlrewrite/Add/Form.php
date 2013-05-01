@@ -69,11 +69,11 @@ class Mage_Adminhtml_Block_Urlrewrite_Add_Form extends Mage_Adminhtml_Block_Widg
             $fieldset->addField('store_id', 'select', array(
                 'name'      => 'store_id',
                 'label'     => $this->__('Store'),
-                'title'     => $this->__('Store'), 
+                'title'     => $this->__('Store'),
                 'required'  => true,
                 'value'     => Mage::app()->getStore(true)->getId(),
-                'options'   => array('' => '', 
-                    Mage::app()->getStore(true)->getId() => Mage::app()->getStore(true)->getName()       
+                'options'   => array('' => '',
+                    Mage::app()->getStore(true)->getId() => Mage::app()->getStore(true)->getName()
                 )
             ));
         }
@@ -132,8 +132,8 @@ class Mage_Adminhtml_Block_Urlrewrite_Add_Form extends Mage_Adminhtml_Block_Widg
 
         $gridFieldset = $form->addFieldset('add_urlrewrite_type', array('legend' => Mage::helper('adminhtml')->__('Please select a type')));
         $gridFieldset->addField('type', 'select', array(
-	        'label' 	=> Mage::helper('adminhtml')->__('Type'),
-	        'title' 	=> Mage::helper('adminhtml')->__('Type'),
+	        'label' 	=> Mage::helper('adminhtml')->__('Create Urlrewrite for'),
+	        'title' 	=> Mage::helper('adminhtml')->__('Create Urlrewrite for'),
 	        'name' 		=> 'type',
 	        'required' 	=> true,
 	        'options'	=> array('' => '',

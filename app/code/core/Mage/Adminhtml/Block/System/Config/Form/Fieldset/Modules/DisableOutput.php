@@ -84,11 +84,9 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset_Modules_DisableOutput
             array(
                 'name'          => 'groups[modules_disable_output][fields]['.$moduleName.'][value]',
                 'label'         => $moduleName,
-                'value'         => isset($data['value']) ? $data['value'] : '',
+                'value'         => $data,
                 'values'		=> $this->_getValues(),
-                'default_value' => isset($data['default_value']) ? $data['default_value'] : '',
-                'old_value'     => isset($data['old_value']) ? $data['old_value'] : '',
-                'inherit'       => isset($data['inherit']) ? $data['inherit'] : '',
+                'inherit'       => isset($configData[$path]) ? false : true,
                 'can_use_default_value' => $this->getForm()->canUseDefaultValue($e),
                 'can_use_website_value' => $this->getForm()->canUseWebsiteValue($e),
             ))->setRenderer($this->_getFieldRenderer());

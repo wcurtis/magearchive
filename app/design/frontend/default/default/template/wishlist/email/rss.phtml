@@ -19,7 +19,7 @@
  */
 ?>
 <div>
-<?=$this->__("RSS link to %s's wishlist",$this->helper('wishlist')->getCustomerName())?>
+<?php echo $this->__("RSS link to %s's wishlist",$this->helper('wishlist')->getCustomerName()) ?>
 <br/>
-<a href="<?=$this->helper('wishlist')->getRssUrl();?>"><?=$this->helper('wishlist')->getRssUrl();?></a>
+<a href="<?php echo $this->helper('wishlist')->getRssUrl(); ?>"><?php echo $this->helper('wishlist')->getRssUrl(); ?></a>
 </div>

@@ -26,22 +26,50 @@
  */
 class Mage_Catalog_Block_Layer_View extends Mage_Core_Block_Template
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('catalog/layer/view.phtml');
     }
-    
+
     public function _prepareLayout()
     {
         $this->setChild('layer_state',
             $this->getLayout()->createBlock('catalog/layer_state'));
-            
+
         $this->setChild('category_filter',
             $this->getLayout()->createBlock('catalog/layer_filter_category')->init());
-        $this->setChild('price_filter',
-            $this->getLayout()->createBlock('catalog/layer_filter_price')->init());
-            
+
+
+
+
+
+
+        /* --- !!! TO BE REMOVED!!! --- */
+        /*
+        $this->setChild('price_filterold',
+            $this->getLayout()->createBlock('catalog/layer_filter_priceold')->init());
+
+        $filterableAttributes = $this->_getFilterableAttributes();
+        foreach ($filterableAttributes as $attribute) {
+            $this->setChild($attribute->getAttributeCode().'_filterold',
+                $this->getLayout()->createBlock('catalog/layer_filter_attributeold')
+                    ->setAttributeModel($attribute)
+                    ->init());
+        }
+        */
+        /* --- !!! TO BE REMOVED!!! --- */
+
+
+
+
+
+
+        if (Mage::getStoreConfigFlag('catalog/frontend/price_range_layered_navigation')) {
+            $this->setChild('_price_filter',
+                $this->getLayout()->createBlock('catalog/layer_filter_price')->init());
+        }
+
         $filterableAttributes = $this->_getFilterableAttributes();
         foreach ($filterableAttributes as $attribute) {
             $this->setChild($attribute->getAttributeCode().'_filter',
@@ -49,14 +77,16 @@ class Mage_Catalog_Block_Layer_View extends Mage_Core_Block_Template
                     ->setAttributeModel($attribute)
                     ->init());
         }
+
+
         return parent::_prepareLayout();
     }
-    
+
     public function getStateHtml()
     {
         return $this->getChildHtml('layer_state');
     }
-    
+
     /**
      * Retrieve filters
      *
@@ -69,27 +99,50 @@ class Mage_Catalog_Block_Layer_View extends Mage_Core_Block_Template
             $filters[] = $categoryFilter;
         }
 
+
+
+
+
+
+        /* --- !!! TO BE REMOVED!!! --- */
+        /*
+        $filters[] = $this->getChild('price_filterold');
+
+        $filterableAttributes = $this->_getFilterableAttributes();
+        foreach ($filterableAttributes as $attribute) {
+            $filters[] = $this->getChild($attribute->getAttributeCode().'_filterold');
+        }
+        */
+        /* --- !!! TO BE REMOVED!!! --- */
+
+
+
+
+
+
+
         if ($priceFilter = $this->_getPriceFilter()) {
             $filters[] = $priceFilter;
         }
-        
+
         $filterableAttributes = $this->_getFilterableAttributes();
         foreach ($filterableAttributes as $attribute) {
             $filters[] = $this->getChild($attribute->getAttributeCode().'_filter');
         }
+
         return $filters;
     }
-    
+
     protected function _getCategoryFilter()
     {
         return $this->getChild('category_filter');
     }
-    
+
     protected function _getPriceFilter()
     {
-        return $this->getChild('price_filter');
+        return $this->getChild('_price_filter');
     }
-    
+
     protected function _getFilterableAttributes()
     {
         $attributes = $this->getData('_filterable_attributes');
@@ -99,7 +152,7 @@ class Mage_Catalog_Block_Layer_View extends Mage_Core_Block_Template
         }
         return $attributes;
     }
-    
+
     public function canShowOptions()
     {
         foreach ($this->getFilters() as $filter) {
@@ -109,7 +162,7 @@ class Mage_Catalog_Block_Layer_View extends Mage_Core_Block_Template
         }
         return false;
     }
-    
+
     public function canShowBlock()
     {
         return $this->canShowOptions() || count(Mage::getSingleton('catalog/layer')->getState()->getFilters());

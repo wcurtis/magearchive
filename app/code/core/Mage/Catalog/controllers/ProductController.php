@@ -40,10 +40,12 @@ class Mage_Catalog_ProductController extends Mage_Core_Controller_Front_Action
             return false;
         }
 
+        $category = null;
         if ($categoryId) {
             $category = Mage::getModel('catalog/category')->load($categoryId);
             Mage::register('current_category', $category);
         }
+
 
         Mage::register('current_product', $product);
         Mage::getSingleton('catalog/session')->setLastViewedProductId($product->getId());
@@ -51,6 +53,8 @@ class Mage_Catalog_ProductController extends Mage_Core_Controller_Front_Action
         Mage::register('product', $product); // this need remove after all replace
 
         Mage::getModel('catalog/design')->applyDesign($product, 1);
+
+        Mage::dispatchEvent('catalog_block_product_view', array('product'=>$product, 'category'=>$category));
         return true;
     }
 
@@ -65,6 +69,7 @@ class Mage_Catalog_ProductController extends Mage_Core_Controller_Front_Action
             $this->_initSendToFriendModel();
 
             $product = Mage::registry('product');
+            /* @var $product Mage_Catalog_Model_Product */
             if (!Mage::helper('catalog/product')->canShow($product)) {
                 /**
                  * @todo Change Group Store switcher
@@ -83,6 +88,7 @@ class Mage_Catalog_ProductController extends Mage_Core_Controller_Front_Action
             $update->addHandle('default');
             $this->addActionLayoutHandles();
 
+            $update->addHandle('PRODUCT_TYPE_'.$product->getTypeId());
             $update->addHandle('PRODUCT_'.$product->getId());
 
             $this->loadLayoutUpdates();

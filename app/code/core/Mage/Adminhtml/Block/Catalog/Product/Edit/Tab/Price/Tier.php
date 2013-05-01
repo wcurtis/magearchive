@@ -28,12 +28,17 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Admi
 {
 
     protected $_element = null;
-
     protected $_customerGroups = null;
+    protected $_websites = null;
 
     public function __construct()
     {
         $this->setTemplate('catalog/product/edit/price/tier.phtml');
+    }
+
+    public function getProduct()
+    {
+        return Mage::registry('product');
     }
 
     public function render(Varien_Data_Form_Element_Abstract $element)
@@ -60,18 +65,16 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Admi
 
         if (is_array($data)) {
             usort($data, array($this, '_sortTierPrices'));
-            foreach ($data as $value) {
-                if (isset($value['price'])) {
-                    $value['price'] = number_format($value['price'], 2, null, '');
-                }
-                $values[] = $value;
-            }
+            $values = $data;
         }
         return $values;
     }
 
     protected function _sortTierPrices($a, $b)
     {
+        if ($a['website_id']!=$b['website_id']) {
+            return $a['website_id']<$b['website_id'] ? -1 : 1;
+        }
         if ($a['cust_group']!=$b['cust_group']) {
             return $this->getCustomerGroups($a['cust_group'])<$this->getCustomerGroups($b['cust_group']) ? -1 : 1;
         }
@@ -97,34 +100,57 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Admi
             (isset($this->_customerGroups[$groupId]) ? $this->_customerGroups[$groupId] : null);
     }
 
+    public function getWebsiteCount()
+    {
+        return count($this->getWebsites());
+    }
+
+    public function getWebsites()
+    {
+        if (!is_null($this->_websites)) {
+            return $this->_websites;
+        }
+        $websites = array();
+        $websites[0] = array(
+            'name'      => $this->__('All Websites'),
+            'currency'  => Mage::app()->getBaseCurrencyCode()
+        );
+        if (Mage::app()->isSingleStoreMode() || $this->getElement()->getEntityAttribute()->isScopeGlobal()) {
+            return $websites;
+        }
+        elseif ($storeId = $this->getProduct()->getStoreId()) {
+            $website = Mage::app()->getStore($storeId)->getWebsite();
+            $websites[$website->getId()] = array(
+                'name'      => $website->getName(),
+                'currency'  => $website->getConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE),
+            );
+        }
+        else {
+            $websites[0] = array(
+                'name'      => $this->__('All Websites'),
+                'currency'  => Mage::app()->getBaseCurrencyCode()
+            );
+            foreach (Mage::app()->getWebsites() as $website) {
+                if (!in_array($website->getId(), $this->getProduct()->getWebsiteIds())) {
+                    continue;
+                }
+                $websites[$website->getId()] = array(
+                    'name'      => $website->getName(),
+                    'currency'  => $website->getConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE),
+                );
+            }
+        }
+        $this->_websites = $websites;
+        return $this->_websites;
+    }
+
     public function getDefaultCustomerGroup()
     {
         return Mage_Customer_Model_Group::CUST_GROUP_ALL;
     }
 
-    public function getAfterElementHtml()
-    {
-        $html = $this->getData('after_element_html');
-
-        $attribute = $this->getElement()->getEntityAttribute();
-        if ($attribute->isScopeGlobal()) {
-            $html .= $this->getGlobalIcon();
-        }
-        $currencyCode = (string) Mage::app()->getStore($attribute->getStoreId())->getBaseCurrencyCode();
-        $html .= '<strong>['.$currencyCode.']</strong>';
-        return $html;
-    }
-
     protected function _prepareLayout()
     {
-        $this->setChild('delete_button',
-            $this->getLayout()->createBlock('adminhtml/widget_button')
-                ->setData(array(
-                    'label'     => Mage::helper('catalog')->__('Delete Tier'),
-                    'onclick'   => "tierPriceControl.deleteItem('#{index}')",
-                    'class' => 'delete'
-                )));
-
         $this->setChild('add_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
@@ -139,10 +165,4 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Admi
     {
         return $this->getChildHtml('add_button');
     }
-
-    public function getDeleteButtonHtml()
-    {
-        return $this->getChildHtml('delete_button');
-    }
-
 }

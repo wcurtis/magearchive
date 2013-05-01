@@ -18,8 +18,8 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<h1 class="page-heading"><?=$this->__('Currency')?></h1>
-<?=$this->__('Your current currency is: %s', $currency->getCode())?>
+<h1 class="page-heading"><?php echo $this->__('Currency') ?></h1>
+<?php echo $this->__('Your current currency is: %s', $currency->getCode()) ?>
 <div class="buttons-container">
-     <a href="<?=Mage::getBaseUrl()?>" class="float-right"><?=$this->__('Continue &raquo;')?></a>
+     <a href="<?php echo Mage::getBaseUrl() ?>" class="float-right"><?php echo $this->__('Continue &raquo;') ?></a>
 </div>

@@ -109,9 +109,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
 
         Mage::getModel('cataloginventory/stock_item')->addCatalogInventoryToProductCollection($collection);
 
-        foreach ($product->getTypeInstance()->getUsedProductAttributeIds() as $attributeId) {
-            $collection->addAttributeToSelect($attributeId);
-            $collection->addAttributeToFilter($attributeId, array('nin'=>array(null)));
+        foreach ($product->getTypeInstance()->getUsedProductAttributes() as $attribute) {
+            $collection->addAttributeToSelect($attribute->getAttributeCode());
+            $collection->addAttributeToFilter($attribute->getAttributeCode(), array('nin'=>array(null)));
         }
 
         $this->setCollection($collection);
@@ -157,7 +157,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
 
 
         $sets = Mage::getModel('eav/entity_attribute_set')->getCollection()
-            ->setEntityTypeFilter($this->_getProduct()->getResource()->getConfig()->getId())
+            ->setEntityTypeFilter($this->_getProduct()->getResource()->getTypeId())
             ->load()
             ->toOptionHash();
 
@@ -201,7 +201,46 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
             ));
         }
 
+         $this->addColumn('action',
+            array(
+                'header'    => Mage::helper('catalog')->__('Action'),
+                'type'      => 'action',
+                'getter'     => 'getId',
+                'actions'   => array(
+                    array(
+                        'caption' => Mage::helper('catalog')->__('Edit'),
+                        'url'     => $this->getEditParamsForAssociated(),
+                        'field'   => 'id',
+                        'popup'  => true
+                    )
+                ),
+                'filter'    => false,
+                'sortable'  => false
+        ));
+
         return parent::_prepareColumns();
+    }
+
+    public function getEditParamsForAssociated()
+    {
+        return array(
+            'base'      =>  '*/*/edit',
+            'params'    =>  array(
+                'required' => $this->_getRequiredAttributesIds(),
+                'popup'    => 1,
+                'product'  => $this->_getProduct()->getId()
+            )
+        );
+    }
+
+    protected function _getRequiredAttributesIds()
+    {
+        $attributesIds = array();
+        foreach ($this->_getProduct()->getTypeInstance()->getConfigurableAttributes() as $attribute) {
+            $attributesIds[] = $attribute->getProductAttribute()->getId();
+        }
+
+        return implode(',', $attributesIds);
     }
 
     public function getOptions($attribute) {
@@ -220,25 +259,4 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
         return $this->getUrl('*/*/superConfig', array('_current'=>true));
     }
 
-    public function getMainButtonsHtml()
-    {
-        $html  = parent::getMainButtonsHtml();
-        $html .= $this->getButtonHtml(
-            Mage::helper('catalog')->__('Create Empty'),
-            'superProduct.createEmptyProduct()',
-            'add'
-        );
-
-        if ($product = $this->_getProduct()->getId()) {
-
-        }
-
-        $html .= $this->getButtonHtml(
-            Mage::helper('catalog')->__('Create From Configurable'),
-            'superProduct.createNewProduct()',
-            'add'
-        );
-
-        return $html;
-    }
 }

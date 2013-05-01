@@ -50,7 +50,8 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Info extends Mage_Adminhtml_Bloc
         );
 
         $infoBlock = $this->getLayout()->createBlock('adminhtml/sales_order_view_info')
-            ->setOrder($this->getOrder());
+            ->setOrder($this->getOrder())
+            ->setNoUseOrderLink(true);
         $this->setChild('info', $infoBlock);
 
         $this->setChild(

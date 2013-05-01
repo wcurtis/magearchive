@@ -22,20 +22,20 @@
 <div class="content-header">
 <table cellspacing="0">
     <tr>
-        <td><h3 class="icon-head head-categories"><?=$this->getHeader()?></h3></td>
+        <td><h3 class="icon-head head-categories"><?php echo $this->getHeader() ?></h3></td>
         <td class="form-buttons">
-            <?=$this->getResetButtonHtml()?>
-            <?if($this->getCategoryId()):?>
-                    <?=$this->getDeleteButtonHtml()?>
-            <?endif;?>
-            <?=$this->getSaveButtonHtml()?>
+            <?php echo $this->getResetButtonHtml() ?>
+            <?php if($this->getCategoryId()): ?>
+                    <?php echo $this->getDeleteButtonHtml() ?>
+            <?php endif; ?>
+            <?php echo $this->getSaveButtonHtml() ?>
         </td>
     </tr>
 </table>
 </div>
-<?if($this->hasStoreRootCategory()):?>
-    <?=$this->getTabsHtml()?>
-    <form id="category_edit_form" action="<?=$this->getSaveUrl()?>" method="post" enctype="multipart/form-data">
+<?php if($this->hasStoreRootCategory()): ?>
+    <?php echo $this->getTabsHtml() ?>
+    <form id="category_edit_form" action="<?php echo $this->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
     <input type="hidden" name="category_products" id="in_category_products" value=""/>
     <div id="category_tab_content"></div>
     </form>
@@ -44,12 +44,12 @@
     var categoryForm = new varienForm('category_edit_form');
 
     function categoryDelete(){
-        if(confirm('<?=Mage::helper('catalog')->__('Are you sure you want to delete this category?')?>')){
-            location.href = '<?=$this->getDeleteUrl()?>'
+        if(confirm('<?php echo Mage::helper('catalog')->__('Are you sure you want to delete this category?') ?>')){
+            location.href = '<?php echo $this->getDeleteUrl() ?>'
         }
     }
-<?if(($block = $this->getLayout()->getBlock('category.product.grid')) && ($_gridJsObject=$block->getJsObjectName())):?>
-    var categoryProducts = $H(<?=$this->getProductsJson()?>);
+<?php if(($block = $this->getLayout()->getBlock('category.product.grid')) && ($_gridJsObject=$block->getJsObjectName())): ?>
+    var categoryProducts = $H(<?php echo $this->getProductsJson() ?>);
     $('in_category_products').value = categoryProducts.toQueryString();
 
     function registerCategoryProduct(grid, element, checked){
@@ -75,7 +75,7 @@
             var checkbox = Element.getElementsBySelector(trElement, 'input');
             if(checkbox[0]){
                 var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
-                <?=$_gridJsObject?>.setCheckboxChecked(checkbox[0], checked);
+                <?php echo $_gridJsObject ?>.setCheckboxChecked(checkbox[0], checked);
             }
         }
     }
@@ -99,15 +99,15 @@
             Event.observe(position,'keyup',positionChange);
         }
     }
-    <?=$_gridJsObject?>.rowClickCallback = categoryProductRowClick;
-    <?=$_gridJsObject?>.initRowCallback = categoryProductRowInit;
-    <?=$_gridJsObject?>.checkboxCheckCallback = registerCategoryProduct;
-    <?=$_gridJsObject?>.rows.each(function(row){categoryProductRowInit(<?=$_gridJsObject?>, row)});
-<?endif;?>
+    <?php echo $_gridJsObject ?>.rowClickCallback = categoryProductRowClick;
+    <?php echo $_gridJsObject ?>.initRowCallback = categoryProductRowInit;
+    <?php echo $_gridJsObject ?>.checkboxCheckCallback = registerCategoryProduct;
+    <?php echo $_gridJsObject ?>.rows.each(function(row){categoryProductRowInit(<?php echo $_gridJsObject ?>, row)});
+<?php endif; ?>
 </script>
 
-<?else:?>
+<?php else: ?>
 <div class="messages warning-msg">
-    <?=Mage::helper('catalog')->__('Set root category for this store in the <a href="%s">configuration</a>', $this->getStoreConfigurationUrl())?>
+    <?php echo Mage::helper('catalog')->__('Set root category for this store in the <a href="%s">configuration</a>', $this->getStoreConfigurationUrl()) ?>
 </div>
-<?endif;?>
+<?php endif; ?>

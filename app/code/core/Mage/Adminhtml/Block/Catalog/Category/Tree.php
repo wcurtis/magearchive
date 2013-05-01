@@ -60,14 +60,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
         return parent::_prepareLayout();
     }
 
-    /**
-     * Enter description here...
-     *
-     * @return int
-     */
     protected function _getDefaultStoreId()
     {
-        return 0;
+        return Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID;;
     }
 
     public function getCategoryCollection()
@@ -173,25 +168,20 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
         $json = Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : array());
         return $json;
     }
-/*
-    protected function _addCategoryInfo($node)
+
+    public function getRootIds()
     {
-        if ($node) {
-            $children = $node->getAllChildNodes();
-
-            $children[$node->getId()] = $node;
-
-            $collection = $this->getCategoryCollection()
-                ->addIdFilter(array_keys($children))
-                ->load();
-            foreach ($collection as $category) {
-                $children[$category->getId()]->addData($category->getData());
+        $ids = $this->getData('root_ids');
+        if (is_null($ids)) {
+            $ids = array();
+            foreach (Mage::app()->getStores() as $store) {
+            	$ids[] = $store->getRootCategoryId();
             }
+            $this->setData('root_ids', $ids);
         }
-
-        return $this;
+        return $ids;
     }
-*/
+
     protected function _getNodeJson($node, $level=0)
     {
         $item = array();
@@ -200,7 +190,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
              $item['text'].= ' ('.$node->getProductCount().')';
         }
 
-        $rootForStores = Mage::getModel('core/store')->getCollection()->loadByCategoryIds(array($node->getEntityId()));
+        //$rootForStores = Mage::getModel('core/store')->getCollection()->loadByCategoryIds(array($node->getEntityId()));
+        $rootForStores = in_array($node->getEntityId(), $this->getRootIds());
 
         $item['id']  = $node->getId();
         $item['cls'] = 'folder ' . ($node->getIsActive() ? 'active-category' : 'no-active-category');
@@ -216,5 +207,4 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
         }
         return $item;
     }
-
 }

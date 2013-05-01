@@ -18,21 +18,21 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($this->getTitle()):?>
-    <h3><?=$this->getTitle()?></h3>
-<?endif?>
-<?if(!empty($tabs)):?>
-<ul id="<?=$this->getId()?>" class="tabs">
-<?foreach ($tabs as $_tab):?>
-    <li <?if($_tab->getIsHidden()):?> style="display:none"<?endif;?>>
-        <a href="<?=$_tab->getUrl()?>" id="<?=$this->getTabId($_tab)?>" name="<?=$_tab->getId()?>" title="<?=$_tab->getTitle()?>" class="tab-item-link <?=$_tab->getClass()?>">
-            <span><div class="changed" title="<?=$this->__('The information in this tab has been changed.')?>"></div><div class="error" title="<?=$this->__('This tab contains invalid data. Please solve the problem before saving.')?>"></div><?=$_tab->getLabel()?></span>
+<?php if($this->getTitle()): ?>
+    <h3><?php echo $this->getTitle() ?></h3>
+<?php endif ?>
+<?php if(!empty($tabs)): ?>
+<ul id="<?php echo $this->getId() ?>" class="tabs">
+<?php foreach ($tabs as $_tab): ?>
+    <li <?php if($_tab->getIsHidden()): ?> style="display:none"<?php endif; ?>>
+        <a href="<?php echo $_tab->getUrl() ?>" id="<?php echo $this->getTabId($_tab) ?>" name="<?php echo $_tab->getId() ?>" title="<?php echo $_tab->getTitle() ?>" class="tab-item-link <?php echo $_tab->getClass() ?>">
+            <span><div class="changed" title="<?php echo $this->__('The information in this tab has been changed.') ?>"></div><div class="error" title="<?php echo $this->__('This tab contains invalid data. Please solve the problem before saving.') ?>"></div><?php echo $_tab->getLabel() ?></span>
         </a>
-        <div id="<?=$this->getId()?>_<?=$_tab->getId()?>_content" style="display:none"><?=$_tab->getContent()?></div>
+        <div id="<?php echo $this->getId() ?>_<?php echo $_tab->getId() ?>_content" style="display:none"><?php echo $_tab->getContent() ?></div>
     </li>
-<?endforeach;?>
+<?php endforeach; ?>
 </ul>
 <script type="text/javascript" language="javascript">
-    <?=$this->getJsObjectName()?> = new varienTabs('<?=$this->getId()?>', '<?=$this->getDestElementId()?>', '<?=$this->getActiveTabId()?>');
+    <?php echo $this->getJsObjectName() ?> = new varienTabs('<?php echo $this->getId() ?>', '<?php echo $this->getDestElementId() ?>', '<?php echo $this->getActiveTabId() ?>');
 </script>
-<?endif;?>
+<?php endif; ?>

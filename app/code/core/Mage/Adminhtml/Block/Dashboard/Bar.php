@@ -55,7 +55,9 @@ class Mage_Adminhtml_Block_Dashboard_Bar extends Mage_Adminhtml_Block_Dashboard_
             $value = ($value != '')?$value:0;
             $decimals = '';
         }*/
-        $value = $this->format($value);
+        if (!$isQuantity) {
+            $value = $this->format($value);
+        }
         $decimals = '';
         $this->_totals[] = array(
             'label' => $label,

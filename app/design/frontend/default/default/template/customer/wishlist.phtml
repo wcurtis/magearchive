@@ -19,33 +19,33 @@
  */
 ?>
 
-<h2><?=$this->__('Wishlist')?></h2>
-<?if($wishlist->getSize()):?>
-<form action="<?=$this->getUrl('customer/wishlist/updatePost')?>" method="post">
+<h2><?php echo $this->__('Wishlist') ?></h2>
+<?php if($wishlist->getSize()): ?>
+<form action="<?php echo $this->getUrl('customer/wishlist/updatePost') ?>" method="post">
     <table cellspacing="0" width="100%" class="data-table">
         <tr>
-            <th class="align-left"><?=$this->__('Product')?></th>
-            <th style="width:60px;" class="align-center"><?=$this->__('Status')?></th>
-            <th style="width:60px;" class="align-center"><?=$this->__('To Cart')?></th>
-            <th style="width:60px;" class="align-center"><?=$this->__('Remove')?></th>
+            <th class="align-left"><?php echo $this->__('Product') ?></th>
+            <th style="width:60px;" class="align-center"><?php echo $this->__('Status') ?></th>
+            <th style="width:60px;" class="align-center"><?php echo $this->__('To Cart') ?></th>
+            <th style="width:60px;" class="align-center"><?php echo $this->__('Remove') ?></th>
         </tr>
-        <?foreach($wishlist as $item):?>
+        <?php foreach($wishlist as $item): ?>
         <tr>
             <td>
-                <input type="hidden" value="1" name="wishlist[<?=$item->getItemId()?>]"/>
-                <a href="<?=$this->getUrl('catalog/product/view/id/'.$item->getProduct()->getId())?>"><?=$item->getProduct()->getName()?></a>
+                <input type="hidden" value="1" name="wishlist[<?php echo $item->getItemId() ?>]"/>
+                <a href="<?php echo $this->getUrl('catalog/product/view/id/'.$item->getProduct()->getId()) ?>"><?php echo $item->getProduct()->getName() ?></a>
             </td>
-            <td class="align-center"><?=$item->getStatus()?></td>
-            <td class="align-center"><input type="checkbox" value="1" name="to_cart[<?=$item->getItemId()?>]"/></td>
-            <td class="align-center"><input type="checkbox" value="1" name="remove[<?=$item->getItemId()?>]"/></td>
+            <td class="align-center"><?php echo $item->getStatus() ?></td>
+            <td class="align-center"><input type="checkbox" value="1" name="to_cart[<?php echo $item->getItemId() ?>]"/></td>
+            <td class="align-center"><input type="checkbox" value="1" name="remove[<?php echo $item->getItemId() ?>]"/></td>
         </tr>
-        <?endforeach?>
+        <?php endforeach ?>
     </table>
     <div class="buttons-container">
-        <a href="<?=Mage::getBaseUrl()?>" class="float-left">&laquo; <?=$this->__('Continue Shopping')?></a>
-        <input type="submit" value="<?=$this->__('Update')?>" class="input-button" name="do"/>
+        <a href="<?php echo Mage::getBaseUrl() ?>" class="float-left">&laquo; <?php echo $this->__('Continue Shopping') ?></a>
+        <input type="submit" value="<?php echo $this->__('Update') ?>" class="input-button" name="do"/>
     </div>
 </form>
-<?else:?>
-    <p><?=$this->__('You have placed no products yet.')?></p>
-<?endif?>
+<?php else: ?>
+    <p><?php echo $this->__('You have placed no products yet.') ?></p>
+<?php endif ?>

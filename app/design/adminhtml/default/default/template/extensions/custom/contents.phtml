@@ -20,67 +20,71 @@
 ?>
 
 <div class="entry-edit">
-    <?=$this->getFormHtml()?>
+    <?php echo $this->getFormHtml() ?>
 
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Contents")?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__("Contents") ?></h4>
     </div>
-    <fieldset id="contents_fieldset">
-        <legend><?=$this->__("Contents")?></legend>
-        <table class="table-editable" cellspacing="0">
-            <thead class="table-editable">
-                <tr>
-                    <th><?=$this->__("Role")?></th>
-                    <th><?=$this->__("Path")?></th>
-                    <th><?=$this->__("Type")?></th>
-                    <th><?=$this->__("Include")?></th>
-                    <th><?=$this->__("Ignore")?></th>
-                    <th>&nbsp;</th>
+    <fieldset id="contents_fieldset" class="grid">
+        <legend><?php echo $this->__("Contents") ?></legend>
+        <table class="data" cellspacing="0">
+            <thead>
+                <tr class="headings">
+                    <th><?php echo $this->__("Role") ?></th>
+                    <th><?php echo $this->__("Path") ?></th>
+                    <th><?php echo $this->__("Type") ?></th>
+                    <th><?php echo $this->__("Include") ?></th>
+                    <th><?php echo $this->__("Ignore") ?></th>
+                    <th><?php echo $this->__("Action") ?></th>
                 </tr>
                 <tr id="contents_template" style="display:none">
-<?function showContentsTemplate($self, $_i=0) {?>
-                    <td class="field-row">
+<?php function showContentsTemplate($self, $_i=0) { ?>
+                    <td style="margin-bottom:5px;">
                         <select name="contents[role][]">
                             <optgroup label="Magento">
-                            <?foreach ($self->getMageRoles() as $_value=>$_label):?>
-                                <option value="<?=$_value?>" <?=$self->getSelected('contents/role/'.$_i, $_value)?>><?=$_label?></option>
-                            <?endforeach?>
+                            <?php foreach ($self->getMageRoles() as $_value=>$_label): ?>
+                                <option value="<?php echo $_value ?>" <?php echo $self->getSelected('contents/role/'.$_i, $_value) ?>><?php echo $_label ?></option>
+                            <?php endforeach ?>
                             </optgroup>
                             <optgroup label="PEAR">
-                            <?foreach ($self->getPearRoles() as $_value=>$_label):?>
-                                <option value="<?=$_value?>" <?=$self->getSelected('contents/role/'.$_i, $_value)?>><?=$_label?></option>
-                            <?endforeach?>
+                            <?php foreach ($self->getPearRoles() as $_value=>$_label): ?>
+                                <option value="<?php echo $_value ?>" <?php echo $self->getSelected('contents/role/'.$_i, $_value) ?>><?php echo $_label ?></option>
+                            <?php endforeach ?>
                             </optgroup>
                         </select>
-                     </td><td class="field-row">
-                        <input class="input-text" style="width:150px" name="contents[path][]" value="<?=$self->getValue('contents/path/'.$_i)?>"/>
-                     </td><td class="field-row">
+                     </td><td style="margin-bottom:5px;">
+                        <input class="input-text" style="width:150px" name="contents[path][]" value="<?php echo $self->getValue('contents/path/'.$_i) ?>"/>
+                     </td><td style="margin-bottom:5px;">
                         <select name="contents[type][]">
-                            <option value="file" <?=$self->getSelected('contents/type/'.$_i, 'file')?>><?=$self->__("File")?></option>
-                            <option value="dir" <?=$self->getSelected('contents/type/'.$_i, 'dir')?>><?=$self->__("Recursive Dir")?></option>
+                            <option value="file" <?php echo $self->getSelected('contents/type/'.$_i, 'file') ?>><?php echo $self->__("File") ?></option>
+                            <option value="dir" <?php echo $self->getSelected('contents/type/'.$_i, 'dir') ?>><?php echo $self->__("Recursive Dir") ?></option>
                         </select>
-                     </td><td class="field-row">
-                        <input class="input-text" style="width:100px" name="contents[include][]" value="<?=$self->getValue('contents/include/'.$_i)?>"/>
-                     </td><td class="field-row">
-                        <input class="input-text" style="width:100px"  name="contents[ignore][]" value="<?=$self->getValue('contents/ignore/'.$_i)?>"/>
-                     </td><td class="field-row">
-                        <?=$self->getRemoveRowButtonHtml('tr')?>
+                     </td><td style="margin-bottom:5px;">
+                        <input class="input-text" style="width:100px" name="contents[include][]" value="<?php echo $self->getValue('contents/include/'.$_i) ?>"/>
+                     </td><td style="margin-bottom:5px;">
+                        <input class="input-text" style="width:100px"  name="contents[ignore][]" value="<?php echo $self->getValue('contents/ignore/'.$_i) ?>"/>
+                     </td><td style="margin-bottom:5px;">
+                        <?php echo $self->getRemoveRowButtonHtml('tr') ?>
                      </td>
-<?}?>
-<?showContentsTemplate($this)?>
+<?php } ?>
+<?php showContentsTemplate($this) ?>
                 </tr>
             </thead>
             <tbody id="contents_container">
-            <?if ($this->getData('contents/role')):?>
-                <?foreach ($this->getData('contents/role') as $_i=>$_dbField):?>
-                    <?if (0===$_i) continue;?>
+            <?php if ($this->getData('contents/role')): ?>
+                <?php foreach ($this->getData('contents/role') as $_i=>$_dbField): ?>
+                    <?php if (0===$_i) continue; ?>
                 <tr>
-<?showContentsTemplate($this, $_i)?>
+<?php showContentsTemplate($this, $_i) ?>
                 </tr>
-                <?endforeach?>
-            <?endif?>
+                <?php endforeach ?>
+            <?php endif ?>
             </tbody>
+            <tfoot>
+            	<tr>
+            		<td class="a-right" colspan="6"><?php echo $this->getAddRowButtonHtml('contents_container', 'contents_template', 'Add Contents Path') ?></td>
+            	</tr>
+            </tfoot>
         </table>
-        <?=$this->getAddRowButtonHtml('contents_container', 'contents_template', 'Add Contents Path')?>
     </fieldset>
 </div>

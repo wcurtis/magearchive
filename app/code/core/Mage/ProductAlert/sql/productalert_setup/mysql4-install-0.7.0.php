@@ -30,7 +30,7 @@ $installer = $this;
 
 $installer->startSetup();
 $installer->run("
-DROP TABLE IF EXISTS `{$installer->getTable('product_alert_price')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('product_alert_price')}`;
 CREATE TABLE IF NOT EXISTS `{$installer->getTable('product_alert_price')}` (
   `alert_price_id` int(10) unsigned NOT NULL auto_increment,
   `customer_id` int(10) unsigned NOT NULL default '0',
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `{$installer->getTable('product_alert_price')}` (
       ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('product_alert_stock')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('product_alert_stock')}`;
 CREATE TABLE `{$installer->getTable('product_alert_stock')}` (
   `alert_stock_id` int(10) unsigned NOT NULL auto_increment,
   `customer_id` int(10) unsigned NOT NULL default '0',

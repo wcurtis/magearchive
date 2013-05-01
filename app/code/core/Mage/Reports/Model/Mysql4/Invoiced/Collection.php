@@ -34,7 +34,7 @@ class Mage_Reports_Model_Mysql4_Invoiced_Collection extends Mage_Sales_Model_Ent
             ->addAttributeToSelect('*')
             ->addAttributeToFilter('created_at', array('from' => $from, 'to' => $to))
             ->addExpressionAttributeToSelect('orders',
-                'COUNT(DISTINCT {{base_total_invoiced}})',
+                'COUNT({{base_total_invoiced}})',
                  array('base_total_invoiced'))
             ->getSelect()->group('("*")')->having('orders > 0');
 
@@ -48,28 +48,28 @@ class Mage_Reports_Model_Mysql4_Invoiced_Collection extends Mage_Sales_Model_Ent
             $this->addAttributeToFilter('store_id', array('in' => (array)$storeIds))
                 ->addExpressionAttributeToSelect(
                     'invoiced',
-                    'IFNULL(SUM({{base_total_invoiced}}), 0)',
+                    'SUM({{base_total_invoiced}}',
                     array('base_total_invoiced'))
                 ->addExpressionAttributeToSelect(
                     'invoiced_captured',
-                    'IFNULL(SUM({{base_total_paid}}), 0)',
+                    'SUM({{base_total_paid}}',
                     array('base_total_paid'))
                 ->addExpressionAttributeToSelect(
                     'invoiced_not_captured',
-                    'IFNULL(SUM({{base_total_invoiced}}-{{base_total_paid}}), 0)',
+                    'SUM({{base_total_invoiced}}-{{base_total_paid}}',
                     array('base_total_invoiced', 'base_total_paid'));
         } else {
             $this->addExpressionAttributeToSelect(
                     'invoiced',
-                    'IFNULL(SUM({{base_total_invoiced}}/{{store_to_base_rate}}), 0)',
+                    'SUM({{base_total_invoiced}}/{{store_to_base_rate}})',
                     array('base_total_invoiced', 'store_to_base_rate'))
                 ->addExpressionAttributeToSelect(
                     'invoiced_captured',
-                    'IFNULL(SUM({{base_total_paid}}/{{store_to_base_rate}}), 0)',
+                    'SUM({{base_total_paid}}/{{store_to_base_rate}})',
                     array('base_total_paid', 'store_to_base_rate'))
                 ->addExpressionAttributeToSelect(
                     'invoiced_not_captured',
-                    'IFNULL(SUM(({{base_total_invoiced}}-{{base_total_paid}})/{{store_to_base_rate}}), 0)',
+                    'SUM(({{base_total_invoiced}}-{{base_total_paid}})/{{store_to_base_rate}})',
                     array('base_total_invoiced', 'store_to_base_rate', 'base_total_paid'));
         }
 

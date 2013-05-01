@@ -203,8 +203,10 @@ class Mage_Install_Model_Installer extends Varien_Object
      */
     public function createAdministrator($data)
     {
-        $user = Mage::getModel('admin/user')->load(1)->addData($data);
-        $user->save();
+        $user = Mage::getModel('admin/permissions_user')
+            ->load($data['username'], 'username');
+        $user->addData($data)->save();
+        $user->setRoleIds(array(1))->saveRelations();
 
         /*Mage::getModel("permissions/user")->setRoleId(1)
             ->setUserId($user->getId())
@@ -234,16 +236,11 @@ class Mage_Install_Model_Installer extends Varien_Object
         Mage::getSingleton('install/installer_config')->replaceTmpInstallDate();
         Mage::app()->cleanCache();
 
-        $cacheData = serialize(array(
-            'config'     => 1,
-            'layout'     => 1,
-            'block_html' => 1,
-            'eav'        => 1,
-            'translate'  => 1,
-            'pear'       => 1,
-        ));
-
-        Mage::app()->saveCache($cacheData, 'use_cache', array(), null);
+        $cacheData = array();
+        foreach (Mage::helper('core')->getCacheTypes() as $type=>$label) {
+            $cacheData[$type] = 1;
+        }
+        Mage::app()->saveCache(serialize($cacheData), 'use_cache', array(), null);
 
         return $this;
     }

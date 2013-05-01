@@ -41,6 +41,8 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
      */
     protected $_select;
 
+    protected $_cacheConf = null;
+
     /**
      * Identifier fild name for collection items
      *
@@ -57,6 +59,16 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
         if (!is_null($conn)) {
             $this->setConnection($conn);
         }
+    }
+
+    public function initCache($object, $idPrefix, $tags)
+    {
+        $this->_cacheConf = array(
+            'object'    => $object,
+            'prefix'    => $idPrefix,
+            'tags'      => $tags
+        );
+        return $this;
     }
 
     protected function _setIdFieldName($fieldName)
@@ -551,7 +563,7 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
 
         $this->printLogQuery($printQuery, $logQuery);
 
-        $data = $this->_conn->fetchAll($this->_select);
+        $data = $this->_fetchAll($this->_select);
         if (is_array($data)) {
             foreach ($data as $row) {
                 $item = $this->getNewEmptyItem();
@@ -608,5 +620,57 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
         $this->_setIsLoaded(false);
         $this->_items = array();
         return $this;
+    }
+
+    /**
+     * Fetch collection data
+     *
+     * @param   Zend_Db_Select $select
+     * @return  array
+     */
+    protected function _fetchAll($select)
+    {
+        if ($object = $this->_getCacheInstance()) {
+            if ($data = $object->load($this->_getSelectCacheId($select))) {
+                $data = unserialize($data);
+            }
+            else {
+                $data = $this->getConnection()->fetchAll($select);
+                $object->save(serialize($data), $this->_getSelectCacheId($select), $this->_getCacheTags());
+            }
+        } else {
+            $data = $this->getConnection()->fetchAll($select);
+        }
+        return $data;
+    }
+
+    protected function _getSelectCacheId($select)
+    {
+        $id = md5($select->__toString());
+        if (isset($this->_cacheConf['prefix'])) {
+            $id = $this->_cacheConf['prefix'].'_'.$id;
+        }
+        return $id;
+    }
+
+    /**
+     * Retrieve cache instance
+     *
+     * @return Zend_Cache_Core
+     */
+    protected function _getCacheInstance()
+    {
+        if (isset($this->_cacheConf['object'])) {
+            return $this->_cacheConf['object'];
+        }
+        return false;
+    }
+
+    protected function _getCacheTags()
+    {
+        if (isset($this->_cacheConf['tags'])) {
+            return $this->_cacheConf['tags'];
+        }
+        return array();
     }
 }

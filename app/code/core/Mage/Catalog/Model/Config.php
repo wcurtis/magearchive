@@ -168,14 +168,14 @@ class Mage_Catalog_Model_Config extends Mage_Eav_Model_Config
         }
 
         $this->loadProductTypes();
-    
+
         return isset($this->_productTypesById[$id]) ? $this->_productTypesById[$id] : false;
     }
 
     public function getSourceOptionId($source, $value)
     {
         foreach ($source->getAllOptions() as $option) {
-            if (strcasecmp($option['label'], $value)==0) {
+            if (strcasecmp($option['label'], $value)==0 || $option['value'] == $value) {
                 return $option['value'];
             }
         }

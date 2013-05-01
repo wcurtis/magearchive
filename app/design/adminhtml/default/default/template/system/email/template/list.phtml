@@ -21,13 +21,13 @@
 <div class="content-header">
 	<table cellspacing="0">
 		<tr>
-			<td style="width:50%;"><h3 class="icon-head head-system-email-template"><?=$this->getHeaderText()?></h3></td>
+			<td style="width:50%;"><h3 class="icon-head head-system-email-template"><?php echo $this->getHeaderText() ?></h3></td>
 			<td class="form-buttons">
-				<button class="scalable add" onclick="window.location='<?=$this->getCreateUrl()?>'"><span><?=$this->__('Add New Template');?></span></button>
+				<button class="scalable add" onclick="window.location='<?php echo $this->getCreateUrl() ?>'"><span><?php echo $this->__('Add New Template'); ?></span></button>
 			</td>
 		</tr>
 	</table>
 </div>
 <div>
-    <?=$this->getChildHtml('grid')?>
+    <?php echo $this->getChildHtml('grid') ?>
 </div>

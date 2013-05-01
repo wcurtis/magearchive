@@ -70,7 +70,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Settings extends Mage_
         $attributes = $product->getTypeInstance()->getSetAttributes();
 
         $fieldset->addField('req_text', 'note', array(
-            'text' => $this->__('Only attributes with scope "Global", input type "Dropdown" and Use To Create Configurable Product "Yes" are available.')
+            'text' => '<ul class="messages"><li class="notice-msg"><ul><li>'
+                    .  $this->__('Only attributes with scope "Global", input type "Dropdown" and Use To Create Configurable Product "Yes" are available.')
+                    . '</li></ul></li></ul>'
         ));
 
         $hasAttributes = false;

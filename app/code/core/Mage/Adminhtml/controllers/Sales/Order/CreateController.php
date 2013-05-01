@@ -190,8 +190,11 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
             $this->_getOrderCreateModel()->moveQuoteItem($itemId, $moveTo);
         }
 
-        if ($paymentData = $this->getRequest()->getPost('payment')) {
+        /*if ($paymentData = $this->getRequest()->getPost('payment')) {
             $this->_getOrderCreateModel()->setPaymentData($paymentData);
+        }*/
+        if ($paymentData = $this->getRequest()->getPost('payment')) {
+            $this->_getOrderCreateModel()->getQuote()->getPayment()->addData($paymentData);
         }
 
 
@@ -199,6 +202,10 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
         $this->_getOrderCreateModel()
             ->initRuleData()
             ->saveQuote();
+
+        if ($paymentData = $this->getRequest()->getPost('payment')) {
+            $this->_getOrderCreateModel()->getQuote()->getPayment()->addData($paymentData);
+        }
 
         /**
          * Saving of giftmessages
@@ -350,9 +357,15 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
     {
         try {
             $this->_processData();
+            if ($paymentData = $this->getRequest()->getPost('payment')) {
+                $this->_getOrderCreateModel()->setPaymentData($paymentData);
+                $this->_getOrderCreateModel()->getQuote()->getPayment()->addData($paymentData);
+            }
+
             $order = $this->_getOrderCreateModel()
                 ->importPostData($this->getRequest()->getPost('order'))
                 ->createOrder();
+
             $this->_getSession()->clear();
             $url = $this->_redirect('*/sales_order/view', array('order_id' => $order->getId()));
         }

@@ -66,7 +66,7 @@
 .mini-search  { padding-top:-1px; line-height:1em;}
 .home-spot { display:inline; }
 .mini-related-items .product-details { margin-left:76px; }
-.mini-related-items .product-images input { float:left; margin:-4px 2px 0 -4px; }
+.mini-related-items .product-images input { zoom:1; position:relative; float:left; margin:-4px 2px 0 -10px; }
 .mini-related-items .product-images img { float:left; }
 .header-top-container { position:relative; }
 #nav ul li.parent { margin-bottom:-3px;}

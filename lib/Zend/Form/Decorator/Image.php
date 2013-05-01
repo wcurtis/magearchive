@@ -37,15 +37,15 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @subpackage Decorator
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Image.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Image.php 8680 2008-03-07 22:25:35Z matthew $
  */
 class Zend_Form_Decorator_Image extends Zend_Form_Decorator_Abstract
 {
     /**
-     * Image
-     * @var string
+     * Attributes that should not be passed to helper
+     * @var array
      */
-    protected $_image;
+    protected $_attribBlacklist = array('helper', 'placement', 'separator', 'tag');
 
     /**
      * Default placement: append
@@ -91,35 +91,26 @@ class Zend_Form_Decorator_Image extends Zend_Form_Decorator_Abstract
     }
 
     /**
-     * Set image
+     * Get attributes to pass to image helper
      * 
-     * @param  string $image 
-     * @return Zend_Form_Decorator_Image
+     * @return array
      */
-    public function setImage($image)
+    public function getAttribs()
     {
-        $this->_image = (string) $image;
-        return $this;
-    }
+        $attribs = $this->getOptions();
 
-    /**
-     * Get image
-     *
-     * If not set internally, attempts to pull from element
-     * 
-     * @return string
-     */
-    public function getImage()
-    {
-        if (null === $this->_image) {
-            if (null !== ($element = $this->getElement())) {
-                if (method_exists($element, 'getValue')) {
-                    $this->setImage($element->getValue());
-                }
+        if (null !== ($element = $this->getElement())) {
+            $attribs['alt'] = $element->getLabel();
+            $attribs = array_merge($attribs, $element->getAttribs());
+        }
+
+        foreach ($this->_attribBlacklist as $key) {
+            if (array_key_exists($key, $attribs)) {
+                unset($attribs[$key]);
             }
         }
 
-        return $this->_image;
+        return $attribs;
     }
 
     /**
@@ -136,13 +127,11 @@ class Zend_Form_Decorator_Image extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $image     = $this->getImage();
         $tag       = $this->getTag();
         $placement = $this->getPlacement();
         $separator = $this->getSeparator();
-        $options   = $this->getOptions();
 
-        $image = $view->formImage($element->getName(), $image, $options); 
+        $image = $view->formImage($element->getName(), $element->getImageValue(), $this->getAttribs()); 
 
         if (null !== $tag) {
             require_once 'Zend/Form/Decorator/HtmlTag.php';

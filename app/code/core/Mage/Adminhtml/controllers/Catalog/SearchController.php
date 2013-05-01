@@ -70,7 +70,7 @@ class Mage_Adminhtml_Catalog_SearchController extends Mage_Adminhtml_Controller_
 
         $this->_initAction();
 
-        $this->getLayout()->getBlock('root')->setCanLoadRulesJs(true);
+        $this->getLayout()->getBlock('head')->setCanLoadRulesJs(true);
 
         $this
             ->_addBreadcrumb($id ? Mage::helper('catalog')->__('Edit Search') : Mage::helper('catalog')->__('New Search'), $id ? Mage::helper('catalog')->__('Edit Search') : Mage::helper('catalog')->__('New Search'))

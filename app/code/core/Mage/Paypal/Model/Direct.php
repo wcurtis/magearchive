@@ -39,6 +39,7 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
     protected $_canUseInternal          = true;
     protected $_canUseCheckout          = true;
     protected $_canUseForMultishipping  = true;
+    protected $_canSaveCc = false;
 
     /**
      * Get Paypal API Model
@@ -213,21 +214,23 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
       */
     public function void(Varien_Object $payment)
     {
+        $error = false;
         if($payment->getCcTransId()){
             $api = $this->getApi();
             $api->setAuthorizationId($payment->getCcTransId());
-
-             if ($api->callDoVoid()!==false){
+            if ($api->callDoVoid()!==false){
                  $payment->setStatus('SUCCESS')
                     ->setCcTransId($api->getTransactionId());
-             }else{
+            }else{
                $e = $api->getError();
-               $payment->setStatus('ERROR')
-                    ->setStatusDescription($e['short_message'].': '.$e['long_message']);
-             }
+               $error = $e['short_message'].': '.$e['long_message'];
+            }
         }else{
             $payment->setStatus('ERROR');
-            $payment->setStatusDescription(Mage::helper('paypal')->__('Invalid transaction id'));
+            $error = Mage::helper('paypal')->__('Invalid transaction id');
+        }
+        if ($error !== false) {
+            Mage::throwException($error);
         }
         return $this;
     }
@@ -241,10 +244,11 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
       */
       public function refund(Varien_Object $payment, $amount)
       {
-          if($payment->getCcTransId() && $payment->getAmount()>0){
+          $error = false;
+          if($payment->getRefundTransactionId() && $amount>0){
               $api = $this->getApi();
               //we can refund the amount full or partial so it is good to set up as partial refund
-              $api->setTransactionId($payment->getCcTransId())
+              $api->setTransactionId($payment->getRefundTransactionId())
                 ->setRefundType(Mage_Paypal_Model_Api_Nvp::REFUND_TYPE_PARTIAL)
                 ->setAmount($amount);
 
@@ -253,16 +257,15 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
                     ->setCcTransId($api->getTransactionId());
              }else{
                $e = $api->getError();
-               $payment->setStatus('ERROR')
-                    ->setStatusDescription($e['short_message'].': '.$e['long_message']);
+               $error = $e['short_message'].': '.$e['long_message'];
              }
-
-
-          }else{
-            $payment->setStatus('ERROR');
-            $payment->setStatusDescription(Mage::helper('paypal')->__('Error in refunding the payment'));
-          }
-
+        }else{
+            $error = Mage::helper('paypal')->__('Error in refunding the payment');
+        }
+        if ($error !== false) {
+            Mage::throwException($error);
+        }
+        return $this;
       }
 
 }

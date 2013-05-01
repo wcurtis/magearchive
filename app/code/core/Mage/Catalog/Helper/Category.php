@@ -37,15 +37,15 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
     public function getStoreCategories($sorted=false, $asCollection=false)
     {
         $parent = Mage::app()->getStore()->getRootCategoryId();
-
         /**
          * Check if parent node of the store still exists
          */
-        if (!Mage::getModel('catalog/category')->load($parent)->getId()) {
+        $category = Mage::getModel('catalog/category');
+        if (!$category->checkId($parent)) {
             return array();
         }
 
-        $tree = Mage::getResourceSingleton('catalog/category_tree');
+        $tree = $category->getTreeModel();
         /* @var $tree Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree */
 
         $nodes = $tree->loadNode($parent)
@@ -71,7 +71,7 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
     {
         return Mage::getModel('catalog/category')
             ->setData($category->getData())
-            ->getCategoryUrl();
+            ->getUrl();
     }
 
     /**

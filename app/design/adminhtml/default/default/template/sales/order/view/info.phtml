@@ -18,49 +18,54 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_order=$this->getOrder()?>
+<?php $_order=$this->getOrder() ?>
 
 <div class="box-left">
     <!--Order Information-->
     <div class="entry-edit">
-        <?if ($_order->getEmailSent()):
+        <?php if ($_order->getEmailSent()):
             $_email=$this->__('Order confirmation email sent');
         else:
             $_email=$this->__('Order confirmation email not sent');
-        endif;?>
+        endif; ?>
         <div class="entry-edit-head">
-            <h4 class="icon-head head-order-date"><?=Mage::helper('sales')->__('Order # %s (%s)', $_order->getRealOrderId(), $_email)?></h4>
+        <?php if ($this->getNoUseOrderLink()): ?>
+            <h4 class="icon-head head-account"><?php echo Mage::helper('sales')->__('Order # %s', $_order->getRealOrderId()) ?> (<?php echo $_email ?>)</h4>
+        <?php else: ?>
+            <a href="<?php echo $this->getViewUrl($_order->getId()) ?>"><?php echo Mage::helper('sales')->__('Order # %s', $_order->getRealOrderId()) ?></a>
+            <strong>(<?php echo $_email ?>)</strong>
+        <?php endif; ?>
         </div>
         <fieldset>
             <table cellspacing="0" class="form-list">
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Order Date')?></label></td>
-                <td class="value"><strong><?=$this->formatDate($_order->getCreatedAt(), 'medium', true)?></strong></td>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Order Date') ?></label></td>
+                <td class="value"><strong><?php echo $this->formatDate($_order->getCreatedAt(), 'medium', true) ?></strong></td>
             </tr>
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Order Status')?></label></td>
-                <td class="value"><strong><span id="order_status"><?=$_order->getStatusLabel()?></span></strong></td>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Order Status') ?></label></td>
+                <td class="value"><strong><span id="order_status"><?php echo $_order->getStatusLabel() ?></span></strong></td>
             </tr>
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Purchased From')?></label></td>
-                <td class="value"><strong><?=$this->getOrderStoreName()?></strong></td>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Purchased From') ?></label></td>
+                <td class="value"><strong><?php echo $this->getOrderStoreName() ?></strong></td>
             </tr>
-            <?if($_order->getRelationChildId()):?>
+            <?php if($_order->getRelationChildId()): ?>
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Link to the new order')?></label></td>
-                <td class="value"><a href="<?=$this->getViewUrl($_order->getRelationChildId())?>">
-                    <?=$_order->getRelationChildRealId()?>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Link to the new order') ?></label></td>
+                <td class="value"><a href="<?php echo $this->getViewUrl($_order->getRelationChildId()) ?>">
+                    <?php echo $_order->getRelationChildRealId() ?>
                 </a></td>
             </tr>
-            <?endif;?>
-            <?if($_order->getRelationParentId()):?>
+            <?php endif; ?>
+            <?php if($_order->getRelationParentId()): ?>
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Link to the previous order')?></label></td>
-                <td class="value"><a href="<?=$this->getViewUrl($_order->getRelationParentId())?>">
-                    <?=$_order->getRelationParentRealId()?>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Link to the previous order') ?></label></td>
+                <td class="value"><a href="<?php echo $this->getViewUrl($_order->getRelationParentId()) ?>">
+                    <?php echo $_order->getRelationParentRealId() ?>
                 </a></td>
             </tr>
-            <?endif;?>
+            <?php endif; ?>
             </table>
         </fieldset>
     </div>
@@ -69,24 +74,24 @@
     <!--Account Information-->
     <div class="entry-edit">
         <div class="entry-edit-head">
-            <h4 class="icon-head head-account"><?=Mage::helper('sales')->__('Account Information')?></h4>
+            <h4 class="icon-head head-account"><?php echo Mage::helper('sales')->__('Account Information') ?></h4>
         </div>
         <fieldset>
             <table cellspacing="0" class="form-list">
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Customer Name')?></label></td>
-                <td class="value"><strong><?=$_order->getCustomerName()?></strong></td>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Customer Name') ?></label></td>
+                <td class="value"><strong><?php echo $_order->getCustomerName() ?></strong></td>
             </tr>
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Email')?></label></td>
-                <td class="value"><a href="mailto:<?=$_order->getCustomerEmail()?>"><strong><?=$_order->getCustomerEmail()?></strong></a></td>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Email') ?></label></td>
+                <td class="value"><a href="mailto:<?php echo $_order->getCustomerEmail() ?>"><strong><?php echo $_order->getCustomerEmail() ?></strong></a></td>
             </tr>
-            <?if ($_groupName=$this->getCustomerGroupName()) :?>
+            <?php if ($_groupName=$this->getCustomerGroupName()) : ?>
             <tr>
-                <td class="label"><label><?=Mage::helper('sales')->__('Customer Group')?></label></td>
-                <td class="value"><strong><?=$_groupName?></strong></td>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Customer Group') ?></label></td>
+                <td class="value"><strong><?php echo $_groupName ?></strong></td>
             </tr>
-            <?endif;?>
+            <?php endif; ?>
             </table>
         </fieldset>
     </div>
@@ -97,10 +102,10 @@
     <!--Billing Address-->
     <div class="entry-edit">
         <div class="entry-edit-head">
-            <h4 class="icon-head head-billing-address"><?=Mage::helper('sales')->__('Billing Address')?></h4>
+            <h4 class="icon-head head-billing-address"><?php echo Mage::helper('sales')->__('Billing Address') ?></h4>
         </div>
         <fieldset>
-            <address><?=$_order->getBillingAddress()->getFormated(true)?></address>
+            <address><?php echo $_order->getBillingAddress()->getFormated(true) ?></address>
         </fieldset>
     </div>
 </div>
@@ -108,10 +113,10 @@
     <!--Shipping Address-->
     <div class="entry-edit">
         <div class="entry-edit-head">
-            <h4 class="icon-head head-shipping-address"><?=Mage::helper('sales')->__('Shipping Address')?></h4>
+            <h4 class="icon-head head-shipping-address"><?php echo Mage::helper('sales')->__('Shipping Address') ?></h4>
         </div>
         <fieldset>
-            <address><?=$_order->getShippingAddress()->getFormated(true)?></address>
+            <address><?php echo $_order->getShippingAddress()->getFormated(true) ?></address>
         </fieldset>
     </div>
 </div>

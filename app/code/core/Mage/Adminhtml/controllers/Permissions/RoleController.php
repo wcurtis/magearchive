@@ -69,7 +69,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
         }
         $this->_addBreadcrumb($breadCrumb, $breadCrumbTitle);
 
-        $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
+        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
         $this->_addLeft(
             $this->getLayout()->createBlock('adminhtml/permissions_editroles')

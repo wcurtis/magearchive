@@ -23,22 +23,22 @@
         <tr>
             <td style="width:50%;">
                 <h3>
-                  <?if($this->getUser()->getUserId()):?>
-                  <?$_userName = $this->getUser()->getFirstname() . ' ' . $this->getUser()->getLastname()?>
-                  <?=$this->__("Edit User '%s'", $_userName)?>
-                  <?else:?>
-                  <?=$this->__('Add New User')?>
-                  <?endif;?>
+                  <?php if($this->getUser()->getUserId()): ?>
+                  <?php $_userName = $this->getUser()->getFirstname() . ' ' . $this->getUser()->getLastname() ?>
+                  <?php echo $this->__("Edit User '%s'", $_userName) ?>
+                  <?php else: ?>
+                  <?php echo $this->__('Add New User') ?>
+                  <?php endif; ?>
                 </h3>
             </td>
             <td class="form-buttons">
-            <?=$this->getBackButtonHtml()?>
-            <?=$this->getResetButtonHtml()?>
-            <?=$this->getDeleteButtonHtml()?>
-            <?=$this->getSaveButtonHtml()?>
+            <?php echo $this->getBackButtonHtml() ?>
+            <?php echo $this->getResetButtonHtml() ?>
+            <?php echo $this->getDeleteButtonHtml() ?>
+            <?php echo $this->getSaveButtonHtml() ?>
    </table>
 </div>
-<form action="<?=$this->getUrl('*/*/saveuser')?>" method="post" id="user_edit_form">
+<form action="<?php echo $this->getUrl('*/*/saveuser') ?>" method="post" id="user_edit_form">
 </form>
 <script type="text/javascript" language="javascript">
     var userForm = new varienForm('user_edit_form');

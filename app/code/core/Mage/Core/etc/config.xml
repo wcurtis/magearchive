@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Core>
-             <version>0.8.0</version>
+             <version>0.8.4</version>
         </Mage_Core>
     </modules>
 
@@ -30,42 +30,20 @@
         <models>
             <core_mysql4>
                 <entities>
-                    <config_field>
-                        <table>core_config_field</table>
-                    </config_field>
-                    <email_template>
-                        <table>core_email_template</table>
-                    </email_template>
-                    <translate>
-                        <table>core_translate</table>
-                    </translate>
-                    <session>
-                        <table>core_session</table>
-                    </session>
-                    <store_group>
-                        <table>core_store_group</table>
-                    </store_group>
-                    <layout_update>
-                        <table>core_layout_update</table>
-                    </layout_update>
-                    <layout_link>
-                        <table>core_layout_link</table>
-                    </layout_link>
-                    <url_rewrite>
-                        <table>core_url_rewrite</table>
-                    </url_rewrite>
-                    <url_rewrite_tag>
-                        <table>core_url_rewrite_tag</table>
-                    </url_rewrite_tag>
-                    <convert_profile>
-                        <table>core_convert_profile</table>
-                    </convert_profile>
-                    <convert_history>
-                        <table>core_convert_history</table>
-                    </convert_history>
-                    <design_change>
-                        <table>design_change</table>
-                    </design_change>
+                    <website><table>core_website</table></website>
+                    <store_group><table>core_store_group</table></store_group>
+                    <store><table>core_store</table></store>
+                    <config_field><table>core_config_field</table></config_field>
+                    <email_template><table>core_email_template</table></email_template>
+                    <translate><table>core_translate</table></translate>
+                    <session><table>core_session</table></session>
+                    <layout_update><table>core_layout_update</table></layout_update>
+                    <layout_link><table>core_layout_link</table></layout_link>
+                    <url_rewrite><table>core_url_rewrite</table></url_rewrite>
+                    <url_rewrite_tag><table>core_url_rewrite_tag</table></url_rewrite_tag>
+                    <convert_profile><table>core_convert_profile</table></convert_profile>
+                    <convert_history><table>core_convert_history</table></convert_history>
+                    <design_change><table>design_change</table></design_change>
                 </entities>
             </core_mysql4>
         </models>
@@ -78,6 +56,15 @@
         <template>
             <email />
         </template>
+        <cache>
+            <types>
+                <config><label>Configuration</label></config>
+                <layout><label>Layouts</label></layout>
+                <block_html><label>Blocks HTML output</label></block_html>
+                <translate><label>Translations</label></translate>
+                <pear><label>PEAR Channels and Packages</label></pear>
+            </types>
+        </cache>
     </global>
     <frontend>
         <routers>
@@ -126,6 +113,33 @@
                     </url_rewrite>
                 </observers>
             </catalog_controller_category_delete>
+            <store_edit>
+                <observers>
+                    <cache>
+                        <type>model</type>
+                        <class>core/observer</class>
+                        <method>observeStoreEdit</method>
+                    </cache>
+                </observers>
+            </store_edit>
+            <store_add>
+                <observers>
+                    <cache>
+                        <type>model</type>
+                        <class>core/observer</class>
+                        <method>observeStoreAdd</method>
+                    </cache>
+                </observers>
+            </store_add>
+            <store_delete>
+                <observers>
+                    <cache>
+                        <type>model</type>
+                        <class>core/observer</class>
+                        <method>observeStoreDelete</method>
+                    </cache>
+                </observers>
+            </store_delete>
         </events>
         <translate>
             <modules>
@@ -151,7 +165,7 @@
 
         <dev>
             <restrict>
-                <allow_ips>127.0.0.1</allow_ips>
+                <allow_ips></allow_ips>
             </restrict>
             <debug>
                 <profiler>0</profiler>

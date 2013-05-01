@@ -69,8 +69,8 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Main extends Mage_Adminhtml_Bloc
             'name'      => 'is_active',
             'required' => true,
             'options'    => array(
-                '1' => Mage::helper('salesrule')->__('Enabled'),
-                '0' => Mage::helper('salesrule')->__('Disabled'),
+                '1' => Mage::helper('salesrule')->__('Active'),
+                '0' => Mage::helper('salesrule')->__('Inactive'),
             ),
         ));
 

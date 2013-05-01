@@ -48,11 +48,11 @@ class Mage_Catalog_Block_Seo_Sitemap_Category extends Mage_Catalog_Block_Seo_Sit
      * @param Mage_Catalog_Model_Category $category
      * @return string
      */
-    public function getItemUrl($product)
+    public function getItemUrl($category)
     {
-        $helper = Mage::helper('catalog/product');
-        /* @var $product Mage_Catalog_Helper_Category */
-        return $product->getCategoryUrl($product);
+        $helper = Mage::helper('catalog/category');
+        /* @var $helper Mage_Catalog_Helper_Category */
+        return $helper->getCategoryUrl($category);
     }
 
 }

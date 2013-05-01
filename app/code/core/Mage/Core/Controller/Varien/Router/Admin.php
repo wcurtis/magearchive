@@ -89,7 +89,7 @@ class Mage_Core_Controller_Varien_Router_Admin extends Mage_Core_Controller_Vari
             $controller = !empty($p[1]) ? $p[1] : $front->getDefault('controller');
         }
         $controllerFileName = $this->getControllerFileName($realModule, $controller);
-        if (!$controllerFileName || !is_readable($controllerFileName)) {
+        if (!$this->validateControllerFileName($controllerFileName)) {
             $controller = 'index';
             $action = 'noroute';
             $controllerFileName = $this->getControllerFileName($realModule, $controller);

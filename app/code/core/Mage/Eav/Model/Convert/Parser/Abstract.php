@@ -49,16 +49,7 @@ abstract class Mage_Eav_Model_Convert_Parser_Abstract
 
     public function getStoreCode($storeId)
     {
-        if (!$this->_storesById) {
-            foreach (Mage::getConfig()->getNode('stores')->children() as $storeNode) {
-                $this->_storesById[(int)$storeNode->system->store->id] = $storeNode->getName();
-            }
-        }
-        if (is_numeric($storeId)) {
-            return isset($this->_storesById[$storeId]) ? $this->_storesById[$storeId] : false;
-        } else {
-            return array_search($storeId, $this->_storesById)!==false ? $storeId : false;
-        }
+    	return Mage::app()->getStore($storeId?$storeId:0)->getCode();
     }
 
     public function loadAttributeSets($entityTypeId)

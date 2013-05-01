@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?/*{
+<?php /*{
     "label":"Root page layout",
     "type":"core/template",
     "children":{
@@ -30,79 +30,11 @@
         "footer":{ "label":"Footer", "type":"adminhtml/page_footer" }
     },
     "vars":{}
-}*/?>
+}*/ ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-    <title><?=$this->__('Magento Admin')?></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-    <link rel="icon" href="<?=$this->getBaseUrl()?>favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="<?=$this->getBaseUrl()?>favicon.ico" type="image/x-icon">
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/prototype.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>scriptaculous/scriptaculous.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/validation.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>mage/translate.js"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/hash.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/events.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/loader.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/grid.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/tabs.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/form.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/accordion.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/tools.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/bundle.js')?>"></script>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/uploader.js')?>"></script>
-    <?=Mage::helper('adminhtml/js')->includeSkinScript('js/product.js')?>
-    <script type="text/javascript">
-        var BLANK_URL = '<?=$this->getJsUrl()?>blank.html';
-        var BLANK_IMG = '<?=$this->getJsUrl()?>spacer.gif';
-        var BASE_URL = '<?=$this->getUrl('*')?>';
-        var SKIN_URL = '<?=$this->getSkinUrl()?>';
-    </script>
-
-    <style type="text/css" media="all">
-        /*<![CDATA[*/ @import "<?=$this->getSkinUrl('styles.css')?>"; /*]]>*/
-    </style>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('reset.css')?>" media="all"/>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('widgets.css')?>" media="all"/>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('boxes.css')?>" media="all"/>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('newsletter.css')?>" media="all"/>
-    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('catalog.css')?>" media="all"/>
-    <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('iestyles.css')?>" type="text/css" media="all" /> <![endif]-->
-    <!--[if lt IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('below_ie7.css')?>" type="text/css" media="all" /> <![endif]-->
-    <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('ie7.css')?>" type="text/css" media="all" /> <![endif]-->
-    <!--[if lt IE 7]>
-        <script defer type="text/javascript" src="<?=$this->getJsUrl()?>lib/ds-sleight.js"></script>
-        <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/iehover-fix.js"></script>
-    <![endif]-->
-
-    <link rel="stylesheet" type="text/css" media="screen, projection" href="<?=$this->getSkinUrl('menu.css')?>"/>
-<?//if($this->getCanLoadCalendarJs()):?>
-    <link rel="stylesheet" type="text/css" media="all" href="<?=$this->getJsUrl()?>calendar/calendar-win2k-1.css" title="win2k-1" />
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/calendar.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/lang/calendar-en.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/calendar-setup.js"></script>
-<?//endif;?>
-
-<?if($this->getCanLoadExtJs()):?>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>extjs/ext-tree.js"></script>
-    <script type="text/javascript" src="<?=$this->getJsUrl()?>extjs/ext-tree-checkbox.js"></script>
-    <link rel="stylesheet" type="text/css" href="<?=$this->getJsUrl()?>extjs/resources/css/ext-all.css"/>
-    <link rel="stylesheet" type="text/css" href="<?=$this->getJsUrl()?>extjs/resources/css/ytheme-magento.css"/>
-    <script type="text/javascript">
-        Ext.BLANK_IMAGE_URL = '<?=$this->getJsUrl()?>extjs/resources/images/default/s.gif';
-        Ext.UpdateManager.defaults.loadScripts = false;
-        Ext.UpdateManager.defaults.disableCaching = true;
-    </script>
-<?endif;?>
-    <script type="text/javascript">
-        Fieldset.addToPrefix(<?=Mage::helper('adminhtml')->getCurrentUserId()?>);
-    </script>
-    <?=$this->helper('core/js')->getTranslatorScript()?>
-<?if($this->getCanLoadRulesJs()):?>
-    <script type="text/javascript" src="<?=$this->getSkinUrl('js/rules.js')?>"></script>
-<?endif?>
+    <?php echo $this->getChildHtml('head') ?>
 </head>
 <body id="html-body" class="html-body-popup">
 <![if !IE]><table cellspacing="0" width="100%"><tr><td><![endif]>
@@ -110,40 +42,40 @@
         <div class="middle-popup">
             <div class="middle" id="anchor-content">
                 <div id="page:main-container">
-                <?if($this->getChildHtml('left')):?>
-                    <div class="<?=$this->getContainerCssClass()?>" id="page:container">
+                <?php if($this->getChildHtml('left')): ?>
+                    <div class="<?php echo $this->getContainerCssClass() ?>" id="page:container">
                         <table cellspacing="0" width="100%">
                             <tr>
                                 <td class="side-col" id="page:left">
-                                    <?=$this->getChildHtml('left')?>
+                                    <?php echo $this->getChildHtml('left') ?>
                                 </td>
                                 <td class="main-col" id="content">
-                                    <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-                                    <?=$this->getChildHtml('content')?>
+                                    <div id="messages"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+                                    <?php echo $this->getChildHtml('content') ?>
                                 </td>
                             </tr>
                         </table>
                     </div>
-                <?else:?>
-                    <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-                    <?=$this->getChildHtml('content')?>
-                <?endif;?>
+                <?php else: ?>
+                    <div id="messages"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+                    <?php echo $this->getChildHtml('content') ?>
+                <?php endif; ?>
                 </div>
             </div>
         </div>
 
         <div class="footer">
-            <?=$this->getChildHtml('footer')?>
+            <?php echo $this->getChildHtml('footer') ?>
         </div>
        </div>
 <![if !IE]></td></tr></table><![endif]>
-        <?=$this->getChildHtml('js')?>
+        <?php echo $this->getChildHtml('js') ?>
 
-<?=$this->getChildHtml('profiler')?>
+<?php echo $this->getChildHtml('profiler') ?>
 <div id="loading-mask" style="display:none">
-    <p class="loader" id="loading_mask_loader"><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=Mage::helper('adminhtml')->__('Loading...')?>"/><br/><?=Mage::helper('adminhtml')->__('Please wait...')?></p>
+    <p class="loader" id="loading_mask_loader"><img src="<?php echo $this->getSkinUrl('images/ajax-loader-tr.gif') ?>" alt="<?php echo Mage::helper('adminhtml')->__('Loading...') ?>"/><br/><?php echo Mage::helper('adminhtml')->__('Please wait...') ?></p>
 </div>
 
-<?=$this->getChildHtml('before_body_end')?>
+<?php echo $this->getChildHtml('before_body_end') ?>
 </body>
 </html>

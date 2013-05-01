@@ -49,6 +49,12 @@ class Mage_Catalog_Model_Product_Visibility extends Varien_Object
         return $this;
     }
 
+    public function addVisibleInSiteFilterToCollection(Mage_Eav_Model_Entity_Collection_Abstract $collection)
+    {
+        $collection->addAttributeToFilter('visibility', array('in'=>$this->getVisibleInSiteIds()));
+        return $this;
+    }
+
     public function getVisibleInCatalogIds()
     {
         return array(self::VISIBILITY_IN_CATALOG, self::VISIBILITY_BOTH);

@@ -309,9 +309,13 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
     {
         if ($this->getCollection()) {
             $field = ( $column->getFilterIndex() ) ? $column->getFilterIndex() : $column->getIndex();
-            $cond = $column->getFilter()->getCondition();
-            if ($field && isset($cond)) {
-                $this->getCollection()->addFieldToFilter($field , $cond);
+            if ($column->getFilterConditionCallback()) {
+                call_user_func($column->getFilterConditionCallback(), $this->getCollection(), $column);
+            } else {
+                $cond = $column->getFilter()->getCondition();
+                if ($field && isset($cond)) {
+                    $this->getCollection()->addFieldToFilter($field , $cond);
+                }
             }
         }
         return $this;

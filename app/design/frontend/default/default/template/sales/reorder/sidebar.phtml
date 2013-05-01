@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Last order sidebar
  *
@@ -27,44 +27,43 @@
 ?>
 
 
-<?if($_order = $this->getLastOrder()):?>
+<?php if($_order = $this->getLastOrder()): ?>
 
 <div class="box base-mini mini-compare-products">
-<form method="post" action="<?=$this->getUrl('checkout/cart/addgroup')?>" id="reorder-validate-detail">
+<form method="post" action="<?php echo $this->getUrl('checkout/cart/addgroup') ?>" id="reorder-validate-detail">
     <div class="head">
-        <h4 style="display: block; float: left;"><?=$this->__('My Orders')?>&nbsp;&nbsp;-&nbsp;&nbsp;</h4>
-        <a href="<?=$this->getUrl('customer/account')?>">View All</a><br /><br />
-        <h5><?=$this->__('Last ordered items')?></h5>
+        <h4 style="display: block; float: left;"><?php echo $this->__('My Orders') ?>&nbsp;&nbsp;-&nbsp;&nbsp;</h4>
+        <a href="<?php echo $this->getUrl('customer/account') ?>">View All</a><br /><br />
+        <h5><?php echo $this->__('Last ordered items') ?></h5>
     </div>
-<ol id="cart-sidebar">
+<ol id="cart-sidebar-reorder">
 
-     <?foreach($_order->getItemsRandomCollection(5) as $_item):?>
-     <?if ($_item->getProduct()): ?>
+     <?php foreach($_order->getItemsRandomCollection(5) as $_item): ?>
+     <?php if ($_item->getProduct()): ?>
         <li>
             <div class="product-checkbox">
-                <input type="checkbox" name="products[]" value="<?=$_item->getProductId()?>" class="validate-one-required-by-name">
+                <input type="checkbox" name="products[]" value="<?php echo $_item->getProductId() ?>" class="validate-one-required-by-name"/>
             </div>
             <div class="product-names">
 
-                <a href="<?=$_item->getProduct()->getProductUrl()?>"><?=$_item->getName()?></a>
+                <a href="<?php echo $_item->getProduct()->getProductUrl() ?>"><?php echo $_item->getName() ?></a>
 
             </div>
         </li>
-        <?endif;?>
-    <?endforeach;?>
+        <?php endif; ?>
+    <?php endforeach; ?>
     </ol>
     <div class="actions">
-        <button class="form-button" type="submit"><span><?=$this->__('Add to Cart')?></span></button><br/>
+        <button class="form-button" type="submit"><span><?php echo $this->__('Add to Cart') ?></span></button><br/>
     </div>
 </form>
 </div>
-<?=$this->getPagerHtml();?>
+<?php echo $this->getPagerHtml(); ?>
 
 <script type="text/javascript">
-
 <!--
  var reorderFormDetail = new VarienForm('reorder-validate-detail');
 //-->
 
 </script>
-<?endif?>
+<?php endif ?>

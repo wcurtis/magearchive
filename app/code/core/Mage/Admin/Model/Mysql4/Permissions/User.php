@@ -41,9 +41,9 @@ class Mage_Admin_Model_Mysql4_Permissions_User extends Mage_Core_Model_Mysql4_Ab
 
     public function load(Mage_Core_Model_Abstract $user, $value, $field=null)
     {
-        if (!intval($value) && is_string($value)) {
-            $field = 'user_id';
-        }
+//        if (!intval($value) && is_string($value)) {
+//            $field = 'user_id';
+//        }
         return parent::load($user, $value, $field);
     }
 
@@ -86,7 +86,7 @@ class Mage_Admin_Model_Mysql4_Permissions_User extends Mage_Core_Model_Mysql4_Ab
                     $row = array('tree_level' => 0);
                 }
                 $row = array('tree_level' => 0);
-                
+
                 $data = array(
                     'parent_id'     => $rid,
                     'tree_level'    => $row['tree_level'] + 1,
@@ -122,7 +122,7 @@ class Mage_Admin_Model_Mysql4_Permissions_User extends Mage_Core_Model_Mysql4_Ab
     public function add(Mage_Core_Model_Abstract $user) {
 
         $dbh = $this->_getWriteAdapter();
-        
+
         $aRoles = $this->hasAssigned2Role($user);
         if ( sizeof($aRoles) > 0 ) {
             foreach($aRoles as $idx => $data){
@@ -172,7 +172,7 @@ class Mage_Admin_Model_Mysql4_Permissions_User extends Mage_Core_Model_Mysql4_Ab
             return array();
         }
     }
-    
+
     public function userExists(Mage_Core_Model_Abstract $user)
     {
         $usersTable = $this->getTable('admin/user');

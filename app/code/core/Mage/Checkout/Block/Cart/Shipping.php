@@ -21,14 +21,6 @@
 
 class Mage_Checkout_Block_Cart_Shipping extends Mage_Checkout_Block_Cart_Abstract
 {
-    public function getQuote()
-    {
-        if (empty($this->_quote)) {
-            $this->_quote = Mage::getSingleton('checkout/session')->getQuote();
-        }
-        return $this->_quote;
-    }
-
     public function getEstimateRates()
     {
         if (empty($this->_rates)) {
@@ -69,27 +61,27 @@ class Mage_Checkout_Block_Cart_Shipping extends Mage_Checkout_Block_Cart_Abstrac
 
     public function getEstimateCountryId()
     {
-        return $this->getQuote()->getShippingAddress()->getCountryId();
+        return $this->getAddress()->getCountryId();
     }
 
     public function getEstimatePostcode()
     {
-        return $this->getQuote()->getShippingAddress()->getPostcode();
+        return $this->getAddress()->getPostcode();
     }
 
     public function getEstimateCity()
     {
-        return $this->getQuote()->getShippingAddress()->getCity();
+        return $this->getAddress()->getCity();
     }
 
     public function getEstimateRegionId()
     {
-        return $this->getQuote()->getShippingAddress()->getRegionId();
+        return $this->getAddress()->getRegionId();
     }
 
     public function getEstimateRegion()
     {
-        return $this->getQuote()->getShippingAddress()->getRegion();
+        return $this->getAddress()->getRegion();
     }
 
     public function getCityActive()

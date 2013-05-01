@@ -138,7 +138,8 @@ class Mage_Wishlist_IndexController extends Mage_Core_Controller_Front_Action
                 Mage::getSingleton('customer/session')->addError(Mage::helper('wishlist')->__('There was an error while deleting item from wishlist: %s', $e->getMessage()));
             }
         }
-        $this->_redirect('*');
+
+        $this->_redirectReferer(Mage::getUrl('*/*'));
     }
 
     public function cartAction() {

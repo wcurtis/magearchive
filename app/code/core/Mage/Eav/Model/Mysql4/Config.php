@@ -21,57 +21,69 @@
 
 class Mage_Eav_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
 {
+    protected static $_entityTypes;
+    protected static $_attributes   = array();
+
     protected function _construct()
     {
         $this->_init('eav/entity_type', 'entity_type_id');
     }
 
-    public function fetchCacheData()
+    /**
+     * Load all entity types
+     *
+     * @return Mage_Eav_Model_Mysql4_Config
+     */
+    protected function _loadTypes()
     {
-        $data = array();
-        $entityTypes = $this->_getReadAdapter()->fetchAll('select * from '.$this->getMainTable());
-        foreach ($entityTypes as $row) {
-            $data['entity_type'][$row['entity_type_id']] = $row;
-            $data['entity_type'][$row['entity_type_code']] = $row['entity_type_id'];
+        if (!$this->_getReadAdapter()) {
+            self::$_entityTypes = array();
+            return $this;
+        }
+        if (is_null(self::$_entityTypes)) {
+            self::$_entityTypes = array();
+            $select = $this->_getReadAdapter()->select()->from($this->getMainTable());
+            $data = $this->_getReadAdapter()->fetchAll($select);
+            foreach ($data as $row) {
+            	self::$_entityTypes['by_id'][$row['entity_type_id']] = $row;
+            	self::$_entityTypes['by_code'][$row['entity_type_code']] = $row;
+            }
         }
 
-        $attributes = $this->_getReadAdapter()->fetchAll('select * from '.$this->getTable('eav/attribute'));
-        foreach ($attributes as $row) {
-            $data['attribute'][$row['attribute_id']] = $row;
-            $data['attribute'][$row['entity_type_id'].'/'.$row['attribute_code']] = $row['attribute_id'];
-        }
+        return $this;
+    }
 
-        return $data;
+    protected function _loadTypeAttributes($typeId)
+    {
+        if (!isset(self::$_attributes[$typeId])) {
+            $select = $this->_getReadAdapter()->select()->from($this->getTable('eav/attribute'))
+                ->where('entity_type_id=?', $typeId);
+            self::$_attributes[$typeId] = $this->_getReadAdapter()->fetchAll($select);
+        }
+        return self::$_attributes[$typeId];
     }
 
     public function fetchEntityTypeData($entityType)
     {
-        $read = $this->_getReadAdapter();
-        if (!$read) {
-            return false;
-        }
-        $select = $read->select()->from($this->getMainTable());
+        $this->_loadTypes();
+
         if (is_numeric($entityType)) {
-            $select->where('entity_type_id=?', $entityType);
-        } else {
-            $select->where('entity_type_code=?', $entityType);
+            $info = isset(self::$_entityTypes['by_id'][$entityType]) ? self::$_entityTypes['by_id'][$entityType] : null;
         }
-        $row = $read->fetchRow($select);
-        if (!$row) {
-            return false;
+        else {
+            $info = isset(self::$_entityTypes['by_code'][$entityType]) ? self::$_entityTypes['by_code'][$entityType] : null;
         }
 
         $data = array();
-        $data['entity_type'] = $row;
-
-        $select = $read->select()->from($this->getTable('eav/attribute'))
-            ->where('entity_type_id=?', $data['entity_type']['entity_type_id']);
-        $attributes = $read->fetchAll($select);
-        foreach ($attributes as $row) {
-            $data['attribute'][$row['attribute_id']] = $row;
-            $data['attribute'][$row['attribute_code']] = $row['attribute_id'];
+        if ($info) {
+            $data['entity'] = $info;
+            $attributes = $this->_loadTypeAttributes($info['entity_type_id']);
+            $data['attributes'] = array();
+            foreach ($attributes as $attribute) {
+            	$data['attributes'][$attribute['attribute_id']] = $attribute;
+            	$data['attributes'][$attribute['attribute_code']] = $attribute['attribute_id'];
+            }
         }
-
         return $data;
     }
 }

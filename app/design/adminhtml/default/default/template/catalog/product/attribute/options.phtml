@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Attribute otions control
  *
@@ -29,7 +29,7 @@
 <ul class="messages">
     <li class="notice-msg">
         <ul>
-            <li><?=Mage::helper('catalog')->__('If you do not specify an option value for a store then the default value will be used.')?></li>
+            <li><?php echo Mage::helper('catalog')->__('If you do not specify an option value for a store then the default value will be used.') ?></li>
         </ul>
     </li>
 </ul>
@@ -38,22 +38,22 @@
 <div class="entity-edit">
     <div>
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Manage Titles (Size, Color, etc.)')?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Manage Titles (Size, Color, etc.)') ?></h4>
     </div>
     <div class="box">
         <table class="dynamic-grid" cellspacing="0" id="attribute-labels-table">
             <tr>
-            <?foreach ($this->getStores() as $_store):?>
-                <th><?=$_store->getName()?></th>
-            <?endforeach;?>
+            <?php foreach ($this->getStores() as $_store): ?>
+                <th><?php echo $_store->getName() ?></th>
+            <?php endforeach; ?>
             </tr>
             <tr>
-                <?$_labels = $this->getLabelValues()?>
-                <?foreach ($this->getStores() as $_store):?>
+                <?php $_labels = $this->getLabelValues() ?>
+                <?php foreach ($this->getStores() as $_store): ?>
                 <td>
-                    <input class="input-text<?if($_store->getId()==0):?> required-option<?endif;?>" type="text" name="frontend_label[<?=$_store->getId()?>]" value="<?=$_labels[$_store->getId()]?>"/>
+                    <input class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" name="frontend_label[<?php echo $_store->getId() ?>]" value="<?php echo $_labels[$_store->getId()] ?>"/>
                 </td>
-                <?endforeach;?>
+                <?php endforeach; ?>
             </tr>
         </table>
     </div>
@@ -62,31 +62,31 @@
 <br/>
 <div class="entity-edit" id="matage-options-panel">
     <div class="entry-edit-head">
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Manage Options (values of your attribute)')?></h4>
+    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Manage Options (values of your attribute)') ?></h4>
     </div>
     <div class="box">
         <table class="dynamic-grid" cellspacing="0" id="attribute-options-table"  cellpadding="0" style="width:">
             <tr>
-            <?foreach ($this->getStores() as $_store):?>
-                <th><?=$_store->getName()?></th>
-            <?endforeach;?>
-                <th><?=Mage::helper('catalog')->__('Position')?></th>
-                <th><?=Mage::helper('catalog')->__('Is Default')?></th>
-                <th><?=$this->getAddNewButtonHtml()?></th>
+            <?php foreach ($this->getStores() as $_store): ?>
+                <th><?php echo $_store->getName() ?></th>
+            <?php endforeach; ?>
+                <th><?php echo Mage::helper('catalog')->__('Position') ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Is Default') ?></th>
+                <th><?php echo $this->getAddNewButtonHtml() ?></th>
             </tr>
         </table>
 
         <div class="no-display template" id="row-template">
         <table class="dynamic-grid" cellspacing="0">
     	    <tr>
-                <?foreach ($this->getStores() as $_store):?>
-                <td><input name="option[value][{{id}}][<?=$_store->getId()?>]" value="{{store<?=$_store->getId()?>}}" class="input-text<?if($_store->getId()==0):?> required-option<?endif;?>" type="text"/></td>
-                <?endforeach;?>
+                <?php foreach ($this->getStores() as $_store): ?>
+                <td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text"/></td>
+                <?php endforeach; ?>
                 <td><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}"></td>
                 <td><input class="input-radio" type="radio" name="default[]" value="{{id}}"></td>
                 <td class="a-left">
                     <input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="">
-                    <?=$this->getDeleteButtonHtml()?>
+                    <?php echo $this->getDeleteButtonHtml() ?>
                 </td>
             </tr>
         </table>
@@ -101,14 +101,14 @@ var optionDefaultInputType = 'radio';
 var templateText =
     '<table class="dynamic-grid" cellspacing="0">'+
         '<tr>'+
-<?foreach ($this->getStores() as $_store):?>
-            '<td><input name="option[value][{{id}}][<?=$_store->getId()?>]" value="{{store<?=$_store->getId()?>}}" class="input-text<?if($_store->getId()==0):?> required-option<?endif;?>" type="text"/></td>'+
-<?endforeach;?>
+<?php foreach ($this->getStores() as $_store): ?>
+            '<td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text"/></td>'+
+<?php endforeach; ?>
             '<td><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}"></td>'+
             '<td><input class="input-radio" type="{{intype}}" name="default[]" value="{{id}}" {{checked}}></td>'+
             '<td class="a-left">'+
                 '<input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="">'+
-                '<?=$this->getDeleteButtonHtml()?>'+
+                '<?php echo $this->getDeleteButtonHtml() ?>'+
             '</td>'+
         '</tr>'+
     '</table>';
@@ -219,12 +219,12 @@ if($('add_new_option_button')){
     Event.observe('add_new_option_button', 'click', attributeOption.add.bind(attributeOption));
 }
 Validation.addAllThese([
-    ['required-option', '<?=Mage::helper('catalog')->__('Failed')?>', function(v) {
+    ['required-option', '<?php echo Mage::helper('catalog')->__('Failed') ?>', function(v) {
         return !Validation.get('IsEmpty').test(v);
 }]]);
-<?foreach ($this->getOptionValues() as $_value):?>
-    attributeOption.add(<?=$_value->toJson()?>);
-<?endforeach;?>
+<?php foreach ($this->getOptionValues() as $_value): ?>
+    attributeOption.add(<?php echo $_value->toJson() ?>);
+<?php endforeach; ?>
 attributeOption.intervalIdentifier = setInterval(
     attributeOption.syncTableSize.bind(attributeOption),
     3000

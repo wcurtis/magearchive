@@ -24,7 +24,7 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
-DROP TABLE IF EXISTS {$this->getTable('sendfriend_log')};
+-- DROP TABLE IF EXISTS {$this->getTable('sendfriend_log')};
 CREATE TABLE {$this->getTable('sendfriend_log')} (
   `log_id` int(11) NOT NULL auto_increment,
   `ip` int(11) NOT NULL default '0',

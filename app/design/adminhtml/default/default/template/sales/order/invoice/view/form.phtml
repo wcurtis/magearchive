@@ -18,18 +18,18 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_invoice = $this->getInvoice()?>
-<?$_order = $_invoice->getOrder()?>
-<?=$this->getChildHtml('order_info')?>
+<?php $_invoice = $this->getInvoice() ?>
+<?php $_order = $_invoice->getOrder() ?>
+<?php echo $this->getChildHtml('order_info') ?>
 <div class="box-left">
     <!--Billing Address-->
     <div class="entry-edit">
         <div class="entry-edit-head">
-            <h4 class="icon-head head-payment-method"><?=$this->helper('sales')->__('Payment Information')?></h4>
+            <h4 class="icon-head head-payment-method"><?php echo $this->helper('sales')->__('Payment Information') ?></h4>
         </div>
         <fieldset>
-            <div><?=$this->getChildHtml('payment_info')?></div>
-            <div><?=Mage::helper('sales')->__('Order was placed using %s', $_order->getOrderCurrencyCode())?></div>
+            <div><?php echo $this->getChildHtml('payment_info') ?></div>
+            <div><?php echo Mage::helper('sales')->__('Order was placed using %s', $_order->getOrderCurrencyCode()) ?></div>
         </fieldset>
     </div>
 </div>
@@ -37,11 +37,11 @@
     <!--Shipping Address-->
     <div class="entry-edit">
         <div class="entry-edit-head">
-            <h4 class="icon-head head-shipping-method"><?=$this->helper('sales')->__('Shipping Information')?></h4>
+            <h4 class="icon-head head-shipping-method"><?php echo $this->helper('sales')->__('Shipping Information') ?></h4>
         </div>
         <fieldset>
-            <strong><?=$_order->getShippingDescription()?></strong>
-            (<?=$this->helper('sales')->__('Total Shipping Charges %s', $this->displayPriceAttribute('shipping_amount', false, ' '))?>)
+            <strong><?php echo $_order->getShippingDescription() ?></strong>
+            (<?php echo $this->helper('sales')->__('Total Shipping Charges %s', $this->displayPriceAttribute('shipping_amount', false, ' ')) ?>)
         </fieldset>
     </div>
 </div>
@@ -49,7 +49,7 @@
 
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-products"><?=$this->helper('sales')->__('Items Invoiced')?></h4>
+        <h4 class="icon-head head-products"><?php echo $this->helper('sales')->__('Items Invoiced') ?></h4>
     </div>
     <div id="invoice_item_container">
         <div class="grid">
@@ -63,38 +63,38 @@
                 <col width="100"/>
                 <thead>
                     <tr class="headings">
-                        <th><?=$this->helper('sales')->__('Product')?></th>
-                        <th><?=$this->helper('sales')->__('Price')?></th>
-                        <th><?=$this->helper('sales')->__('Qty')?></th>
-                        <th><?=$this->helper('sales')->__('Subtotal')?></th>
-                        <th><?=$this->helper('sales')->__('Tax Amount')?></th>
-                        <th><?=$this->helper('sales')->__('Discount Amount')?></th>
-                        <th class="last"><?=$this->helper('sales')->__('Row Total')?></th>
+                        <th><?php echo $this->helper('sales')->__('Product') ?></th>
+                        <th><?php echo $this->helper('sales')->__('Price') ?></th>
+                        <th><?php echo $this->helper('sales')->__('Qty') ?></th>
+                        <th><?php echo $this->helper('sales')->__('Subtotal') ?></th>
+                        <th><?php echo $this->helper('sales')->__('Tax Amount') ?></th>
+                        <th><?php echo $this->helper('sales')->__('Discount Amount') ?></th>
+                        <th class="last"><?php echo $this->helper('sales')->__('Row Total') ?></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?$_items = $this->getInvoice()->getAllItems()?>
-                    <?$i=0;foreach ($_items as $_item):$i++?>
-                    <?$this->setPriceDataObject($_item)?>
-                        <tr class="<?=($i%2==0)?'even':'odd'?>">
+                    <?php $_items = $this->getInvoice()->getAllItems() ?>
+                    <?php $i=0;foreach ($_items as $_item):$i++ ?>
+                    <?php $this->setPriceDataObject($_item) ?>
+                        <tr class="<?php echo ($i%2==0)?'even':'odd' ?>">
                             <td>
-                                <?=$_item->getName()?>
-                                <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
-                                <?=$_item->getDescription()?>
+                                <?php echo $_item->getName() ?>
+                                <div class="nobr"><strong><?php echo $this->helper('sales')->__('SKU') ?>:</strong> <?php echo $_item->getSku() ?></div>
+                                <?php echo $_item->getDescription() ?>
                             </td>
-                            <td class="price"><?=$this->displayPriceAttribute('price')?></td>
-                            <td><?=$_item->getQty()*1?></td>
-                            <td class="price"><?=$this->displayPriceAttribute('row_total')?></td>
-                            <td class="price"><?=$this->displayPriceAttribute('tax_amount')?></td>
-                            <td class="price"><?=$this->displayPriceAttribute('discount_amount')?></td>
+                            <td class="price"><?php echo $this->displayPriceAttribute('price') ?></td>
+                            <td><?php echo $_item->getQty()*1 ?></td>
+                            <td class="price"><?php echo $this->displayPriceAttribute('row_total') ?></td>
+                            <td class="price"><?php echo $this->displayPriceAttribute('tax_amount') ?></td>
+                            <td class="price"><?php echo $this->displayPriceAttribute('discount_amount') ?></td>
                             <td class="price last">
-                                <?=$this->displayPrices(
+                                <?php echo $this->displayPrices(
                                     $_item->getBaseRowTotal()+$_item->getBaseTaxAmount()-$_item->getBaseDiscountAmount(),
                                     $_item->getRowTotal()+$_item->getTaxAmount()-$_item->getDiscountAmount()
-                                )?>
+                                ) ?>
                             </td>
                         </tr>
-                    <?endforeach;?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -102,12 +102,12 @@
 </div>
 <br/>
 <div class="box-left entry-edit">
-    <div class="entry-edit-head"><h4><?=$this->__('Invoice History')?></h4></div>
-    <fieldset><?=$this->getChildHtml('comments')?></fieldset>
+    <div class="entry-edit-head"><h4><?php echo $this->__('Invoice History') ?></h4></div>
+    <fieldset><?php echo $this->getChildHtml('comments') ?></fieldset>
 </div>
 
 <div class="box-right entry-edit" id="history_form">
-    <div class="entry-edit-head"><h4><?=$this->__('Invoice Totals')?></h4></div>
-    <div class="order-totals"><?=$this->getChildHtml('totals')?></div>
+    <div class="entry-edit-head"><h4><?php echo $this->__('Invoice Totals') ?></h4></div>
+    <div class="order-totals"><?php echo $this->getChildHtml('totals') ?></div>
 </div>
 <div class="clear"></div>

@@ -13,9 +13,9 @@
  * so we can mail you a copy immediately.
  *
  * @package    Zend_View
- * @subpackage Helpers
+ * @subpackage Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Abstract.php 8183 2008-02-19 22:27:20Z matthew $
+ * @version    $Id: Abstract.php 8838 2008-03-15 19:55:17Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -219,7 +219,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
      */
     public function setIndent($indent)
     {
-        $this->_indent = $this->_getWhitespace($indent);
+        $this->_indent = $this->getWhitespace($indent);
         return $this;
     }
 
@@ -239,7 +239,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
      * @param  int|string $indent 
      * @return string
      */
-    protected function _getWhitespace($indent)
+    public function getWhitespace($indent)
     {
         if (is_int($indent)) {
             $indent = str_repeat(' ', $indent);
@@ -351,7 +351,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
     public function toString($indent = null)
     {
         $indent = ($indent !== null) 
-                ? $this->_getWhitespace($indent) 
+                ? $this->getWhitespace($indent) 
                 : $this->getIndent();
         
         $items  = $this->getArrayCopy();

@@ -61,21 +61,21 @@ class Varien_Data_Form_Element_Time extends Varien_Data_Form_Element_Abstract
         $html = '<select name="'. $this->getName() . '" '.$this->serialize($this->getHtmlAttributes()).' style="width:40px">'."\n";
         for( $i=0;$i<24;$i++ ) {
             $hour = str_pad($i, 2, '0', STR_PAD_LEFT);
-            $html.= '<option value="'.$hour.'" '. ( ($value_hrs == $i) ? 'selected' : '' ) .'>' . $hour . '</option>';
+            $html.= '<option value="'.$hour.'" '. ( ($value_hrs == $i) ? 'selected="selected"' : '' ) .'>' . $hour . '</option>';
         }
         $html.= '</select>'."\n";
 
         $html.= '&nbsp;:&nbsp;<select name="'. $this->getName() . '" '.$this->serialize($this->getHtmlAttributes()).' style="width:40px">'."\n";
         for( $i=0;$i<60;$i++ ) {
             $hour = str_pad($i, 2, '0', STR_PAD_LEFT);
-            $html.= '<option value="'.$hour.'" '. ( ($value_min == $i) ? 'selected' : '' ) .'>' . $hour . '</option>';
+            $html.= '<option value="'.$hour.'" '. ( ($value_min == $i) ? 'selected="selected"' : '' ) .'>' . $hour . '</option>';
         }
         $html.= '</select>'."\n";
 
         $html.= '&nbsp;:&nbsp;<select name="'. $this->getName() . '" '.$this->serialize($this->getHtmlAttributes()).' style="width:40px">'."\n";
         for( $i=0;$i<60;$i++ ) {
             $hour = str_pad($i, 2, '0', STR_PAD_LEFT);
-            $html.= '<option value="'.$hour.'" '. ( ($value_sec == $i) ? 'selected' : '' ) .'>' . $hour . '</option>';
+            $html.= '<option value="'.$hour.'" '. ( ($value_sec == $i) ? 'selected="selected"' : '' ) .'>' . $hour . '</option>';
         }
         $html.= '</select>'."\n";
         $html.= $this->getAfterElementHtml();

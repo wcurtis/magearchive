@@ -49,11 +49,15 @@ class Mage_Adminhtml_Block_Review_Edit_Form extends Mage_Adminhtml_Block_Widget_
             'label'     => Mage::helper('review')->__('Product'),
             'text'      => '<a href="' . $this->getUrl('*/catalog_product/edit', array('id' => $product->getId())) . '" target="_blank">' . $product->getName() . '</a>'
         ));
-
-        if($customer->getId()) {
-            $customerText = Mage::helper('review')->__('<a href="%1$s" target="_blank">%2$s %3$s</a> <a href="mailto:%4$s">(%4$s)</a>', $this->getUrl('*/customer/edit', array('id' => $customer->getId(), 'active_tab'=>'review')), $customer->getFirstname(), $customer->getLastname(), $customer->getEmail());
+        
+		if ($customer->getId()) {
+        	$customerText = Mage::helper('review')->__('<a href="%1$s" target="_blank">%2$s %3$s</a> <a href="mailto:%4$s">(%4$s)</a>', $this->getUrl('*/customer/edit', array('id' => $customer->getId(), 'active_tab'=>'review')), $customer->getFirstname(), $customer->getLastname(), $customer->getEmail());
         } else {
-            $customerText = Mage::helper('review')->__('Guest');
+        	if (is_null($review->getCustomerId())) {
+        		$customerText = Mage::helper('review')->__('Guest');
+        	} elseif ($review->getCustomerId() == 0) {
+        		$customerText = Mage::helper('review')->__('Administrator');
+        	}
         }
 
         $fieldset->addField('customer', 'note', array(

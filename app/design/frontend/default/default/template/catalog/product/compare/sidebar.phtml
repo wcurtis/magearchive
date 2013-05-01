@@ -20,24 +20,28 @@
 ?>
 <div class="box base-mini  mini-compare-products">
     <div class="head">
-        <h4><?=$this->__('Compare Products - %d Items', $this->helper('catalog/product_compare')->getItemCount())?></h4>
+    <?php if($this->helper('catalog/product_compare')->getItemCount()>0): ?>
+        <h4><?php echo $this->__('Compare Products - %d Items', $this->helper('catalog/product_compare')->getItemCount()) ?></h4>
+    <?php else: ?>
+        <h4><?php echo $this->__('Compare Products') ?></h4>
+    <?php endif; ?>
     </div>
-    <?if($this->helper('catalog/product_compare')->getItemCount()>0):?>
+    <?php if($this->helper('catalog/product_compare')->getItemCount()>0): ?>
         <ol id="compare-items">
-        <?foreach($this->helper('catalog/product_compare')->getItemCollection() as $_index=>$_item):?>
+        <?php foreach($this->helper('catalog/product_compare')->getItemCollection() as $_index=>$_item): ?>
             <li class="block-compare-item">
-                <input type="hidden" class="compare-item-id" value="<?=$_item->getId()?>"/>
-                <a href="<?=$this->helper('catalog/product_compare')->getRemoveUrl($_item)?>" class="widget-btn"><img src="<?=$this->getSkinUrl('images/list_remove_btn.gif')?>" alt="<?=$this->__('Remove This Item')?>"/></a>
-                <a href="<?=$_item->getProductUrl()?>"><?=$_item->getName()?></a>
+                <input type="hidden" class="compare-item-id" value="<?php echo $_item->getId() ?>"/>
+                <a href="<?php echo $this->helper('catalog/product_compare')->getRemoveUrl($_item) ?>" class="widget-btn"><img src="<?php echo $this->getSkinUrl('images/list_remove_btn.gif') ?>" alt="<?php echo $this->__('Remove This Item') ?>"/></a>
+                <a href="<?php echo $_item->getProductUrl() ?>"><?php echo $_item->getName() ?></a>
             </li>
-        <?endforeach;?>
+        <?php endforeach; ?>
         </ol>
         <script type="text/javascript">decorateList('compare-items')</script>
         <div class="actions">
-            <a href="<?=$this->helper('catalog/product_compare')->getClearListUrl()?>" class="left"><?=$this->__('Clear All Items')?></a>
-            <button class="form-button-alt" onclick="popWin('<?=$this->helper('catalog/product_compare')->getListUrl()?>','compare','width=800,height=600,resizable=yes,scrollbars=yes')"><span><?=$this->__('Compare Items')?></span></button>
+            <a href="<?php echo $this->helper('catalog/product_compare')->getClearListUrl() ?>" class="left"><?php echo $this->__('Clear All Items') ?></a>
+            <button class="form-button-alt" onclick="popWin('<?php echo $this->helper('catalog/product_compare')->getListUrl() ?>','compare','width=800,height=600,resizable=yes,scrollbars=yes')"><span><?php echo $this->__('Compare Items') ?></span></button>
         </div>
-    <?else:?>
-        <div class="content"><p><?=$this->__('You have no items to compare.')?></p></div>
-    <?endif;?>
+    <?php else: ?>
+        <div class="content"><p><?php echo $this->__('You have no items to compare.') ?></p></div>
+    <?php endif; ?>
 </div>

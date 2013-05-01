@@ -64,19 +64,19 @@ trackingControl = {
     <col width="80"/>
     <thead>
         <tr class="headings">
-            <th><?=Mage::helper('sales')->__('Carrier')?></th>
-            <th><?=Mage::helper('sales')->__('Title')?></th>
-            <th><?=Mage::helper('sales')->__('Number')?></th>
-            <th class="last"><?=Mage::helper('sales')->__('Action')?></th>
+            <th><?php echo Mage::helper('sales')->__('Carrier') ?></th>
+            <th><?php echo Mage::helper('sales')->__('Title') ?></th>
+            <th><?php echo Mage::helper('sales')->__('Number') ?></th>
+            <th class="last"><?php echo Mage::helper('sales')->__('Action') ?></th>
         </tr>
     </thead>
     <tbody id="track_row_container">
         <tr id="track_row_template" class="template no-display">
             <td>
                 <select name="tracking[__index__][carrier_code]" class="select carrier" style="width:110px;" disabled>
-                    <?foreach ($this->getCarriers() as $_code=>$_name):?>
-                    <option value="<?=$_code?>"><?=$_name?></option>
-                    <?endforeach;?>
+                    <?php foreach ($this->getCarriers() as $_code=>$_name): ?>
+                    <option value="<?php echo $_code ?>"><?php echo $_name ?></option>
+                    <?php endforeach; ?>
                 </select>
             </td>
             <td>
@@ -86,13 +86,13 @@ trackingControl = {
                 <input class="input-text" type="text" name="tracking[__index__][number]" value="" disabled/>
             </td>
             <td class="last">
-                <a href="#" onclick="trackingControl.deleteRow(event);return false"><?=$this->__('Delete')?></a>
+                <a href="#" onclick="trackingControl.deleteRow(event);return false"><?php echo $this->__('Delete') ?></a>
             </td>
         </tr>
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="4" class="a-center last" style="padding:8px"><?=$this->getChildHtml('add_button')?></td>
+            <td colspan="4" class="a-center last" style="padding:8px"><?php echo $this->getChildHtml('add_button') ?></td>
         </tr>
     </tfoot>
 </table>

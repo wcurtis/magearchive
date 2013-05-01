@@ -32,7 +32,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('report_event_types')};
+-- DROP TABLE IF EXISTS {$this->getTable('report_event_types')};
 CREATE TABLE {$this->getTable('report_event_types')} (
   `event_type_id` smallint(6) unsigned NOT NULL auto_increment,
   `event_name` varchar(32) NOT NULL,
@@ -48,7 +48,7 @@ INSERT INTO {$this->getTable('report_event_types')} VALUES
 (5, 'wishlist_add_product'),
 (6, 'wishlist_share');
 
-DROP TABLE IF EXISTS {$this->getTable('report_event')};
+-- DROP TABLE IF EXISTS {$this->getTable('report_event')};
 CREATE TABLE {$this->getTable('report_event')} (
   `event_id` bigint(20) unsigned NOT NULL auto_increment,
   `logged_at` datetime NOT NULL default '0000-00-00 00:00:00',

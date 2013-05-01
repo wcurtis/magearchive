@@ -19,18 +19,18 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('All Tags')?></h3>
+    <h3><?php echo $this->__('All Tags') ?></h3>
 </div>
 <div class="box base-mini mini-product-tags">
     <div class="content">
-        <?if( sizeof($this->getTags()) > 0 ):?>
+        <?php if( sizeof($this->getTags()) > 0 ): ?>
         <ul>
-            <?foreach ($this->getTags() as $_tag):?>
-                <li><a href="<?=$_tag->getTaggedProductsUrl()?>" style="font-size:<?=$_tag->getRatio()*70+75?>%;"><?=$_tag->getName()?></a></li>
-            <?endforeach;?>
+            <?php foreach ($this->getTags() as $_tag): ?>
+                <li><a href="<?php echo $_tag->getTaggedProductsUrl() ?>" style="font-size:<?php echo $_tag->getRatio()*70+75 ?>%;"><?php echo $_tag->getName() ?></a></li>
+            <?php endforeach; ?>
         </ul>
-        <?else:?>
-        <p class="a-center"><small><?=$this->__("Tags Aren't Available")?></small></p>
-        <?endif;?>
+        <?php else: ?>
+        <p class="a-center"><small><?php echo $this->__("Tags Aren't Available") ?></small></p>
+        <?php endif; ?>
     </div>
 </div>

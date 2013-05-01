@@ -25,7 +25,7 @@
  * @package    Zend_Form
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DisplayGroup.php 8213 2008-02-20 17:04:20Z matthew $
+ * @version    $Id: DisplayGroup.php 8604 2008-03-06 21:52:58Z matthew $
  */
 class Zend_Form_DisplayGroup implements Iterator,Countable
 {
@@ -46,6 +46,12 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
      * @var string
      */
     protected $_description;
+
+    /**
+     * Should we disable loading the default decorators?
+     * @var bool
+     */
+    protected $_disableLoadDefaultDecorators = false;
 
     /**
      * Element order
@@ -89,6 +95,12 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
     protected $_translator;
 
     /**
+     * Is translation disabled?
+     * @var bool
+     */
+    protected $_translatorDisabled = false;
+
+    /**
      * @var Zend_View_Interface
      */
     protected $_view;
@@ -113,13 +125,7 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
             $this->setConfig($options);
         }
 
-        $decorators = $this->getDecorators();
-        if (empty($decorators)) {
-            $this->addDecorator('FormElements')
-                 ->addDecorator('HtmlTag', array('tag' => 'dl'))
-                 ->addDecorator('Fieldset')
-                 ->addDecorator('DtDdWrapper');
-        }
+        $this->loadDefaultDecorators();
     }
 
     /**
@@ -532,6 +538,48 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
     // Decorators
 
     /**
+     * Set flag to disable loading default decorators
+     * 
+     * @param  bool $flag 
+     * @return Zend_Form_Element
+     */
+    public function setDisableLoadDefaultDecorators($flag)
+    {
+        $this->_disableLoadDefaultDecorators = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Should we load the default decorators?
+     * 
+     * @return bool
+     */
+    public function loadDefaultDecoratorsIsDisabled()
+    {
+        return $this->_disableLoadDefaultDecorators;
+    }
+
+    /**
+     * Load default decorators
+     * 
+     * @return void
+     */
+    public function loadDefaultDecorators()
+    {
+        if ($this->loadDefaultDecoratorsIsDisabled()) {
+            return;
+        }
+
+        $decorators = $this->getDecorators();
+        if (empty($decorators)) {
+            $this->addDecorator('FormElements')
+                 ->addDecorator('HtmlTag', array('tag' => 'dl'))
+                 ->addDecorator('Fieldset')
+                 ->addDecorator('DtDdWrapper');
+        }
+    }
+
+    /**
      * Instantiate a decorator based on class name or class name fragment
      * 
      * @param  string $name 
@@ -790,12 +838,38 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
      */
     public function getTranslator()
     {
+        if ($this->translatorIsDisabled()) {
+            return null;
+        }
+
         if (null === $this->_translator) {
             require_once 'Zend/Form.php';
             return Zend_Form::getDefaultTranslator();
         }
 
         return $this->_translator;
+    }
+
+    /**
+     * Indicate whether or not translation should be disabled
+     * 
+     * @param  bool $flag 
+     * @return Zend_Form_DisplayGroup
+     */
+    public function setDisableTranslator($flag)
+    {
+        $this->_translatorDisabled = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Is translation disabled?
+     * 
+     * @return bool
+     */
+    public function translatorIsDisabled()
+    {
+        return $this->_translatorDisabled;
     }
 
     // Interfaces: Iterator, Countable

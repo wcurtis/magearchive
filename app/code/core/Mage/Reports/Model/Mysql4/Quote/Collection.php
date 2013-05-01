@@ -35,11 +35,11 @@ class Mage_Reports_Model_Mysql4_Quote_Collection extends Mage_Sales_Model_Entity
 
     public function addCustomerName()
     {
-        $this->joinAttribute('customer_firstname', 'customer/firstname', 'customer_id')
-            ->joinAttribute('customer_lastname', 'customer/lastname', 'customer_id')
+        $this->joinAttribute('customer_firstname', 'customer/firstname', 'customer_id', '', 'left')
+            ->joinAttribute('customer_lastname', 'customer/lastname', 'customer_id', '', 'left')
             ->addExpressionAttributeToSelect(
                 'customer_name',
-                'CONCAT({{customer_firstname}}, " ", {{customer_lastname}})',
+                'IFNULL(CONCAT({{customer_firstname}}, " ", {{customer_lastname}}),"'.Mage::helper('reports')->__('Guest').'")',
                 array('customer_firstname', 'customer_lastname'));
 
         return $this;
@@ -47,34 +47,7 @@ class Mage_Reports_Model_Mysql4_Quote_Collection extends Mage_Sales_Model_Entity
 
     public function addCustomerEmail()
     {
-        $this->joinAttribute('customer_email', 'customer/email', 'customer_id');
-        return $this;
-    }
-
-    public function addQuoteItems()
-    {
-        $quoteItem = Mage::getResourceSingleton('sales/quote_item');
-        /* @var $quoteItem Mage_Sales_Model_Entity_Quote_Item */
-
-        $this->getSelect()
-            ->joinLeft(array('quote_items' => $quoteItem->getEntityTable()),
-                "quote_items.parent_id=e.entity_id AND quote_items.entity_type_id=".$quoteItem->getTypeId(),
-                array());
-
-        $attr = $quoteItem->getAttribute('qty');
-        $attrId = $attr->getAttributeId();
-        $attrTableName = $attr->getBackend()->getTable();
-        $attrFieldName = $attr->getBackend()->isStatic() ? 'qty' : 'value';
-
-        $this->getSelect()
-            ->joinInner(array('quote_items_qty' => $attrTableName),
-                "quote_items_qty.entity_id=quote_items.entity_id AND quote_items_qty.attribute_id=".$attrId,
-                 array())
-            ->from("", array(
-                "items" => "COUNT(quote_items.entity_id)",
-                "items_qty" => "SUM(quote_items_qty.{$attrFieldName})"))
-            ;//->having('items > 0');
-
+        $this->joinAttribute('customer_email', 'customer/email', 'customer_id', '', 'left');
         return $this;
     }
 
@@ -95,19 +68,10 @@ class Mage_Reports_Model_Mysql4_Quote_Collection extends Mage_Sales_Model_Entity
 
         $this->getSelect()
             ->joinLeft(array('quote_addr_subtotal' => $attrTableName),
-                "quote_addr_subtotal.entity_id=quote_addr.entity_id AND quote_addr_subtotal.attribute_id=".$attrId,
+                "quote_addr_subtotal.entity_id=quote_addr.entity_id",
                  array());
         if ($storeIds == '') {
-            $rate = $this->getEntity()->getAttribute('store_to_base_rate');
-            $rateId = $rate->getAttributeId();
-            $rateTableName = $rate->getBackend()->getTable();
-            $rateFieldName = $rate->getBackend()->isStatic() ? 'store_to_base_rate' : 'value';
-
-            $this->getSelect()
-                ->joinLeft(array('quote_rate' => $rateTableName),
-                    "quote_rate.entity_id=e.entity_id AND quote_rate.attribute_id=".$rateId,
-                     array());
-            $this->getSelect()->from("", array("subtotal" => "SUM(IFNULL(quote_addr_subtotal.{$attrFieldName}/quote_rate.{$rateFieldName}, 0))"));
+            $this->getSelect()->from("", array("subtotal" => "SUM(IFNULL(quote_addr_subtotal.{$attrFieldName}/e.store_to_base_rate, 0))"));
         } else {
             $this->getSelect()->from("", array("subtotal" => "SUM(IFNULL(quote_addr_subtotal.{$attrFieldName}, 0))"));
         }

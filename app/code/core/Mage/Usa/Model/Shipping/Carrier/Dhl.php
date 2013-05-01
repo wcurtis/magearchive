@@ -157,22 +157,26 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl
 
         $internationcode = $this->getCode('international_searvice');
 
-        foreach ($methods as $method) {
-            if(($method==$internationcode && ($r->getDestCountryId() != self::USA_COUNTRY_ID)) ||
-            ($method!=$internationcode && ($r->getDestCountryId() == self::USA_COUNTRY_ID)))
-            {
-                $weight = $freeMethod==$method ? $freeMethodWeight : $shippingWeight;
-                if ($weight>0) {
-                    $this->_rawRequest->setWeight($weight);
-            	    $this->_rawRequest->setService($method);
-                    $this->_getQuotes();
-                } else {
-                    $this->_dhlRates[$method] = array(
-                        'term' => $this->getCode('service', $method),
-                        'price_total' => 0,
-                    );
+        if ($shippingWeight>0) {
+            foreach ($methods as $method) {
+                if(($method==$internationcode && ($r->getDestCountryId() != self::USA_COUNTRY_ID)) ||
+                ($method!=$internationcode && ($r->getDestCountryId() == self::USA_COUNTRY_ID)))
+                {
+                    $weight = $freeMethod==$method ? $freeMethodWeight : $shippingWeight;
+                    if ($weight>0) {
+                        $this->_rawRequest->setWeight($weight);
+                	    $this->_rawRequest->setService($method);
+                        $this->_getQuotes();
+                    } else {
+                        $this->_dhlRates[$method] = array(
+                            'term' => $this->getCode('service', $method),
+                            'price_total' => 0,
+                        );
+                    }
                 }
             }
+        } else {
+           $this->_errors[] = Mage::helper('usa')->__('Please enter the package weight');
         }
 
         return $this;
@@ -217,6 +221,20 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl
         $r->setService($freeMethod);
     }
 
+
+    protected function _getShipDate()
+    {
+        $i = 0;
+        $weekday = date('l');
+        /*
+        * need to omit saturday and sunday
+        * dhl will not work on saturday and sunday
+        */
+        if ($weekday=='Saturday') $i += 2;
+        elseif ($weekday=='Sunday') $i += 1;
+        return date('Y-m-d', strtotime("$i day"));
+    }
+
     protected function _getXmlQuotes()
     {
         $r = $this->_rawRequest;
@@ -252,7 +270,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl
                 $shippingCredentials->addChild('AccountNbr', $r->getAccountNbr());
 
             $shipmentDetail = $shipment->addChild('ShipmentDetail');
-                $shipmentDetail->addChild('ShipDate', date('Y-m-d'));
+                $shipmentDetail->addChild('ShipDate', $this->_getShipDate());
                 $shipmentDetail->addChild('Service')->addChild('Code', $r->getService());
                 $shipmentDetail->addChild('ShipmentType')->addChild('Code', $r->getShipmentType());
                 $shipmentDetail->addChild('Weight', $r->getWeight());
@@ -696,9 +714,9 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl
                 foreach ($trackings as $tracking){
                     if($data = $tracking->getAllData()){
                         if (isset($data['status'])) {
-                            $statuses .= Mage::helper('usa')->__($data['status'])."\n<br>";
+                            $statuses .= Mage::helper('usa')->__($data['status'])."\n<br/>";
                         } else {
-                            $statuses .= Mage::helper('usa')->__($data['error_message'])."\n<br>";
+                            $statuses .= Mage::helper('usa')->__($data['error_message'])."\n<br/>";
                         }
                     }
                 }

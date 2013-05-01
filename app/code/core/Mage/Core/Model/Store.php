@@ -27,6 +27,7 @@
  */
 class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
 {
+
     const XML_PATH_USE_REWRITES         = 'web/seo/use_rewrites';
     const XML_PATH_UNSECURE_BASE_URL    = 'web/unsecure/base_url';
     const XML_PATH_SECURE_BASE_URL      = 'web/secure/base_url';
@@ -44,6 +45,9 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
     const URL_TYPE_MEDIA                = 'media';
 
     const DEFAULT_CODE                  = 'default';
+
+    const CACHE_TAG         = 'store';
+    protected $_cacheTag    = 'store';
 
     protected $_priceFilter;
 
@@ -304,6 +308,11 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         $cacheKey = $type.'/'.(is_null($secure) ? 'null' : ($secure ? 'true' : 'false'));
         if (!isset($this->_baseUrlCache[$cacheKey])) {
             switch ($type) {
+                case self::URL_TYPE_WEB:
+                    $secure = is_null($secure) ? $this->isCurrentlySecure() : (bool)$secure;
+                    $url = $this->getConfig('web/'.($secure ? 'secure' : 'unsecure').'/base_url');
+                    break;
+
                 case self::URL_TYPE_LINK:
                     $secure = (bool)$secure;
                     $url = $this->getConfig('web/'.($secure ? 'secure' : 'unsecure').'/base_link_url');
@@ -313,11 +322,6 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
                         $url .= basename($_SERVER['SCRIPT_FILENAME']).'/';
                         #$url .= 'index.php/';
                     }
-                    break;
-
-                case self::URL_TYPE_WEB:
-                    $secure = is_null($secure) ? $this->isCurrentlySecure() : (bool)$secure;
-                    $url = $this->getConfig('web/'.($secure ? 'secure' : 'unsecure').'/base_url');
                     break;
 
                 case self::URL_TYPE_SKIN:
@@ -457,7 +461,10 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         $codes = $this->getData('available_currency_codes');
         if (is_null($codes)) {
             $codes = explode(',', $this->getConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_ALLOW));
-            $codes[] = $this->getBaseCurrencyCode();
+            // only if base currency is not in allowed currencies
+            if (!in_array($this->getBaseCurrencyCode(), $codes)) {
+            	$codes[] = $this->getBaseCurrencyCode();
+            }
             $this->setData('available_currency_codes', $codes);
         }
         return $codes;

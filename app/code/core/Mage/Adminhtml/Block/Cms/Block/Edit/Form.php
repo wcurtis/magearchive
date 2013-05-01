@@ -72,8 +72,8 @@ class Mage_Adminhtml_Block_Cms_Block_Edit_Form extends Mage_Adminhtml_Block_Widg
          * Check is single store mode
          */
         if (!Mage::app()->isSingleStoreMode()) {
-        	$fieldset->addField('store_id', 'select', array(
-                'name'      => 'store_id',
+        	$fieldset->addField('store_id', 'multiselect', array(
+                'name'      => 'stores[]',
                 'label'     => Mage::helper('cms')->__('Store View'),
                 'title'     => Mage::helper('cms')->__('Store View'),
                 'required'  => true,
@@ -82,7 +82,7 @@ class Mage_Adminhtml_Block_Cms_Block_Edit_Form extends Mage_Adminhtml_Block_Widg
         }
         else {
             $fieldset->addField('store_id', 'hidden', array(
-                'name'      => 'store_id',
+                'name'      => 'stores[]',
                 'value'     => Mage::app()->getStore(true)->getId()
             ));
             $model->setStoreId(Mage::app()->getStore(true)->getId());

@@ -310,7 +310,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     /**
      * Place order payments
      *
-     * @return unknown
+     * @return Mage_Sales_Model_Order
      */
     protected function _placePayment()
     {
@@ -565,17 +565,27 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      *
      * @return Mage_Sales_Model_Order
      */
-    public function sendOrderUpdateEmail($comment='')
+    public function sendOrderUpdateEmail($notifyCustomer=true, $comment='')
     {
+        $bcc = $this->_getEmails(self::XML_PATH_UPDATE_ORDER_EMAIL_COPY_TO);
+        if (!$notifyCustomer && !$bcc) {
+            return $this;
+        }
+
         $mailTemplate = Mage::getModel('core/email_template');
-        if ($bcc = $this->_getEmails(self::XML_PATH_UPDATE_ORDER_EMAIL_COPY_TO )) {
+        if ($notifyCustomer) {
+            $customerEmail = $this->getCustomerEmail();
             $mailTemplate->addBcc($bcc);
         }
+        else {
+            $customerEmail = $bcc;
+        }
+
         $mailTemplate->setDesignConfig(array('area'=>'frontend', 'store' => $this->getStoreId()))
             ->sendTransactional(
                 Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE, $this->getStoreId()),
                 Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY, $this->getStoreId()),
-                $this->getCustomerEmail(),
+                $customerEmail,
                 $this->getBillingAddress()->getName(),
                 array(
                     'order'=>$this,
@@ -938,6 +948,17 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         $total = $this->getBaseGrandTotal()-$this->getBaseTotalPaid();
         $total = Mage::app()->getStore($this->getStoreId())->roundPrice($total);
         return max($total, 0);
+    }
+
+    public function getData($key='', $index=null)
+    {
+        if ($key == 'total_due') {
+            return $this->getTotalDue();
+        }
+        if ($key == 'base_total_due') {
+            return $this->getBaseTotalDue();
+        }
+        return parent::getData($key, $index);
     }
 
     /**

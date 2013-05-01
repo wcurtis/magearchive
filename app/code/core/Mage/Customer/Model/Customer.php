@@ -220,17 +220,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function hashPassword($password, $salt=null)
     {
-        if (is_null($salt)) {
-            $chars = 'ABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
-            $l = strlen($chars)-1;
-            $salt = $chars[rand(0, $l)].$chars[rand(0, $l)];
-        }
-        if (false !== $salt) {
-            $hash = md5($salt.$password).':'.$salt;
-        } else {
-            $hash = md5($password);
-        }
-        return $hash;
+        return Mage::helper('core')->getHash($password, !is_null($salt) ? $salt : 2);
     }
 
     /**
@@ -252,11 +242,10 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function validatePassword($password)
     {
-        if (!($pHash = $this->getPasswordHash())) {
+        if (!($hash = $this->getPasswordHash())) {
             return false;
         }
-        $h = explode(':', $pHash);
-        return md5((isset($h[1]) ? $h[1] : '').$password) == $h[0];
+        return Mage::helper('core')->validateHash($password, $hash);
     }
 
     /**

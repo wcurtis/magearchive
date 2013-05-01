@@ -25,13 +25,11 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__("Welcome to Magento's Installation Wizard")?>!</h3>
+    <h3><?php echo $this->__("Welcome to Magento's Installation Wizard") ?>!</h3>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
-<?
-?>
-<?if(count($this->getMessagesBlock()->getMessages())==0):?>
-<form action="<?=$this->getPostUrl()?>" method="post">
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<?php if(count($this->getMessagesBlock()->getMessages())==0): ?>
+<form action="<?php echo $this->getPostUrl() ?>" method="post">
 <div style="height:20em; border:1px solid #ccc; margin-bottom:8px; padding:5px; background:#fff; overflow: auto; overflow-x:hidden; overflow-y:scroll;">
 <h4>Open Software License ("OSL") v. 3.0</h4>
 
@@ -90,13 +88,13 @@ function changeSubmitStatus(obj) {
 </script>
     <p>
         <input type="checkbox" name="agree" value="1" id="agree" onclick="changeSubmitStatus(this)"/>
-        <label for="agree">&nbsp; <?=$this->__('I agree to the above terms and conditions')?>.</label>
+        <label for="agree">&nbsp; <?php echo $this->__('I agree to the above terms and conditions') ?>.</label>
     </p>
     <div class="button-set">
-        <button class="form-button" type="submit" id="submitButton" disabled="true"><span><?=$this->__('Continue')?></span></button>
+        <button class="form-button" type="submit" id="submitButton" disabled="true"><span><?php echo $this->__('Continue') ?></span></button>
     </div>
 </form>
 <script type="text/javascript">
     changeSubmitStatus($('agree'));
 </script>
-<?endif?>
+<?php endif ?>

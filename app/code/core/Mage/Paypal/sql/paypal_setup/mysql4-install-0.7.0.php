@@ -26,8 +26,8 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('paypal_api_debug')};
-CREATE TABLE {$this->getTable('paypal_api_debug')} (
+-- DROP TABLE IF EXISTS `{$this->getTable('paypal_api_debug')}`;
+CREATE TABLE `{$this->getTable('paypal_api_debug')}` (
   `debug_id` int(10) unsigned NOT NULL auto_increment,
   `debug_at` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `request_body` text,
@@ -40,5 +40,6 @@ CREATE TABLE {$this->getTable('paypal_api_debug')} (
 
 $installer->endSetup();
 
-$installer->installEntities();
-
+$installer->addAttribute('quote_payment', 'paypal_payer_id', array());
+$installer->addAttribute('quote_payment', 'paypal_payer_status', array());
+$installer->addAttribute('quote_payment', 'paypal_correlation_id', array());

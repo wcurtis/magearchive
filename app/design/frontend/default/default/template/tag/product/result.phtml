@@ -18,43 +18,43 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if( $this->getTagInfo()->getName() ):?>
+<?php if( $this->getTagInfo()->getName() ): ?>
     <div class="page-head">
-        <h3><?=$this->__("Products tagged with '%s'", $this->getTagInfo()->getName())?></h3>
+        <h3><?php echo $this->__("Products tagged with '%s'", $this->getTagInfo()->getName()) ?></h3>
     </div>
-<?endif;?>
-<?=$this->getListHtml()?>
+<?php endif; ?>
+<?php echo $this->getListHtml() ?>
     <table class="data-table box-table" id="tags-table" cellspacing="0">
-    <?if( $this->getCount() > 0 ):?>
+    <?php if( $this->getCount() > 0 ): ?>
         <col width="100">
         <col>
         <col width="75">
         <tbody>
-        <?$iterator = 0?>
-        <?foreach($this->getProducts() as $_product):?>
-            <tr <?if($iterator % 2 == 0):?>class="odd"<?$iterator++;endif;?>>
-                <td><a href="<?=$_product->getProductUrl();?>"><img src="<?=$this->helper('catalog/image')->init($_product, 'small_image')->resize(100, 100);?>" alt="" height="100" width="100"></a></td>
+        <?php $iterator = 0 ?>
+        <?php foreach($this->getProducts() as $_product): ?>
+            <tr <?php if($iterator % 2 == 0): ?>class="odd"<?php $iterator++;endif; ?>>
+                <td><a href="<?php echo $_product->getProductUrl(); ?>"><img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(100, 100); ?>" alt="" height="100" width="100"></a></td>
                 <td>
 
-                    <h5><a href="<?=$_product->getProductUrl()?>"><?=$_product->getName()?></a></h5>
-                    <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
-                    <?=$this->helper('review/product')->getSummaryHtml($_product, 'short')?>
-                    <p><?=$_product->getDescription()?></p>
+                    <h5><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getName() ?></a></h5>
+                    <?php echo $this->helper('catalog/product')->getPriceHtml($_product) ?>
+                    <?php echo $this->helper('review/product')->getSummaryHtml($_product, 'short') ?>
+                    <p><?php echo $_product->getDescription() ?></p>
                 </td>
                 <td class="a-center">
-                    <button class="form-button" onclick="setLocation('<?=$this->getUrl('checkout/cart/add',array('product'=>$_product->getId()))?>')"><span><?=$this->__('Add to Cart')?></span></button>
-                    <?if ($this->helper('wishlist')->isAllow()) :?>
-                    <br><a href="<?=$this->getUrl('wishlist/index/add',array('product'=>$_product->getId()))?>"><?=$this->__('Add to Wishlist')?></a>
-                    <?endif;?>
+                    <button class="form-button" onclick="setLocation('<?php echo $this->getUrl('checkout/cart/add',array('product'=>$_product->getId())) ?>')"><span><?php echo $this->__('Add to Cart') ?></span></button>
+                    <?php if ($this->helper('wishlist')->isAllow()) : ?>
+                    <br/><a href="<?php echo $this->getUrl('wishlist/index/add',array('product'=>$_product->getId())) ?>"><?php echo $this->__('Add to Wishlist') ?></a>
+                    <?php endif; ?>
                 </td>
             </tr>
-        <?endforeach;?>
+        <?php endforeach; ?>
         </tbody>
-    <?else:?>
+    <?php else: ?>
             <tr>
-            <td><p><?=$this->__("Unable to find any products tagged with '%s' in the current store", $this->getTagInfo()->getName() )?></p></td>
+            <td><p><?php echo $this->__("Unable to find any products tagged with '%s' in the current store", $this->getTagInfo()->getName() ) ?></p></td>
             </tr>
-    <?endif;?>
+    <?php endif; ?>
     </table>
     <script type="text/javascript">decorateTable('tags-table')</script>
-<?=$this->getListHtml()?>
+<?php echo $this->getListHtml() ?>

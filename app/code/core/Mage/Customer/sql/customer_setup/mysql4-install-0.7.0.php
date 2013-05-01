@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_entity')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_entity')}`;
 CREATE TABLE `{$this->getTable('customer_entity')}` (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -43,7 +43,7 @@ CREATE TABLE `{$this->getTable('customer_entity')}` (
 --  ,CONSTRAINT `FK_CUSTOMER_ENTITY_PARENT_ENTITY` FOREIGN KEY (`parent_id`) REFERENCES `{$this->getTable('customer_entity')}` (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Customer Entityies';
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_entity_datetime')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_entity_datetime')}`;
 CREATE TABLE `{$this->getTable('customer_entity_datetime')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -62,7 +62,7 @@ CREATE TABLE `{$this->getTable('customer_entity_datetime')}` (
   CONSTRAINT `FK_CUSTOMER_DATETIME_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_entity_decimal')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_entity_decimal')}`;
 CREATE TABLE `{$this->getTable('customer_entity_decimal')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -81,7 +81,7 @@ CREATE TABLE `{$this->getTable('customer_entity_decimal')}` (
   CONSTRAINT `FK_CUSTOMER_DECIMAL_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_entity_int')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_entity_int')}`;
 CREATE TABLE `{$this->getTable('customer_entity_int')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -100,7 +100,7 @@ CREATE TABLE `{$this->getTable('customer_entity_int')}` (
   CONSTRAINT `FK_CUSTOMER_INT_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_entity_text')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_entity_text')}`;
 CREATE TABLE `{$this->getTable('customer_entity_text')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -119,7 +119,7 @@ CREATE TABLE `{$this->getTable('customer_entity_text')}` (
   CONSTRAINT `FK_CUSTOMER_TEXT_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_entity_varchar')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_entity_varchar')}`;
 CREATE TABLE `{$this->getTable('customer_entity_varchar')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -138,7 +138,7 @@ CREATE TABLE `{$this->getTable('customer_entity_varchar')}` (
   CONSTRAINT `FK_CUSTOMER_VARCHAR_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_group')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_group')}`;
 CREATE TABLE `{$this->getTable('customer_group')}` (
   `customer_group_id` smallint(3) unsigned NOT NULL auto_increment,
   `customer_group_code` varchar(32) NOT NULL default '',
@@ -148,7 +148,7 @@ CREATE TABLE `{$this->getTable('customer_group')}` (
 
 insert into `{$this->getTable('customer_group')}` (`customer_group_id`,`customer_group_code`,`tax_class_id`) values (0,'NOT LOGGED IN',1),(1,'General',3),(2,'Wholesale',3),(3,'Retailer',3);
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity')}`;
 CREATE TABLE `{$this->getTable('customer_address_entity')}` (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -164,7 +164,7 @@ CREATE TABLE `{$this->getTable('customer_address_entity')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_CUSTOMER_ID` FOREIGN KEY (`parent_id`) REFERENCES `{$this->getTable('customer_entity')}` (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Customer Address Entities';
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_datetime')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_datetime')}`;
 CREATE TABLE `{$this->getTable('customer_address_entity_datetime')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -183,7 +183,7 @@ CREATE TABLE `{$this->getTable('customer_address_entity_datetime')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_DATETIME_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_decimal')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_decimal')}`;
 CREATE TABLE `{$this->getTable('customer_address_entity_decimal')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -202,7 +202,7 @@ CREATE TABLE `{$this->getTable('customer_address_entity_decimal')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_DECIMAL_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_int')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_int')}`;
 CREATE TABLE `{$this->getTable('customer_address_entity_int')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -221,7 +221,7 @@ CREATE TABLE `{$this->getTable('customer_address_entity_int')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_INT_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_text')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_text')}`;
 CREATE TABLE `{$this->getTable('customer_address_entity_text')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -240,7 +240,7 @@ CREATE TABLE `{$this->getTable('customer_address_entity_text')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_TEXT_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$this->getTable('core_store')}` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_varchar')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('customer_address_entity_varchar')}`;
 CREATE TABLE `{$this->getTable('customer_address_entity_varchar')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',

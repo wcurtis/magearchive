@@ -147,9 +147,13 @@ class Mage_Adminhtml_Block_System_Config_Form extends Mage_Adminhtml_Block_Widge
 
                         $helperName = $this->_configFields->getAttributeModule($section, $group);
 
+                        $fieldsetConfig = array('legend' => Mage::helper($helperName)->__((string)$group->label));
+                        if (!empty($group->comment)) {
+                            $fieldsetConfig['comment'] = (string)$group->comment;
+                        }
+
                         $fieldset = $form->addFieldset(
-                            $section->getName() . '_' . $group->getName(),
-                            array('legend' => Mage::helper($helperName)->__((string)$group->label)))
+                            $section->getName() . '_' . $group->getName(), $fieldsetConfig)
                             ->setRenderer($fieldsetRenderer);
                         $this->_addElementTypes($fieldset);
 

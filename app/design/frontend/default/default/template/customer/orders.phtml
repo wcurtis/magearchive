@@ -20,38 +20,38 @@
 ?>
 
     <div class="page-head">
-            <h3><?=$this->__('My Orders')?></h3>
+            <h3><?php echo $this->__('My Orders') ?></h3>
         </div>
 
-<?if($orders->getSize()):?>
+<?php if($orders->getSize()): ?>
     <table cellspacing="0" width="100%" class="data-table" id="my-orders-table" >
         <thead>
             <tr>
-                <th><?=$this->__('Order #')?></th>
-                <th><?=$this->__('Date')?></th>
+                <th><?php echo $this->__('Order #') ?></th>
+                <th><?php echo $this->__('Date') ?></th>
                 <!--<th class="align-center">Shipped To</th>-->
-                <th class="a-right"><?=$this->__('Total')?></th>
-                <th class="a-center"><?=$this->__('Status')?></th>
-                <th ><?=$this->__('Details')?></th>
+                <th class="a-right"><?php echo $this->__('Total') ?></th>
+                <th class="a-center"><?php echo $this->__('Status') ?></th>
+                <th ><?php echo $this->__('Details') ?></th>
             </tr>
         </thead>
         <tbody>
-        <?foreach ($orders as $order):?>
+        <?php foreach ($orders as $order): ?>
             <tr>
-                <td><?=$order->getRealOrderId()?>&nbsp;</td>
-                <td><?=date("D, j M, Y", strtotime($order->getCreatedAt()))?>&nbsp;</td>
+                <td><?php echo $order->getRealOrderId() ?>&nbsp;</td>
+                <td><?php echo date("D, j M, Y", strtotime($order->getCreatedAt())) ?>&nbsp;</td>
                 <!--<td class="align-center">{$page.orders[io].customer}</td>-->
-                <td class="a-right"><?=$order->getGrandTotal()?>&nbsp;</td>
-                <td class="a-center"><?=$order->getStatus()?>&nbsp;</td>
-                <td><a href="<?=$this->getUrl('customer/order/view', array('order'=>$order->getOrderId()))?>"><?=$this->__('View Order')?></a>&nbsp;</td>
+                <td class="a-right"><?php echo $order->getGrandTotal() ?>&nbsp;</td>
+                <td class="a-center"><?php echo $order->getStatus() ?>&nbsp;</td>
+                <td><a href="<?php echo $this->getUrl('customer/order/view', array('order'=>$order->getOrderId())) ?>"><?php echo $this->__('View Order') ?></a>&nbsp;</td>
             </tr>
-        <?endforeach?>
+        <?php endforeach ?>
         </tbody>
     </table>
 <script type="text/javascript">decorateTable('my-orders-table')</script>
-<?else:?>
-    <p><?=$this->__('You have placed no orders yet.')?></p>
-<?endif?>
+<?php else: ?>
+    <p><?php echo $this->__('You have placed no orders yet.') ?></p>
+<?php endif ?>
     <div class="buttons-container">
-        <a href="<?=$this->getUrl('customer/account')?>" class="float-left">&laquo; <?=$this->__('Back')?></a>
+        <a href="<?php echo $this->getUrl('customer/account') ?>" class="float-left">&laquo; <?php echo $this->__('Back') ?></a>
     </div>

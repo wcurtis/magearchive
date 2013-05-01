@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('wishlist')};
+-- DROP TABLE IF EXISTS {$this->getTable('wishlist')};
 CREATE TABLE {$this->getTable('wishlist')} (
   `wishlist_id` int(10) unsigned NOT NULL auto_increment,
   `customer_id` int(10) unsigned NOT NULL default '0',
@@ -35,7 +35,7 @@ CREATE TABLE {$this->getTable('wishlist')} (
   UNIQUE KEY `FK_CUSTOMER` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Wishlist main';
 
-DROP TABLE IF EXISTS {$this->getTable('wishlist_item')};
+-- DROP TABLE IF EXISTS {$this->getTable('wishlist_item')};
 CREATE TABLE {$this->getTable('wishlist_item')} (
   `wishlist_item_id` int(10) unsigned NOT NULL auto_increment,
   `wishlist_id` int(10) unsigned NOT NULL default '0',

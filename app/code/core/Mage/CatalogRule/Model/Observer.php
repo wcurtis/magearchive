@@ -23,6 +23,21 @@ class Mage_CatalogRule_Model_Observer
 {
     protected $_rulePrices = array();
 
+    public function applyAllRulesOnProduct($observer)
+    {
+        $product = $observer->getEvent()->getProduct();
+        $productWebsiteIds = $product->getWebsiteIds();
+
+        $rules = Mage::getModel('catalogrule/rule')->getCollection()
+            ->addFieldToFilter('is_active', 1);
+
+        foreach ($rules as $rule) {
+            $ruleWebsiteIds = (array)explode(',', $rule->getWebsiteIds());
+            $websiteIds = array_intersect($productWebsiteIds, $ruleWebsiteIds);
+            $rule->applyToProduct($product, $websiteIds);
+        }
+    }
+
     /**
      * Processing final price on frontend
      */
@@ -67,15 +82,25 @@ class Mage_CatalogRule_Model_Observer
      */
     public function processAdminFinalPrice($observer)
     {
+        $product = $observer->getEvent()->getProduct();
+        $key = false;
         if ($ruleData = Mage::registry('rule_data')) {
-            $product = $observer->getEvent()->getProduct();
-
             $date = mktime(0,0,0);
             $wId = $ruleData->getWebsiteId();
             $gId = $ruleData->getCustomerGroupId();
             $pId = $product->getId();
 
             $key = "$date|$wId|$gId|$pId";
+        }
+        elseif ($product->getWebsiteId() && $product->getCustomerGroupId()) {
+            $date = mktime(0,0,0);
+            $wId = $product->getWebsiteId();
+            $gId = $product->getCustomerGroupId();
+            $pId = $product->getId();
+            $key = "$date|$wId|$gId|$pId";
+        }
+
+        if ($key) {
             if (!isset($this->_rulePrices[$key])) {
                 $rulePrice = Mage::getResourceModel('catalogrule/rule')
                     ->getRulePrice($date, $wId, $gId, $pId);

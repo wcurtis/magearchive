@@ -27,7 +27,7 @@ if (!$installer->tableExists('catalog_category_entity')) {
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity')};
 CREATE TABLE {$this->getTable('catalog_category_entity')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -42,7 +42,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity')} (
   KEY `FK_catalog_category_ENTITY_STORE` (`store_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Category Entities';
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_datetime')};
 CREATE TABLE {$this->getTable('catalog_category_entity_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -60,7 +60,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity_datetime')} (
   CONSTRAINT `FK_CATALOG_CATEGORY_ENTITY_DATETIME_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_decimal')};
 CREATE TABLE {$this->getTable('catalog_category_entity_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -78,7 +78,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity_decimal')} (
   CONSTRAINT `FK_CATALOG_CATEGORY_ENTITY_DECIMAL_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_int')};
 CREATE TABLE {$this->getTable('catalog_category_entity_int')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -96,7 +96,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity_int')} (
   CONSTRAINT `FK_CATALOG_CATEGORY_EMTITY_INT_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_text')};
 CREATE TABLE {$this->getTable('catalog_category_entity_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -114,7 +114,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity_text')} (
   CONSTRAINT `FK_CATALOG_CATEGORY_ENTITY_TEXT_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_varchar')};
 CREATE TABLE {$this->getTable('catalog_category_entity_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -132,7 +132,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity_varchar')} (
   CONSTRAINT `FK_CATALOG_CATEGORY_ENTITY_VARCHAR_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_product')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_category_product')};
 CREATE TABLE {$this->getTable('catalog_category_product')} (
   `category_id` int(10) unsigned NOT NULL default '0',
   `product_id` int(10) unsigned NOT NULL default '0',
@@ -143,7 +143,7 @@ CREATE TABLE {$this->getTable('catalog_category_product')} (
   CONSTRAINT `CATALOG_CATEGORY_PRODUCT_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_compare_item')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_compare_item')};
 CREATE TABLE {$this->getTable('catalog_compare_item')} (
   `catalog_compare_item_id` int(11) unsigned NOT NULL auto_increment,
   `visitor_id` int(11) unsigned NOT NULL default '0',
@@ -156,7 +156,7 @@ CREATE TABLE {$this->getTable('catalog_compare_item')} (
   CONSTRAINT `FK_CATALOG_COMPARE_ITEM_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_bundle_option')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_bundle_option')};
 CREATE TABLE {$this->getTable('catalog_product_bundle_option')} (
   `option_id` int(10) unsigned NOT NULL auto_increment,
   `product_id` int(10) unsigned NOT NULL default '0',
@@ -165,7 +165,7 @@ CREATE TABLE {$this->getTable('catalog_product_bundle_option')} (
   CONSTRAINT `FK_catalog_product_bundle_option` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_bundle_option_link')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_bundle_option_link')};
 CREATE TABLE {$this->getTable('catalog_product_bundle_option_link')} (
   `link_id` int(10) unsigned NOT NULL auto_increment,
   `option_id` int(10) unsigned NOT NULL default '0',
@@ -178,7 +178,7 @@ CREATE TABLE {$this->getTable('catalog_product_bundle_option_link')} (
   CONSTRAINT `FK_catalog_product_bundle_option_link_entity` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_bundle_option_value')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_bundle_option_value')};
 CREATE TABLE {$this->getTable('catalog_product_bundle_option_value')} (
   `value_id` int(10) unsigned NOT NULL auto_increment,
   `store_id` smallint(5) unsigned NOT NULL default '0',
@@ -190,7 +190,7 @@ CREATE TABLE {$this->getTable('catalog_product_bundle_option_value')} (
   CONSTRAINT `FK_catalog_product_bundle_option_label` FOREIGN KEY (`option_id`) REFERENCES {$this->getTable('catalog_product_bundle_option')} (`option_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity')};
 CREATE TABLE {$this->getTable('catalog_product_entity')} (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -212,7 +212,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_STORE_ID` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Product Entities';
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_datetime')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_datetime')};
 CREATE TABLE {$this->getTable('catalog_product_entity_datetime')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -229,7 +229,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_datetime')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_DATETIME_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_decimal')};
 CREATE TABLE {$this->getTable('catalog_product_entity_decimal')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -246,7 +246,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_decimal')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_DECIMAL_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_gallery')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_gallery')};
 CREATE TABLE {$this->getTable('catalog_product_entity_gallery')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(5) unsigned NOT NULL default '0',
@@ -265,7 +265,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_gallery')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_GALLERY_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_int')};
 CREATE TABLE {$this->getTable('catalog_product_entity_int')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` mediumint(8) unsigned NOT NULL default '0',
@@ -282,7 +282,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_int')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_INT_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_text')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_text')};
 CREATE TABLE {$this->getTable('catalog_product_entity_text')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` mediumint(8) unsigned NOT NULL default '0',
@@ -299,7 +299,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_text')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_TEXT_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_tier_price')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_tier_price')};
 CREATE TABLE {$this->getTable('catalog_product_entity_tier_price')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` mediumint(8) unsigned NOT NULL default '0',
@@ -317,7 +317,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_tier_price')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_TIER_PRICE_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_entity_varchar')};
 CREATE TABLE {$this->getTable('catalog_product_entity_varchar')} (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` mediumint(8) unsigned NOT NULL default '0',
@@ -334,7 +334,7 @@ CREATE TABLE {$this->getTable('catalog_product_entity_varchar')} (
   CONSTRAINT `FK_CATALOG_PRODUCT_ENTITY_VARCHAR_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_link')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_link')};
 CREATE TABLE {$this->getTable('catalog_product_link')} (
   `link_id` int(11) unsigned NOT NULL auto_increment,
   `product_id` int(10) unsigned NOT NULL default '0',
@@ -349,7 +349,7 @@ CREATE TABLE {$this->getTable('catalog_product_link')} (
   CONSTRAINT `FK_PRODUCT_LINK_TYPE` FOREIGN KEY (`link_type_id`) REFERENCES {$this->getTable('catalog_product_link_type')} (`link_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Related products';
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute')};
 CREATE TABLE {$this->getTable('catalog_product_link_attribute')} (
   `product_link_attribute_id` smallint(6) unsigned NOT NULL auto_increment,
   `link_type_id` tinyint(3) unsigned NOT NULL default '0',
@@ -362,7 +362,7 @@ CREATE TABLE {$this->getTable('catalog_product_link_attribute')} (
 
 insert  into {$this->getTable('catalog_product_link_attribute')}(`product_link_attribute_id`,`link_type_id`,`product_link_attribute_code`,`data_type`) values (1,2,'qty','decimal'),(2,1,'position','int'),(3,4,'position','int'),(4,5,'position','int'),(6,1,'qty','decimal'),(7,3,'position','int'),(8,3,'qty','decimal');
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute_decimal')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute_decimal')};
 CREATE TABLE {$this->getTable('catalog_product_link_attribute_decimal')} (
   `value_id` int(11) unsigned NOT NULL auto_increment,
   `product_link_attribute_id` smallint(6) unsigned default NULL,
@@ -375,7 +375,7 @@ CREATE TABLE {$this->getTable('catalog_product_link_attribute_decimal')} (
   CONSTRAINT `FK_DECIMAL_PRODUCT_LINK_ATTRIBUTE` FOREIGN KEY (`product_link_attribute_id`) REFERENCES {$this->getTable('catalog_product_link_attribute')} (`product_link_attribute_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Decimal attributes values';
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute_int')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute_int')};
 CREATE TABLE {$this->getTable('catalog_product_link_attribute_int')} (
   `value_id` int(11) unsigned NOT NULL auto_increment,
   `product_link_attribute_id` smallint(6) unsigned default NULL,
@@ -388,7 +388,7 @@ CREATE TABLE {$this->getTable('catalog_product_link_attribute_int')} (
   CONSTRAINT `FK_INT_PRODUCT_LINK_ATTRIBUTE` FOREIGN KEY (`product_link_attribute_id`) REFERENCES {$this->getTable('catalog_product_link_attribute')} (`product_link_attribute_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute_varchar')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_attribute_varchar')};
 CREATE TABLE {$this->getTable('catalog_product_link_attribute_varchar')} (
   `value_id` int(11) unsigned NOT NULL auto_increment,
   `product_link_attribute_id` smallint(6) unsigned NOT NULL default '0',
@@ -401,7 +401,7 @@ CREATE TABLE {$this->getTable('catalog_product_link_attribute_varchar')} (
   CONSTRAINT `FK_VARCHAR_PRODUCT_LINK_ATTRIBUTE` FOREIGN KEY (`product_link_attribute_id`) REFERENCES {$this->getTable('catalog_product_link_attribute')} (`product_link_attribute_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Varchar attributes values';
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_type')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_link_type')};
 CREATE TABLE {$this->getTable('catalog_product_link_type')} (
   `link_type_id` tinyint(3) unsigned NOT NULL auto_increment,
   `code` varchar(32) NOT NULL default '',
@@ -410,7 +410,7 @@ CREATE TABLE {$this->getTable('catalog_product_link_type')} (
 
 insert  into {$this->getTable('catalog_product_link_type')}(`link_type_id`,`code`) values (1,'relation'),(2,'bundle'),(3,'super'),(4,'up_sell'),(5,'cross_sell');
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_status')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_status')};
 CREATE TABLE {$this->getTable('catalog_product_status')} (
   `status_id` tinyint(3) unsigned NOT NULL auto_increment,
   `status_code` varchar(32) NOT NULL default '',
@@ -419,7 +419,7 @@ CREATE TABLE {$this->getTable('catalog_product_status')} (
 
 insert  into {$this->getTable('catalog_product_status')}(`status_id`,`status_code`) values (1,'Enabled'),(2,'Disabled'),(3,'Out-of-stock');
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_store')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_store')};
 CREATE TABLE {$this->getTable('catalog_product_store')} (
   `store_id` smallint(5) unsigned NOT NULL default '0',
   `product_id` int(10) unsigned NOT NULL default '0',
@@ -430,7 +430,7 @@ CREATE TABLE {$this->getTable('catalog_product_store')} (
   CONSTRAINT `FK_CATALOG_PRDUCT_STORE_STORE` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_attribute')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_attribute')};
 CREATE TABLE {$this->getTable('catalog_product_super_attribute')} (
   `product_super_attribute_id` int(10) unsigned NOT NULL auto_increment,
   `product_id` int(10) unsigned NOT NULL default '0',
@@ -441,7 +441,7 @@ CREATE TABLE {$this->getTable('catalog_product_super_attribute')} (
   CONSTRAINT `FK_SUPER_PRODUCT_ATTRIBUTE_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_attribute_label')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_attribute_label')};
 CREATE TABLE {$this->getTable('catalog_product_super_attribute_label')} (
   `value_id` int(10) unsigned NOT NULL auto_increment,
   `product_super_attribute_id` int(10) unsigned NOT NULL default '0',
@@ -452,7 +452,7 @@ CREATE TABLE {$this->getTable('catalog_product_super_attribute_label')} (
   CONSTRAINT `FK_SUPER_PRODUCT_ATTRIBUTE_LABEL` FOREIGN KEY (`product_super_attribute_id`) REFERENCES {$this->getTable('catalog_product_super_attribute')} (`product_super_attribute_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_attribute_pricing')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_attribute_pricing')};
 CREATE TABLE {$this->getTable('catalog_product_super_attribute_pricing')} (
   `value_id` int(10) unsigned NOT NULL auto_increment,
   `product_super_attribute_id` int(10) unsigned NOT NULL default '0',
@@ -464,7 +464,7 @@ CREATE TABLE {$this->getTable('catalog_product_super_attribute_pricing')} (
   CONSTRAINT `FK_SUPER_PRODUCT_ATTRIBUTE_PRICING` FOREIGN KEY (`product_super_attribute_id`) REFERENCES {$this->getTable('catalog_product_super_attribute')} (`product_super_attribute_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_link')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_super_link')};
 CREATE TABLE {$this->getTable('catalog_product_super_link')} (
   `link_id` int(10) unsigned NOT NULL auto_increment,
   `product_id` int(10) unsigned NOT NULL default '0',
@@ -476,7 +476,7 @@ CREATE TABLE {$this->getTable('catalog_product_super_link')} (
   CONSTRAINT `FK_SUPER_PRODUCT_LINK_PARENT` FOREIGN KEY (`parent_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_type')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_type')};
 CREATE TABLE {$this->getTable('catalog_product_type')} (
   `type_id` tinyint(3) unsigned NOT NULL auto_increment,
   `code` varchar(32) character set cp1251 NOT NULL default '',
@@ -485,7 +485,7 @@ CREATE TABLE {$this->getTable('catalog_product_type')} (
 
 insert  into {$this->getTable('catalog_product_type')}(`type_id`,`code`) values (1,'Simple Product'),(2,'bundle'),(3,'Configurable Product'),(4,'Grouped Product');
 
-DROP TABLE IF EXISTS {$this->getTable('catalog_product_visibility')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalog_product_visibility')};
 CREATE TABLE {$this->getTable('catalog_product_visibility')} (
   `visibility_id` tinyint(3) unsigned NOT NULL auto_increment,
   `visibility_code` varchar(32) NOT NULL default '',
@@ -506,21 +506,26 @@ $installer->endSetup();
 $installer->installEntities();
 
 // Create Root Catalog Node
-Mage::getModel('catalog/category')->setId(1)->setPath(1)->setName('Root Catalog')->save();
+Mage::getModel('catalog/category')
+    ->setId(1)
+    ->setPath(1)
+    ->setName('Root Catalog')
+    ->setInitialSetupFlag(true)
+    ->save();
 
 $category = Mage::getModel('catalog/category');
 /* @var $category Mage_Catalog_Model_Category */
 
-$category->setStoreId(0);
-$category->setName('Default Category');
-$category->setDisplayMode('PRODUCTS');
-$category->setAttributeSetId($category->getDefaultAttributeSetId());
-$category->setIsActive(1);
-$category->setPath('1/');
-$category->setInitialSetupFlag(true);
-$category->save();
+$category->setStoreId(0)
+    ->setName('Default Category')
+    ->setDisplayMode('PRODUCTS')
+    ->setAttributeSetId($category->getDefaultAttributeSetId())
+    ->setIsActive(1)
+    ->setPath('1/')
+    ->setInitialSetupFlag(true)
+    ->save();
 
-$category->setStoreId(1);
-$category->save();
+$category->setStoreId(1)
+    ->save();
 
 $installer->setConfigData('catalog/category/root_id', $category->getId());

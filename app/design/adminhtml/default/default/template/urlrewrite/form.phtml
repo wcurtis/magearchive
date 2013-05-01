@@ -19,14 +19,14 @@
  */
 ?>
 <div class="entry-edit" style="display:none;" id="urlrewrite_container">
-    <?=$this->getFormHtml()?>
-<?/*if( $form->getUseContainer() === true ):?>
-<form id="<?=$form->getFormId()?>" method="<?=( $form->getFormMethod() ) ? $form->getFormMethod() : 'post' ;?>" action="<?=$form->getFormAction()?>" <?=( $form->getFormEnctype() ) ? 'enctype="' . $this->getForm()->getFormEnctype() . '"' : '' ?> >
-<?endif;?>
-	<?foreach ($form->getElements() as $_element):?>
-	<?=$this->drawElement($_element)?>
-	<?endforeach;?>
-<?if( $form->getUseContainer() === true ):?>
+    <?php echo $this->getFormHtml() ?>
+<?php /*if( $form->getUseContainer() === true ): ?>
+<form id="<?php echo $form->getFormId() ?>" method="<?php echo ( $form->getFormMethod() ) ? $form->getFormMethod() : 'post' ; ?>" action="<?php echo $form->getFormAction() ?>" <?php echo ( $form->getFormEnctype() ) ? 'enctype="' . $this->getForm()->getFormEnctype() . '"' : '' ?> >
+<?php endif; ?>
+	<?php foreach ($form->getElements() as $_element): ?>
+	<?php echo $this->drawElement($_element) ?>
+	<?php endforeach; ?>
+<?php if( $form->getUseContainer() === true ): ?>
 </form>
-<?endif;*/?>
+<?php endif;*/ ?>
 </div>

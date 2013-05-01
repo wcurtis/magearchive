@@ -25,37 +25,37 @@
         <col width="100"/>
         <thead>
             <tr class="headings">
-                <th><?=$this->helper('sales')->__('Product')?></th>
-                <th><?=$this->helper('sales')->__('Qty')?></th>
-                <th class="last"><?=$this->helper('sales')->__('Qty to Ship')?></th>
+                <th><?php echo $this->helper('sales')->__('Product') ?></th>
+                <th><?php echo $this->helper('sales')->__('Qty') ?></th>
+                <th class="last"><?php echo $this->helper('sales')->__('Qty to Ship') ?></th>
             </tr>
         </thead>
         <tbody>
-            <?$_items = $this->getShipment()->getAllItems()?>
-            <?$_i=0;foreach ($_items as $_item):$_i++?>
-                <tr class="<?=$_i%2?'odd':'even'?>">
+            <?php $_items = $this->getShipment()->getAllItems() ?>
+            <?php $_i=0;foreach ($_items as $_item):$_i++ ?>
+                <tr class="<?php echo $_i%2?'odd':'even' ?>">
                     <td>
-                        <?=$_item->getName()?>
-                        <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
-                        <?=$_item->getDescription()?>
+                        <?php echo $_item->getName() ?>
+                        <div class="nobr"><strong><?php echo $this->helper('sales')->__('SKU') ?>:</strong> <?php echo $_item->getSku() ?></div>
+                        <?php echo $_item->getDescription() ?>
                     </td>
-                    <td><?=$this->getQtyHtml($_item->getOrderItem())?></td>
+                    <td><?php echo $this->getQtyHtml($_item->getOrderItem()) ?></td>
                     <td class="last">
-                        <input type="text" class="input-text" name="shipment[items][<?=$_item->getOrderItemId()?>]" value="<?=$_item->getQty()*1?>"/>
+                        <input type="text" class="input-text" name="shipment[items][<?php echo $_item->getOrderItemId() ?>]" value="<?php echo $_item->getQty()*1 ?>"/>
                     </td>
                 </tr>
-            <?endforeach;?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>
 
 <div class="box-left entry-edit">
-    <div class="entry-edit-head"><h4><?=$this->__('Shipment Comments')?></h4></div>
+    <div class="entry-edit-head"><h4><?php echo $this->__('Shipment Comments') ?></h4></div>
     <fieldset>
         <div id="history_form" class="order-history-form">
             <span class="field-row">
-                <label class="normal" for="history_comment"><?=Mage::helper('sales')->__('Shipment Comments')?></label>
-                <textarea name="shipment[comment_text]" class="input-text" style="height: 6em; width: 99%;"></textarea>
+                <label class="normal" for="history_comment"><?php echo Mage::helper('sales')->__('Shipment Comments') ?></label>
+                <textarea id="shipment_comment_text" name="shipment[comment_text]" class="input-text" style="height: 6em; width: 99%;"></textarea>
             </span>
             <div class="clear"></div>
         </div>
@@ -65,16 +65,36 @@
 <div class="box-right entry-edit" id="history_form">
     <div class="order-totals">
         <p>
-            <label class="normal" for="notify_customer"><?=Mage::helper('sales')->__('Append Comments')?></label>
+            <label class="normal" for="notify_customer"><?php echo Mage::helper('sales')->__('Append Comments') ?></label>
             <input id="notify_customer" name="shipment[comment_customer_notify]" value="1" type="checkbox">
         </p>
         <p>
-            <label class="normal" for="send_email"><?=Mage::helper('sales')->__('Email Copy of Shipment')?></label>
+            <label class="normal" for="send_email"><?php echo Mage::helper('sales')->__('Email Copy of Shipment') ?></label>
             <input id="send_email" name="shipment[send_email]" value="1" type="checkbox">
         </p>
         <div class="a-right">
-        <?=$this->getChildHtml('submit_button')?>
+        <?php echo $this->getChildHtml('submit_button') ?>
         </div>
     </div>
 </div>
 <div class="clear"></div>
+<script type="text/javascript">
+var sendEmailCheckbox = $('send_email');
+if (sendEmailCheckbox) {
+    var notifyCustomerCheckbox = $('notify_customer');
+    var shipmentCommentText = $('shipment_comment_text');
+    Event.observe(sendEmailCheckbox, 'change', bindSendEmail);
+    bindSendEmail();
+}
+function bindSendEmail()
+{
+    if (sendEmailCheckbox.checked == true) {
+        notifyCustomerCheckbox.disabled = false;
+        shipmentCommentText.disabled = false;
+    }
+    else {
+        notifyCustomerCheckbox.disabled = true;
+        shipmentCommentText.disabled = true;
+    }
+}
+</script>

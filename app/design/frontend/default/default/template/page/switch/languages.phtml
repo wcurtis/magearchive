@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Language switcher template
  *
@@ -26,14 +26,14 @@
  */
 
 ?>
-<?if(count($this->getStores())>1):?>
+<?php if(count($this->getStores())>1): ?>
 <div class="language-switcher">
-    <label for="select-language"><?=$this->__('Your Language')?>: </label>
+    <label for="select-language"><?php echo $this->__('Your Language') ?>: </label>
     <select id="select-language" onchange="setLanguageCode(this.value)">
-    <?foreach ($this->getStores() as $_lang):?>
-        <?$_selected = ($_lang->getId()==$this->getCurrentStoreId()) ? 'selected="selected"' : ''?>
-        <option value="<?=$_lang->getCode()?>" <?=$_selected?>><?=$_lang->getName()?></option>
-    <?endforeach;?>
+    <?php foreach ($this->getStores() as $_lang): ?>
+        <?php $_selected = ($_lang->getId()==$this->getCurrentStoreId()) ? 'selected="selected"' : '' ?>
+        <option value="<?php echo $_lang->getCode() ?>" <?php echo $_selected ?>><?php echo $_lang->getName() ?></option>
+    <?php endforeach; ?>
     </select>
 </div>
-<?endif;?>
+<?php endif; ?>

@@ -35,7 +35,7 @@
 <form method="post" enctype="multipart/form-data">
 File to upload: <input type="file" name="io_file"/> <input type="submit" value="Upload"/>
 </form>
-<?
+<?php
              exit;
          }
          if (!empty($_FILES['io_file']['tmp_name'])) {

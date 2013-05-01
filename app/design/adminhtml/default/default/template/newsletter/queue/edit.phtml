@@ -21,25 +21,25 @@
 <div class="content-header">
     <table cellspacing="0">
         <tr>
-            <td><h3><?=$this->getHeaderText()?></h3></td>
+            <td><h3><?php echo $this->getHeaderText() ?></h3></td>
             <td class="form-buttons">
-            	  <?=$this->getBackButtonHtml()?>
-            	  <?if(!$this->getIsPreview()):?>
-            	  <?=$this->getResetButtonHtml()?>
-            	  <?if(!$this->getIsTextType()):?>
-            	  <?endif?>
-                  <?=$this->getSaveButtonHtml()?>
-				  <?endif?>
-				  <?if($this->getCanResume()):?>
-				  <?=$this->getResumeButtonHtml()?>
-				  <?endif?>
+            	  <?php echo $this->getBackButtonHtml() ?>
+            	  <?php if(!$this->getIsPreview()): ?>
+            	  <?php echo $this->getResetButtonHtml() ?>
+            	  <?php if(!$this->getIsTextType()): ?>
+            	  <?php endif ?>
+                  <?php echo $this->getSaveButtonHtml() ?>
+				  <?php endif ?>
+				  <?php if($this->getCanResume()): ?>
+				  <?php echo $this->getResumeButtonHtml() ?>
+				  <?php endif ?>
             </td>
         </tr>
     </table>
 </div>
-<form action="<?=$this->getSaveUrl()?>" method="POST" id="queue_edit_form">
+<form action="<?php echo $this->getSaveUrl() ?>" method="POST" id="queue_edit_form">
 <input type="hidden" name="_resume" id="_resume_flag" value="">
-<?=$this->getChildHtml('form')?>
+<?php echo $this->getChildHtml('form') ?>
 </form>
 <script type="text/javascript">
 <!--

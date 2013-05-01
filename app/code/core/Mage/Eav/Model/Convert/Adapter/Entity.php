@@ -26,6 +26,7 @@ class Mage_Eav_Model_Convert_Adapter_Entity
 	protected $_joinFilter = array();
 	protected $_joinAttr = array();
 	protected $_attrToDb;
+	protected $_joinField = array();
 
     public function getStoreId()
     {
@@ -57,22 +58,30 @@ class Mage_Eav_Model_Convert_Adapter_Entity
     }
 
     public function setFilter($attrFilterArray,$attrToDb=null,$bind=null,$joinType=null){
-        if(is_null($bind))$def_bind='entity_id';
-        if(is_null($joinType))$joinType='LEFT';
+        if (is_null($bind)) {
+            $defBind = 'entity_id';
+        }
+        if (is_null($joinType)) {
+            $joinType = 'LEFT';
+        }
 
         $this->_attrToDb=$attrToDb;
         $filters = $this->_parseVars();
+        
     	foreach ($attrFilterArray as $key=>$type) {
     	    if(is_array($type)){
     	        if(isset($type['bind'])){
     	           $bind = $type['bind'];
     	        } else {
-    	           $bind = $def_bind;
+    	           $bind = $defBind;
     	        }
     	        $type = $type['type'];
     	    }
+
     	    $keyDB = (isset($this->_attrToDb[$key])) ? $this->_attrToDb[$key] : $key;
+
             $exp = explode('/',$key);
+
     	    if(isset($exp[1])){
     	        if(isset($filters[$exp[1]])){
     	           $val = $filters[$exp[1]];
@@ -88,7 +97,7 @@ class Mage_Eav_Model_Convert_Adapter_Entity
     	    } else {
     	        $val = isset($filters[$key]) ? $filters[$key] : null;
     	    }
-    	    if(is_null($val)){
+    	    if (is_null($val)) {
     	        continue;
     	    }
     	    $attr = array();
@@ -110,12 +119,28 @@ class Mage_Eav_Model_Convert_Adapter_Entity
             }
     	    $this->_filter[] = $attr;
     	}
+    	
     	return $this;
     }
 
     public function getFilter()
     {
         return $this->_filter;
+    }
+
+    protected function getFieldValue($fields = array(), $name)
+    {
+    	$result = array();
+    	if ($fields && $name) {
+    		foreach($fields as $index => $value) {
+    			$exp = explode('/', $index);
+    			if (isset($exp[1]) && $exp[0] == $name) {
+    				$result[$exp[1]] = $value;
+    			}
+    		}
+    		if ($result) return $result;
+    	}
+    	return false;
     }
 
     public function setJoinAttr($joinAttr)
@@ -129,8 +154,15 @@ class Mage_Eav_Model_Convert_Adapter_Entity
     		$joinArrAttr['storeId'] = isset($joinAttr['storeId']) ? $joinAttr['storeId'] : null;
     		$this->_joinAttr[] = $joinArrAttr;
     	}
+
     }
 
+    public function setJoinFeild($joinField)
+    {
+    	if (is_array($joinField)) {
+    		$this->_joinField[] = $joinField;
+    	}
+    }
     public function load()
     {
     	if (!($entityType = $this->getVar('entity_type'))
@@ -138,8 +170,9 @@ class Mage_Eav_Model_Convert_Adapter_Entity
             $this->addException(Mage::helper('eav')->__('Invalid entity specified'), Varien_Convert_Exception::FATAL);
         }
         try {
-            $collection = $this->_getCollectioForLoad($entityType);
-
+        	
+            $collection = $this->_getCollectionForLoad($entityType);
+            
            	if(isset($this->_joinAttr)&& is_array($this->_joinAttr)){
            		foreach ($this->_joinAttr as $val){
            			$collection->joinAttribute(
@@ -159,6 +192,18 @@ class Mage_Eav_Model_Convert_Adapter_Entity
                 }
 
            	}
+           	$joinFields = $this->_joinField;
+           	if (isset($joinFields) && is_array($joinFields)) {
+           		foreach ($joinFields as $field) {
+					$collection->joinField($field['alias'],
+	                	$field['attribute'],
+	                	$field['field'],
+		                $field['bind'],
+	                	$field['cond'],
+	                	$field['joinType']);
+           		}
+           	}
+
            	$collection
                 ->addAttributeToSelect('*')
                 ->load();
@@ -176,7 +221,7 @@ class Mage_Eav_Model_Convert_Adapter_Entity
         return $this;
     }
 
-    protected function _getCollectioForLoad($entityType)
+    protected function _getCollectionForLoad($entityType)
     {
         return Mage::getResourceModel($entityType.'_collection');
     }

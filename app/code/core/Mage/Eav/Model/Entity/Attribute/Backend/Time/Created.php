@@ -28,7 +28,7 @@ class Mage_Eav_Model_Entity_Attribute_Backend_Time_Created extends Mage_Eav_Mode
 {
     public function beforeSave($object)
     {
-        if (!$object->getId()) {
+        if (!$object->getId() && is_null($object->getData($this->getAttribute()->getAttributeCode()))) {
             $object->setData($this->getAttribute()->getAttributeCode(), now());
         }
     }

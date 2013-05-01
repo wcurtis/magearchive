@@ -18,28 +18,28 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($this->getItems()->getSize()):?>
+<?php if($this->getItems()->getSize()): ?>
 <div class="box base-mini cross-sell">
     <div class="head">
-        <h4><span><?=$this->__('Cross-sell Products')?></span></h4>
+        <h4><span><?php echo $this->__('Cross-sell Products') ?></span></h4>
     </div>
     <ol id="cross-sell-products">
-     <?foreach($this->getItems() as $_item):?>
+     <?php foreach($this->getItems() as $_item): ?>
         <li>
             <div class="product-images">
-                <a href="<?=$_item->getProductUrl()?>"><img src="<?=$this->helper('catalog/image')->init($_item, 'thumbnail')->resize(38)?>" alt="<?=$this->htmlEscape($_item->getName())?>" width="38" height="38"/></a>
+                <a href="<?php echo $_item->getProductUrl() ?>"><img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(38) ?>" alt="<?php echo $this->htmlEscape($_item->getName()) ?>" width="38" height="38"/></a>
             </div>
             <div class="product-details">
-                <a href="#"><a href="<?=$_item->getProductUrl()?>"><?=$_item->getName()?></a>
-                <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
-                <a href="<?=$this->getAddToCartUrl($_item)?>"><?=$this->__('Add to Cart')?></a>
-                <?if ($this->helper('wishlist')->isAllow()) :?>
-                <a href="<?=$this->getAddToWishlistUrl($_item)?>"><?=$this->__('Add to Wishlist')?></a>
-                <?endif;?>
+                <a href="#"><a href="<?php echo $_item->getProductUrl() ?>"><?php echo $_item->getName() ?></a>
+                <?php echo $this->helper('catalog/product')->getPriceHtml($_item) ?>
+                <a href="<?php echo $this->getAddToCartUrl($_item) ?>"><?php echo $this->__('Add to Cart') ?></a>
+                <?php if ($this->helper('wishlist')->isAllow()) : ?>
+                <a href="<?php echo $this->getAddToWishlistUrl($_item) ?>"><?php echo $this->__('Add to Wishlist') ?></a>
+                <?php endif; ?>
             </div>
         </li>
-    <?endforeach;?>
+    <?php endforeach; ?>
     </ol>
     <script type="text/javascript">decorateList('cross-sell-products')</script>
 </div>
-<?endif?>
+<?php endif ?>

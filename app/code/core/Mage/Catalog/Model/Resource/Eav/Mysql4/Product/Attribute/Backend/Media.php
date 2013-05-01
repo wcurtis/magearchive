@@ -71,7 +71,26 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Attribute_Backend_Media ext
             ->where('main.entity_id = ?', $product->getId())
             ->order('IF(value.position IS NULL, default_value.position, value.position) ASC');
 
-        return $this->_getReadAdapter()->fetchAll($select);
+        $result = $this->_getReadAdapter()->fetchAll($select);
+        $this->_removeDuplicates($result);
+        return $result;
+    }
+
+    protected function _removeDuplicates(&$result)
+    {
+        $fileToId = array();
+
+        foreach (array_keys($result) as $index) {
+            if (!isset($fileToId[$result[$index]['file']])) {
+                $fileToId[$result[$index]['file']] = $result[$index]['value_id'];
+            } elseif ($fileToId[$result[$index]['file']] != $result[$index]['value_id']) {
+                $this->deleteGallery($result[$index]['value_id']);
+                unset($result[$index]);
+            }
+        }
+
+        $result = array_values($result);
+        return $this;
     }
 
     /**

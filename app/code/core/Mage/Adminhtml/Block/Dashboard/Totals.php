@@ -58,6 +58,6 @@ class Mage_Adminhtml_Block_Dashboard_Totals extends Mage_Adminhtml_Block_Dashboa
         $this->addTotal($this->__('Revenue'), $totals['revenue']);
         $this->addTotal($this->__('Tax'), $totals['tax']);
         $this->addTotal($this->__('Shipping'), $totals['shipping']);
-        $this->addTotal($this->__('Quantity'), $totals['quantity'], true);
+        $this->addTotal($this->__('Quantity'), $totals['quantity']*1, true);
     }
 }

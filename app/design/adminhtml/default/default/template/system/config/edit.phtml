@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * @methods
  *  getTitle() - string
@@ -32,12 +32,12 @@
 <div class="content-header">
 	<table cellspacing="0">
 		<tr>
-			<td><h3><?=$this->getTitle()?></h3></td><td class="form-buttons"><?=$this->getSaveButtonHtml()?></td>
+			<td><h3><?php echo Mage::helper('adminhtml')->__($this->getTitle()) ?></h3></td><td class="form-buttons"><?php echo $this->getSaveButtonHtml() ?></td>
 		 </tr>
 	</table>
 </div>
-<form action="<?=$this->getSaveUrl()?>" method="post" id="config_edit_form" enctype="multipart/form-data">
-<?=$this->getChildHtml('form')?>
+<form action="<?php echo $this->getSaveUrl() ?>" method="post" id="config_edit_form" enctype="multipart/form-data">
+<?php echo $this->getChildHtml('form') ?>
 </form>
 
 

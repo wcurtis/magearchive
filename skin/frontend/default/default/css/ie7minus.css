@@ -31,3 +31,16 @@
 .base-mini .head h4, .shopping-cart-collaterals h4 { height:16px; }
 .login-box h4 { height:16px; }
 .login-box .content { height:230px; }
+
+
+/*menu fixing for IE*/
+
+/* Show menu */
+#nav li.over ul.shown-sub { left:0; }
+#nav li.over li ul.shown-sub { left:100px; }
+
+
+
+
+
+

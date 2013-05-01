@@ -39,7 +39,7 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @subpackage Decorator
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ViewHelper.php 8115 2008-02-18 15:12:13Z matthew $
+ * @version    $Id: ViewHelper.php 8631 2008-03-07 17:36:42Z matthew $
  */
 class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
 {
@@ -51,6 +51,14 @@ class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
         'Zend_Form_Element_Button',
         'Zend_Form_Element_Reset',
         'Zend_Form_Element_Submit',
+    );
+
+    /**
+     * Element types representing checkboxes
+     * @var array
+     */
+    protected $_checkboxTypes = array(
+        'Zend_Form_Element_Checkbox'
     );
 
     /**
@@ -192,9 +200,16 @@ class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
             return null;
         }
 
-        $type = $element->getType();
-        if (in_array($type, $this->_buttonTypes)) {
-            return $element->getLabel();
+        foreach ($this->_buttonTypes as $type) {
+            if ($element instanceof $type) {
+                return $element->getLabel();
+            }
+        }
+
+        foreach ($this->_checkboxTypes as $type) {
+            if ($element instanceof $type) {
+                return $element->getCheckedValue();
+            }
         }
 
         return $element->getValue();

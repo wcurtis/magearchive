@@ -18,97 +18,97 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_source  = $this->getSource()?>
-<?$this->setPriceDataObject($_source)?>
-<?$_currency= $this->getCurrency()?>
-<?if ($_source):?>
+<?php $_source  = $this->getSource() ?>
+<?php $this->setPriceDataObject($_source) ?>
+<?php $_currency= $this->getCurrency() ?>
+<?php if ($_source): ?>
 <table cellspacing="0" width="100%">
     <tfoot>
         <tr>
             <td class="label">
                 <strong><big>
-                <?if ($this->getGrandTotalTitle()):?>
-                    <?=$this->getGrandTotalTitle()?>
-                <?else:?>
-                    <?=Mage::helper('sales')->__('Grand Total')?>
-                <?endif;?>
+                <?php if ($this->getGrandTotalTitle()): ?>
+                    <?php echo $this->getGrandTotalTitle() ?>
+                <?php else: ?>
+                    <?php echo Mage::helper('sales')->__('Grand Total') ?>
+                <?php endif; ?>
                 </big></strong>
             </td>
-            <td class="emph"><big><?=$this->displayPriceAttribute('grand_total', true)?></big></td>
+            <td class="emph"><big><?php echo $this->displayPriceAttribute('grand_total', true) ?></big></td>
         </tr>
-        <?if ($this->getCanDisplayTotalPaid()):?>
+        <?php if ($this->getCanDisplayTotalPaid()): ?>
         <tr>
-            <td class="label"><strong><?=Mage::helper('sales')->__('Total Paid')?></strong></td>
-            <td class="emph"><?=$this->displayPriceAttribute('total_paid', true)?>
+            <td class="label"><strong><?php echo Mage::helper('sales')->__('Total Paid') ?></strong></td>
+            <td class="emph"><?php echo $this->displayPriceAttribute('total_paid', true) ?>
             </td>
         </tr>
-        <?endif;?>
-        <?if ($this->getCanDisplayTotalRefunded()):?>
+        <?php endif; ?>
+        <?php if ($this->getCanDisplayTotalRefunded()): ?>
         <tr>
-            <td class="label"><strong><?=Mage::helper('sales')->__('Total Refunded')?></strong></td>
-            <td class="emph"><?=$this->displayPriceAttribute('total_refunded', true)?></td>
+            <td class="label"><strong><?php echo Mage::helper('sales')->__('Total Refunded') ?></strong></td>
+            <td class="emph"><?php echo $this->displayPriceAttribute('total_refunded', true) ?></td>
         </tr>
-        <?endif;?>
-        <?if ($this->getCanDisplayTotalDue()):?>
+        <?php endif; ?>
+        <?php if ($this->getCanDisplayTotalDue()): ?>
         <tr>
-            <td class="label"><big><strong><?=Mage::helper('sales')->__('Total Due', true)?></strong></big></td>
-            <td class="emph"><big><?=$this->displayPriceAttribute('total_due', true)?></big></td>
+            <td class="label"><big><strong><?php echo Mage::helper('sales')->__('Total Due', true) ?></strong></big></td>
+            <td class="emph"><big><?php echo $this->displayPriceAttribute('total_due', true) ?></big></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
     </tfoot>
     <tbody>
-        <?if ((float) $_source->getSubtotal()):?>
+        <?php if ((float) $_source->getSubtotal()): ?>
         <tr>
-            <td class="label"><?=Mage::helper('sales')->__('Subtotal')?></td>
-            <td><?=$this->displayPriceAttribute('subtotal')?></td>
+            <td class="label"><?php echo Mage::helper('sales')->__('Subtotal') ?></td>
+            <td><?php echo $this->displayPriceAttribute('subtotal') ?></td>
         </tr>
-        <?endif;?>
-        <?if ((float) $_source->getTaxAmount()):?>
+        <?php endif; ?>
+        <?php if ((float) $_source->getTaxAmount()): ?>
         <tr>
-            <td class="label"><?=Mage::helper('sales')->__('Tax')?></td>
-            <td><?=$this->displayPriceAttribute('tax_amount')?></td>
+            <td class="label"><?php echo Mage::helper('sales')->__('Tax') ?></td>
+            <td><?php echo $this->displayPriceAttribute('tax_amount') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_source->getShippingAmount() || $_source->getShippingDescription()):?>
+        <?php if ((float) $_source->getShippingAmount() || $_source->getShippingDescription()): ?>
         <tr>
-            <td class="label"><?=Mage::helper('sales')->__('Shipping &amp; Handling')?></td>
-            <td><?=$this->displayPriceAttribute('shipping_amount')?></td>
+            <td class="label"><?php echo Mage::helper('sales')->__('Shipping &amp; Handling') ?></td>
+            <td><?php echo $this->displayPriceAttribute('shipping_amount') ?></td>
         </tr>
-        <?endif;?>
-        <?if ((float) $_source->getDiscountAmount()):?>
+        <?php endif; ?>
+        <?php if ((float) $_source->getDiscountAmount()): ?>
         <tr>
             <td class="label">
-                <?if ($_source->getCouponCode()):?>
-                    <?=Mage::helper('sales')->__('Discount (%s)', $_source->getCouponCode())?>
-                <?else:?>
-                    <?=Mage::helper('sales')->__('Discount')?>
-                <?endif;?>
+                <?php if ($_source->getCouponCode()): ?>
+                    <?php echo Mage::helper('sales')->__('Discount (%s)', $_source->getCouponCode()) ?>
+                <?php else: ?>
+                    <?php echo Mage::helper('sales')->__('Discount') ?>
+                <?php endif; ?>
             </td>
-            <td><?=$this->displayPriceAttribute('discount_amount')?></td>
+            <td><?php echo $this->displayPriceAttribute('discount_amount') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_source->getGiftcertAmount()):?>
+        <?php if ((float) $_source->getGiftcertAmount()): ?>
         <tr>
-            <td class="label"><?=Mage::helper('sales')->__('Gift Certificate')?></td>
-            <td><?=$this->displayPriceAttribute('giftcert_amount')?></td>
+            <td class="label"><?php echo Mage::helper('sales')->__('Gift Certificate') ?></td>
+            <td><?php echo $this->displayPriceAttribute('giftcert_amount') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_source->getAdjustmentPositive()):?>
+        <?php if ((float) $_source->getAdjustmentPositive()): ?>
         <tr>
-            <td class="label"><?=Mage::helper('sales')->__('Adjustment Refund')?></td>
-            <td><?=$this->displayPriceAttribute('adjustment_positive')?></td>
+            <td class="label"><?php echo Mage::helper('sales')->__('Adjustment Refund') ?></td>
+            <td><?php echo $this->displayPriceAttribute('adjustment_positive') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_source->getAdjustmentNegative()):?>
+        <?php if ((float) $_source->getAdjustmentNegative()): ?>
         <tr>
-            <td class="label"><?=Mage::helper('sales')->__('Adjustment Fee')?></td>
-            <td><?=$this->displayPriceAttribute('adjustment_negative')?></td>
+            <td class="label"><?php echo Mage::helper('sales')->__('Adjustment Fee') ?></td>
+            <td><?php echo $this->displayPriceAttribute('adjustment_negative') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
     </tbody>
 </table>
-<?endif;?>
+<?php endif; ?>

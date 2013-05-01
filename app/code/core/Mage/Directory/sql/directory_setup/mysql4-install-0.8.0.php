@@ -30,7 +30,7 @@ $installer = $this;
 
 $installer->startSetup();
 $installer->run("
-DROP TABLE IF EXISTS `{$installer->getTable('directory_country')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('directory_country')}`;
 CREATE TABLE `{$installer->getTable('directory_country')}` (
   `country_id` varchar(2) NOT NULL default '',
   `iso2_code` varchar(2) NOT NULL default '',
@@ -99,7 +99,7 @@ INSERT INTO `{$installer->getTable('directory_country')}` VALUES
 ('VU', 'VU', 'VUT'),('WF', 'WF', 'WLF'),('WS', 'WS', 'WSM'),('YE', 'YE', 'YEM'),
 ('YT', 'YT', 'MYT'),('ZA', 'ZA', 'ZAF'),('ZM', 'ZM', 'ZMB'),('ZW', 'ZW', 'ZWE');
 
-DROP TABLE IF EXISTS `{$installer->getTable('directory_country_format')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('directory_country_format')}`;
 CREATE TABLE `{$installer->getTable('directory_country_format')}` (
   `country_format_id` int(10) unsigned NOT NULL auto_increment,
   `country_id` varchar(2) NOT NULL default '',
@@ -109,7 +109,7 @@ CREATE TABLE `{$installer->getTable('directory_country_format')}` (
   UNIQUE KEY `country_type` (`country_id`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Countries format';
 
-DROP TABLE IF EXISTS `{$installer->getTable('directory_country_region')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('directory_country_region')}`;
 CREATE TABLE `{$installer->getTable('directory_country_region')}` (
   `region_id` mediumint(8) unsigned NOT NULL auto_increment,
   `country_id` varchar(4) NOT NULL default '0',
@@ -182,7 +182,7 @@ INSERT INTO `{$installer->getTable('directory_country_region')}` VALUES
 (176, 'ES', 'Toledo', 'Toledo'),(177, 'ES', 'Valencia', 'Valencia'),(178, 'ES', 'Valladolid', 'Valladolid'),
 (179, 'ES', 'Vizcaya', 'Vizcaya'),(180, 'ES', 'Zamora', 'Zamora'),(181, 'ES', 'Zaragoza', 'Zaragoza');
 
-DROP TABLE IF EXISTS `{$installer->getTable('directory_country_region_name')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('directory_country_region_name')}`;
 CREATE TABLE `{$installer->getTable('directory_country_region_name')}` (
   `locale` varchar(8) NOT NULL default '',
   `region_id` mediumint(8) unsigned NOT NULL default '0',
@@ -257,7 +257,7 @@ INSERT INTO `{$installer->getTable('directory_country_region_name')}` VALUES
 ('en_US', 178, 'Valladolid'),('en_US', 179, 'Vizcaya'),('en_US', 180, 'Zamora'),
 ('en_US', 181, 'Zaragoza');
 
-DROP TABLE IF EXISTS `{$installer->getTable('directory_currency_rate')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('directory_currency_rate')}`;
 CREATE TABLE `{$installer->getTable('directory_currency_rate')}` (
   `currency_from` char(3) NOT NULL default '',
   `currency_to` char(3) NOT NULL default '',

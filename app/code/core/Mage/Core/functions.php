@@ -205,7 +205,7 @@ function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
         case E_RECOVERABLE_ERROR:   echo "Recoverable Error";      break;
         default:                    echo "Unknown error ($errno)"; break;
     }
-    echo ":</strong> <i>$errstr</i> in <strong>$errfile</strong> on line <strong>$errline</strong><br>";
+    echo ":</strong> <i>$errstr</i> in <strong>$errfile</strong> on line <strong>$errline</strong><br/>";
 
     $backtrace = debug_backtrace();
     array_shift($backtrace);
@@ -226,7 +226,7 @@ function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
         echo ")";
         if(!empty($l['file'])) echo " in <strong>{$l['file']}</strong>";
         if(!empty($l['line'])) echo " on line <strong>{$l['line']}</strong>";
-        echo "<br>";
+        echo "<br/>";
     }
 
     echo "\n</pre>";

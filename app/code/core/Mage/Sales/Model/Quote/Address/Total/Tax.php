@@ -27,6 +27,11 @@ class Mage_Sales_Model_Quote_Address_Total_Tax extends Mage_Sales_Model_Quote_Ad
         $address->setTaxAmount(0);
         $address->setBaseTaxAmount(0);
 
+        $items = $address->getAllItems();
+        if (!count($items)) {
+            return $this;
+        }
+
         $tax = Mage::getModel('tax/rate_data')
             ->setCustomerClassId($address->getQuote()->getCustomerTaxClassId());
         /* @var $tax Mage_Tax_Model_Rate_Data */
@@ -35,6 +40,7 @@ class Mage_Sales_Model_Quote_Address_Total_Tax extends Mage_Sales_Model_Quote_Ad
         switch (Mage::getStoreConfig('sales/tax/based_on')) {
             case 'billing':
                 $taxAddress = $address->getQuote()->getBillingAddress();
+                //no break;
             case 'shipping':
                 $tax
                     ->setCountryId($taxAddress->getCountryId())
@@ -50,7 +56,7 @@ class Mage_Sales_Model_Quote_Address_Total_Tax extends Mage_Sales_Model_Quote_Ad
                 break;
         }
 
-        foreach ($address->getAllItems() as $item) {
+        foreach ($items as $item) {
         	$tax->setProductClassId($item->getProduct()->getTaxClassId());
         	$rate = $tax->getRate();
             $item->setTaxPercent($rate);

@@ -33,13 +33,18 @@ class Mage_Sales_Model_Quote_Address_Total_Discount
 
         $address->setFreeShipping(0);
 
+        $items = $address->getAllItems();
+        if (!count($items)) {
+            return $this;
+        }
+
         $totalDiscountAmount = 0;
         $subtotalWithDiscount= 0;
         $baseTotalDiscountAmount = 0;
         $baseSubtotalWithDiscount= 0;
 
         $hasDiscount = false;
-        foreach ($address->getAllItems() as $item) {
+        foreach ($items as $item) {
             if ($item->getNoDiscount()) {
                 $item->setDiscountAmount(0);
                 $item->setBaseDiscountAmount(0);

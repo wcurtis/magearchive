@@ -352,6 +352,19 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
         }
     }
 
+    public function printAction()
+    {
+        if ($invoiceId = $this->getRequest()->getParam('invoice_id')) {
+            if ($invoice = Mage::getModel('sales/order_shipment')->load($invoiceId)) {
+                $pdf = Mage::getModel('sales/order_pdf_shipment')->getPdf(array($invoice));
+                $this->_prepareDownloadResponse('packingslip'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
+            }
+        }
+        else {
+            $this->_forward('noRoute');
+        }
+    }
+    
     public function addCommentAction()
     {
         try {

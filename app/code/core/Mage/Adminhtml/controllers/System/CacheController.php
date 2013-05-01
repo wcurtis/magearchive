@@ -39,28 +39,29 @@ class Mage_Adminhtml_System_CacheController extends Mage_Adminhtml_Controller_Ac
 
     public function saveAction()
     {
-        $a = $this->getRequest()->getPost('refresh');
-        if (!empty($a) && is_array($a)) {
-            if (!empty($a['catalog_rewrites'])) {
-                Mage::getSingleton('catalog/url')->refreshRewrites();
-            }
-            if (!empty($a['all_cache'])) {
-                Mage::app()->cleanCache();
-            }
+        $allCache = $this->getRequest()->getPost('all_cache');
+        if ($allCache=='disable' || $allCache=='refresh') {
+            Mage::app()->cleanCache();
         }
 
-        $a = $this->getRequest()->getPost('enable');
-        if (!empty($a) && is_array($a)) {
-            foreach ($a as $type=>$value) {
-                if ($value&2) {
-                    Mage::app()->cleanCache(array($type));
-                    if ($type==='config') {
-                        Mage::app()->getConfig()->removeCache();
-                    }
-                    $a[$type] = $value&1;
-                }
+        $e = $this->getRequest()->getPost('enable');
+        $enable = array();
+        $clean = array();
+        foreach (Mage::helper('core')->getCacheTypes() as $type=>$label) {
+            $flag = $allCache!='disable' && (!empty($e[$type]) || $allCache=='enable');
+            $enable[$type] = $flag ? 1 : 0;
+            if ($allCache=='' && !$flag) {
+                $clean[] = $type;
             }
-            Mage::app()->saveCache(serialize($a), 'use_cache', array(), null);
+        }
+        if (!empty($clean)) {
+            Mage::app()->cleanCache($clean);
+        }
+
+        Mage::app()->saveCache(serialize($enable), 'use_cache', array(), null);
+
+        if ($this->getRequest()->getPost('refresh_catalog_rewrites')) {
+            Mage::getSingleton('catalog/url')->refreshRewrites();
         }
 
         if( $this->getRequest()->getPost('clear_images_cache') ) {

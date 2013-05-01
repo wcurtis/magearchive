@@ -137,7 +137,7 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
     public function initFromOrder(Mage_Sales_Model_Order $order)
     {
         if (!$order->getReordered()) {
-        	$this->getSession()->setOrderId($order->getId());
+            $this->getSession()->setOrderId($order->getId());
         }
 
 
@@ -730,6 +730,7 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
             $customer->addData($billingAddress->getData())
                 ->addData($this->getData('account'))
                 ->setPassword($customer->generatePassword())
+                ->setWebsiteId($this->getSession()->getStore()->getWebsiteId())
                 ->setStoreId($this->getSession()->getStore()->getId())
                 ->addAddress($billingAddress);
 

@@ -33,6 +33,15 @@ class Mage_Sales_Model_Quote_Address_Rate extends Mage_Shipping_Model_Rate_Abstr
         unset($this->_address);
     }
 
+    protected function _beforeSave()
+    {
+        parent::_beforeSave();
+        if ($this->getAddress()) {
+            $this->setParentId($this->getAddress()->getId());
+        }
+        return $this;
+    }
+
     public function setAddress(Mage_Sales_Model_Quote_Address $address)
     {
         $this->_address = $address;

@@ -27,7 +27,7 @@
 
 class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
 {
-    protected $_collection;
+    protected $_productCollection;
 
 
     public function getTag()
@@ -49,7 +49,7 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
             ->setTemplate($template)
             ->setAvailableOrders(array('name'=>Mage::helper('tag')->__('Name'), 'price'=>Mage::helper('tag')->__('Price')))
             ->setModes(array('list' => Mage::helper('tag')->__('List'), 'grid' => Mage::helper('tag')->__('Grid')))
-            ->setCollection($this->_getCollection());
+            ->setCollection($this->_getProductCollection());
         $this->setChild('search_result_list', $resultBlock);
     }
 
@@ -58,31 +58,25 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
         return $this->getChildHtml('search_result_list');
     }
 
-    protected function _getCollection()
+    protected function _getProductCollection()
     {
-        if( !$this->_collection ) {
+        if(is_null($this->_productCollection)) {
             $tagModel = Mage::getModel('tag/tag');
-            $this->_collection = $tagModel->getEntityCollection()
+            $this->_productCollection = $tagModel->getEntityCollection()
                 ->addTagFilter($this->getTag()->getId())
-                ->addStoreFilter();
+                ->addStoreFilter()
+                ->addUrlRewrite();
         }
-        return $this->_collection;
-    }
-
-    public function _getProductCollection()
-    {
-        return $this->_getCollection();
-    }
-
-    protected function _beforeToHtml()
-    {
-        Mage::getModel('review/review')->appendSummary($this->_getCollection());
-        return parent::_beforeToHtml();
+        return $this->_productCollection;
     }
 
     public function getResultCount()
     {
-        return $this->_getProductCollection()->getSize();
+        if (!$this->getData('result_count')) {
+            $size = $this->_getProductCollection()->getSize();
+            $this->setResultCount($size);
+        }
+        return $this->getData('result_count');
     }
 
     public function getHeaderText()

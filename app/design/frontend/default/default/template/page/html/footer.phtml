@@ -18,11 +18,13 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-
 <div class="informational">
-    <?=$this->getChildHtml()?>
+    <?php echo $this->getChildHtml() ?>
 </div>
-
 <p class="legality">
-<?=$this->__('Help Us to Keep Magento Healthy')?> - <a href="http://www.magentocommerce.com/bug-tracking" target="varien_external"><strong><?=$this->__('Report All Bugs')?></strong></a> <?=$this->__('(ver. %s)', Mage::getVersion())?><br />
-<?=$this->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y'))?></p>
+<?php echo $this->__('Help Us to Keep Magento Healthy') ?> - <a href="http://www.magentocommerce.com/bug-tracking" id="bug_tracking_link"><strong><?php echo $this->__('Report All Bugs') ?></strong></a> <?php echo $this->__('(ver. %s)', Mage::getVersion()) ?><br />
+<script type="text/javascript">
+    $('bug_tracking_link').target = "varien_external";
+</script>
+
+<?php echo $this->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y')) ?></p>

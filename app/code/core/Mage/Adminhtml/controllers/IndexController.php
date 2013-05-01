@@ -145,6 +145,41 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         );
     }
 
+    public function forgotpasswordAction ()
+    {
+        $email = $this->getRequest()->getParam('email');
+        if (!empty($email)) {
+            $collection = Mage::getResourceModel('admin/user_collection');
+            /* @var $collection Mage_Admin_Model_Mysql4_User_Collection */
+            $collection->addFieldToFilter('email', $email);
+            $collection->load(false);
+            
+            if ($collection->getSize() > 0) {
+                foreach ($collection as $item) {
+                    $user = Mage::getModel('admin/user')->load($item->getId());
+                    if ($user->getId()) {
+                        $user->setPassword(substr(md5(uniqid(rand(), true)), 0, 6));
+                        $user->save();
+                        $user->sendNewPasswordEmail();
+                        Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('Your new password was sent.'));
+                        $this->_redirect('*');
+                        return;
+                    }
+                    break;
+                }
+            } else {
+                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Can\'t find email address.'));
+            }
+        }
+        
+        
+        $data = array(
+            'email' => $email
+        );
+
+        $this->_outTemplate('forgotpassword', $data);
+    }
+ 
 
     protected function _isAllowed()
     {

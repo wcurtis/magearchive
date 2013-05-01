@@ -31,9 +31,9 @@ class Mage_Sales_Model_Entity_Order extends Mage_Eav_Model_Entity_Abstract
     public function __construct()
     {
         $resource = Mage::getSingleton('core/resource');
-        $this->setType('order')->setConnection(
-            $resource->getConnection('sales_read'),
-            $resource->getConnection('sales_write')
-        );
+        $this->setType('order');
+        $read = $resource->getConnection('sales_read');
+        $write = $resource->getConnection('sales_write');
+        $this->setConnection($read, $write);
     }
 }

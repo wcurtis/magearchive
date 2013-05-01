@@ -19,10 +19,10 @@
  */
 ?>
 <div class="entry-edit">
-    <?=$this->getFormHtml()?>
+    <?php echo $this->getFormHtml() ?>
 </div>
 
 <script type="text/javascript">
-var updater = new RegionUpdater('tax_country_id', 'tax_region', 'tax_region_id', <?=$this->helper('directory')->getRegionJson()?>, 'disable');
+var updater = new RegionUpdater('tax_country_id', 'tax_region', 'tax_region_id', <?php echo $this->helper('directory')->getRegionJson() ?>, 'disable');
 
 </script>

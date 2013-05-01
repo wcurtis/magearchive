@@ -33,7 +33,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 
 /*Table structure for table `cron_schedule` */
 
-DROP TABLE IF EXISTS {$this->getTable('cron_schedule')};
+-- DROP TABLE IF EXISTS {$this->getTable('cron_schedule')};
 
 CREATE TABLE {$this->getTable('cron_schedule')} (
   `schedule_id` int(10) unsigned NOT NULL auto_increment,

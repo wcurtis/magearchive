@@ -192,7 +192,7 @@ class Varien_Pear
 body { margin:0px; padding:3px; background:black; color:white; }
 pre { font:normal 11px Courier New, serif; color:#2EC029; }
 </style></head><body>
-<?
+<?php
         echo "<pre>".$run->getComment();
 
         if ($command = $run->getCommand()) {
@@ -224,7 +224,7 @@ if (!auto_scroll) {
 }
 </script>
 </body></html>
-<?
+<?php
         $fe->setLogStream($oldLogStream);
 
         return $result;

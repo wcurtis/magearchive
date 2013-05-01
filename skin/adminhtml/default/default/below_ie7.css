@@ -18,5 +18,17 @@
 .icon-head { height:18px;}
 .footer .powered-by { height:19px;}
 .simple-container { height:350px; }
-.login-box .bottom { right:1px;}
 .messages li { height:23px; }
+
+
+#nav ul { border-bottom-width:2px;}
+#nav ul li{ background:none !important; padding:0 !important; float:none; width:auto;border-left:1px solid #b6b6b6;border-right:1px solid #b6b6b6; }
+#nav ul li.active {float:none; width:auto; }
+#nav ul { border-top:1px solid #4d5255 !imporant;border-bottom:1px solid #b6b6b6; padding-top:0 !important; padding-bottom:0 !important; }
+#nav ul ul { border:1px solid #b6b6b6; border-left-width:0; border-right-width:0; background-image:none;}
+#nav ul li a { background:#e5edef;}
+#nav ul li a:hover  { background:#d0dfe2;}
+#nav ul, #nav ul li, #nav ul a, #nav ul a span { zoom:1; }
+#nav ul li.parent { margin-bottom:-3px}
+#nav ul li.parent li.parent { margin-bottom:-3px}
+

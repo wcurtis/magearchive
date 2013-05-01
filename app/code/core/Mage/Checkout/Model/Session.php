@@ -49,7 +49,8 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
              * Prepare quote for load
              */
             $quote = Mage::getModel('sales/quote')
-                ->setStoreId(Mage::app()->getStore()->getId());
+                ->setStoreId(Mage::app()->getStore()->getId())
+                ->setCacheKey(true);
 
             /* @var $quote Mage_Sales_Model_Quote */
             if ($this->getQuoteId()) {
@@ -59,9 +60,10 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                 }
             }
             if (!$this->getQuoteId()) {
-                $quote->save();
+                //$quote->save();
+                $quote->setIsCheckoutCart(true);
                 Mage::dispatchEvent('checkout_quote_init', array('quote'=>$quote));
-                $this->setQuoteId($quote->getId());
+                //$this->setQuoteId($quote->getId());
             }
             if ($this->getQuoteId() && !$quote->getCustomerId()) {
                 $customerSession = Mage::getSingleton('customer/session');
@@ -81,11 +83,17 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
         return $this->_quote;
     }
 
+    public function createQuote()
+    {
+
+    }
+
     public function loadCustomerQuote()
     {
         // coment until quote fix
         $customerQuote = Mage::getModel('sales/quote')
             ->setStoreId(Mage::app()->getStore()->getId())
+            ->setCacheKey(true)
             ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomerId());
         if ($customerQuote) {
             if ($this->getQuoteId()) {

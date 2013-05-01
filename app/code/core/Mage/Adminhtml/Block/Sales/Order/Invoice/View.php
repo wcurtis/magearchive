@@ -74,6 +74,15 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_View extends Mage_Adminhtml_Block
                 )
             );
         }
+        
+        if ($this->getInvoice()->getId()) {
+            $this->_addButton('print', array(
+                'label'     => Mage::helper('sales')->__('Print'),
+                'class'     => 'save',
+                'onclick'   => 'setLocation(\''.$this->getPrintUrl().'\')'
+                )
+            );
+        }
     }
 
     /**
@@ -141,4 +150,10 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_View extends Mage_Adminhtml_Block
         ));
     }
 
+    public function getPrintUrl()
+    {
+        return $this->getUrl('*/*/print', array(
+            'invoice_id' => $this->getInvoice()->getId()
+        ));
+    }
 }

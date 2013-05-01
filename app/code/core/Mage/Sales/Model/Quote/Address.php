@@ -49,6 +49,23 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         unset($this->_totals);
     }
 
+    protected function _beforeSave()
+    {
+        parent::_beforeSave();
+        if ($this->getQuote()) {
+            $this->setParentId($this->getQuote()->getId());
+        }
+        return $this;
+    }
+
+    protected function _afterSave()
+    {
+        parent::_afterSave();
+        $this->getItemsCollection()->save();
+        $this->getShippingRatesCollection()->save();
+        return $this;
+    }
+
     /**
      * Declare adress quote model object
      *

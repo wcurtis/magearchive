@@ -26,6 +26,7 @@ abstract class Mage_Usa_Model_Shipping_Carrier_Abstract extends Mage_Shipping_Mo
 {
 
     const USA_COUNTRY_ID = 'US';
+    const PUERTORICO_COUNTRY_ID = 'PR';
 
     public function getTrackingInfo($tracking)
     {

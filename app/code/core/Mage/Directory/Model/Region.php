@@ -49,7 +49,9 @@ class Mage_Directory_Model_Region extends Mage_Core_Model_Abstract
 
     public function loadByCode($code, $countryId)
     {
-        $this->_getResource()->loadByCode($this, $code, $countryId);
+        if ($code) {
+            $this->_getResource()->loadByCode($this, $code, $countryId);
+        }
         return $this;
     }
 

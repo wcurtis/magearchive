@@ -18,94 +18,94 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Product list toolbar
  *
  * @see Mage_Catalog_Block_Product_List_Toolbar
  */
 ?>
-<?if($this->getCollection()->getSize()):?>
+<?php if($this->getCollection()->getSize()): ?>
     <table class="pager" cellspacing="0">
         <tr>
             <td>
-            <?if($this->getLastPageNum()>1):?>
-                <?=$this->__('Items %s to %s of %s total', $this->getFirstNum(), $this->getLastNum(), $this->getTotalNum())?>
-            <?else:?>
-                <strong><?=$this->__('%s Item(s)', $this->getTotalNum())?></strong>
-            <?endif;?>
+            <?php if($this->getLastPageNum()>1): ?>
+                <?php echo $this->__('Items %s to %s of %s total', $this->getFirstNum(), $this->getLastNum(), $this->getTotalNum()) ?>
+            <?php else: ?>
+                <strong><?php echo $this->__('%s Item(s)', $this->getTotalNum()) ?></strong>
+            <?php endif; ?>
             </td>
-            <?if($this->getLastPageNum()>1):?>
+            <?php if($this->getLastPageNum()>1): ?>
             <td>
-                <strong><?=$this->__('Page:')?></strong>
+                <strong><?php echo $this->__('Page:') ?></strong>
                 <ol>
-                <?if (!$this->isFirstPage()):?>
+                <?php if (!$this->isFirstPage()): ?>
                     <li>
-                        <a href="<?=$this->getPreviousPageUrl()?>"><img src="<?=$this->getSkinUrl('images/pager_arrow_left.gif')?>" alt="<?=$this->__('Previous')?>"/></a>
+                        <a href="<?php echo $this->getPreviousPageUrl() ?>"><img src="<?php echo $this->getSkinUrl('images/pager_arrow_left.gif') ?>" alt="<?php echo $this->__('Previous') ?>"/></a>
                     </li>
-                <?endif?>
-                <?foreach ($this->getPages() as $_page):?>
-                    <?if ($this->isPageCurrent($_page)):?>
-                        <li><span class="on"><?=$_page?></span></li>
-                    <?else:?>
-                        <li><a href="<?=$this->getPageUrl($_page)?>"><?=$_page?></a></li>
-                    <?endif?>
-                <?endforeach;;?>
-                <?if (!$this->isLastPage()):?>
+                <?php endif ?>
+                <?php foreach ($this->getPages() as $_page): ?>
+                    <?php if ($this->isPageCurrent($_page)): ?>
+                        <li><span class="on"><?php echo $_page ?></span></li>
+                    <?php else: ?>
+                        <li><a href="<?php echo $this->getPageUrl($_page) ?>"><?php echo $_page ?></a></li>
+                    <?php endif ?>
+                <?php endforeach;; ?>
+                <?php if (!$this->isLastPage()): ?>
                     <li>
-                        <a href="<?=$this->getNextPageUrl()?>"><img src="<?=$this->getSkinUrl('images/pager_arrow_right.gif')?>" alt="<?=$this->__('Next')?>"/></a>
+                        <a href="<?php echo $this->getNextPageUrl() ?>"><img src="<?php echo $this->getSkinUrl('images/pager_arrow_right.gif') ?>" alt="<?php echo $this->__('Next') ?>"/></a>
                     </li>
-                <?endif?>
+                <?php endif ?>
                 </ol>
             </td>
-            <?endif;?>
+            <?php endif; ?>
             <td class="a-right">
-                <?=$this->__('Show')?> <select name="" onchange="setLocation(this.value)">
-                <?foreach ($this->getAvailableLimit() as  $_key=>$_limit):?>
-                    <option value="<?=$this->getLimitUrl($_key)?>"<?if($this->isLimitCurrent($_key)):?> selected<?endif?>>
-                        <?=$_limit?>
+                <?php echo $this->__('Show') ?> <select onchange="setLocation(this.value)">
+                <?php foreach ($this->getAvailableLimit() as  $_key=>$_limit): ?>
+                    <option value="<?php echo $this->getLimitUrl($_key) ?>"<?php if($this->isLimitCurrent($_key)): ?> selected="selected"<?php endif ?>>
+                        <?php echo $_limit ?>
                     </option>
-                <?endforeach;?>
-                </select> <?=$this->__('per page')?>
+                <?php endforeach; ?>
+                </select> <?php echo $this->__('per page') ?>
             </td>
         </tr>
     </table>
-    <?if( $this->isExpanded() ):?>
+    <?php if( $this->isExpanded() ): ?>
     <table class="view-by" cellspacing="0">
         <tr>
-            <?if( $this->isEnabledViewSwitcher() ):?>
+            <?php if( $this->isEnabledViewSwitcher() ): ?>
             <td>
-                <?$_modes = $this->getModes();?>
-                <?if($_modes && count($_modes)>1):?>
-                <?=$this->__('View as')?>:
-                <?foreach ($this->getModes() as $_code=>$_label):?>
-                    <?if($this->isModeActive($_code)):?>
-                        <strong><?=$_label?></strong>&nbsp;
-                    <?else:?>
-                        <a href="<?=$this->getModeUrl($_code)?>"><?=$_label?></a>&nbsp;
-                    <?endif;?>
-                <?endforeach;?>
-                <?endif;?>
+                <?php $_modes = $this->getModes(); ?>
+                <?php if($_modes && count($_modes)>1): ?>
+                <?php echo $this->__('View as') ?>:
+                <?php foreach ($this->getModes() as $_code=>$_label): ?>
+                    <?php if($this->isModeActive($_code)): ?>
+                        <strong><?php echo $_label ?></strong>&nbsp;
+                    <?php else: ?>
+                        <a href="<?php echo $this->getModeUrl($_code) ?>"><?php echo $_label ?></a>&nbsp;
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <?php endif; ?>
             </td>
-            <?endif;?>
+            <?php endif; ?>
             <td class="a-center">
-                <?=$this->__('Sort by')?> <select name="" onchange="setLocation(this.value)">
-                <?foreach($this->getAvailableOrders() as $_key=>$_order):?>
-                    <option value="<?=$this->getOrderUrl($_key, 'asc')?>"<?if($this->isOrderCurrent($_key)):?> selected<?endif;?>>
-                        <?=$_order?>
+                <?php echo $this->__('Sort by') ?> <select onchange="setLocation(this.value)">
+                <?php foreach($this->getAvailableOrders() as $_key=>$_order): ?>
+                    <option value="<?php echo $this->getOrderUrl($_key, 'asc') ?>"<?php if($this->isOrderCurrent($_key)): ?> selected="selected"<?php endif; ?>>
+                        <?php echo $_order ?>
                     </option>
-                <?endforeach;?>
+                <?php endforeach; ?>
                 </select>
-                <?if($this->getCurrentDirection() == 'desc'):?>
-                    <a href="<?=$this->getOrderUrl(null, 'asc')?>"><img src="<?=$this->getSkinUrl('images/sort_desc_arrow.gif')?>" alt="<?=$this->__('Set Ascending Direction')?>" class="v-middle"/></a>
-                <?else:?>
-                    <a href="<?=$this->getOrderUrl(null, 'desc')?>"><img src="<?=$this->getSkinUrl('images/sort_asc_arrow.gif')?>" alt="<?=$this->__('Set Descending Direction')?>" class="v-middle"/></a>
-                <?endif;?>
+                <?php if($this->getCurrentDirection() == 'desc'): ?>
+                    <a href="<?php echo $this->getOrderUrl(null, 'asc') ?>"><img src="<?php echo $this->getSkinUrl('images/sort_desc_arrow.gif') ?>" alt="<?php echo $this->__('Set Ascending Direction') ?>" class="v-middle"/></a>
+                <?php else: ?>
+                    <a href="<?php echo $this->getOrderUrl(null, 'desc') ?>"><img src="<?php echo $this->getSkinUrl('images/sort_asc_arrow.gif') ?>" alt="<?php echo $this->__('Set Descending Direction') ?>" class="v-middle"/></a>
+                <?php endif; ?>
             </td>
-            <?if ($this->helper('rss/catalog')->getTagFeedUrl()):?>
-            <td class="a-right"><a href="<?=$this->helper('rss/catalog')->getTagFeedUrl()?>" class="no-wrap link-feed"><?=$this->__('Subscribe to Feed')?></a></td>
-            <?endif;?>
+            <?php if ($this->helper('rss/catalog')->getTagFeedUrl()): ?>
+            <td class="a-right"><a href="<?php echo $this->helper('rss/catalog')->getTagFeedUrl() ?>" class="no-wrap link-feed"><?php echo $this->__('Subscribe to Feed') ?></a></td>
+            <?php endif; ?>
         </tr>
     </table>
-    <?endif;?>
-<?endif?>
+    <?php endif; ?>
+<?php endif ?>

@@ -21,14 +21,14 @@
 
 class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Action
 {
-	protected function _initRule()
-	{
-		Mage::register('current_promo_quote_rule', Mage::getModel('salesrule/rule'));
+    protected function _initRule()
+    {
+        Mage::register('current_promo_quote_rule', Mage::getModel('salesrule/rule'));
         if ($id = (int) $this->getRequest()->getParam('id')) {
             Mage::registry('current_promo_quote_rule')
                 ->load($id);
         }
-	}
+    }
 
     protected function _initAction()
     {
@@ -81,7 +81,7 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
 
         $this->_initAction();
 
-        $this->getLayout()->getBlock('root')
+        $this->getLayout()->getBlock('head')
             ->setCanLoadExtJs(true)
             ->setCanLoadRulesJs(true);
 
@@ -89,7 +89,6 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
             ->_addBreadcrumb($id ? Mage::helper('salesrule')->__('Edit Rule') : Mage::helper('salesrule')->__('New Rule'), $id ? Mage::helper('salesrule')->__('Edit Rule') : Mage::helper('salesrule')->__('New Rule'))
             ->_addContent($block)
             ->_addLeft($this->getLayout()->createBlock('adminhtml/promo_quote_edit_tabs'))
-            ->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('promo/quote/js.phtml'))
             ->renderLayout();
 
     }
@@ -109,10 +108,10 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
                 }
             }
             if (isset($data['rule']['conditions'])) {
-            	$data['conditions'] = $data['rule']['conditions'];
+                $data['conditions'] = $data['rule']['conditions'];
             }
             if (isset($data['rule']['actions'])) {
-            	$data['actions'] = $data['rule']['actions'];
+                $data['actions'] = $data['rule']['actions'];
             }
             unset($data['rule']);
 
@@ -221,7 +220,7 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('promo/quote');
+        return Mage::getSingleton('admin/session')->isAllowed('promo/quote');
     }
 
 }

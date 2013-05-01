@@ -138,8 +138,8 @@ abstract class Mage_Catalog_Model_Resource_Eav_Mysql4_Abstract extends Mage_Eav_
             if ($object->getStoreId() == 0) {
                 $this->_updateAttributeForStore($object, $attribute, $value, $object->getStoreId());
             } else {
-                if (is_array($object->getStoreIds())) {
-                    foreach ($object->getStoreIds() as $storeId) {
+                if (is_array($object->getWebsiteStoreIds())) {
+                    foreach ($object->getWebsiteStoreIds() as $storeId) {
                         $this->_updateAttributeForStore($object, $attribute, $value, $storeId);
                     }
                 }
@@ -254,12 +254,21 @@ abstract class Mage_Catalog_Model_Resource_Eav_Mysql4_Abstract extends Mage_Eav_
         if (!empty($storeAttributes)) {
             $delCondition = $condition
                 . $this->_getWriteAdapter()->quoteInto(' AND attribute_id IN(?)', $storeAttributes)
-                . $this->   _getWriteAdapter()->quoteInto(' AND store_id =?', $object->getStoreId());
+                . $this->_getWriteAdapter()->quoteInto(' AND store_id =?', $object->getStoreId());
             $this->_getWriteAdapter()->delete($table, $delCondition);;
         }
         return $this;
     }
 
+    protected function _getOrigObject($object)
+    {
+        $className  = get_class($object);
+        $origObject = new $className();
+        $origObject->setData(array());
+        $origObject->setStoreId($object->getStoreId());
+        $this->load($origObject, $object->getData($this->getEntityIdField()));
+        return $origObject;
+    }
 
 
 

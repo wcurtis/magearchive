@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Date
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Date.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Date.php 8857 2008-03-16 12:04:03Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -666,13 +666,13 @@ class Zend_Date extends Zend_Date_DateObject {
 
 
                 // zone
-                // @todo: v needs to be reworked as it's the long wall time and not the timezone
+                // @todo  v needs to be reworked as it's the long wall time and not the timezone
                 case 'vvvv' :
                 case 'zzzz' :
                     $output[$i] = $this->get(Zend_Date::TIMEZONE_NAME, $locale);
                     break;
 
-                // @todo: v needs to be reworked as it's the short wall time and not the timezone
+                // @todo  v needs to be reworked as it's the short wall time and not the timezone
                 case 'v' :
                 case 'zzz' :
                 case 'zz'  :

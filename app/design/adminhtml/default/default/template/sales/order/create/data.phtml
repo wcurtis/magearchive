@@ -20,44 +20,44 @@
 ?>
 <div class="page-create-order">
 <p class="switcher">
-<label for="currency_switcher"><?=Mage::helper('sales')->__('Order Currency:')?></label>
+<label for="currency_switcher"><?php echo Mage::helper('sales')->__('Order Currency:') ?></label>
 <select id="currency_switcher" name="order[currency]" class="left-col-block" onchange="order.setCurrencyId(this.value)">
-    <?foreach ($this->getAvailableCurrencies() as $_code):?>
-    <option value="<?=$_code?>"<?if($_code==$this->getCurrentCurrencyCode()):?> selected<?endif;?>><?=$this->getCurrencyName($_code)?></option>
-    <?endforeach;?>
+    <?php foreach ($this->getAvailableCurrencies() as $_code): ?>
+    <option value="<?php echo $_code ?>"<?php if($_code==$this->getCurrentCurrencyCode()): ?> selected="selected"<?php endif; ?>><?php echo $this->getCurrencyName($_code) ?></option>
+    <?php endforeach; ?>
 </select>
 </p>
 <table cellspacing="0" width="100%">
 <tr>
-    <?if($this->getCustomerId()):?>
+    <?php if($this->getCustomerId()): ?>
     <td class="side-col" style="background:none; padding:0;">
-        <div id="order:sidebar"><?=$this->getChildHtml('sidebar')?></div>
+        <div id="order:sidebar"><?php echo $this->getChildHtml('sidebar') ?></div>
     </td>
-    <?endif;?>
-    <td <?if($this->getCustomerId()):?>class="main-col"<?endif;?>>
-       <div id="order:search" style="display:none" class="order-search-items"><?=$this->getChildHtml('search')?></div>
-        <div id="order:items"><?=$this->getChildHtml('items')?></div>
-        <div id="order:form_account"><?=$this->getChildHtml('form_account')?></div>
+    <?php endif; ?>
+    <td <?php if($this->getCustomerId()): ?>class="main-col"<?php endif; ?>>
+       <div id="order:search" style="display:none" class="order-search-items"><?php echo $this->getChildHtml('search') ?></div>
+        <div id="order:items"><?php echo $this->getChildHtml('items') ?></div>
+        <div id="order:form_account"><?php echo $this->getChildHtml('form_account') ?></div>
         <div id="order:addresses">
-            <div id="order:billing_address" class="box-left"><?=$this->getChildHtml('billing_address')?></div>
-            <div id="order:shipping_address" class="box-right"><?=$this->getChildHtml('shipping_address')?></div>
+            <div id="order:billing_address" class="box-left"><?php echo $this->getChildHtml('billing_address') ?></div>
+            <div id="order:shipping_address" class="box-right"><?php echo $this->getChildHtml('shipping_address') ?></div>
         </div>
         <div class="clear"></div>
         <div id="order:methods">
-            <div id="order:billing_method" class="box-left payments"><?=$this->getChildHtml('billing_method')?></div>
-            <div id="order:shipping_method" class="box-right"><?=$this->getChildHtml('shipping_method')?></div>
+            <div id="order:billing_method" class="box-left payments"><?php echo $this->getChildHtml('billing_method') ?></div>
+            <div id="order:shipping_method" class="box-right"><?php echo $this->getChildHtml('shipping_method') ?></div>
         </div>
         <div id="order:giftmessage">
-        <?=$this->getChildHtml('giftmessage')?>
+        <?php echo $this->getChildHtml('giftmessage') ?>
         </div>
         <div class="clear"></div>
         <div class="box-left entry-edit">
-            <div class="entry-edit-head"><h4><?=Mage::helper('sales')->__('Order History')?></h4></div>
-            <fieldset id="order:comment"><?=$this->getChildHtml('comment')?></fieldset>
+            <div class="entry-edit-head"><h4><?php echo Mage::helper('sales')->__('Order History') ?></h4></div>
+            <fieldset id="order:comment"><?php echo $this->getChildHtml('comment') ?></fieldset>
         </div>
         <div class="box-right entry-edit">
-            <div class="entry-edit-head"><h4><?=Mage::helper('sales')->__('Order Totals')?></h4></div>
-            <div id="order:totals" class="order-totals"><?=$this->getChildHtml('totals')?></div>
+            <div class="entry-edit-head"><h4><?php echo Mage::helper('sales')->__('Order Totals') ?></h4></div>
+            <div id="order:totals" class="order-totals"><?php echo $this->getChildHtml('totals') ?></div>
         </div>
         <div class="clear"></div>
     </td>

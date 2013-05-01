@@ -21,14 +21,14 @@
 <div class="content-header">
 <table cellspacing="0">
 	<tr>
-		<td style="width:50%;"><h3 class="icon-head head-customer-groups"><?=Mage::helper('customer')->__('Customer Groups')?></h3></td>
+		<td style="width:50%;"><h3 class="icon-head head-customer-groups"><?php echo Mage::helper('customer')->__('Customer Groups') ?></h3></td>
 		<td class="form-buttons">
-	<button class="scalable add" onclick="window.location='<?=$createUrl?>'"><span><?=Mage::helper('customer')->__('Add New Customer Group')?></span></button>
+	<button class="scalable add" onclick="window.location='<?php echo $createUrl ?>'"><span><?php echo Mage::helper('customer')->__('Add New Customer Group') ?></span></button>
 	</tr>
 </table>
 </div>
 <div>
-	<?=$this->getChildHtml('grid')?>
+	<?php echo $this->getChildHtml('grid') ?>
 </div>
 <script type="text/javascript">
 <!--

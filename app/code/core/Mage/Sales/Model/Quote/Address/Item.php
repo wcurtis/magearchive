@@ -38,6 +38,15 @@ class Mage_Sales_Model_Quote_Address_Item extends Mage_Sales_Model_Quote_Item_Ab
         unset($this->_address);
     }
 
+    protected function _beforeSave()
+    {
+        parent::_beforeSave();
+        if ($this->getAddress()) {
+            $this->setParentId($this->getAddress()->getId());
+        }
+        return $this;
+    }
+
     /**
      * Declare address model
      *

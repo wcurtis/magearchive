@@ -108,7 +108,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
             foreach ($optionCollection as $option) {
                 $value = array();
                 if (in_array($option->getId(), $defaultValues)) {
-                    $value['checked'] = 'checked';
+                    $value['checked'] = 'checked="checked"';
                 } else {
                     $value['checked'] = '';
                 }

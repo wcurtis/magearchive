@@ -43,10 +43,12 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
     public function addEntityType($code, array $params)
     {
         $data = array(
-            'entity_type_code'=>$code,
-            'entity_table'=>isset($params['table']) ? $params['table'] : 'eav/entity',
-            'increment_model'=>isset($params['increment_model']) ? $params['increment_model'] : '',
-            'increment_per_store'=>isset($params['increment_per_store']) ? $params['increment_per_store'] : 0,
+            'entity_type_code'      => $code,
+            'entity_model'          => $params['entity_model'],
+            'attribute_model'       => isset($params['attribute_model']) ? $params['attribute_model'] : '',
+            'entity_table'          => isset($params['table']) ? $params['table'] : 'eav/entity',
+            'increment_model'       => isset($params['increment_model']) ? $params['increment_model'] : '',
+            'increment_per_store'   => isset($params['increment_per_store']) ? $params['increment_per_store'] : 0,
         );
 
         if ($this->getEntityType($code, 'entity_type_id')) {
@@ -280,30 +282,30 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
      */
     public function addAttribute($entityTypeId, $code, array $attr)
     {
-        $applyTo = implode(',', array_keys((array)Mage::getConfig()->getNode('global/catalog/product/type')->children()));
         $entityTypeId = $this->getEntityTypeId($entityTypeId);
         $data = array(
-            'entity_type_id'    => $entityTypeId,
-            'attribute_code'    => $code,
-            'backend_model'     => isset($attr['backend']) ? $attr['backend'] : '',
-            'backend_type'      => isset($attr['type']) ? $attr['type'] : 'varchar',
-            'backend_table'     => isset($attr['table']) ? $attr['table'] : '',
-            'frontend_model'    => isset($attr['frontend']) ? $attr['frontend'] : '',
-            'frontend_input'    => isset($attr['input']) ? $attr['input'] : 'text',
-            'frontend_label'    => isset($attr['label']) ? $attr['label'] : '',
-            'source_model'      => isset($attr['source']) ? $attr['source'] : '',
-            'is_global'         => isset($attr['global']) ? $attr['global'] : 1,
-            'is_visible'        => isset($attr['visible']) ? (int) $attr['visible'] : 1,
-            'is_required'       => isset($attr['required']) ? $attr['required'] : 1,
-            'is_user_defined'   => isset($attr['user_defined']) ? $attr['user_defined'] : 0,
-            'default_value'     => isset($attr['default']) ? $attr['default'] : '',
-            'is_searchable'     => isset($attr['searchable']) ? $attr['searchable'] : 0,
-            'is_filterable'     => isset($attr['filterable']) ? $attr['filterable'] : 0,
-            'is_comparable'     => isset($attr['comparable']) ? $attr['comparable'] : 0,
-            'is_visible_on_front' => isset($attr['visible_on_front']) ? $attr['visible_on_front'] : 0,
-            'is_unique'         => isset($attr['unique']) ? $attr['unique'] : 0,
-            'apply_to'          => isset($attr['apply_to']) ? $attr['apply_to'] : $applyTo,
-            'is_configurable'   => isset($attr['is_configurable']) ? $attr['is_configurable'] : 1
+            'entity_type_id'        => $entityTypeId,
+            'attribute_code'        => $code,
+            'backend_model'         => isset($attr['backend']) ? $attr['backend'] : '',
+            'backend_type'          => isset($attr['type']) ? $attr['type'] : 'varchar',
+            'backend_table'         => isset($attr['table']) ? $attr['table'] : '',
+            'frontend_model'        => isset($attr['frontend']) ? $attr['frontend'] : '',
+            'frontend_input'        => isset($attr['input']) ? $attr['input'] : 'text',
+            'frontend_label'        => isset($attr['label']) ? $attr['label'] : '',
+            'source_model'          => isset($attr['source']) ? $attr['source'] : '',
+            'is_global'             => isset($attr['global']) ? $attr['global'] : 1,
+            'is_visible'            => isset($attr['visible']) ? (int) $attr['visible'] : 1,
+            'is_required'           => isset($attr['required']) ? $attr['required'] : 1,
+            'is_user_defined'       => isset($attr['user_defined']) ? $attr['user_defined'] : 0,
+            'default_value'         => isset($attr['default']) ? $attr['default'] : '',
+            'is_searchable'         => isset($attr['searchable']) ? $attr['searchable'] : 0,
+            'is_filterable'         => isset($attr['filterable']) ? $attr['filterable'] : 0,
+            'is_comparable'         => isset($attr['comparable']) ? $attr['comparable'] : 0,
+            'is_visible_on_front'   => isset($attr['visible_on_front']) ? $attr['visible_on_front'] : 0,
+            'is_unique'             => isset($attr['unique']) ? $attr['unique'] : 0,
+            'apply_to'              => isset($attr['apply_to']) ? $attr['apply_to'] : '',
+            'is_configurable'       => isset($attr['is_configurable']) ? $attr['is_configurable'] : 1,
+            'note'                  => isset($attr['note']) ? $attr['note'] : '',
         );
 
         $sortOrder = isset($attr['sort_order']) ? $attr['sort_order'] : null;
@@ -327,7 +329,62 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
                 $this->addAttributeToSet($entityTypeId, $set['attribute_set_id'], $this->_generalGroupName, $code, $sortOrder);
             }
         }
+
+        if (isset($attr['option']) && is_array($attr['option'])) {
+            $option = $attr['option'];
+            $option['attribute_id'] = $this->getAttributeId($entityTypeId, $code);
+            $this->addAttributeOption($option);
+        }
+
         return $this;
+    }
+
+    public function addAttributeOption($option)
+    {
+        if (isset($option['value'])) {
+            $optionTable        = $this->getTable('eav/attribute_option');
+            $optionValueTable   = $this->getTable('eav/attribute_option_value');
+
+            foreach ($option['value'] as $optionId => $values) {
+                $intOptionId = (int) $optionId;
+                if (!empty($option['delete'][$optionId])) {
+                    if ($intOptionId) {
+                        $condition = $this->_conn->quoteInto('option_id=?', $intOptionId);
+                        $write->delete($optionTable, $condition);
+                    }
+                    continue;
+                }
+
+                if (!$intOptionId) {
+                    $data = array(
+                        'attribute_id'  => $option['attribute_id'],
+                        'sort_order'    => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
+                    );
+                    $this->_conn->insert($optionTable, $data);
+                    $intOptionId = $this->_conn->lastInsertId();
+                } else {
+                    $data = array(
+                        'sort_order'    => isset($option['order'][$optionId]) ? $option['order'][$optionId] : 0,
+                    );
+                    $this->_conn->update($optionTable, $data, $this->_conn->quoteInto('option_id=?', $intOptionId));
+                }
+
+                // Default value
+                if (!isset($values[0])) {
+                    Mage::throwException(Mage::helper('eav')->__('Default option value is not defined'));
+                }
+
+                $this->_conn->delete($optionValueTable, $this->_conn->quoteInto('option_id=?', $intOptionId));
+                foreach ($values as $storeId => $value) {
+                    $data = array(
+                        'option_id' => $intOptionId,
+                        'store_id'  => $storeId,
+                        'value'     => $value,
+                    );
+                    $this->_conn->insert($optionValueTable, $data);
+                }
+            }
+        }
     }
 
     public function updateAttribute($entityTypeId, $id, $field, $value=null, $sortOrder=null)

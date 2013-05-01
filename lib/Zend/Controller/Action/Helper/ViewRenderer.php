@@ -65,7 +65,7 @@ require_once 'Zend/View.php';
  *
  * @uses       Zend_Controller_Action_Helper_Abstract
  * @package    Zend_Controller
- * @subpackage Zend_Controller_Action
+ * @subpackage Action_Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -193,6 +193,18 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
             $this->_setOptions($options);
         }
     }
+    
+    /**
+     * Clone - also make sure the view is cloned.
+     *
+     */
+    public function __clone()
+    {
+        if (isset($this->view) && $this->view instanceof Zend_View_Interface) {
+            $this->view = clone $this->view;
+            
+        }
+    }
 
     /**
      * Set the view object
@@ -267,8 +279,8 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
             $this->_inflector->setStaticRuleReference('moduleDir', $this->_moduleDir) // moduleDir must be specified before the less specific 'module'
                  ->addRules(array(
                      ':module'     => array('Word_CamelCaseToDash', 'StringToLower'),
-                     ':controller' => array('Word_CamelCaseToDash', new Zend_Filter_Word_UnderscoreToSeparator(DIRECTORY_SEPARATOR), 'StringToLower'),
-                     ':action'     => array('Word_CamelCaseToDash', new Zend_Filter_PregReplace('#[^a-z0-9' . preg_quote(DIRECTORY_SEPARATOR, '#') . ']+#i', '-'), 'StringToLower'),
+                     ':controller' => array('Word_CamelCaseToDash', new Zend_Filter_Word_UnderscoreToSeparator('/'), 'StringToLower'),
+                     ':action'     => array('Word_CamelCaseToDash', new Zend_Filter_PregReplace('#[^a-z0-9' . preg_quote('/', '#') . ']+#i', '-'), 'StringToLower'),
                  ))
                  ->setStaticRuleReference('suffix', $this->_viewSuffix)
                  ->setTargetReference($this->_inflectorTarget);
@@ -355,19 +367,21 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
     protected function _getBasePath()
     {
         if (null === $this->_actionController) {
-            return '.' . DIRECTORY_SEPARATOR . 'views';
+            return './views';
         }
 
         $inflector = $this->getInflector();
         $this->_setInflectorTarget($this->getViewBasePathSpec());
         
+        $dispatcher = $this->_frontController->getDispatcher();
         $request = $this->getRequest();
+
         $parts = array(
-            'module'     => $request->getModuleName(),
-            'controller' => $request->getControllerName(),
-            'action'     => $request->getActionName()
+            'module'     => (($moduleName = $request->getModuleName()) != '') ? $dispatcher->formatModuleName($moduleName) : $moduleName,
+            'controller' => substr($dispatcher->formatControllerName($request->getControllerName()), 0, -10),
+            'action'     => $dispatcher->formatActionName($request->getActionName())
             );
-        
+
         $path = $inflector->filter($parts);
         return $path;
     }
@@ -455,9 +469,10 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
 
         // Determine if this path has already been registered
         $currentPaths = $this->view->getScriptPaths();
-        $path         = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+        $path         = str_replace(array('/', '\\'), '/', $path);
         $pathExists   = false;
         foreach ($currentPaths as $tmpPath) {
+            $tmpPath = str_replace(array('/', '\\'), '/', $tmpPath);
             if (strstr($tmpPath, $path)) {
                 $pathExists = true;
                 break;
@@ -809,9 +824,10 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
     {
         $inflector  = $this->getInflector();
         $request    = $this->getRequest();
-        $module     = $request->getModuleName();
-        $controller = $request->getControllerName();
-        $action     = $request->getActionName();
+        $dispatcher = $this->_frontController->getDispatcher();
+        $module     = $dispatcher->formatModuleName($request->getModuleName());
+        $controller = substr($dispatcher->formatControllerName($request->getControllerName()), 0, -10);
+        $action     = $dispatcher->formatActionName($request->getActionName());
 
         $params     = compact('module', 'controller', 'action');
         foreach ($vars as $key => $value) {

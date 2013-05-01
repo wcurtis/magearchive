@@ -30,7 +30,7 @@ $installer = $this;
 
 $installer->startSetup();
 $installer->run("
-DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity')}`;
 CREATE TABLE `{$installer->getTable('customer_address_entity')}` (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -45,7 +45,7 @@ CREATE TABLE `{$installer->getTable('customer_address_entity')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_CUSTOMER_ID` FOREIGN KEY (`parent_id`) REFERENCES `{$installer->getTable('customer_entity')}` (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Customer Address Entities';
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_datetime')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_datetime')}`;
 CREATE TABLE `{$installer->getTable('customer_address_entity_datetime')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -61,7 +61,7 @@ CREATE TABLE `{$installer->getTable('customer_address_entity_datetime')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_DATETIME_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_decimal')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_decimal')}`;
 CREATE TABLE `{$installer->getTable('customer_address_entity_decimal')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -77,7 +77,7 @@ CREATE TABLE `{$installer->getTable('customer_address_entity_decimal')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_DECIMAL_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_int')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_int')}`;
 CREATE TABLE `{$installer->getTable('customer_address_entity_int')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -93,7 +93,7 @@ CREATE TABLE `{$installer->getTable('customer_address_entity_int')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_INT_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_text')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_text')}`;
 CREATE TABLE `{$installer->getTable('customer_address_entity_text')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -109,7 +109,7 @@ CREATE TABLE `{$installer->getTable('customer_address_entity_text')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_TEXT_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_varchar')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_address_entity_varchar')}`;
 CREATE TABLE `{$installer->getTable('customer_address_entity_varchar')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -125,7 +125,7 @@ CREATE TABLE `{$installer->getTable('customer_address_entity_varchar')}` (
   CONSTRAINT `FK_CUSTOMER_ADDRESS_VARCHAR_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_entity')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_entity')}`;
 CREATE TABLE `{$installer->getTable('customer_entity')}` (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -147,7 +147,7 @@ CREATE TABLE `{$installer->getTable('customer_entity')}` (
   CONSTRAINT `FK_CUSTOMER_WEBSITE` FOREIGN KEY (`website_id`) REFERENCES `{$installer->getTable('core_website')}` (`website_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Customer Entityies';
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_datetime')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_datetime')}`;
 CREATE TABLE `{$installer->getTable('customer_entity_datetime')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -163,7 +163,7 @@ CREATE TABLE `{$installer->getTable('customer_entity_datetime')}` (
   CONSTRAINT `FK_CUSTOMER_DATETIME_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_decimal')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_decimal')}`;
 CREATE TABLE `{$installer->getTable('customer_entity_decimal')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -179,7 +179,7 @@ CREATE TABLE `{$installer->getTable('customer_entity_decimal')}` (
   CONSTRAINT `FK_CUSTOMER_DECIMAL_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_int')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_int')}`;
 CREATE TABLE `{$installer->getTable('customer_entity_int')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -195,7 +195,7 @@ CREATE TABLE `{$installer->getTable('customer_entity_int')}` (
   CONSTRAINT `FK_CUSTOMER_INT_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_text')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_text')}`;
 CREATE TABLE `{$installer->getTable('customer_entity_text')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -211,7 +211,7 @@ CREATE TABLE `{$installer->getTable('customer_entity_text')}` (
   CONSTRAINT `FK_CUSTOMER_TEXT_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_varchar')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_entity_varchar')}`;
 CREATE TABLE `{$installer->getTable('customer_entity_varchar')}` (
   `value_id` int(11) NOT NULL auto_increment,
   `entity_type_id` smallint(8) unsigned NOT NULL default '0',
@@ -227,7 +227,7 @@ CREATE TABLE `{$installer->getTable('customer_entity_varchar')}` (
   CONSTRAINT `FK_CUSTOMER_VARCHAR_ENTITY_TYPE` FOREIGN KEY (`entity_type_id`) REFERENCES `{$installer->getTable('eav_entity_type')}` (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('customer_group')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('customer_group')}`;
 CREATE TABLE `{$installer->getTable('customer_group')}` (
   `customer_group_id` smallint(3) unsigned NOT NULL auto_increment,
   `customer_group_code` varchar(32) NOT NULL default '',

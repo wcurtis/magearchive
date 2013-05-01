@@ -17,7 +17,7 @@
  * @subpackage StrikeIron
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StrikeIron.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: StrikeIron.php 8539 2008-03-04 20:29:55Z darby $
  */
 
 
@@ -74,7 +74,10 @@ class Zend_Service_StrikeIron
         }
 
         try {
-            Zend_Loader::loadClass($class);
+            @Zend_Loader::loadClass($class);
+            if (!class_exists($class, false)) {
+                throw new Exception('Class file not found');
+            }
         } catch (Exception $e) {
             $msg = "Service '$class' could not be loaded: " . $e->getMessage();
             /**

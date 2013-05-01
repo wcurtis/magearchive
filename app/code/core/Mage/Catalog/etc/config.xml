@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Catalog>
-            <version>0.7.21</version>
+            <version>0.7.27</version>
             <depends>
                 <Mage_Customer />
             </depends>
@@ -50,10 +50,6 @@
                     <compare_item>
                         <table>catalog_compare_item</table>
                     </compare_item>
-
-                    <!--product_entity_gallery>
-                        <table>catalog_category_entity_gallery</table>
-                    </product_entity_gallery-->
 
                     <product_website>
                         <table>catalog_product_website</table>
@@ -112,57 +108,61 @@
             <catalog_mysql4>
                 <class>Mage_Catalog_Model_Mysql4</class>
             </catalog_mysql4>
-      </models>
-      <resources>
-         <catalog_setup>
-            <setup>
-               <module>Mage_Catalog</module>
-               <class>Mage_Catalog_Model_Resource_Eav_Mysql4_Setup</class>
-            </setup>
-            <connection>
-               <use>core_setup</use>
-            </connection>
-         </catalog_setup>
-         <catalog_write>
-            <connection>
-               <use>core_write</use>
-            </connection>
-         </catalog_write>
-         <catalog_read>
-            <connection>
-               <use>core_read</use>
-            </connection>
-         </catalog_read>
-      </resources>
-      <blocks>
-         <catalog><class>Mage_Catalog_Block</class></catalog>
-      </blocks>
-      <catalog>
-          <product>
-             <type>
-                <simple translate="label" module="catalog">
-                    <label>Simple Product</label>
-                    <model>catalog/product_type_simple</model>
-                </simple>
-                <grouped translate="label" module="catalog">
-                    <label>Grouped Product</label>
-                    <model>catalog/product_type_grouped</model>
-                </grouped>
-                <configurable translate="label" module="catalog">
-                    <label>Configurable Product</label>
-                    <model>catalog/product_type_configurable</model>
-                </configurable>
-             </type>
-          </product>
-       </catalog>
-   </global>
-   <adminhtml>
-       <menu>
+        </models>
+        <resources>
+            <catalog_setup>
+                <setup>
+                    <module>Mage_Catalog</module>
+                    <class>Mage_Catalog_Model_Resource_Eav_Mysql4_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </catalog_setup>
+            <catalog_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </catalog_write>
+            <catalog_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </catalog_read>
+        </resources>
+
+        <blocks>
+            <catalog><class>Mage_Catalog_Block</class></catalog>
+        </blocks>
+
+        <catalog>
+            <product>
+                <type>
+                    <simple translate="label" module="catalog">
+                        <label>Simple Product</label>
+                        <model>catalog/product_type_simple</model>
+                    </simple>
+                    <grouped translate="label" module="catalog">
+                        <label>Grouped Product</label>
+                        <model>catalog/product_type_grouped</model>
+                    </grouped>
+                    <configurable translate="label" module="catalog">
+                        <label>Configurable Product</label>
+                        <model>catalog/product_type_configurable</model>
+                    </configurable>
+                </type>
+            </product>
+        </catalog>
+    </global>
+    <adminhtml>
+        <menu>
             <catalog translate="title" module="catalog">
                 <title>Catalog</title>
                 <sort_order>30</sort_order>
                 <!--action>adminhtml/catalog</action-->
-                <depends><module>Mage_Catalog</module></depends>
+                <depends>
+                    <module>Mage_Catalog</module>
+                </depends>
                 <children>
                     <products translate="title" module="catalog">
                         <title>Manage Products</title>
@@ -190,13 +190,13 @@
                         <action>adminhtml/urlrewrite/index</action>
                     </urlrewrite>
                 </children>
-             </catalog>
+            </catalog>
         </menu>
         <acl>
             <resources>
                 <admin>
                     <children>
-                         <system>
+                        <system>
                             <children>
                                 <config>
                                     <children>
@@ -269,8 +269,37 @@
                     </children>
                 </admin>
             </resources>
-       </acl>
-       <translate>
+        </acl>
+        <events>
+            <store_add>
+                <observers>
+                    <catalog>
+                        <type>singleton</type>
+                        <class>catalog/observer</class>
+                        <method>storeAdd</method>
+                    </catalog>
+                </observers>
+            </store_add>
+            <store_edit>
+                <observers>
+                    <catalog>
+                        <type>singleton</type>
+                        <class>catalog/observer</class>
+                        <method>storeEdit</method>
+                    </catalog>
+                </observers>
+            </store_edit>
+            <store_group_save>
+                <observers>
+                    <catalog>
+                        <type>singleton</type>
+                        <class>catalog/observer</class>
+                        <method>storeGroupSave</method>
+                    </catalog>
+                </observers>
+            </store_group_save>
+        </events>
+        <translate>
             <modules>
                 <Mage_Catalog>
                     <files>
@@ -279,61 +308,63 @@
                 </Mage_Catalog>
             </modules>
         </translate>
-   </adminhtml>
+    </adminhtml>
 
-   <frontend>
-      <routers>
-         <catalog>
-            <use>standard</use>
-            <args>
-               <module>Mage_Catalog</module>
-               <frontName>catalog</frontName>
-            </args>
-         </catalog>
-      </routers>
-      <default>
-         <router>catalog</router>
-      </default>
-      <events>
-         <customer_login>
-             <observers>
-                 <catalog>
-                      <type>model</type>
-                      <class>catalog/product_compare_item</class>
-                      <method>bindCustomerLogin</method>
-                 </catalog>
-             </observers>
-          </customer_login>
-      </events>
-      <translate>
-        <modules>
-            <Mage_Catalog>
-                <files>
-                    <default>Mage_Catalog.csv</default>
-                </files>
-            </Mage_Catalog>
-        </modules>
-      </translate>
-      <layout>
-          <updates>
-              <catalog>
-                  <file>catalog.xml</file>
-              </catalog>
-          </updates>
-      </layout>
-      <catalog>
-          <per_page_values>
-              <grid>9,15,30</grid>
-              <list>5,10,15,20,25</list>
-          </per_page_values>
-      </catalog>
-   </frontend>
+    <frontend>
+        <routers>
+            <catalog>
+                <use>standard</use>
+                <args>
+                    <module>Mage_Catalog</module>
+                    <frontName>catalog</frontName>
+                </args>
+            </catalog>
+        </routers>
+        <default>
+            <router>catalog</router>
+        </default>
+        <events>
+            <customer_login>
+                <observers>
+                    <catalog>
+                        <type>model</type>
+                        <class>catalog/product_compare_item</class>
+                        <method>bindCustomerLogin</method>
+                    </catalog>
+                </observers>
+            </customer_login>
+        </events>
+        <translate>
+            <modules>
+                <Mage_Catalog>
+                    <files>
+                        <default>Mage_Catalog.csv</default>
+                    </files>
+                </Mage_Catalog>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <catalog>
+                    <file>catalog.xml</file>
+                </catalog>
+            </updates>
+        </layout>
+        <catalog>
+            <per_page_values>
+                <grid>9,15,30</grid>
+                <list>5,10,15,20,25</list>
+            </per_page_values>
+        </catalog>
+    </frontend>
 
     <default>
         <catalog>
             <frontend>
                 <list_mode>grid-list</list_mode>
-                <product_per_page>9</product_per_page>
+                <grid_per_page>9</grid_per_page>
+                <list_per_page>10</list_per_page>
+                <price_range_layered_navigation>1</price_range_layered_navigation>
             </frontend>
 
             <product>

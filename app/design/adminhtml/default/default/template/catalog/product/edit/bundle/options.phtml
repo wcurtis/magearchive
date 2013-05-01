@@ -18,42 +18,42 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<input type="hidden" id="<?=$this->getId()?>_raw_options" name="_options_json">
+<input type="hidden" id="<?php echo $this->getId() ?>_raw_options" name="_options_json">
 <table cellspacing="0" width="100%">
     <tr>
         <td class="content-left-nav">
-			<ul id="<?=$this->getId()?>" class="tabs">
+			<ul id="<?php echo $this->getId() ?>" class="tabs">
 				<li>
-					<a href="#" id="<?=$this->getId()?>_options" title="<?=Mage::helper('catalog')->__('Options')?>" class="option-item-link">
-						<span><div class="changed" title="<?=Mage::helper('catalog')->__('The information in this tab has been changed.')?>"></div><div class="error" title="<?=Mage::helper('catalog')->__('This tab contains invalid data. Please solve the problem before saving.')?>"></div><div class="option-label-text"><?=Mage::helper('catalog')->__('Options')?></div></span>
+					<a href="#" id="<?php echo $this->getId() ?>_options" title="<?php echo Mage::helper('catalog')->__('Options') ?>" class="option-item-link">
+						<span><div class="changed" title="<?php echo Mage::helper('catalog')->__('The information in this tab has been changed.') ?>"></div><div class="error" title="<?php echo Mage::helper('catalog')->__('This tab contains invalid data. Please solve the problem before saving.') ?>"></div><div class="option-label-text"><?php echo Mage::helper('catalog')->__('Options') ?></div></span>
 					</a>
-					<div id="<?=$this->getId()?>_options_content" style="display:none">
-						<?=$this->getChildHtml('option_form')?>
+					<div id="<?php echo $this->getId() ?>_options_content" style="display:none">
+						<?php echo $this->getChildHtml('option_form') ?>
 					</div>
 				</li>
 			</ul>
-			<ul id="<?=$this->getId()?>_template" class="no-display">
+			<ul id="<?php echo $this->getId() ?>_template" class="no-display">
 				<li>
 					<a href="_url_" id="_id_" title="#{label}" class="option-item-link">
-						<span><div class="changed" title="<?=Mage::helper('catalog')->__('The information in this tab has been changed.')?>"></div><div class="error" title="<?=Mage::helper('catalog')->__('This tab contains invalid data. Please solve the problem before saving.')?>"></div><div class="option-label-text">#{label}</div></span>
+						<span><div class="changed" title="<?php echo Mage::helper('catalog')->__('The information in this tab has been changed.') ?>"></div><div class="error" title="<?php echo Mage::helper('catalog')->__('This tab contains invalid data. Please solve the problem before saving.') ?>"></div><div class="option-label-text">#{label}</div></span>
 					</a>
 					<div id="_id__content" style="display:none">#{content}</div>
 				</li>
 			</ul>
         </td>
         <td>
-            <div class="content" id="<?=$this->getId()?>_destanation">
+            <div class="content" id="<?php echo $this->getId() ?>_destanation">
             	
             </div>
         </td>
     </tr>
 </table>
 <script>
-var <?=$this->getTabJsObjectName()?> = new Bundle.Tabs('<?=$this->getId()?>','<?=$this->getId()?>_destanation','<?=$this->getId()?>_options','<?=$this->getId()?>_template');
-var <?=$this->getJsObjectName()?> = new Bundle.Options('<?=$this->getJsContainerHtmlId()?>',<?=$this->getTabJsObjectName()?>,'<?=$this->getUrl('*/*/bundle')?>', '<?=$this->getId()?>_raw_options', '<?=$this->getJsTemplateHtmlId()?>');
-<?=$this->getJsObjectName()?>.jsController = '<?=$this->getJsObjectName()?>';
-<?=$this->getJsObjectName()?>.optionLabelNewText = '<?=Mage::helper('catalog')->__('Option')?> ';
-<?foreach ($this->getBundleOptions() as $_option):?>
-<?=$this->getJsObjectName()?>.addItem('<?=$_option->getId()?>','<?=$this->getEscaped($_option->getLabel())?>','<?=$_option->getPosition()?>',<?=$this->getOptionProductsJSON($_option)?>);
-<?endforeach;?>
+var <?php echo $this->getTabJsObjectName() ?> = new Bundle.Tabs('<?php echo $this->getId() ?>','<?php echo $this->getId() ?>_destanation','<?php echo $this->getId() ?>_options','<?php echo $this->getId() ?>_template');
+var <?php echo $this->getJsObjectName() ?> = new Bundle.Options('<?php echo $this->getJsContainerHtmlId() ?>',<?php echo $this->getTabJsObjectName() ?>,'<?php echo $this->getUrl('*/*/bundle') ?>', '<?php echo $this->getId() ?>_raw_options', '<?php echo $this->getJsTemplateHtmlId() ?>');
+<?php echo $this->getJsObjectName() ?>.jsController = '<?php echo $this->getJsObjectName() ?>';
+<?php echo $this->getJsObjectName() ?>.optionLabelNewText = '<?php echo Mage::helper('catalog')->__('Option') ?> ';
+<?php foreach ($this->getBundleOptions() as $_option): ?>
+<?php echo $this->getJsObjectName() ?>.addItem('<?php echo $_option->getId() ?>','<?php echo $this->getEscaped($_option->getLabel()) ?>','<?php echo $_option->getPosition() ?>',<?php echo $this->getOptionProductsJSON($_option) ?>);
+<?php endforeach; ?>
 </script>

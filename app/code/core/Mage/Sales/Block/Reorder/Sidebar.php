@@ -31,37 +31,30 @@ class Mage_Sales_Block_Reorder_Sidebar extends Mage_Core_Block_Template
     {
         parent::__construct();
 
-    if (Mage::getSingleton('customer/session')->getCustomer()->getId()) {
-	 $this->setTemplate('sales/order/history.phtml');
+        if (Mage::getSingleton('customer/session')->getCustomer()->getId()) {
+    	    $this->setTemplate('sales/order/history.phtml');
 
-        $orders = Mage::getResourceModel('sales/order_collection')
-            ->addAttributeToSelect('*')
-            ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id')
-            ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id')
-            ->addAttributeToFilter('customer_id', Mage::getSingleton('customer/session')->getCustomer()->getId())
-            ->addAttributeToSort('created_at', 'desc')
-        ;
+            $orders = Mage::getResourceModel('sales/order_collection')
+                ->addAttributeToFilter('customer_id', Mage::getSingleton('customer/session')->getCustomer()->getId())
+                ->addAttributeToSort('created_at', 'desc')
+                ->setPage(1,1);
+            //TODO: add filter by current website
 
-        $this->setOrders($orders);
+            $this->setOrders($orders);
 
-        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
-    }
+        }
     }
 
-    protected function _prepareLayout()
+    public function _prepareLayout()
     {
         parent::_prepareLayout();
-        if ($this->getOrders()) {
-        	$this->getOrders()->load();
-        return $this;
-        }
-        return false;
+//        $this->getLayout()->getBlock('root')
+//            ->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
     }
 
     public function getLastOrder()
     {
-        $orders=$this->getOrders();
-        foreach ($orders as $order) {
+        foreach ($this->getOrders() as $order) {
 //            $order =  Mage::getModel('sales/order')->load($order->getId());
 //
 //            $collection = Mage::getModel('sales/order_item')->getCollection()

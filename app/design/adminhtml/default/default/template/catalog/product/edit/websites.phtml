@@ -20,47 +20,47 @@
 ?>
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Product In Websites')?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Product In Websites') ?></h4>
     </div>
     <fieldset id="grop_fields">
-    <?if($this->getProductId()):?>
+    <?php if($this->getProductId()): ?>
         <ul class="messages">
             <li class="notice-msg">
                 <ul>
-                    <li><?=Mage::helper('catalog')->__("Items that you don't want to show in the catalog or search results should have status 'Disabled' in the desired store.")?></li>
+                    <li><?php echo Mage::helper('catalog')->__("Items that you don't want to show in the catalog or search results should have status 'Disabled' in the desired store.") ?></li>
                 </ul>
             </li>
         </ul>
-    <?endif;?>
-    <?foreach ($this->getWebsiteCollection() as $_website):?>
+    <?php endif; ?>
+    <?php foreach ($this->getWebsiteCollection() as $_website): ?>
     <div>
         <div class="website-name">
-            <input name="product[website_ids][]" value="<?=$_website->getId()?>" class="website-checkbox" id="product_website_<?=$_website->getId()?>" type="checkbox"<?if($this->hasWebsite($_website->getId())):?> checked<?endif;?>/>
-            <big><strong><label for="product_website_<?=$_website->getId()?>"><?=$_website->getName()?></label></big></strong>
+            <input name="product[website_ids][]" value="<?php echo $_website->getId() ?>" class="website-checkbox" id="product_website_<?php echo $_website->getId() ?>" type="checkbox"<?php if($this->hasWebsite($_website->getId())): ?> checked<?php endif; ?>/>
+            <big><strong><label for="product_website_<?php echo $_website->getId() ?>"><?php echo $_website->getName() ?></label></big></strong>
         </div>
-        <div class="webiste-groups" id="product_website_<?=$_website->getId()?>_data">
-        <?foreach ($this->getGroupCollection($_website) as $_group):?>
-            <h4><?=$_group->getName()?></h4>
+        <div class="webiste-groups" id="product_website_<?php echo $_website->getId() ?>_data">
+        <?php foreach ($this->getGroupCollection($_website) as $_group): ?>
+            <h4><?php echo $_group->getName() ?></h4>
             <div class="group-stores">
             <table>
-            <?foreach ($this->getStoreCollection($_group) as $_store):?>
+            <?php foreach ($this->getStoreCollection($_group) as $_store): ?>
                 <tr>
-                    <td><?=$_store->getName()?></td>
+                    <td><?php echo $_store->getName() ?></td>
                     <td>
-                    <?if($this->getWebsites() && !$this->hasWebsite($_website->getId())):?>
-                        <span class="website-<?=$_website->getId()?>-select" style="display:none">
-                        <?=Mage::helper('catalog')->__('(Copy data from: %s)', $this->getChooseFromStoreHtml($_store))?>
+                    <?php if($this->getWebsites() && !$this->hasWebsite($_website->getId())): ?>
+                        <span class="website-<?php echo $_website->getId() ?>-select" style="display:none">
+                        <?php echo Mage::helper('catalog')->__('(Copy data from: %s)', $this->getChooseFromStoreHtml($_store)) ?>
                         </span>
-                    <?endif;?>
+                    <?php endif; ?>
                     </td>
                 </tr>
-            <?endforeach;?>
+            <?php endforeach; ?>
             </table>
             </div>
-        <?endforeach;?>
+        <?php endforeach; ?>
         </div>
     </div>
-    <?endforeach;?>
+    <?php endforeach; ?>
 </div>
 <script type="text/javascript">
     var productWebsiteCheckboxes = $$('.website-checkbox');

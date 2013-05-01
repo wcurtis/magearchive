@@ -79,7 +79,9 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
                 'header'    => Mage::helper('cms')->__('Store View'),
                 'index'     => 'store_id',
                 'type'      => 'store',
-                'store_all' => true
+                'store_all' => true,
+                'store_view' => true,
+                'filter_condition_callback' => array($this, '_filterStoreCondition'),
             ));
         }
 
@@ -119,6 +121,22 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
         ));
 
         return parent::_prepareColumns();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $this->getCollection()->walk('afterLoad');
+        parent::_afterLoadCollection();
+    }
+
+    protected function _filterStoreCondition($collection, $column)
+    {
+        if (!$value = $column->getFilter()->getValue()) {
+            return;
+        }
+        $res = Mage::getSingleton('core/resource');
+        $collection->getSelect()->join(array('s'=>$res->getTableName('cms/page_store')), 's.page_id=main_table.page_id')
+            ->where('s.store_id=0 or s.store_id=?', $value);
     }
 
     /**

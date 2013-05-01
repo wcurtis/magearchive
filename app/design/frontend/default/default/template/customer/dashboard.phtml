@@ -18,62 +18,62 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
 <div class="input-left">
-    <h3><?=$this->__('Personal Information')?></h3>
+    <h3><?php echo $this->__('Personal Information') ?></h3>
     <p>
-        <?=$this->getCustomer()->toString('{{firstname}} {{lastname}}<br/>{{email}}')?>
+        <?php echo $this->getCustomer()->toString('{{firstname}} {{lastname}}<br/>{{email}}') ?>
         <br/>
-        <a href="<?=$this->getAccountUrl()?>"><?=$this->__('Edit Personal Information')?></a>
+        <a href="<?php echo $this->getAccountUrl() ?>"><?php echo $this->__('Edit Personal Information') ?></a>
     </p>
-    <h3><?=_('Newsletters')?></h3>
-    <?=$this->getSubscriptionText()?>
-    <p><a href="<?=$this->getManageNewsletterUrl()?>"><?=$this->__('Edit Newsletter Subscription')?></a></p>
+    <h3><?php echo _('Newsletters') ?></h3>
+    <?php echo $this->getSubscriptionText() ?>
+    <p><a href="<?php echo $this->getManageNewsletterUrl() ?>"><?php echo $this->__('Edit Newsletter Subscription') ?></a></p>
 </div>
 <div class="input-right">
-<h3><?=$this->__('Addresses')?></h3>
-<?if($_addresses = $this->getPrimaryAddresses()):?>
-    <?foreach ($_addresses as $_address):?>
+<h3><?php echo $this->__('Addresses') ?></h3>
+<?php if($_addresses = $this->getPrimaryAddresses()): ?>
+    <?php foreach ($_addresses as $_address): ?>
     <address>
-        <?=$_address->toString("{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: {{telephone}}")?>
-        <br/><a href="<?=$this->getAddressEditUrl($_address)?>"><?=$this->__('Edit Address')?></a>
+        <?php echo $_address->toString("{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: {{telephone}}") ?>
+        <br/><a href="<?php echo $this->getAddressEditUrl($_address) ?>"><?php echo $this->__('Edit Address') ?></a>
     </address>
-    <?endforeach;?>
-<?endif;?>
-<a href="<?=$this->getAddressesUrl()?>"><?=$this->__('Go to Address Book')?></a>
+    <?php endforeach; ?>
+<?php endif; ?>
+<a href="<?php echo $this->getAddressesUrl() ?>"><?php echo $this->__('Go to Address Book') ?></a>
 </div>
 <div class="clearfix"></div>
 
 <div>
-    <h3><?=$this->__('Last 5 Orders')?></h3>
+    <h3><?php echo $this->__('Last 5 Orders') ?></h3>
     <p>
-    <?=$this->__('Order List...')?><br/>
-    <a href=""><?=$this->__('View Order List')?></a>
+    <?php echo $this->__('Order List...') ?><br/>
+    <a href=""><?php echo $this->__('View Order List') ?></a>
     </p>
 </div>
 
 <div class="input-left">
-    <h3><?=$this->__('Personal Information')?></h3>
+    <h3><?php echo $this->__('Personal Information') ?></h3>
 </div>
 
-<?if ($this->helper('wishlist')->isAllow()) :?>
+<?php if ($this->helper('wishlist')->isAllow()) : ?>
 <div class="input-right">
-    <h3><?=$this->__('My Wishlist')?></h3>
+    <h3><?php echo $this->__('My Wishlist') ?></h3>
 </div>
-<?endif;?>
+<?php endif; ?>
 
 <div class="input-left">
-    <h3><?=$this->__('My Reviews')?></h3>
+    <h3><?php echo $this->__('My Reviews') ?></h3>
 </div>
 
 <div class="input-right">
-    <h3><?=$this->__('My Tags')?></h3>
+    <h3><?php echo $this->__('My Tags') ?></h3>
 </div>
 
 <div class="input-left">
-    <h3><?=$this->__('Last Viewed Items')?></h3>
+    <h3><?php echo $this->__('Last Viewed Items') ?></h3>
 </div>
 
 <div class="input-right">
-    <h3><?=$this->__('Shopping Cart')?></h3>
+    <h3><?php echo $this->__('Shopping Cart') ?></h3>
 </div>

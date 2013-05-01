@@ -180,14 +180,14 @@ class Mage_Paypal_Model_Standard extends Mage_Payment_Model_Method_Abstract
         if ($transaciton_type=='O') {
             $businessName = Mage::getStoreConfig('paypal/wps/business_name');
             $storeName = Mage::getStoreConfig('store/system/name');
-            $amount = $a->getSubtotal()-$a->getDiscountAmount();
+            $amount = $a->getBaseSubtotal()-$a->getBaseDiscountAmount();
             $sArr = array_merge($sArr, array(
                     'cmd'           => '_ext-enter',
                     'redirect_cmd'  => '_xclick',
                     'item_name'     => $businessName ? $businessName : $storeName,
                     'amount'        => sprintf('%.2f', $amount),
                 ));
-            $tax = sprintf('%.2f', $this->getQuote()->getShippingAddress()->getTaxAmount());
+            $tax = sprintf('%.2f', $this->getQuote()->getShippingAddress()->getBaseTaxAmount());
             if ($tax>0) {
                   $sArr = array_merge($sArr, array(
                         'tax' => $tax
@@ -208,11 +208,11 @@ class Mage_Paypal_Model_Standard extends Mage_Payment_Model_Method_Abstract
                         'item_name_'.$i      => $item->getName(),
                         'item_number_'.$i      => $item->getSku(),
                         'quantity_'.$i      => $item->getQty(),
-                        'amount_'.$i      => ($item->getCalculationPrice() - $item->getDiscountAmount()),
+                        'amount_'.$i      => ($item->getBaseCalculationPrice() - $item->getBaseDiscountAmount()),
                     ));
-                    if($item->getTaxAmount()>0){
+                    if($item->getBaseTaxAmount()>0){
                         $sArr = array_merge($sArr, array(
-                        'tax_'.$i      => sprintf('%.2f',$item->getTaxAmount()),
+                        'tax_'.$i      => sprintf('%.2f',$item->getBaseTaxAmount()),
                         ));
                     }
                     $i++;
@@ -221,7 +221,7 @@ class Mage_Paypal_Model_Standard extends Mage_Payment_Model_Method_Abstract
         }
 
         $totalArr = $a->getTotals();
-        $shipping = sprintf('%.2f', $this->getQuote()->getShippingAddress()->getShippingAmount());
+        $shipping = sprintf('%.2f', $this->getQuote()->getShippingAddress()->getBaseShippingAmount());
         if ($shipping>0) {
           if ($transaciton_type=='O') {
               $sArr = array_merge($sArr, array(

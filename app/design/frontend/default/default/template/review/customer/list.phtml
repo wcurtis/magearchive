@@ -19,10 +19,10 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('My Product Reviews')?></h3>
+    <h3><?php echo $this->__('My Product Reviews') ?></h3>
 </div>
-<?if( $this->getCollection() && $this->count()):?>
-    <?=$this->getToolbarHtml()?>
+<?php if( $this->getCollection() && $this->count()): ?>
+    <?php echo $this->getToolbarHtml() ?>
         <table class="data-table box-table" id="my-reviews-table" cellspacing="0">
             <col width="60"/>
             <col width="200"/>
@@ -30,25 +30,25 @@
             <col/>
             <col width="100"/>
             <tbody>
-                <?foreach ($this->getCollection() as $_review):?>
+                <?php foreach ($this->getCollection() as $_review): ?>
                 <tr>
-                    <td><?=$this->dateFormat($_review->getCreatedAt())?></td>
-                    <td><a href="<?=$this->getProductLink()?>id/<?=$_review->getEntityPkValue()?>"><?=$_review->getName()?></a></td>
+                    <td><?php echo $this->dateFormat($_review->getCreatedAt()) ?></td>
+                    <td><a href="<?php echo $this->getProductLink() ?>id/<?php echo $_review->getEntityPkValue() ?>"><?php echo $_review->getName() ?></a></td>
                     <td>
-                    <?if($_review->getSum()):?>
+                    <?php if($_review->getSum()): ?>
                         <div class="rating-box">
-                            <div class="rating" style="width:<?=( $_review->getSum() / $_review->getCount() )?>%;"></div>
+                            <div class="rating" style="width:<?php echo ( $_review->getSum() / $_review->getCount() ) ?>%;"></div>
                         </div>
-                    <?endif;?>
+                    <?php endif; ?>
                     </td>
-                    <td><?=$this->helper('review')->getDetail($_review->getDetail())?></td>
-                    <td class="last a-center"><a href="<?=$this->getReviewLink()?>id/<?=$_review->getReviewId()?>"><?=$this->__('View Details')?></a></td>
+                    <td><?php echo $this->helper('review')->getDetail($_review->getDetail()) ?></td>
+                    <td class="last a-center"><a href="<?php echo $this->getReviewLink() ?>id/<?php echo $_review->getReviewId() ?>"><?php echo $this->__('View Details') ?></a></td>
                 </tr>
-                <?endforeach;?>
+                <?php endforeach; ?>
             </tbody>
         </table>
 <script type="text/javascript">decorateTable('my-reviews-table')</script>
-    <?=$this->getToolbarHtml()?>
-<?else:?>
-    <p><?=$this->__('You have submitted no reviews.')?></p>
-<?endif;?>
+    <?php echo $this->getToolbarHtml() ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have submitted no reviews.') ?></p>
+<?php endif; ?>

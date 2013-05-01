@@ -385,4 +385,17 @@ class Mage_Adminhtml_Sales_Order_InvoiceController extends Mage_Adminhtml_Contro
         }
         $this->getResponse()->setBody($response);
     }
+
+    public function printAction()
+    {
+        if ($invoiceId = $this->getRequest()->getParam('invoice_id')) {
+            if ($invoice = Mage::getModel('sales/order_invoice')->load($invoiceId)) {
+                $pdf = Mage::getModel('sales/order_pdf_invoice')->getPdf(array($invoice));
+                $this->_prepareDownloadResponse('invoice'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
+            }
+        }
+        else {
+            $this->_forward('noRoute');
+        }
+    }
 }

@@ -21,33 +21,33 @@
 <div class="content-header">
     <table cellspacing="0">
         <tr>
-            <td><h3 class="icon-head head-newsletter-list"><?=$this->getHeaderText()?></h3></td>
+            <td><h3 class="icon-head head-newsletter-list"><?php echo $this->getHeaderText() ?></h3></td>
             <td class="form-buttons">
-                <?=$this->getBackButtonHtml();?>
-                <?=$this->getResetButtonHtml();?>
-                <?if(!$this->isTextType()):?>
-                <?=$this->getToPlainButtonHtml();?>
-                <?=$this->getToHtmlButtonHtml();?>
-                <?endif?>
-                <?=$this->getSaveButtonHtml();?>
-                <?if($this->getEditMode()):?>
-                <?=$this->getSaveAsButtonHtml();?>
-                <?endif?>
-                <?=$this->getPreviewButtonHtml();?>
-                <?if($this->getEditMode()):?>
-                <?=$this->getDeleteButtonHtml();?>
-                <?endif?>
+                <?php echo $this->getBackButtonHtml(); ?>
+                <?php echo $this->getResetButtonHtml(); ?>
+                <?php if(!$this->isTextType()): ?>
+                <?php echo $this->getToPlainButtonHtml(); ?>
+                <?php echo $this->getToHtmlButtonHtml(); ?>
+                <?php endif ?>
+                <?php echo $this->getSaveButtonHtml(); ?>
+                <?php if($this->getEditMode()): ?>
+                <?php echo $this->getSaveAsButtonHtml(); ?>
+                <?php endif ?>
+                <?php echo $this->getPreviewButtonHtml(); ?>
+                <?php if($this->getEditMode()): ?>
+                <?php echo $this->getDeleteButtonHtml(); ?>
+                <?php endif ?>
             </td>
         </tr>
     </table>
 </div>
-<form action="<?=$this->getSaveUrl()?>" method="post" id="newsletter_template_edit_form">
+<form action="<?php echo $this->getSaveUrl() ?>" method="post" id="newsletter_template_edit_form">
 <input type="hidden" id="change_flag_element" name="_change_type_flag" value="" />
-<input type="hidden" id="save_as_flag" name="_save_as_flag" value="<?=$this->getSaveAsFlag()?>" />
-<?=$this->getForm()?>
+<input type="hidden" id="save_as_flag" name="_save_as_flag" value="<?php echo $this->getSaveAsFlag() ?>" />
+<?php echo $this->getForm() ?>
 </form>
-<form action="<?=$this->getPreviewUrl()?>" method="post" id="newsletter_template_preview_form" target="_blank">
-<input type="hidden" id="preview_type" name="type" value="<?=$this->isTextType()?1:2?>" />
+<form action="<?php echo $this->getPreviewUrl() ?>" method="post" id="newsletter_template_preview_form" target="_blank">
+<input type="hidden" id="preview_type" name="type" value="<?php echo $this->isTextType()?1:2 ?>" />
 <input type="hidden" id="preview_text" name="text" value="" />
 </form>
 <script type="text/javascript" language="javascript">
@@ -64,7 +64,7 @@
         	}
         },
         stripTags: function () {
-            if(!window.confirm("<?=Mage::helper('newsletter')->__('Are you sure that you want to strip all tags?')?>")) {
+            if(!window.confirm("<?php echo Mage::helper('newsletter')->__('Are you sure that you want to strip all tags?') ?>")) {
                 return false;
             }
             if(this.isEditor) {
@@ -101,7 +101,7 @@
             }
 
             if($F('code').blank() || $F('code')==templateControl.templateName) {
-               value = prompt('<?=Mage::helper('newsletter')->__('Please enter new template name')?>', templateControl.templateName + '<?=Mage::helper('newsletter')->__(' Copy')?>');
+               value = prompt('<?php echo Mage::helper('newsletter')->__('Please enter new template name') ?>', templateControl.templateName + '<?php echo Mage::helper('newsletter')->__(' Copy') ?>');
                if(!value) {
                    if(value !== null) {
                        $('code').value = '';
@@ -135,12 +135,12 @@
         },
 
         deleteTemplate: function() {
-            if(window.confirm("<?=Mage::helper('newsletter')->__('Are you sure that you want to delete this template?')?>")) {
-               	window.location.href = '<?=$this->getDeleteUrl()?>';
+            if(window.confirm("<?php echo Mage::helper('newsletter')->__('Are you sure that you want to delete this template?') ?>")) {
+               	window.location.href = '<?php echo $this->getDeleteUrl() ?>';
             }
         }
     };
 
     templateControl.init();
-    templateControl.templateName = "<?=$this->getJsTemplateName()?>";
+    templateControl.templateName = "<?php echo $this->getJsTemplateName() ?>";
 </script>

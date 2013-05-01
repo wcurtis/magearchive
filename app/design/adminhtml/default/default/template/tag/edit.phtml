@@ -21,25 +21,25 @@
 <div class="content-header">
     <table cellspacing="0">
         <tr>
-            <td><h3><?=$this->getHeader()?></h3></td>
+            <td><h3><?php echo $this->getHeader() ?></h3></td>
             <td class="form-buttons">
-                <?if($this->getTagId()):?>
-                    <?=$this->getDeleteButtonHtml()?>
-                <?endif;?>
-                <?=$this->getSaveButtonHtml()?>
+                <?php if($this->getTagId()): ?>
+                    <?php echo $this->getDeleteButtonHtml() ?>
+                <?php endif; ?>
+                <?php echo $this->getSaveButtonHtml() ?>
             </td>
         </tr>
     </table>
 </div>
-<form action="<?=$this->getSaveUrl()?>" method="post" id="tag_edit_form">
-    <?=$this->getChildHtml('tagForm');?>
+<form action="<?php echo $this->getSaveUrl() ?>" method="post" id="tag_edit_form">
+    <?php echo $this->getChildHtml('tagForm'); ?>
 </form>
 <script type="text/javascript" language="javascript">
     var tagForm = new varienForm('tag_edit_form');
 
     function tagDelete(){
-        if(confirm('<?=Mage::helper('tag')->__('Are you sure that you want to delete this tag?')?>')){
-            location.href = '<?=$this->getDeleteUrl()?>'
+        if(confirm('<?php echo Mage::helper('tag')->__('Are you sure that you want to delete this tag?') ?>')){
+            location.href = '<?php echo $this->getDeleteUrl() ?>'
         }
     }
 </script>

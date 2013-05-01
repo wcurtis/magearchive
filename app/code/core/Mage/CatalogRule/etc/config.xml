@@ -115,15 +115,15 @@
                     </catalogrule>
                 </observers>
             </catalog_product_get_final_price>
-            <catalog_controller_product_save>
+            <catalog_product_save_after>
                 <observers>
                     <catalogrule>
                         <type>singleton</type>
                         <class>catalogrule/observer</class>
-                        <method>dailyCatalogUpdate</method>
+                        <method>applyAllRulesOnProduct</method>
                     </catalogrule>
                 </observers>
-            </catalog_controller_product_save>
+            </catalog_product_save_after>
         </events>
         <menu>
              <promo translate="title" module="catalogrule">

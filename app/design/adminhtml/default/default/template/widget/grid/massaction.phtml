@@ -18,56 +18,56 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<div id="<?=$this->getHtmlId()?>">
+<div id="<?php echo $this->getHtmlId() ?>">
 <table cellspacing="0" cellpadding="0" class="massaction">
 <tr>
-    <td><a href="#" onclick="return <?=$this->getJsObjectName()?>.selectAll()"><?=$this->__('Select All')?></a>
+    <td><a href="#" onclick="return <?php echo $this->getJsObjectName() ?>.selectAll()"><?php echo $this->__('Select All') ?></a>
         <span class="separator">|</span>
-        <a href="#" onclick="return <?=$this->getJsObjectName()?>.unselectAll()"><?=$this->__('Unselect All')?></a>
+        <a href="#" onclick="return <?php echo $this->getJsObjectName() ?>.unselectAll()"><?php echo $this->__('Unselect All') ?></a>
         <span class="separator">|</span>
-        <a href="#" onclick="return <?=$this->getJsObjectName()?>.selectVisible()"><?=$this->__('Select Visible')?></a>
+        <a href="#" onclick="return <?php echo $this->getJsObjectName() ?>.selectVisible()"><?php echo $this->__('Select Visible') ?></a>
         <span class="separator">|</span>
-        <a href="#" onclick="return <?=$this->getJsObjectName()?>.unselectVisible()"><?=$this->__('Unselect Visible')?></a>
+        <a href="#" onclick="return <?php echo $this->getJsObjectName() ?>.unselectVisible()"><?php echo $this->__('Unselect Visible') ?></a>
         <span class="separator">|</span>
-        <strong id="<?=$this->getHtmlId()?>-count">0</strong> <?=$this->__('items selected')?>
+        <strong id="<?php echo $this->getHtmlId() ?>-count">0</strong> <?php echo $this->__('items selected') ?>
     </td>
     <td>
         <div class="right">
             <div class="entry-edit">
-                <form id="<?=$this->getHtmlId()?>-form" method="post">
+                <form id="<?php echo $this->getHtmlId() ?>-form" method="post">
                     <fieldset>
                         <span class="field-row">
-                            <label><?=$this->__('Actions')?></label>
-                            <select id="<?=$this->getHtmlId()?>-select" class="required-entry select absolute-advice">
+                            <label><?php echo $this->__('Actions') ?></label>
+                            <select id="<?php echo $this->getHtmlId() ?>-select" class="required-entry select absolute-advice">
                                 <option value=""></option>
-                                <?foreach($this->getItems() as $_item):?>
-                                    <option value="<?=$_item->getId()?>"><?=$_item->getLabel()?></option>
-                                <?endforeach;?>
+                                <?php foreach($this->getItems() as $_item): ?>
+                                    <option value="<?php echo $_item->getId() ?>"><?php echo $_item->getLabel() ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </span>
-                        <span class="outer-span" id="<?=$this->getHtmlId()?>-form-hiddens"></span>
-                        <span class="outer-span" id="<?=$this->getHtmlId()?>-form-additional"></span>
+                        <span class="outer-span" id="<?php echo $this->getHtmlId() ?>-form-hiddens"></span>
+                        <span class="outer-span" id="<?php echo $this->getHtmlId() ?>-form-additional"></span>
                         <span class="field-row">
-                            <?=$this->getApplyButtonHtml()?>
+                            <?php echo $this->getApplyButtonHtml() ?>
                         </span>
                     </fieldset>
                 </form>
             </div>
 
             <div class="no-display">
-            <?foreach($this->getItems() as $_item):?>
-                <div id="<?=$this->getHtmlId()?>-item-<?=$_item->getId()?>-block">
-                    <?=$_item->getAdditionalActionBlockHtml()?>
+            <?php foreach($this->getItems() as $_item): ?>
+                <div id="<?php echo $this->getHtmlId() ?>-item-<?php echo $_item->getId() ?>-block">
+                    <?php echo $_item->getAdditionalActionBlockHtml() ?>
                 </div>
-            <?endforeach;?>
+            <?php endforeach; ?>
             </div>
         </div>
     </td>
 </tr>
 </table>
-<?if(!$this->getParentBlock()->canDisplayContainer()):?>
+<?php if(!$this->getParentBlock()->canDisplayContainer()): ?>
 <script type="text/javascript">
-    <?=$this->getJsObjectName()?>.setGridIds(<?=$this->getGridIdsJson()?>);
+    <?php echo $this->getJsObjectName() ?>.setGridIds(<?php echo $this->getGridIdsJson() ?>);
 </script>
-<?endif;?>
+<?php endif; ?>
 </div>

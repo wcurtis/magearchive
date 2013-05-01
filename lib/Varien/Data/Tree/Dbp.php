@@ -165,7 +165,7 @@ class Varien_Data_Tree_Dbp extends Varien_Data_Tree
         if (isset($children[$path])) {
             foreach ($children[$path] as $child) {
                 $node = new Varien_Data_Tree_Node($child, $this->_idField, $this, $parentNode);
-                $node->setLevel(count(explode('/', $node->getData($this->_pathField))));
+                $node->setLevel(count(explode('/', $node->getData($this->_pathField)))-1);
                 $node->setPathId($node->getData($this->_pathField));
                 $this->addNode($node, $parentNode);
 

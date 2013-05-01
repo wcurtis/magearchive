@@ -58,7 +58,7 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
 
         $this->loadLayout();
         $this->_setActiveMenu('catalog/sets');
-        $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
+        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
         $this->_addBreadcrumb(Mage::helper('catalog')->__('Catalog'), Mage::helper('catalog')->__('Catalog'));
         $this->_addBreadcrumb(Mage::helper('catalog')->__('Manage Product Sets'), Mage::helper('catalog')->__('Manage Product Sets'));
@@ -103,8 +103,9 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
                 $this->_getSession()->addSuccess($this->__('Attribute set successfully saved.'));
             } else {
                 $this->_getSession()->addSuccess($this->__('Attribute set successfully saved.'));
-                $response->setMessage(Mage::helper('catalog')->__('Attribute set successfully saved.'));
-                $this->_redirect('*/*/');
+                $this->_initLayoutMessages('adminhtml/session');
+                $response->setMessage($this->getLayout()->getMessagesBlock()->getGroupedHtml());
+                //$this->_redirect('*/*/'); Why? there is Ajax.
             }
         }
         catch (Exception $e) {
@@ -154,7 +155,7 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
     protected function _setTypeId()
     {
         Mage::register('entityType',
-            Mage::getModel('catalog/product')->getResource()->getConfig()->getId());
+            Mage::getModel('catalog/product')->getResource()->getTypeId());
     }
 
     protected function _isAllowed()

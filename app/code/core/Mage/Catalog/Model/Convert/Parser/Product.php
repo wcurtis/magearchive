@@ -32,11 +32,11 @@ class Mage_Catalog_Model_Convert_Parser_Product
     protected $_collections;
 
     protected $_productTypes = array(
-        1=>'Simple',
-        2=>'Bundle',
-        3=>'Configurable',
-        4=>'Grouped',
-        5=>'Virtual',
+        'simple'=>'Simple',
+        'bundle'=>'Bundle',
+        'configurable'=>'Configurable',
+        'grouped'=>'Grouped',
+        'virtual'=>'Virtual',
     );
 
     protected $_inventoryFields = array(
@@ -170,7 +170,7 @@ class Mage_Catalog_Model_Convert_Parser_Product
 
                     }//foreach ($row as $field=>$value)
 
-                    //echo 'Before **********************<br><pre>';
+                    //echo 'Before **********************<br/><pre>';
                     //print_r($model->getData());
                     if (!$rowError) {
                         $collection->addItem($model);
@@ -209,7 +209,6 @@ class Mage_Catalog_Model_Convert_Parser_Product
     {
         $systemFields = array('store_id', 'attribute_set_id', 'entity_type_id', 'parent_id', 'created_at', 'updated_at', 'type_id');
         $collections = $this->getData();
-
         if ($collections instanceof Mage_Eav_Model_Entity_Collection_Abstract) {
             $collections = array($collections->getStoreId()=>$collections);
         } elseif (!is_array($collections)) {

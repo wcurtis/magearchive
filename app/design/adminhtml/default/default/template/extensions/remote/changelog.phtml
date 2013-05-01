@@ -19,22 +19,22 @@
  */
 ?>
 <div class="entry-edit">
-    <?foreach ($this->getPkg()->getReleases() as $_ver=>$_log):?>
+    <?php foreach ($this->getPkg()->getReleases() as $_ver=>$_log): ?>
     
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=$_ver?> (<?=$_log['state']?>)</h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $_ver ?> (<?php echo $_log['state'] ?>)</h4>
     </div>
     <fieldset>
-        <legend><?=$_ver?> (<?=$_log['state']?>)</legend>
+        <legend><?php echo $_ver ?> (<?php echo $_log['state'] ?>)</legend>
 
         <table class="" cellspacing="5">
             <tbody>
-                <tr><th><?=$this->__("Done by:")?></th><td><?=$_log['doneby']?></td></tr>
-                <tr><th><?=$this->__("Date:")?></th><td><?=$_log['releasedate']?></td></tr>
-                <tr><th><?=$this->__("License:")?></th><td><?=$_log['license']?></td></tr>
-                <tr><th><?=$this->__("Notes:")?></th><td><?=nl2br($_log['releasenotes'])?></td></tr>
+                <tr><th><?php echo $this->__("Done by:") ?></th><td><?php echo $_log['doneby'] ?></td></tr>
+                <tr><th><?php echo $this->__("Date:") ?></th><td><?php echo $_log['releasedate'] ?></td></tr>
+                <tr><th><?php echo $this->__("License:") ?></th><td><?php echo $_log['license'] ?></td></tr>
+                <tr><th><?php echo $this->__("Notes:") ?></th><td><?php echo nl2br($_log['releasenotes']) ?></td></tr>
             </tbody>
         </table>
     </fieldset>
-    <?endforeach?>
+    <?php endforeach ?>
 </div>

@@ -85,7 +85,7 @@ class Varien_Data_Collection implements IteratorAggregate, Countable
      *
      * @var int
      */
-    protected $_totalRecords = null;
+    protected $_totalRecords;
 
     /**
      * Loading state flag
@@ -93,6 +93,12 @@ class Varien_Data_Collection implements IteratorAggregate, Countable
      * @var bool
      */
     protected $_isCollectionLoaded;
+
+    protected $_cacheKey;
+
+    protected $_cacheTags = array();
+
+    protected $_cacheLifetime = 86400;
 
     public function __construct()
     {
@@ -351,19 +357,27 @@ class Varien_Data_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * Walk through the collection and run method with optional arguments
+     * Walk through the collection and run model method or external callback
+     * with optional arguments
      *
-     * Returns array with results for each item
+     * Returns array with results of callback for each item
      *
      * @param string $method
      * @param array $args
      * @return array
      */
-    public function walk($method, array $args=array())
+    public function walk($callback, array $args=array())
     {
         $results = array();
+        $useItemCallback = is_string($callback) && strpos($callback, '::')===false;
         foreach ($this->getItems() as $id=>$item) {
-            $results[$id] = call_user_func_array(array($item, $method), $args);
+            if ($useItemCallback) {
+                $cb = array($item, $callback);
+            } else {
+                $cb = $callback;
+                array_unshift($args, $item);
+            }
+            $results[$id] = call_user_func_array($cb, $args);
         }
         return $results;
     }
@@ -442,9 +456,12 @@ class Varien_Data_Collection implements IteratorAggregate, Countable
     function setItemObjectClass($className)
     {
         $className = Mage::getConfig()->getModelClassName($className);
-        if (!is_subclass_of($className, 'Varien_Object')) {
+        /**
+         * is_subclass_of($className, 'Varien_Object') - Segmentation fault in php 5.2.3
+         */
+        /*if (!is_subclass_of($className, 'Varien_Object')) {
             throw new Exception($className.' does not extends from Varien_Object');
-        }
+        }*/
         $this->_itemObjectClass = $className;
         return $this;
     }
@@ -648,5 +665,32 @@ class Varien_Data_Collection implements IteratorAggregate, Countable
     {
         $this->load();
         return count($this->_items);
+    }
+
+    public function setCacheKey($key)
+    {
+        $this->_cacheKey = $key;
+        return $this;
+    }
+
+    public function getCacheKey()
+    {
+        return $this->_cacheKey;
+    }
+
+    public function setCacheTags($tags)
+    {
+        $this->_cacheTags = $tags;
+        return $this;
+    }
+
+    public function getCacheTags()
+    {
+        return $this->_cacheTags;
+    }
+
+    public function getCacheLifetime()
+    {
+        return $this->_cacheLifetime;
     }
 }

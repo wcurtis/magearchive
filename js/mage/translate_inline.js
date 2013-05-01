@@ -19,8 +19,9 @@
 
 var TranslateInline = Class.create();
 TranslateInline.prototype = {
-    initialize: function(trigEl, ajaxUrl){
+    initialize: function(trigEl, ajaxUrl, area){
         this.ajaxUrl = ajaxUrl;
+        this.area = area;
 
         this.trigTimer = null;
         this.trigContentEl = null;
@@ -137,15 +138,16 @@ TranslateInline.prototype = {
         }
         this.formIsSubmitted = true;
 
-        var inputs = $('translate-inline-form').getInputs(), parameters = [];
+        var inputs = $('translate-inline-form').getInputs(), parameters = {};
         for (var i=0; i<inputs.length; i++) {
             parameters[inputs[i].name] = inputs[i].value;
         }
+        parameters['area'] = this.area;
 
         new Ajax.Request(this.ajaxUrl, {
             method:'post',
             parameters:parameters,
-            onComplete:this.ajaxComplete.bind(this, win),
+            onComplete:this.ajaxComplete.bind(this, win)
         });
 
         this.formIsSubmitted = false;

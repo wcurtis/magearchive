@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Zend Framework
  *
@@ -17,24 +16,24 @@
  * @package    Zend_Acl
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Interface.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Interface.php 8861 2008-03-16 14:30:18Z thomas $
  */
 
 
 /**
- * Zend_Acl
+ * @see Zend_Acl
  */
 require_once 'Zend/Acl.php';
 
 
 /**
- * Zend_Acl_Role_Interface
+ * @see Zend_Acl_Role_Interface
  */
 require_once 'Zend/Acl/Role/Interface.php';
 
 
 /**
- * Zend_Acl_Resource_Interface
+ * @see Zend_Acl_Resource_Interface
  */
 require_once 'Zend/Acl/Resource/Interface.php';
 

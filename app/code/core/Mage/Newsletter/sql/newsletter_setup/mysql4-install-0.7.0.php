@@ -27,7 +27,7 @@ $installer->run("
 
 /*Table structure for table `newsletter_problem` */
 
-DROP TABLE IF EXISTS {$this->getTable('newsletter_problem')};
+-- DROP TABLE IF EXISTS {$this->getTable('newsletter_problem')};
 CREATE TABLE {$this->getTable('newsletter_problem')} (
   `problem_id` int(7) unsigned NOT NULL auto_increment,
   `subscriber_id` int(7) unsigned default NULL,
@@ -45,7 +45,7 @@ CREATE TABLE {$this->getTable('newsletter_problem')} (
 
 /*Table structure for table `newsletter_queue` */
 
-DROP TABLE IF EXISTS {$this->getTable('newsletter_queue')};
+-- DROP TABLE IF EXISTS {$this->getTable('newsletter_queue')};
 CREATE TABLE {$this->getTable('newsletter_queue')} (
   `queue_id` int(7) unsigned NOT NULL auto_increment,
   `template_id` int(7) unsigned NOT NULL default '0',
@@ -61,7 +61,7 @@ CREATE TABLE {$this->getTable('newsletter_queue')} (
 
 /*Table structure for table `newsletter_queue_link` */
 
-DROP TABLE IF EXISTS {$this->getTable('newsletter_queue_link')};
+-- DROP TABLE IF EXISTS {$this->getTable('newsletter_queue_link')};
 CREATE TABLE {$this->getTable('newsletter_queue_link')} (
   `queue_link_id` int(9) unsigned NOT NULL auto_increment,
   `queue_id` int(7) unsigned NOT NULL default '0',
@@ -78,7 +78,7 @@ CREATE TABLE {$this->getTable('newsletter_queue_link')} (
 
 /*Table structure for table `newsletter_queue_store_link` */
 
-DROP TABLE IF EXISTS {$this->getTable('newsletter_queue_store_link')};
+-- DROP TABLE IF EXISTS {$this->getTable('newsletter_queue_store_link')};
 CREATE TABLE {$this->getTable('newsletter_queue_store_link')} (
   `queue_id` int(7) unsigned NOT NULL default '0',
   `store_id` smallint(5) unsigned NOT NULL default '0',
@@ -90,7 +90,7 @@ CREATE TABLE {$this->getTable('newsletter_queue_store_link')} (
 
 /*Table structure for table `newsletter_subscriber` */
 
-DROP TABLE IF EXISTS {$this->getTable('newsletter_subscriber')};
+-- DROP TABLE IF EXISTS {$this->getTable('newsletter_subscriber')};
 CREATE TABLE {$this->getTable('newsletter_subscriber')} (
   `subscriber_id` int(7) unsigned NOT NULL auto_increment,
   `store_id` int(3) unsigned default '0',
@@ -108,7 +108,7 @@ CREATE TABLE {$this->getTable('newsletter_subscriber')} (
 
 /*Table structure for table `newsletter_template` */
 
-DROP TABLE IF EXISTS {$this->getTable('newsletter_template')};
+-- DROP TABLE IF EXISTS {$this->getTable('newsletter_template')};
 CREATE TABLE {$this->getTable('newsletter_template')} (
   `template_id` int(7) unsigned NOT NULL auto_increment,
   `template_code` varchar(150) default NULL,

@@ -39,6 +39,33 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
         $this->setChild('grid',
             $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_super_config_grid')
         );
+
+
+
+        $this->setChild('create_empty',
+            $this->getLayout()->createBlock('adminhtml/widget_button')
+                ->setData(array(
+                    'label' => Mage::helper('catalog')->__('Create Empty'),
+                    'class' => 'add',
+                    'onclick' => 'superProduct.createEmptyProduct()'
+                ))
+        );
+
+        if ($this->_getProduct()->getId()) {
+            $this->setChild('simple',
+                $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_super_config_simple')
+            );
+
+            $this->setChild('create_from_configurable',
+                $this->getLayout()->createBlock('adminhtml/widget_button')
+                    ->setData(array(
+                        'label' => Mage::helper('catalog')->__('Copy From Configurable'),
+                        'class' => 'add',
+                        'onclick' => 'superProduct.createNewProduct()'
+                    ))
+            );
+        }
+
         return parent::_prepareLayout();
     }
 
@@ -55,47 +82,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
     public function getAttributesJson()
     {
         $attributes = $this->_getProduct()->getTypeInstance()->getConfigurableAttributesAsArray();
-        $this->_clearDeletedValues($attributes);
         if(!$attributes) {
             return '[]';
         }
         return Zend_Json::encode($attributes);
-    }
-
-    /**
-     * Clears deleted products link in attributes from configured product
-     *
-     * @param array $attributes
-     * @return Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config
-     */
-    protected function _clearDeletedValues(&$attributes)
-    {
-        /*$links = $this->_getProduct()->getTypeInstance()->getUsedProducts();
-        if(!$links) {
-            $links = array();
-        }
-
-        $existsIndicator = array();
-        foreach($links as &$link) {
-            foreach ($link as &$linkAttribute) {
-                if(!isset($existsIndicator[$linkAttribute['attribute_id']])) {
-                    $existsIndicator[$linkAttribute['attribute_id']] = array();
-                }
-                $existsIndicator[$linkAttribute['attribute_id']][$linkAttribute['value_index']] = 1;
-            }
-        }
-
-        foreach($attributes as &$attribute) {
-            foreach ($attribute['values'] as $valueKey=>&$value) {
-                if(!isset($existsIndicator[$attribute['attribute_id']][$value['value_index']])) {
-                    unset($attribute['values'][$valueKey]);
-                }
-            }
-            $attribute['values'] = array_values($attribute['values']);
-        }
-
-        unset($existsIndicator);*/
-        return $this;
     }
 
     public function getLinksJson()
@@ -106,9 +96,22 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
         }
         $data = array();
         foreach ($products as $product) {
-        	$data[$product->getId()] = $product->getConfigurableSettings();
+        	$data[$product->getId()] = $this->getConfigurableSettings($product);
         }
         return Zend_Json::encode($data);
+    }
+
+    public function getConfigurableSettings($product) {
+        $data = array();
+        foreach ($this->_getProduct()->getTypeInstance()->getUsedProductAttributes() as $attribute) {
+            $data[] = array(
+                'attribute_id' => $attribute->getId(),
+                'label'        => $product->getAttributeText($attribute->getAttributeCode()),
+                'value_index'  => $product->getData($attribute->getAttributeCode())
+            );
+        }
+
+        return $data;
     }
 
     public function getGridHtml()
@@ -149,6 +152,18 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
     }
 
 
+
+    public function getQuickCreationUrl()
+    {
+        return $this->getUrl(
+            '*/*/quickCreate',
+            array(
+                'product'  => $this->_getProduct()->getId()
+            )
+        );
+    }
+
+
     protected function _getRequiredAttributesIds()
     {
         $attributesIds = array();
@@ -157,6 +172,11 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config extends Mage_Ad
         }
 
         return implode(',', $attributesIds);
+    }
+
+    public function escapeJs($string)
+    {
+        return addcslashes($string, "'\r\n\\");
     }
 
 }// Class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config END

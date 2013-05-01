@@ -19,18 +19,18 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('My Account')?></h3>
+    <h3><?php echo $this->__('My Account') ?></h3>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
-<?=$this->getChildHtml('hello')?>
-<?=$this->getChildHtml('top')?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<?php echo $this->getChildHtml('hello') ?>
+<?php echo $this->getChildHtml('top') ?>
 <div class="account-box ad-account-info">
     <div class="head">
-        <h4><?=$this->__('Account Information')?></h4>
+        <h4><?php echo $this->__('Account Information') ?></h4>
     </div>
-    <?=$this->getChildHtml('info')?>
-    <?=$this->getChildHtml('address')?>
+    <?php echo $this->getChildHtml('info') ?>
+    <?php echo $this->getChildHtml('address') ?>
 </div>
 
-<?=$this->getChildHtml('info1')?>
-<?=$this->getChildHtml('info2')?>
+<?php echo $this->getChildHtml('info1') ?>
+<?php echo $this->getChildHtml('info2') ?>

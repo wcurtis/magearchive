@@ -125,13 +125,6 @@
                                 </config>
                             </children>
                         </system>
-                        <report>
-                            <children>
-                                <wishlist>
-                                    <title>Wishlist Report</title>
-                                </wishlist>
-                            </children>
-                        </report>
                     </children>
                 </admin>
             </resources>

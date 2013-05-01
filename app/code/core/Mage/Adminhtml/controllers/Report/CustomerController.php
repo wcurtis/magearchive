@@ -31,8 +31,41 @@ class Mage_Adminhtml_Report_CustomerController extends Mage_Adminhtml_Controller
     {
         $this->loadLayout()
             ->_addBreadcrumb(Mage::helper('reports')->__('Reports'), Mage::helper('reports')->__('Reports'))
-            ->_addBreadcrumb(Mage::helper('reports')->__('Products'), Mage::helper('reports')->__('Products'));
+            ->_addBreadcrumb(Mage::helper('reports')->__('Customers'), Mage::helper('reports')->__('Customers'));
         return $this;
+    }
+
+    public function accountsAction()
+    {
+        $this->_initAction()
+            ->_setActiveMenu('report/customer/accounts')
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('New Accounts'), Mage::helper('adminhtml')->__('New Accounts'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_customer_accounts'))
+            ->renderLayout();
+    }
+
+    /**
+     * Export new accounts report grid to CSV format
+     */
+    public function exportAccountsCsvAction()
+    {
+        $fileName   = 'new_accounts.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_customer_accounts_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export new accounts report grid to Excel XML format
+     */
+    public function exportAccountsExcelAction()
+    {
+        $fileName   = 'accounts.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_customer_accounts_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function ordersAction()
@@ -106,14 +139,17 @@ class Mage_Adminhtml_Report_CustomerController extends Mage_Adminhtml_Controller
     protected function _isAllowed()
     {
         switch ($this->getRequest()->getActionName()) {
+            case 'accounts':
+                return Mage::getSingleton('admin/session')->isAllowed('report/customers/accounts');
+                break;
             case 'orders':
-                return Mage::getSingleton('admin/session')->isAllowed('report/customer/orders');
+                return Mage::getSingleton('admin/session')->isAllowed('report/customers/orders');
                 break;
             case 'totals':
-                return Mage::getSingleton('admin/session')->isAllowed('report/customer/totals');
+                return Mage::getSingleton('admin/session')->isAllowed('report/customers/totals');
                 break;
             default:
-                return Mage::getSingleton('admin/session')->isAllowed('report/customer');
+                return Mage::getSingleton('admin/session')->isAllowed('report/customers');
                 break;
         }
     }

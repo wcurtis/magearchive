@@ -46,6 +46,11 @@ class Mage_Checkout_Block_Multishipping_Overview extends Mage_Checkout_Block_Mul
         return $this->getChildHtml('payment_info');
     }
 
+    public function getPayment()
+    {
+        return $this->getCheckout()->getQuote()->getPayment();
+    }
+
     public function getShippingAddresses()
     {
         return $this->getCheckout()->getQuote()->getAllShippingAddresses();

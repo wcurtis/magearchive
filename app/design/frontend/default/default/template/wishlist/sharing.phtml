@@ -19,34 +19,34 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('Share Your Wishlist')?></h3>
-</div><?=$this->getMessagesBlock()->getGroupedHtml()?>
-<form action="<?=$this->getSendUrl()?>" id="form-validate" method="post">
+    <h3><?php echo $this->__('Share Your Wishlist') ?></h3>
+</div><?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<form action="<?php echo $this->getSendUrl() ?>" id="form-validate" method="post">
         <ul class="form-list">
             <li>
-                <label for="email_address"><?=$this->__('Email addresses, separated by commas')?> <span class="required">*</span></label><br/>
-                <textarea name="emails" cols="60" rows="5" class="validate-emails required-entry"><?=$this->getEnteredData('emails')?></textarea>
+                <label for="email_address"><?php echo $this->__('Email addresses, separated by commas') ?> <span class="required">*</span></label><br/>
+                <textarea name="emails" cols="60" rows="5" class="validate-emails required-entry"><?php echo $this->getEnteredData('emails') ?></textarea>
             </li>
             <li>
-                <label for="email_address"><?=$this->__('Message')?></label><br/>
-                <textarea name="message" cols="60" rows="5"><?=$this->getEnteredData('message')?></textarea>
+                <label for="message"><?php echo $this->__('Message') ?></label><br/>
+                <textarea id="message" name="message" cols="60" rows="5"><?php echo $this->getEnteredData('message') ?></textarea>
             </li>
-            <?if($this->helper('wishlist')->isRssAllow()):?>
+            <?php if($this->helper('wishlist')->isRssAllow()): ?>
             <li>
                 <input type="checkbox" name="rss_url" id="rss_url" value="1"/>
-                <label for="rss_url"><?=$this->__('Check this checkbox if you want to add a link to an rss feed to your wishlist.')?></label>
+                <label for="rss_url"><?php echo $this->__('Check this checkbox if you want to add a link to an rss feed to your wishlist.') ?></label>
             </li>
-            <?endif;?>
+            <?php endif; ?>
         </ul>
     <div class="button-set">
-            <p class="required"><?=$this->__('* Required Fields')?></p>
-            <button type="submit" class="form-button"><span><?=$this->__('Share Wishlist')?></span></button>
+            <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+            <button type="submit" class="form-button"><span><?php echo $this->__('Share Wishlist') ?></span></button>
     </div>
 </form>
 <script type="text/javascript">
 <!--
 Validation.addAllThese([
-    ['validate-emails', '<?=$this->__('Please enter a valid email addresses, separated by commas. For example johndoe@domain.com, johnsmith@domain.com.')?>', function (v) {
+    ['validate-emails', '<?php echo $this->__('Please enter a valid email addresses, separated by commas. For example johndoe@domain.com, johnsmith@domain.com.') ?>', function (v) {
                 if(Validation.get('IsEmpty').test(v)) {
                     return true;
                 }

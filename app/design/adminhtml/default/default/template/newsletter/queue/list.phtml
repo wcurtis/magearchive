@@ -21,7 +21,7 @@
 <div class="content-header">
 	<table cellspacing="0">
 		<tr>
-			<td style="width:50%;"><h3 class="icon-head head-newsletter-queue"><?=Mage::helper('newsletter')->__('Newsletter Queue')?></h3></td>
+			<td style="width:50%;"><h3 class="icon-head head-newsletter-queue"><?php echo Mage::helper('newsletter')->__('Newsletter Queue') ?></h3></td>
 			<td class="form-buttons">
 			
 			</td>
@@ -29,5 +29,5 @@
 	</table>
 </div>
 <div>
-    <?=$this->getChildHtml('grid')?>
+    <?php echo $this->getChildHtml('grid') ?>
 </div>

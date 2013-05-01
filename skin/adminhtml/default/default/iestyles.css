@@ -15,6 +15,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /* Clearing */
+
 .nav-bar,
 ul.tabs-horiz,
 dl.accordion dt,
@@ -52,13 +53,12 @@ dl.accordion dt a,
 div.collapseable a               { width:100%; }
 .product-image-gallery .grid tbody td { padding: 4px !important; }
 .massaction .entry-edit fieldset{ float: right;}
+.massaction .entry-edit fieldset  button.scalable {text-align:center!important; padding-left:0;padding-right:0; margin-top:1px;}
+.content-header {height:1%;}
 
-#nav ul { border-bottom-width:2px; }
-#nav ul li { background:none !important; padding:0 !important; }
-#nav ul { border:1px solid #b6b6b6; border-top:1px solid #4d5255 !imporant; padding-top:0 !important; padding-bottom:0 !important; }
-#nav ul ul { border:1px solid #b6b6b6;}
-#nav ul li a { background:#e5edef;}
-#nav ul li a:hover  { background:#d0dfe2;}
-#nav ul, #nav ul li, #nav ul a, #nav ul a span { zoom:1; }
-#nav ul li.parent { margin-bottom:-3px}
-#nav ul li.parent li.parent { margin:0; }
+#nav ul li, #nav ul li.active {
+	float:left;
+	clear:left;
+	width:185px;
+    }
+

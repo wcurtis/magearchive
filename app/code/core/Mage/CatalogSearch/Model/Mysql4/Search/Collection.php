@@ -46,7 +46,7 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
     {
         if (!$this->_attributesCollection) {
             $this->_attributesCollection = Mage::getResourceModel('eav/entity_attribute_collection')
-                ->setEntityTypeFilter($this->getEntity()->getConfig()->getId())
+                ->setEntityTypeFilter($this->getEntity()->getTypeId())
                 ->load();
 
             foreach ($this->_attributesCollection as $attribute) {

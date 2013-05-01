@@ -92,6 +92,7 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
                 break;
 
             case IMAGETYPE_PNG:
+                $this->_saveAlpha($this->_imageHandler);
                 imagepng($this->_imageHandler, $fileName);
                 break;
 
@@ -176,6 +177,10 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
         }
 
         $imageNewHandler = imagecreatetruecolor($dstWidth, $dstHeight);
+
+        if ($this->_fileType == IMAGETYPE_PNG) {
+            $this->_saveAlpha($imageNewHandler);
+        }
 
         imagecopyresampled($imageNewHandler, $this->_imageHandler, $xOffset, $yOffset, 0, 0, $width, $height, $this->_imageSrcWidth, $this->_imageSrcHeight);
 
@@ -283,6 +288,10 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
 
         $canvas = imagecreatetruecolor($newWidth, $newHeight);
 
+        if ($this->_fileType == IMAGETYPE_PNG) {
+            $this->_saveAlpha($canvas);
+        }
+
         imagecopyresampled($canvas, $this->_imageHandler, $top, $bottom, $right, $left, $this->_imageSrcWidth, $this->_imageSrcHeight, $newWidth, $newHeight);
 
         $this->_imageHandler = $canvas;
@@ -307,5 +316,16 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
     function __destruct()
     {
         imagedestroy($this->_imageHandler);
+    }
+
+    /*
+     * Fixes saving PNG alpha channel
+     */
+    private function _saveAlpha($imageHandler)
+    {
+        $background = imagecolorallocate($imageHandler, 0, 0, 0);
+        ImageColorTransparent($imageHandler, $background);
+        imagealphablending($imageHandler, false);
+        imagesavealpha($imageHandler, true);
     }
 }

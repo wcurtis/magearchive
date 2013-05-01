@@ -105,7 +105,7 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
                     // found tier qty is same as current tier qty but current tier group is ALL_GROUPS
                     continue;
                 }
-                $prevPrice = $price['price'];
+                $prevPrice = $price['website_price'];
                 $prevQty = $price['price_qty'];
                 $prevGroup = $price['cust_group'];
             }
@@ -145,7 +145,7 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
         $price = $product->getTierPrice($qty);
         if (is_array($price)) {
             foreach ($price as $index => $value) {
-                $price[$index]['formated_price'] = Mage::app()->getStore()->convertPrice($price[$index]['price'], true);
+                $price[$index]['formated_price'] = Mage::app()->getStore()->convertPrice($price[$index]['website_price'], true);
             }
         }
         else {
@@ -180,10 +180,12 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
          */
         if($product->getSuperProduct() && $product->getSuperProduct()->isConfigurable()) {
             $finalPrice = $product->getSuperProduct()->getFinalPrice($qty);
+            $product->getSuperProduct()->getTypeInstance()->setStoreFilter($product->getStore());
             $attributes = $product->getSuperProduct()->getTypeInstance()->getConfigurableAttributes();
+
             foreach ($attributes as $attribute) {
                 $value = $this->getValueByIndex(
-                    $attribute->getPrices(),
+                    $attribute->getPrices() ? $attribute->getPrices() : array(),
                     $product->getData($attribute->getProductAttribute()->getAttributeCode())
                 );
                 if($value) {

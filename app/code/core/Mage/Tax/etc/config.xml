@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Tax>
-            <version>0.7.3</version>
+            <version>0.7.4</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Customer />
@@ -171,15 +171,24 @@
         </translate>
 
         <events>
-            <catalog_block_product_list_collection>
+            <catalog_product_collection_load_after>
                 <observers>
                     <apply_tax>
                         <type>singleton</type>
                         <class>tax/observer</class>
-                        <method>catalog_block_product_list_collection</method>
+                        <method>catalog_product_collection_load_after</method>
                     </apply_tax>
                 </observers>
-            </catalog_block_product_list_collection>
+            </catalog_product_collection_load_after>
+            <catalog_block_product_view>
+                <observers>
+                    <apply_tax>
+                        <type>singleton</type>
+                        <class>tax/observer</class>
+                        <method>catalog_block_product_view</method>
+                    </apply_tax>
+                </observers>
+            </catalog_block_product_view>
         </events>
     </frontend>
 </config>

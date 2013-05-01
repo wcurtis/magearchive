@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('catalogsearch_query')};
+-- DROP TABLE IF EXISTS {$this->getTable('catalogsearch_query')};
 CREATE TABLE {$this->getTable('catalogsearch_query')} (
     `query_id` int(10) unsigned NOT NULL auto_increment,
     `query_text` varchar(255) NOT NULL default '',

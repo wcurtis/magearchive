@@ -80,7 +80,7 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Media extends Mage_Eav_Model_
         $newImages   = array();
 
         foreach ($value['images'] as &$image) {
-            if(!empty($image['remove'])) {
+            if(!empty($image['removed'])) {
                 $clearImages[] = $image['file'];
             } else if (!isset($image['value_id'])) {
                 $newFile                   = $this->_moveImageFromTmp($image['file']);
@@ -117,7 +117,7 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Media extends Mage_Eav_Model_
         $toDelete = array();
         $filesToValueIds = array();
         foreach ($value['images'] as &$image) {
-            if(!empty($image['remove'])) {
+            if(!empty($image['removed'])) {
                 if(isset($image['value_id'])) {
                     $toDelete[] = $image['value_id'];
                 }

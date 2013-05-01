@@ -83,6 +83,14 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
      */
     protected $_quoteTable;
 
+    protected $_fieldMap = array(
+        'customer_firstname' => 'customer_firstname_table.value',
+        'customer_lastname'  => 'customer_lastname_table.value',
+        'customer_email'     => 'customer_email_table.email',
+        'customer_id'        =>  'customer_table.customer_id',
+        'url'                =>  'url_info_table.url'
+    );
+
     /**
      * Construct
      *
@@ -125,6 +133,34 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
                 'url_info_table.url_id = visitor_table.last_url_id')
             //->joinLeft(array('quote_table'=>$this->_quoteTable), 'quote_table.visitor_id=visitor_table.visitor_id')
             ->where( 'visitor_table.last_visit_at >= ( ? - INTERVAL '.$minutes.' MINUTE)', now() );
+
+
+        $customersCollection = Mage::getModel('customer/customer')->getCollection();
+        /* @var $customersCollection Mage_Customer_Model_Entity_Customer_Collection */
+        $firstname = $customersCollection->getAttribute('firstname');
+        $lastname  = $customersCollection->getAttribute('lastname');
+        $email  = $customersCollection->getAttribute('email');
+
+        $this->_select
+            ->joinLeft(
+                array('customer_lastname_table'=>$lastname->getBackend()->getTable()),
+                'customer_lastname_table.entity_id=customer_table.customer_id
+                 AND customer_lastname_table.attribute_id = '.(int) $lastname->getAttributeId() . '
+                 ',
+                array('customer_lastname'=>'value')
+             )
+             ->joinLeft(
+                array('customer_firstname_table'=>$firstname->getBackend()->getTable()),
+                'customer_firstname_table.entity_id=customer_table.customer_id
+                 AND customer_firstname_table.attribute_id = '.(int) $firstname->getAttributeId() . '
+                 ',
+                array('customer_firstname'=>'value')
+             )
+             ->joinLeft(
+                array('customer_email_table'=>$email->getBackend()->getTable()),
+                'customer_email_table.entity_id=customer_table.customer_id',
+                array('customer_email'=>'email')
+             );
         return $this;
     }
 
@@ -219,12 +255,22 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
     {
         if( $fieldName == 'type' ) {
             if ($fieldValue == 'v') {
-                return parent::addFieldToFilter('customer_id', array('null' => 1));
+                return parent::addFieldToFilter('customer_table.customer_id', array('null' => 1));
             } else {
-                return parent::addFieldToFilter('customer_id', array('moreq' => 1));
+                return parent::addFieldToFilter('customer_table.customer_id', array('moreq' => 1));
             }
         } else {
-            return parent::addFieldToFilter($fieldName, $fieldValue);
+            return parent::addFieldToFilter($this->_getFieldMap($fieldName), $fieldValue);
         }
     }
+
+    protected function _getFieldMap($fieldName)
+    {
+        if(isset($this->_fieldMap[$fieldName])) {
+            return $this->_fieldMap[$fieldName];
+        } else {
+            return 'visitor_table.' . $fieldName;
+        }
+    }
+
 }

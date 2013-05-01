@@ -46,4 +46,12 @@ class Mage_Checkout_Model_Observer
             );
         }
     }
+
+    public function sales_quote_save_after($observer)
+    {
+        $quote = $observer->getEvent()->getQuote();
+        if ($quote->getIsCheckoutCart()) {
+            Mage::getSingleton('checkout/session')->getQuoteId($quote->getId());
+        }
+    }
 }

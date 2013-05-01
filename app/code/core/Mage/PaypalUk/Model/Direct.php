@@ -28,6 +28,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
     protected $_code  = 'paypaluk_direct';
     protected $_formBlockType = 'paypaluk/direct_form';
     protected $_infoBlockType = 'paypaluk/direct_info';
+    protected $_canSaveCc = false;
 
     /*
     * overwrites the method of Mage_Payment_Model_Method_Cc
@@ -104,6 +105,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
         $api = $this->getApi()
             ->setTrxtype($trxType)
             ->setAmount($amount)
+            ->setTransactionId($payment->getCcTransId())
             ->setBillingAddress($payment->getOrder()->getBillingAddress())
             ->setPayment($payment);
 
@@ -126,6 +128,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
     {
         if ($payment->getCcTransId()) {
          $api = $this->getApi()
+            ->setTransactionId($payment->getCcTransId())
             ->setPayment($payment);
          if ($api->canVoid()!==false) {
              $payment->setStatus(self::STATUS_VOID);
@@ -143,8 +146,10 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
 
     public function void(Varien_Object $payment)
     {
+        $error = false;
         if ($payment->getCcTransId()) {
              $api = $this->getApi()
+                ->setTransactionId($payment->getCcTransId())
                 ->setPayment($payment);
 
              if ($api->void()!==false) {
@@ -152,37 +157,40 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
                  $payment->setStatus(self::STATUS_VOID);
              } else {
                  $e = $api->getError();
-                 $payment->setStatus(self::STATUS_ERROR);
-                 $payment->setStatusDescription($e['message']);
+                 $error = $e['message'];
              }
         } else {
-            $payment->setStatus(self::STATUS_ERROR);
-            $payment->setStatusDescription(Mage::helper('paypalUk')->__('Invalid transaction id'));
+            $error = Mage::helper('paypalUk')->__('Invalid transaction id');
+        }
+        if ($error !== false) {
+            Mage::throwException($error);
         }
         return $this;
     }
 
     public function refund(Varien_Object $payment, $amount)
     {
-         if (($payment->getCcTransId() && $amount>0)) {
-             $api = $this->getApi()
-                ->setPayment($payment)
-                ->setAmount($amount);
+        $error = false;
+        if (($payment->getRefundTransactionId() && $amount>0)) {
+         $api = $this->getApi()
+            ->setTransactionId($payment->getRefundTransactionId())
+            ->setPayment($payment)
+            ->setAmount($amount);
 
-             if ($api->refund()!==false) {
-                 $payment->setCcTransId($api->getTransactionId());
-                 $payment->setStatus(self::STATUS_SUCCESS);
-             } else {
-                 $e = $api->getError();
-                 $payment->setStatus(self::STATUS_ERROR);
-                 $payment->setStatusDescription($e['message']);
-             }
-
+         if ($api->refund()!==false) {
+             $payment->setCcTransId($api->getTransactionId());
+             $payment->setStatus(self::STATUS_SUCCESS);
          } else {
-            $payment->setStatus(self::STATUS_ERROR);
-            $payment->setStatusDescription(Mage::helper('paypalUk')->__('Error in refunding the payment'));
+             $e = $api->getError();
+             $error = $e['message'];
          }
-         return $this;
+        } else {
+            $error = Mage::helper('paypalUk')->__('Error in refunding the payment');
+        }
+        if ($error !== false) {
+            Mage::throwException($error);
+        }
+        return $this;
     }
 
 }

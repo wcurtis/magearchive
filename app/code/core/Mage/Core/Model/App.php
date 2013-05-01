@@ -33,6 +33,8 @@ class Mage_Core_Model_App
 
     const DEFAULT_ERROR_HANDLER = 'mageCoreErrorHandler';
 
+    const DISTRO_LOCALE_CODE = 'en_US';
+
     /**
      * Application loaded areas array
      *
@@ -166,6 +168,14 @@ class Mage_Core_Model_App
      */
     protected $_response;
 
+
+    /**
+     * Events cache
+     *
+     * @var array
+     */
+    protected $_events = array();
+
     /**
      * Constructor
      *
@@ -229,27 +239,35 @@ class Mage_Core_Model_App
         if (empty($_GET)) {
             return $this;
         }
-        $storeKey = 'store';
-        if (isset($_GET[$storeKey]) && $this->_stores[$_GET[$storeKey]]->getId()
-            && $this->_stores[$_GET[$storeKey]]->getIsActive()) {
-            $store = $_GET[$storeKey];
-            if ($type == 'website'
-                && $this->_stores[$store]->getWebsiteId() == $this->_stores[$this->_currentStore]->getWebsiteId()) {
-                $this->_currentStore = $store;
-            }
-            if ($type == 'group'
-                && $this->_stores[$store]->getGroupId() == $this->_stores[$this->_currentStore]->getGroupId()) {
-                $this->_currentStore = $store;
-            }
-            if ($type == 'store') {
-                $this->_currentStore = $store;
-            }
 
-            if ($this->_currentStore == $store) {
-                $cookie = Mage::getSingleton('core/cookie');
-                /* @var $cookie Mage_Core_Model_Cookie */
-                $cookie->set($storeKey, $this->_currentStore);
-            }
+        $storeKey = 'store';
+        if (!isset($_GET[$storeKey])) {
+            return $this;
+        }
+
+        $store = $_GET[$storeKey];
+        if (!isset($this->_stores[$store])) {
+            return $this;
+        }
+
+        $storeObj = $this->_stores[$store];
+        if (!$storeObj->getId() || !$storeObj->getIsActive()) {
+            return $this;
+        }
+
+        $curStoreObj = $this->_stores[$this->_currentStore];
+        if ($type == 'website' && $storeObj->getWebsiteId() == $curStoreObj->getWebsiteId()) {
+            $this->_currentStore = $store;
+        } elseif ($type == 'group' && $storeObj->getGroupId() == $curStoreObj->getGroupId()) {
+            $this->_currentStore = $store;
+        } elseif ($type == 'store') {
+            $this->_currentStore = $store;
+        }
+
+        if ($this->_currentStore == $store) {
+            $cookie = Mage::getSingleton('core/cookie');
+            /* @var $cookie Mage_Core_Model_Cookie */
+            $cookie->set($storeKey, $this->_currentStore);
         }
         return $this;
     }
@@ -287,17 +305,32 @@ class Mage_Core_Model_App
         return $this;
     }
 
+    public function reinitStores()
+    {
+        return $this->_initStores();
+    }
+
     /**
      * Init store, group and website collections
      *
      */
     protected function _initStores()
     {
-        $websiteCollection = Mage::getModel('core/website')->getCollection()->setLoadDefault(true);
-        $groupCollection = Mage::getModel('core/store_group')->getCollection()->setLoadDefault(true);
-        $storeCollection = Mage::getModel('core/store')->getCollection()->setLoadDefault(true);
+        $this->_stores = array();
+        $this->_groups = array();
+        $this->_websites = array();
 
-        $this->_isSingleStore = $storeCollection->getSize() < 3;
+        $websiteCollection = Mage::getModel('core/website')->getCollection()
+            ->initCache($this->getCache(), 'app', array(Mage_Core_Model_Website::CACHE_TAG))
+            ->setLoadDefault(true);
+        $groupCollection = Mage::getModel('core/store_group')->getCollection()
+            ->initCache($this->getCache(), 'app', array(Mage_Core_Model_Store_Group::CACHE_TAG))
+            ->setLoadDefault(true);
+        $storeCollection = Mage::getModel('core/store')->getCollection()
+            ->initCache($this->getCache(), 'app', array(Mage_Core_Model_Store::CACHE_TAG))
+            ->setLoadDefault(true);
+
+        $this->_isSingleStore = $storeCollection->count() < 3;
 
         $websiteStores = array();
         $websiteGroups = array();
@@ -499,6 +532,31 @@ class Mage_Core_Model_App
         return $this->_stores[$id];
     }
 
+    /**
+     * Retrieve stores array
+     *
+     * @param bool $withDefault
+     * @param bool $codeKey
+     * @return array
+     */
+    public function getStores($withDefault = false, $codeKey = false)
+    {
+        $stores = array();
+        foreach ($this->_stores as $store) {
+            if (!$withDefault && $store->getId() == 0) {
+                continue;
+            }
+            if ($codeKey) {
+                $stores[$store->getCode()] = $store;
+            }
+            else {
+                $stores[$store->getId()] = $store;
+            }
+        }
+
+        return $stores;
+    }
+
     protected function _getDefaultStore()
     {
         if (empty($this->_store)) {
@@ -506,6 +564,11 @@ class Mage_Core_Model_App
             $this->_store->setStoreId(1)->setCode('default');
         }
         return $this->_store;
+    }
+
+    public function getDistroLocaleCode()
+    {
+        return self::DISTRO_LOCALE_CODE;
     }
 
     /**
@@ -543,15 +606,17 @@ class Mage_Core_Model_App
     public function getWebsites($withDefault = false, $codeKey = false)
     {
         $websites = array();
-        foreach ($this->_websites as $website) {
-            if (!$withDefault && $website->getId() == 0) {
-                continue;
-            }
-            if ($codeKey) {
-                $websites[$website->getCode()] = $website;
-            }
-            else {
-                $websites[$website->getId()] = $website;
+        if (is_array($this->_websites)) {
+            foreach ($this->_websites as $website) {
+                if (!$withDefault && $website->getId() == 0) {
+                    continue;
+                }
+                if ($codeKey) {
+                    $websites[$website->getCode()] = $website;
+                }
+                else {
+                    $websites[$website->getId()] = $website;
+                }
             }
         }
 
@@ -632,7 +697,7 @@ class Mage_Core_Model_App
      */
     public function getBaseCurrencyCode()
     {
-        return Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, $this->getStore()->getCode());
+        return Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, 0);
     }
 
     /**
@@ -696,7 +761,7 @@ class Mage_Core_Model_App
     protected function _getCacheIdTags($id, $tags=array())
     {
         return $tags;
-
+/*
         $idTags = explode('_', $id);
 
         $first = true;
@@ -709,6 +774,7 @@ class Mage_Core_Model_App
         }
 
         return $tags;
+*/
     }
 
     /**
@@ -720,13 +786,22 @@ class Mage_Core_Model_App
     {
         if (!$this->_cache) {
             $this->_cache = Zend_Cache::factory('Core', 'File',
-                array('caching'=>true, 'lifetime'=>7200),
+                array(
+                    'caching'=>true,
+                    'lifetime'=>7200,
+                    'automatic_cleaning_factor'=>0,
+                ),
                 array(
                     'cache_dir'=>Mage::getBaseDir('cache'),
                     'hashed_directory_level'=>1,
                     'hashed_directory_umask'=>0777,
-                    'file_name_prefix'=>'mage')
+                    'file_name_prefix'=>'mage',
+                )
             );
+//            $this->_cache = Zend_Cache::factory('Core', 'Apc',
+//                array('caching'=>true, 'lifetime'=>7200),
+//                array()
+//            );
         }
         return $this->_cache;
     }
@@ -777,6 +852,9 @@ class Mage_Core_Model_App
     public function cleanCache($tags=array())
     {
         if (!empty($tags)) {
+            if (!is_array($tags)) {
+                $tags = array($tags);
+            }
             $this->getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, $tags);
         } else {
             $useCache = $this->useCache();
@@ -848,5 +926,64 @@ class Mage_Core_Model_App
             $this->_response->setHeader("Content-Type", "text/html; charset=UTF-8");
         }
         return $this->_response;
+    }
+
+    public function addEventArea($area)
+    {
+        if (!isset($this->_events[$area])) {
+            $this->_events[$area] = array();
+        }
+        return $this;
+    }
+
+    public function dispatchEvent($eventName, $args)
+    {
+        $event = new Varien_Event($args);
+        $event->setName($eventName);
+
+        $observer = new Varien_Event_Observer();
+
+        foreach ($this->_events as $area=>$events) {
+            if (!isset($events[$eventName])) {
+                $eventConfig = $this->getConfig()->getNode("$area/events/$eventName");
+                if (!$eventConfig) {
+                    $this->_events[$area][$eventName] = false;
+                    continue;
+                }
+                $observers = array();
+                foreach ($eventConfig->observers->children() as $obsName=>$obsConfig) {
+                    $observers[$obsName] = array(
+                        'type' => $obsConfig->type ? (string)$obsConfig->type : 'singleton',
+                        'model' => $obsConfig->class ? (string)$obsConfig->class : $obsConfig->getClassName(),
+                        'method' => (string)$obsConfig->method,
+                        'args' => (array)$obsConfig->args,
+                    );
+                }
+                $events[$eventName]['observers'] = $observers;
+                $this->_events[$area][$eventName]['observers'] = $observers;
+            }
+            if (false===$events[$eventName]) {
+                continue;
+            }
+            foreach ($events[$eventName]['observers'] as $obsName=>$obs) {
+                $observer->setData(array('event'=>$event));
+                switch ($obs['type']) {
+                    case 'singleton':
+                        $method = $obs['method'];
+                        $observer->addData($args);
+                        $object = Mage::getSingleton($obs['model']);
+                        $object->$method($observer);
+                        break;
+
+                    case 'object': case 'model':
+                        $method = $obs['method'];
+                        $observer->addData($args);
+                        $object = Mage::getModel($obs['model']);
+                        $object->$method($observer);
+                        break;
+                }
+            }
+        }
+        return $this;
     }
 }

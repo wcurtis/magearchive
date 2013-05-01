@@ -19,37 +19,37 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('RSS Feeds')?> <img src="<?=$this->getSkinUrl()?>images/icon_big_rss.png" class="v-middle" style="margin-bottom:3px;"/></h3>
+    <h3><?php echo $this->__('RSS Feeds') ?> <img src="<?php echo $this->getSkinUrl() ?>images/icon_big_rss.png" class="v-middle" style="margin-bottom:3px;"/></h3>
 </div>
-<?
+<?php 
 $_categories = $this->getRssCatalogFeeds();
 $_misc = $this->getRssMiscFeeds();
 ?>
-    <?if($_misc):?>
+    <?php if($_misc): ?>
     <table cellspacing="0" class="data-table" id="rss-table-misc">
         <thead><tr><th>Miscellaneous Feeds</th></tr></thead>
         <tbody>
-    <?foreach ($_misc as $_feed):?>
+    <?php foreach ($_misc as $_feed): ?>
             <tr>
-                <td class="a-right"><span class="left"><?=$_feed->getLabel()?></span><a href="<?=$_feed->getUrl()?>" class="link-feed"><?=$this->__('Get Feed');?></a></td>
+                <td class="a-right"><span class="left"><?php echo $_feed->getLabel() ?></span><a href="<?php echo $_feed->getUrl() ?>" class="link-feed"><?php echo $this->__('Get Feed'); ?></a></td>
             </tr>
-    <?endforeach;?>
+    <?php endforeach; ?>
          </tbody>
     </table>
-    <?endif;?>
-    <?if ($_categories || $_misc):?><br/><?endif?>
-    <?if($_categories):?>
+    <?php endif; ?>
+    <?php if ($_categories || $_misc): ?><br/><?php endif ?>
+    <?php if($_categories): ?>
     <table cellspacing="0" class="data-table" id="rss-table-category">
     <thead><tr><th>Category Feeds</th></tr></thead>
     <tbody>
-    <?foreach ($_categories as $_category):?>
+    <?php foreach ($_categories as $_category): ?>
     <tr>
-        <td class="a-right"><span class="left"><?=$_category->getLabel()?></span><a href="<?=$_category->getUrl()?>" class="link-feed"><?=$this->__('Get Feed');?></a></td>
+        <td class="a-right"><span class="left"><?php echo $_category->getLabel() ?></span><a href="<?php echo $_category->getUrl() ?>" class="link-feed"><?php echo $this->__('Get Feed'); ?></a></td>
     </tr>
-    <?endforeach;?>
+    <?php endforeach; ?>
     </tbody>
 </table>
 <script type="text/javascript">decorateTable('rss-table-misc'); decorateTable('rss-table-category')</script>
-<?else:?>
-<p><?=$this->__('There are no %s.',$this->__('Rss Feeds'));?></p>
-<?endif;?>
+<?php else: ?>
+<p><?php echo $this->__('There are no %s.',$this->__('Rss Feeds')); ?></p>
+<?php endif; ?>

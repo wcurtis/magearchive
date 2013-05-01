@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `{$this->getTable('cataloginventory_stock')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('cataloginventory_stock')}`;
 CREATE TABLE `{$this->getTable('cataloginventory_stock')}` (
   `stock_id` smallint(4) unsigned NOT NULL auto_increment,
   `stock_name` varchar(255) NOT NULL default '',
@@ -34,7 +34,7 @@ CREATE TABLE `{$this->getTable('cataloginventory_stock')}` (
 
 insert into `{$this->getTable('cataloginventory_stock')}`(`stock_id`,`stock_name`) values (1, 'Default');
 
-DROP TABLE IF EXISTS `{$this->getTable('cataloginventory_stock_item')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('cataloginventory_stock_item')}`;
 CREATE TABLE `{$this->getTable('cataloginventory_stock_item')}` (
     `item_id` int(10) unsigned NOT NULL auto_increment,
     `product_id` int(10) unsigned NOT NULL default '0',

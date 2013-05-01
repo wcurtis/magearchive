@@ -43,17 +43,15 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
                 $this->setCategoryId(Mage::app()->getStore()->getRootCategoryId());
             }
 
-// if this is a product view page
+            // if this is a product view page
             if (Mage::registry('product')) {
-// get collection of categories this product is associated with
+                // get collection of categories this product is associated with
                 $categories = Mage::registry('product')->getCategoryCollection()
-// request only first category
                     ->setPage(1, 1)
-// and load the collection data
                     ->load();
-// if the product is associated with any category
+                // if the product is associated with any category
                 if ($categories->count()) {
-// show products from this category
+                    // show products from this category
                     $this->setCategoryId(current($categories->getIterator()));
                 }
             }
@@ -63,9 +61,6 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
                 $layer->setCurrentCategory($category);
             }
             $this->_productCollection = $layer->getProductCollection();
-            Mage::dispatchEvent('catalog_block_product_list_collection', array(
-                'collection'=>$this->_productCollection,
-            ));
         }
         return $this->_productCollection;
     }
@@ -105,6 +100,9 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
         }
         $toolbar->setCollection($this->_getProductCollection());
         $this->setChild('toolbar', $toolbar);
+        Mage::dispatchEvent('catalog_block_product_list_collection', array(
+            'collection'=>$this->_getProductCollection(),
+        ));
 
         $this->_getProductCollection()->load();
         Mage::getModel('review/review')->appendSummary($this->_getProductCollection());

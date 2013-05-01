@@ -19,32 +19,32 @@
  */
 ?>
 <div class="content-header">
-    <table cellspacing="0"><tr><td><h3 class="icon-head head-tax-rate-importExport"><?=Mage::helper('tax')->__('Tax Rates Import / Export')?></h3></td></tr></table>
+    <table cellspacing="0"><tr><td><h3 class="icon-head head-tax-rate-importExport"><?php echo Mage::helper('tax')->__('Tax Rates Import / Export') ?></h3></td></tr></table>
 </div>
 
 <div class="entry-edit">
 	<table cellspacing="10" border="0" width="100%">
 		<tr><td width="50%">
-			<form id="import_form" action="<?=$this->getUrl('*/*/importPost')?>" method="post" enctype="multipart/form-data">
+			<form id="import_form" action="<?php echo $this->getUrl('*/*/importPost') ?>" method="post" enctype="multipart/form-data">
             <div class="entry-edit-head">
-			<h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('tax')->__('Import Tax Rates')?></h4>
+			<h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('tax')->__('Import Tax Rates') ?></h4>
             </div>
 			<fieldset>
-				<legend><?=Mage::helper('tax')->__('Import Tax Rates')?></legend>
+				<legend><?php echo Mage::helper('tax')->__('Import Tax Rates') ?></legend>
 				<input type="file" name="import_rates_file" class="input-file required-entry"/>
-		    	<?=$this->getButtonHtml('Import Tax Rates', "this.form.submit()")?>
+		    	<?php echo $this->getButtonHtml('Import Tax Rates', "this.form.submit()") ?>
 			</fieldset>
 			</form>
 			<script>
 				var importForm = new varienForm('import_form');
 			</script>
 		</td><td width="50%">
-			<form id="export_form" action="<?=$this->getUrl('*/*/exportPost')?>" method="post" enctype="multipart/form-data">
+			<form id="export_form" action="<?php echo $this->getUrl('*/*/exportPost') ?>" method="post" enctype="multipart/form-data">
 			
-            <div class="entry-edit-head"><h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('tax')->__('Export Tax Rates')?></h4></div>
+            <div class="entry-edit-head"><h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('tax')->__('Export Tax Rates') ?></h4></div>
 			<fieldset>
-				<legend><?=Mage::helper('tax')->__('Export Tax Rates')?></legend>
-		        <?=$this->getButtonHtml('Export Tax Rates', "this.form.submit()")?>
+				<legend><?php echo Mage::helper('tax')->__('Export Tax Rates') ?></legend>
+		        <?php echo $this->getButtonHtml('Export Tax Rates', "this.form.submit()") ?>
 		    </fieldset>	
 			</form>
     	</td></tr>

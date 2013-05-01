@@ -83,6 +83,7 @@
                 <mcrypt/>
                 <curl/>
                 <iconv/>
+                <ctype/>
             </extensions>
         </php>
     </check>

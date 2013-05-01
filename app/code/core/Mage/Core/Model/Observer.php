@@ -42,4 +42,19 @@ class Mage_Core_Model_Observer
             $item->delete();
         }
     }
+
+    public function observeStoreEdit($observer)
+    {
+        Mage::app()->cleanCache();
+    }
+
+    public function observeStoreAdd($observer)
+    {
+        Mage::app()->cleanCache();
+    }
+
+    public function observeStoreDelete($observer)
+    {
+        Mage::app()->cleanCache();
+    }
 }

@@ -41,6 +41,11 @@
                 <class>Mage_Checkout_Model_Mysql4</class>
             </checkout_mysql4>
         </models>
+        <cache>
+            <types>
+                <checkout_quote><label>Shopping Cart data</label></checkout_quote>
+            </types>
+        </cache>
     </global>
     <frontend>
           <secure_url>
@@ -66,6 +71,15 @@
                     </unsetAll>
                 </observers>
             </customer_logout>
+            <sales_quote_save_after>
+                <observers>
+                    <set_checkout_quote_id>
+                        <type>singleton</type>
+                        <class>checkout/observer</class>
+                        <method>sales_quote_save_after</method>
+                    </set_checkout_quote_id>
+                </observers>
+            </sales_quote_save_after>
         </events>
         <routers>
             <checkout>

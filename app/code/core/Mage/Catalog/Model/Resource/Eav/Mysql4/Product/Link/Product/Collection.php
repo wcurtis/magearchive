@@ -111,6 +111,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Link_Product_Collection
     public function setRandomOrder()
     {
         $this->getSelect()->order(new Zend_Db_Expr('RAND()'));
+        $this->_setIdFieldName('link_id');
         return $this;
     }
 

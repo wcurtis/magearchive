@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('shipping_tablerate')};
+-- DROP TABLE IF EXISTS {$this->getTable('shipping_tablerate')};
 CREATE TABLE {$this->getTable('shipping_tablerate')} (
   `pk` int(10) unsigned NOT NULL auto_increment,
   `website_id` int(11) NOT NULL default '0',

@@ -16,7 +16,7 @@
  * @package    Zend_Controller
  * @subpackage Action_Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: ContextSwitch.php 8120 2008-02-18 16:41:34Z matthew $
+ * @version    $Id: ContextSwitch.php 8577 2008-03-06 17:22:11Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -249,6 +249,7 @@ class Zend_Controller_Action_Helper_ContextSwitch extends Zend_Controller_Action
         }
 
         if ($this->getAutoDisableLayout()) {
+            require_once 'Zend/Layout.php';
             $layout = Zend_Layout::getMvcInstance();
             if (null !== $layout) {
                 $layout->disableLayout();

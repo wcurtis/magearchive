@@ -18,30 +18,30 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if( $this->getCollection() && $this->count()):?>
+<?php if( $this->getCollection() && $this->count()): ?>
 <div class="account-box ad-reviews">
     <div class="head">
-        <h4><?=$this->__('My Recent Reviews')?></h4>
-        <a href="<?=$this->getAllReviewsUrl()?>"><small><?=$this->__('View All Reviews')?></small></a>
+        <h4><?php echo $this->__('My Recent Reviews') ?></h4>
+        <a href="<?php echo $this->getAllReviewsUrl() ?>"><small><?php echo $this->__('View All Reviews') ?></small></a>
     </div>
-    <?$iterator = 0?>
-    <?foreach ($this->getCollection() as $_review):?>
+    <?php $iterator = 0 ?>
+    <?php foreach ($this->getCollection() as $_review): ?>
     <ol class="recent-reviews">
-        <li <?if($iterator % 2 == 0):?>class="odd"<?endif;?>>
-            <div class="count"><?=++$iterator?></div>
+        <li <?php if($iterator % 2 == 0): ?>class="odd"<?php endif; ?>>
+            <div class="count"><?php echo ++$iterator ?></div>
             <div class="content">
-                <a href="<?=$this->getReviewUrl($_review->getReviewId())?>"><?=$_review->getName()?></a>
-                <?if($_review->getSum()):?>
+                <a href="<?php echo $this->getReviewUrl($_review->getReviewId()) ?>"><?php echo $_review->getName() ?></a>
+                <?php if($_review->getSum()): ?>
                 <div class="ratings">
-                    <small><?=$this->__('Rating:')?></small>
+                    <small><?php echo $this->__('Rating:') ?></small>
                         <div class="rating-box">
-                            <div class="rating" style="width:<?=( $_review->getSum() / $_review->getCount() )?>%;"></div>
+                            <div class="rating" style="width:<?php echo ( $_review->getSum() / $_review->getCount() ) ?>%;"></div>
                         </div>
                  </div>
-                <?endif;?>
+                <?php endif; ?>
             </div>
         </li>
     </ol>
-    <?endforeach;?>
+    <?php endforeach; ?>
 </div>
-<?endif;?>
+<?php endif; ?>

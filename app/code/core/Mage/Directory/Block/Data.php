@@ -39,13 +39,24 @@ class Mage_Directory_Block_Data extends Mage_Core_Block_Template
                 ->loadByStore();
             $this->setData('country_collection', $collection);
         }
+
         return $collection;
     }
 
     public function getCountryHtmlSelect($defValue=null, $name='country_id', $id='country', $title='Country')
     {
+        Varien_Profiler::start('TEST: '.__METHOD__);
 		if (is_null($defValue)) {
 			$defValue = $this->getCountryId();
+		}
+		$cacheKey = 'DIRECTORY_COUNTRY_SELECT_STORE'.Mage::app()->getStore()->getId();
+		if (Mage::app()->useCache('config') && $cache = Mage::app()->loadCache($cacheKey)) {
+		    $options = unserialize($cache);
+		} else {
+		    $options = $this->getCountryCollection()->toOptionArray();
+		    if (Mage::app()->useCache('config')) {
+		        Mage::app()->saveCache(serialize($options), $cacheKey, array('config'));
+		    }
 		}
         $html = $this->getLayout()->createBlock('core/html_select')
             ->setName($name)
@@ -53,9 +64,10 @@ class Mage_Directory_Block_Data extends Mage_Core_Block_Template
             ->setTitle(Mage::helper('directory')->__($title))
             ->setClass('validate-select')
             ->setValue($defValue)
-            ->setOptions($this->getCountryCollection()->toOptionArray())
+            ->setOptions($options)
             ->getHtml();
 
+        Varien_Profiler::stop('TEST: '.__METHOD__);
         return $html;
     }
 
@@ -75,14 +87,26 @@ class Mage_Directory_Block_Data extends Mage_Core_Block_Template
 
     public function getRegionHtmlSelect()
     {
-        return $this->getLayout()->createBlock('core/html_select')
+        Varien_Profiler::start('TEST: '.__METHOD__);
+		$cacheKey = 'DIRECTORY_REGION_SELECT_STORE'.Mage::app()->getStore()->getId();
+		if (Mage::app()->useCache('config') && $cache = Mage::app()->loadCache($cacheKey)) {
+		    $options = unserialize($cache);
+		} else {
+		    $options = $this->getRegionCollection()->toOptionArray();
+		    if (Mage::app()->useCache('config')) {
+		        Mage::app()->saveCache(serialize($options), $cacheKey, array('config'));
+		    }
+		}
+        $html = $this->getLayout()->createBlock('core/html_select')
             ->setName('region')
             ->setTitle(Mage::helper('directory')->__('State/Province'))
             ->setId('state')
             ->setClass('required-entry validate-state')
             ->setValue($this->getRegionId())
-            ->setOptions($this->getRegionCollection()->toOptionArray())
+            ->setOptions($options)
             ->getHtml();
+        Varien_Profiler::start('TEST: '.__METHOD__);
+        return $html;
     }
 
     public function getCountryId()
@@ -96,6 +120,7 @@ class Mage_Directory_Block_Data extends Mage_Core_Block_Template
 
     public function getRegionsJs()
     {
+        Varien_Profiler::start('TEST: '.__METHOD__);
     	$regionsJs = $this->getData('regions_js');
     	if (!$regionsJs) {
 	    	$countryIds = array();
@@ -117,6 +142,7 @@ class Mage_Directory_Block_Data extends Mage_Core_Block_Template
 	    	}
 	    	$regionsJs = Zend_Json::encode($regions);
     	}
+    	Varien_Profiler::stop('TEST: '.__METHOD__);
     	return $regionsJs;
     }
 }

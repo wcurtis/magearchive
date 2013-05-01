@@ -144,7 +144,7 @@ class Varien_File_Uploader
         $result = false;
 
         $destFile = $destinationFolder;
-        $fileName = ( isset($newFileName) ) ? $newFileName : $this->_file['name'];
+        $fileName = ( isset($newFileName) ) ? $newFileName : $this->_replaceIllegalChars($this->_file['name']);
         $fileExtension = substr($fileName, strrpos($fileName, '.')+1);
 
         if( !$this->chechAllowedExtension($fileExtension) ) {
@@ -189,6 +189,15 @@ class Varien_File_Uploader
         } else {
             return $result;
         }
+    }
+
+    protected function _replaceIllegalChars($fileName)
+    {
+        if (preg_match('/[^a-z0-9_\\-\\.]/i', $fileName)) {
+            $fileName = 'file' . substr($fileName, strrpos($fileName, '.'));
+        }
+
+        return $fileName;
     }
 
     protected function _addDirSeparator($dir)
@@ -328,6 +337,11 @@ class Varien_File_Uploader
         if( !$destinationFolder ) {
             return $this;
         }
+
+        if (substr($destinationFolder, -1) == DIRECTORY_SEPARATOR) {
+            $destinationFolder = substr($destinationFolder, 0, -1);
+        }
+
         if (!(@is_dir($destinationFolder) || @mkdir($destinationFolder, 0777, true))) {
             throw new Exception("Unable to create directory '{$destinationFolder}'.");
         }

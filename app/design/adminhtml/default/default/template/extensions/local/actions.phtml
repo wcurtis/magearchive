@@ -21,23 +21,23 @@
 <script type="text/javascript">
 function upgrade()
 {
-    $('run_iframe').src = '<?=$this->getUrl('*/*/upgrade', array('do'=>'run'))?>?id=<?=urlencode($this->getRequest()->getParam('id'))?>';
+    $('run_iframe').src = '<?php echo $this->getUrl('*/*/upgrade', array('do'=>'run')) ?>?id=<?php echo urlencode($this->getRequest()->getParam('id')) ?>';
     $('run_iframe').style.display = 'block';
 }
 
 function uninstall()
 {
-    $('run_iframe').src = '<?=$this->getUrl('*/*/uninstall', array('do'=>'run'))?>?id=<?=urlencode($this->getRequest()->getParam('id'))?>';
+    $('run_iframe').src = '<?php echo $this->getUrl('*/*/uninstall', array('do'=>'run')) ?>?id=<?php echo urlencode($this->getRequest()->getParam('id')) ?>';
     $('run_iframe').style.display = 'block';
 }
 </script>
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Actions")?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__("Actions") ?></h4>
     </div>
     <fieldset>
-        <legend><?=$this->__("Actions")?></legend>
-        <?=$this->getActionButtonHtml()?><br/>
-        <iframe id="run_iframe" src="<?=$this->getUrl('*/*/prepare')?>?id=<?=urlencode($this->getRequest()->getParam('id'))?>" frameborder=0 style="display:none; width:100%; height:400px;"></iframe>
+        <legend><?php echo $this->__("Actions") ?></legend>
+        <?php echo $this->getActionButtonHtml() ?><br/>
+        <iframe id="run_iframe" src="<?php echo $this->getUrl('*/*/prepare') ?>?id=<?php echo urlencode($this->getRequest()->getParam('id')) ?>" frameborder=0 style="display:none; width:100%; height:400px;"></iframe>
     </fieldset>
 </div>

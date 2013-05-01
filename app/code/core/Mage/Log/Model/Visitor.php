@@ -22,7 +22,7 @@
 class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
 {
     const ONLINE_MINUTES_INTERVAL = 15;
-    
+
     protected function _construct()
     {
         $this->_init('log/visitor');
@@ -37,7 +37,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
     {
         return Mage::getSingleton('core/session');
     }
-    
+
     /**
      * Retrieve visitor resource model
      *
@@ -47,7 +47,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
     {
         return Mage::getResourceSingleton('log/visitor');
     }
-    
+
     /**
      * Initialize visitor information from server data
      *
@@ -71,7 +71,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
 
         return $this;
     }
-    
+
     /**
      * Retrieve url from model data
      *
@@ -83,7 +83,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         $url .= $this->getHttpHost().$this->getRequestUri();
         return $url;
     }
-    
+
     public function getFirstVisitAt()
     {
         if (!$this->hasData('first_visit_at')) {
@@ -91,15 +91,15 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         }
         return $this->getData('first_visit_at');
     }
-    
+
     public function getLastVisitAt()
     {
         if (!$this->hasData('last_visit_at')) {
             $this->setData('last_visit_at', now());
         }
         return $this->getData('last_visit_at');
-    }            
-    
+    }
+
     public function isModuleIgnored($observer)
     {
         $ignores = Mage::getConfig()->getNode('global/ignoredModules/entities')->asArray();
@@ -112,12 +112,12 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         }
         return false;
     }
-    
+
     /**
      * Initialization visitor information by request
-     * 
+     *
      * Used in event "controller_action_predispatch"
-     * 
+     *
      * @param   Varien_Event_Observer $observer
      * @return  Mage_Log_Model_Visitor
      */
@@ -126,10 +126,10 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         if ($this->isModuleIgnored($observer)) {
             return $this;
         }
-        
+
         $this->setData($this->_getSession()->getVisitorData());
         $this->initServerData();
-        
+
         if (!$this->getId()) {
             $this->setFirstVisitAt(now());
             $this->setIsNewVisitor(true);
@@ -137,12 +137,12 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         }
         return $this;
     }
-    
+
     /**
      * Saving visitor information by request
-     * 
+     *
      * Used in event "controller_action_postdispatch"
-     * 
+     *
      * @param   Varien_Event_Observer $observer
      * @return  Mage_Log_Model_Visitor
      */
@@ -151,19 +151,19 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         if ($this->isModuleIgnored($observer)) {
             return $this;
         }
-        
+
         $this->setLastVisitAt(now());
         $this->save();
-        
+
         $this->_getSession()->setVisitorData($this->getData());
         return $this;
     }
-    
+
     /**
      * Bind customer data when customer login
-     * 
+     *
      * Used in event "customer_login"
-     * 
+     *
      * @param   Varien_Event_Observer $observer
      * @return  Mage_Log_Model_Visitor
      */
@@ -178,9 +178,9 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
 
     /**
      * Bind customer data when customer logout
-     * 
+     *
      * Used in event "customer_logout"
-     * 
+     *
      * @param   Varien_Event_Observer $observer
      * @return  Mage_Log_Model_Visitor
      */
@@ -195,8 +195,10 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
     public function bindQuoteCreate($observer)
     {
         if ($quote = $observer->getEvent()->getQuote()) {
-            $this->setQuoteId($quote->getId());
-            $this->setDoQuoteCreate(true);
+            if ($quote->getIsCheckoutCart()) {
+                $this->setQuoteId($quote->getId());
+                $this->setDoQuoteCreate(true);
+            }
         }
         return $this;
     }
@@ -208,7 +210,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         }
         return $this;
     }
-    
+
     /**
      * Methods for research (depends from customer online admin section)
      */
@@ -218,7 +220,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         $data->setIpData($ipData);
         return $this;
     }
-    
+
     public function addCustomerData($data)
     {
         $customerId = $data->getCustomerId();

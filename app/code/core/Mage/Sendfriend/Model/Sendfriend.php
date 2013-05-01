@@ -20,6 +20,11 @@
 
 class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
 {
+    /**
+     * XML configuration paths
+     */
+    const XML_PATH_SENDFRIEND_EMAIL_TEMPLATE     = 'sendfriend/email/template';
+
     protected $_names = array();
     protected $_emails = array();
     protected $_sender = array();
@@ -54,30 +59,28 @@ class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
         $errors = array();
 
         $this->_emailModel = Mage::getModel('core/email_template');
+        $message = nl2br(htmlspecialchars($this->_sender['message']));
+        $sender  = array(
+            'name' => strip_tags($this->_sender['name']),
+            'email' => strip_tags($this->_sender['email'])
+            );
 
-        $this->_emailModel->load($this->getTemplate());
-        if (!$this->_emailModel->getId()) {
-            Mage::throwException(
-               Mage::helper('sendfriend')
-                   ->__('Invalid transactional email code')
+        foreach($this->_emails as $key => $email) {
+            $this->_emailModel->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()))
+            ->sendTransactional(
+                Mage::getStoreConfig(self::XML_PATH_SENDFRIEND_EMAIL_TEMPLATE),
+                $sender,
+                $email,
+                $this->_names[$key],
+                array(
+                    'name'          => $this->_names[$key],
+                    'product_name'  => $this->_product->_data['name'],
+                    'product_url'   => $this->_product->getProductUrl(),
+                    'message'       => $message
+                )
             );
         }
 
-        $this->_emailModel->setSenderName(strip_tags($this->_sender['name']));
-        $this->_emailModel->setSenderEmail(strip_tags($this->_sender['email']));
-
-        foreach ($this->_emails as $k=>$email) {
-            if (!$this->_sendOne($email, $this->_names[$k])) {
-                $errors[] = $email;
-            }
-        }
-
-        if (count($errors)) {
-            Mage::throwException(
-                Mage::helper('sendfriend')
-                    ->__('Email to %s was not sent', implode(', ', $errors))
-            );
-        }
     }
 
     public function canSend()

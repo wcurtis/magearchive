@@ -143,6 +143,10 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action extends Mage_Admin
             	    unset($action['url']);
                		break;
 
+            	case 'popup':
+            	    $action['onclick'] = 'popWin(this.href, \'windth=800,height=700,resizable=1,scrollbars=1\');return false;';
+            	    break;
+
             }
         }
         return $this;

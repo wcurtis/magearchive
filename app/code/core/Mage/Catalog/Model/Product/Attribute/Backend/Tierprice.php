@@ -25,25 +25,8 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Product_Attribute_Backend_Tierprice extends Mage_Eav_Model_Entity_Attribute_Backend_Abstract
+class Mage_Catalog_Model_Product_Attribute_Backend_Tierprice extends Mage_Catalog_Model_Product_Attribute_Backend_Price
 {
-    public function setAttribute($attribute)
-    {
-        parent::setAttribute($attribute);
-        //$this->setScope($attribute);
-        return $this;
-    }
-
-    public function setScope($attribute)
-    {
-        $priceScope = (int) Mage::app()->getStore()->getConfig(Mage_Core_Model_Store::XML_PATH_PRICE_SCOPE);
-
-        if ($priceScope == Mage_Core_Model_Store::PRICE_SCOPE_GLOBAL) {
-            $attribute->setIsGlobal(Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL);
-        } else {
-            $attribute->setIsGlobal(Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE);
-        }
-    }
     /**
      * Retrieve resource model
      *
@@ -71,27 +54,43 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Tierprice extends Mage_Eav_Mo
             if (!empty($tier['delete'])) {
                 continue;
             }
-            $key = $tier['cust_group'].'-'.$tier['price_qty'];
-            if (!empty($dup[$key])) {
+            $key1 = implode('-', array($tier['website_id'], $tier['cust_group'], $tier['price_qty']));
+            $key2 = implode('-', array(0, $tier['cust_group'], $tier['price_qty']));
+            if (!empty($dup[$key1]) || !empty($dup[$key2])) {
                 Mage::throwException(
-                    Mage::helper('catalog')->__('Duplicate tier price customer group and quantity.')
+                    Mage::helper('catalog')->__('Duplicate website tier price customer group and quantity.')
                 );
             }
-            $dup[$key] = 1;
+            $dup[$key1] = 1;
         }
         return $this;
     }
 
+    /**
+     * Assign tier prices to product data
+     *
+     * @param   Mage_Catalog_Model_Product $object
+     * @return  Mage_Catalog_Model_Product_Attribute_Backend_Tierprice
+     */
     public function afterLoad($object)
     {
-        $data = $this->_getResource()->loadProductPrices($object);
+        $data = $this->_getResource()->loadProductPrices($object, $this->getAttribute());
 
         foreach ($data as $i=>$row) {
             if (!empty($row['all_groups'])) {
                 $data[$i]['cust_group'] = Mage_Customer_Model_Group::CUST_GROUP_ALL;
             }
+            if ($data[$i]['website_id'] == 0) {
+                $rate = Mage::app()->getStore()->getBaseCurrency()->getRate(Mage::app()->getBaseCurrencyCode());
+                $data[$i]['website_price'] = $data[$i]['price']/$rate;
+            }
+            else {
+                $data[$i]['website_price'] = $data[$i]['price'];
+            }
+
         }
         $object->setData($this->getAttribute()->getName(), $data);
+        return $this;
     }
 
     public function afterSave($object)
@@ -102,70 +101,25 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Tierprice extends Mage_Eav_Mo
         if (!is_array($tierPrices)) {
             return $this;
         }
-        //$minimalPrice = $object->getPrice();
 
         foreach ($tierPrices as $tierPrice) {
-            if (empty($tierPrice['price_qty'])
-                || !isset($tierPrice['price'])
-                || !empty($tierPrice['delete'])) {
+            if (empty($tierPrice['price_qty']) || !isset($tierPrice['price']) || !empty($tierPrice['delete'])) {
                 continue;
             }
 
             $useForAllGroups = $tierPrice['cust_group'] == Mage_Customer_Model_Group::CUST_GROUP_ALL;
 
             $data = array();
+            $data['website_id']        = $tierPrice['website_id'];
             $data['all_groups']        = $useForAllGroups;
             $data['customer_group_id'] = !$useForAllGroups ? $tierPrice['cust_group'] : 0;
             $data['qty']               = $tierPrice['price_qty'];
             $data['value']             = $tierPrice['price'];
 
-/*            if ($tierPrice['price']<$minimalPrice) {
-                $minimalPrice = $tierPrice['price'];
-            }*/
-
             $this->_getResource()->insertProductPrice($object, $data);
         }
 
-
-//        $this->_spreadPrices($object);
-
         return $this;
-        /*$object->setMinimalPrice($minimalPrice);
-        $this->getAttribute()->getEntity()->saveAttribute($object, 'minimal_price');*/
-
-    }
-
-    protected function _spreadPrices($object)
-    {
-        if ($object->getStoreId() == 0) {
-            $scope = (int) Mage::app()->getStore()->getConfig(Mage_Core_Model_Store::XML_PATH_PRICE_SCOPE);
-            $baseCurrency = Mage::app()->getBaseCurrencyCode();
-
-            if ($scope == Mage_Core_Model_Store::PRICE_SCOPE_WEBSITE) {
-                $oldValue = $object->getData($this->getAttribute()->getAttributeCode());
-                $storeIds = $object->getStoreIds();
-
-                if (is_array($storeIds)) {
-                    foreach ($storeIds as $storeId) {
-                        $storeCurrency = Mage::app()->getStore($storeId)->getBaseCurrencyCode();
-                        $rate = Mage::getModel('directory/currency')->load($storeCurrency)->getRate($baseCurrency);
-
-                        $newValue = array();
-                        foreach ($oldValue as $tier) {
-                            if (empty($tier['price_qty'])
-                                || !isset($tier['price'])
-                                || !empty($tier['delete'])) {
-                                continue;
-                            }
-
-                            $tier['price'] = $tier['price'] * $rate;
-                            $newValue[] = $tier;
-                        }
-                        $object->addAttributeUpdate($this->getAttribute()->getAttributeCode(), $newValue, $storeId);
-                    }
-                }
-            }
-        }
     }
 
     public function afterDelete($object)

@@ -25,43 +25,43 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('Localization')?></h3>
+    <h3><?php echo $this->__('Localization') ?></h3>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
 
-<form action="<?=$this->getPostUrl()?>" method="post" id="form-validate">
+<form action="<?php echo $this->getPostUrl() ?>" method="post" id="form-validate">
 <fieldset class="group-select">
- <legend><?=$this->__('Locale')?></legend>
-    <h4 class="legend"><?=$this->__('Locale settings')?></h4>
+ <legend><?php echo $this->__('Locale') ?></legend>
+    <h4 class="legend"><?php echo $this->__('Locale settings') ?></h4>
     <ul>
         <li>
             <div class="input-box">
-                <label for="locale"><?=$this->__('Locale')?> <span class="required">*</span></label><br/>
-                <?=$this->getLocaleSelect()?>
+                <label for="locale"><?php echo $this->__('Locale') ?> <span class="required">*</span></label><br/>
+                <?php echo $this->getLocaleSelect() ?>
             </div>
         </li>
         <li>
             <div class="input-box">
-                <label for="timezone"><?=$this->__('Time Zone')?> <span class="required">*</span></label><br/>
-                <?=$this->getTimezoneSelect()?>
+                <label for="timezone"><?php echo $this->__('Time Zone') ?> <span class="required">*</span></label><br/>
+                <?php echo $this->getTimezoneSelect() ?>
             </div>
             <div class="input-box">
-                <label for="currency"><?=$this->__('Default Currency')?> <span class="required">*</span></label><br/>
-                <?=$this->getCurrencySelect()?>
+                <label for="currency"><?php echo $this->__('Default Currency') ?> <span class="required">*</span></label><br/>
+                <?php echo $this->getCurrencySelect() ?>
             </div>
         </li>
     </ul>
 </fieldset>
 <div class="button-set">
-    <p class="required">* <?=$this->__('Required Fields')?></p>
-    <button class="form-button" type="submit"><span><?=$this->__('Continue')?></span></button>
+    <p class="required">* <?php echo $this->__('Required Fields') ?></p>
+    <button class="form-button" type="submit"><span><?php echo $this->__('Continue') ?></span></button>
 </div>
 </form>
 <script type="text/javascript">
     function changeLocale(event){
         var elem = Event.element(event);
         if(elem){
-            setLocation('<?=$this->getChangeUrl()?>locale/'+elem.value);
+            setLocation('<?php echo $this->getChangeUrl() ?>locale/'+elem.value);
         }
     }
     var dataForm = new VarienForm('form-validate');

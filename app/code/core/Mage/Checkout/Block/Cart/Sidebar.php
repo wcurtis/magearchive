@@ -25,43 +25,44 @@
  * @category   Mage
  * @package    Mage_Checkout
  */
-class Mage_Checkout_Block_Cart_Sidebar extends Mage_Core_Block_Template
+class Mage_Checkout_Block_Cart_Sidebar extends Mage_Checkout_Block_Cart_Abstract
 {
-    public function getItemCollection()
+    protected $_items;
+
+    public function getRecentItems()
     {
-
-        $collection = $this->getData('item_collection');
-        if (is_null($collection)) {
-            $collection = Mage::getModel('sales/quote_item')->getCollection()
-               ->addAttributeToSelect('*')
-               ->setQuote($this->getQuote())
-               ->addAttributeToSort('created_at', 'desc')
-               ->setPageSize(3)
-               ->load();
-
-            $this->setData('item_collection', $collection);
+        $items = array();
+        if ($this->getQuote()->getItemsCount()==0) {
+            return $items;
         }
-        return $collection;
+        $quoteItems = $this->getQuote()->getAllItems();
+        usort($quoteItems, array($this, 'sortByCreatedAt'));
+        $i = 0;
+        foreach ($quoteItems as $quoteItem) {
+            $item = clone $quoteItem;
+            $item->setItemProduct($this->helper('checkout')->getQuoteItemProduct($item));
+            $item->setProductUrl($this->helper('checkout')->getQuoteItemProductUrl($item));
+            $item->setProductName($this->helper('checkout')->getQuoteItemProductName($item));
+            $item->setProductDescription($this->helper('catalog/product')->getProductDescription($item));
+            if (Mage::helper('tax')->updateProductTax($item)) {
+                $item->setPrice($item->getPriceAfterTax());
+            }
+            $items[] = $item;
+            if (++$i==3) break;
+        }
+        return $items;
+    }
+
+    public function sortByCreatedAt($a, $b)
+    {
+        $a1 = $a->getCreatedAt();
+        $b1 = $b->getCreatedAt();
+        return $a1<$b1 ? 1 : $a1>$b1 ? -1 : 0;
     }
 
     public function getSubtotal()
     {
-        foreach ($this->getQuote()->getTotals() as $total) {
-            if ($total->getCode()=='subtotal') {
-                return Mage::helper('core')->currency($total->getValue());
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Retrieve quote
-     *
-     * @return Mage_Sales_Model_Quote
-     */
-    public function getQuote()
-    {
-        return Mage::getSingleton('checkout/session')->getQuote();
+        return $this->getQuote()->getShippingAddress()->getSubtotal();
     }
 
     public function getCanDisplayCart()

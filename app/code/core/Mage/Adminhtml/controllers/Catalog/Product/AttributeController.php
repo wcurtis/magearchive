@@ -149,6 +149,10 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
                 $data['default_value'] = $this->getRequest()->getParam($defaultValueField);
             }
 
+            if(!isset($data['apply_to'])) {
+                $data['apply_to'] = array();
+            }
+
             /**
              * @todo need specify relations for properties
              */

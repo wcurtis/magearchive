@@ -26,45 +26,45 @@
     <col width="80"/>
     <thead>
         <tr class="headings">
-            <th><?=Mage::helper('sales')->__('Carrier')?></th>
-            <th><?=Mage::helper('sales')->__('Title')?></th>
-            <th><?=Mage::helper('sales')->__('Number')?></th>
-            <th class="last"><?=Mage::helper('sales')->__('Action')?></th>
+            <th><?php echo Mage::helper('sales')->__('Carrier') ?></th>
+            <th><?php echo Mage::helper('sales')->__('Title') ?></th>
+            <th><?php echo Mage::helper('sales')->__('Number') ?></th>
+            <th class="last"><?php echo Mage::helper('sales')->__('Action') ?></th>
         </tr>
     </thead>
-<?if($_tracks = $this->getShipment()->getAllTracks()):?>
+<?php if($_tracks = $this->getShipment()->getAllTracks()): ?>
     <tbody>
-    <?$i=0;foreach ($_tracks as $_track):$i++?>
-        <tr class="<?=($i%2==0)?'even':'odd'?>">
-            <td><?=$this->getCarrierTitle($_track->getCarrierCode())?></td>
-            <td><?=$_track->getTitle()?></td>
+    <?php $i=0;foreach ($_tracks as $_track):$i++ ?>
+        <tr class="<?php echo ($i%2==0)?'even':'odd' ?>">
+            <td><?php echo $this->getCarrierTitle($_track->getCarrierCode()) ?></td>
+            <td><?php echo $_track->getTitle() ?></td>
             <td>
-                <?if ($_track->isCustom()):?>
-                <?=$_track->getNumber()?>
-                <?else:?>
-                <a href="#" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByTrackID($_track->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" >
-                    <?=$_track->getNumber()?>
+                <?php if ($_track->isCustom()): ?>
+                <?php echo $_track->getNumber() ?>
+                <?php else: ?>
+                <a href="#" onclick="popWin('<?php echo $this->helper('shipping')->getTrackingPopUpUrlByTrackID($_track->getId()) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" >
+                    <?php echo $_track->getNumber() ?>
                 </a>
-                <div id="shipment_tracking_info_response_<?=$_track->getId()?>"></div>
-                <?endif;?>
+                <div id="shipment_tracking_info_response_<?php echo $_track->getId() ?>"></div>
+                <?php endif; ?>
             </td>
             <td class="last">
-                <a href="#" onclick="deleteTrackingNumber('<?=$this->getRemoveUrl($_track)?>'); return false;">
-                    <?=Mage::helper('sales')->__('Delete')?>
+                <a href="#" onclick="deleteTrackingNumber('<?php echo $this->getRemoveUrl($_track) ?>'); return false;">
+                    <?php echo Mage::helper('sales')->__('Delete') ?>
                 </a>
             </td>
         </tr>
-    <?endforeach;?>
+    <?php endforeach; ?>
     </tbody>
-<?endif;?>
+<?php endif; ?>
     <tfoot>
         <tr>
             <td>
                 <select name="carrier" class="select" style="width:110px" onchange="selectCarrier(this)">
                     <option value=""></option>
-                    <?foreach ($this->getCarriers() as $_code=>$_name):?>
-                    <option value="<?=$_code?>"><?=$_name?></option>
-                    <?endforeach;?>
+                    <?php foreach ($this->getCarriers() as $_code=>$_name): ?>
+                    <option value="<?php echo $_code ?>"><?php echo $_name ?></option>
+                    <?php endforeach; ?>
                 </select>
             </td>
             <td>
@@ -73,7 +73,7 @@
             <td>
                 <input class="input-text" type="text" id="tracking_number" name="number" value=""/>
             </td>
-            <td class="last"><?=$this->getSaveButtonHtml()?></td>
+            <td class="last"><?php echo $this->getSaveButtonHtml() ?></td>
         </tr>
     </tfoot>
 </table>
@@ -89,7 +89,7 @@ function selectCarrier(elem) {
 }
 
 function deleteTrackingNumber(url) {
-    if (confirm('<?=Mage::helper('sales')->__('Are you sure?')?>')) {
+    if (confirm('<?php echo Mage::helper('sales')->__('Are you sure?') ?>')) {
         submitAndReloadArea($('shipment_tracking_info').parentNode, url)
     }
 }

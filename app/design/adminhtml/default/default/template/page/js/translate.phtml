@@ -53,5 +53,5 @@ $_data = array(
 );
 ?>
 <script type="text/javascript">
-    var Translator = new Translate(<?=Zend_Json::encode($_data)?>);
+    var Translator = new Translate(<?php echo Zend_Json::encode($_data) ?>);
 </script>

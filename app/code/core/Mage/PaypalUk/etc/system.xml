@@ -23,7 +23,7 @@
     <sections>
        <payment>
             <groups>
-                <paypaluk_direct translate="label" module="paypal">
+                <paypaluk_direct translate="label" module="paypaluk">
                     <label>PayPal UK Direct (Website Payments Pro UK)</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>150</sort_order>

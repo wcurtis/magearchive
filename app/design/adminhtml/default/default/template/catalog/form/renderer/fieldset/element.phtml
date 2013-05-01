@@ -18,20 +18,25 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_element = $this->getElement()?>
-<?$this->checkFieldDisable()?>
+<?php $_element = $this->getElement() ?>
+<?php $this->checkFieldDisable() ?>
+
+
+<?php if ($_element->getType()=='hidden'): ?>
 <tr>
-    <?if ($_element->getType()=='hidden'):?>
-    <td colspan="2"><?=trim($_element->getElementHtml())?></td>
-    <?else:?>
-    <td class="label"><?=trim($_element->getLabelHtml())?></td>
-    <td class="value value"><?=trim($_element->getElementHtml())?></td>
-    <?endif;?>
-    <td class="value scope-label"><?=$this->getScopeLabel()?></td>
-    <?if ($this->canDisplayUseDefault()):?>
-    <td class="value use-default">
-        <input type="checkbox" name="use_default[]" id="<?=$_element->getHtmlId()?>_default"<?if ($this->usedDefault()):?> checked<?endif;?> onclick="toggleValueElements(this, this.parentNode.parentNode)" value="<?=$this->getAttributeCode()?>"/>
-        <label for="<?=$_element->getHtmlId()?>_default" class="normal"><?=$this->__('Use Default Value')?></label>
-    </td>
-    <?endif;?>
+    <td class="hidden" colspan="100"><?php echo trim($_element->getElementHtml()) ?></td>
 </tr>
+<?php else: ?>
+<tr class="hidden">
+    <td class="label"><?php echo trim($_element->getLabelHtml()) ?></td>
+    <td class="value value"><?php echo trim($_element->getElementHtml()) ?></td>
+    <td class="value scope-label"><?php echo $this->getScopeLabel() ?></td>
+    <?php if ($this->canDisplayUseDefault()): ?>
+    <td class="value use-default">
+        <input type="checkbox" name="use_default[]" id="<?php echo $_element->getHtmlId() ?>_default"<?php if ($this->usedDefault()): ?> checked<?php endif; ?> onclick="toggleValueElements(this, this.parentNode.parentNode)" value="<?php echo $this->getAttributeCode() ?>"/>
+        <label for="<?php echo $_element->getHtmlId() ?>_default" class="normal"><?php echo $this->__('Use Default Value') ?></label>
+    </td>
+    <?php endif; ?>
+    <td<?php if ($_element->getNote()): ?> class="note"<?php endif ?>><small><?php echo $_element->getNote() ?></small></td>
+</tr>
+<?php endif; ?>

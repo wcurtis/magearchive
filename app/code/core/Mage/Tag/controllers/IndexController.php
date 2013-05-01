@@ -104,7 +104,7 @@ class Mage_Tag_IndexController extends Mage_Core_Controller_Front_Action
                         }
 
                         Mage::getSingleton('catalog/session')
-                                ->addSuccess(Mage::helper('tag')->__('Your tag(s) have been submitted'));
+                                ->addSuccess(Mage::helper('tag')->__('Your tag(s) have been accepted for moderation'));
 
                         return;
                     } catch (Exception $e) {

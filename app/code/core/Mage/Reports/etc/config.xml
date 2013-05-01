@@ -159,27 +159,27 @@
                         <children>
                             <sales translate="title" module="reports">
                                 <title>Sales Report</title>
-                                <action>adminhtml/report/sales</action>
+                                <action>adminhtml/report_sales/sales</action>
                             </sales>
                             <tax translate="title" module="reports">
                                 <title>Tax</title>
-                                <action>adminhtml/report/tax</action>
+                                <action>adminhtml/report_sales/tax</action>
                             </tax>
                             <shipping translate="title" module="reports">
                                 <title>Shipping</title>
-                                <action>adminhtml/report/shipping</action>
+                                <action>adminhtml/report_sales/shipping</action>
                             </shipping>
                             <invoiced translate="title" module="reports">
                                 <title>Total invoiced</title>
-                                <action>adminhtml/report/invoiced</action>
+                                <action>adminhtml/report_sales/invoiced</action>
                             </invoiced>
                             <refunded translate="title" module="reports">
                                 <title>Total refunded</title>
-                                <action>adminhtml/report/refunded</action>
+                                <action>adminhtml/report_sales/refunded</action>
                             </refunded>
                              <coupons translate="title" module="reports">
                                 <title>Coupons</title>
-                                <action>adminhtml/report/coupons</action>
+                                <action>adminhtml/report_sales/coupons</action>
                             </coupons>
                         </children>
                     </salesroot>
@@ -222,7 +222,7 @@
                         <children>
                             <accounts translate="title" module="reports">
                                 <title>New Accounts</title>
-                                <action>adminhtml/report/accounts</action>
+                                <action>adminhtml/report_customer/accounts</action>
                             </accounts>
                             <totals translate="title" module="reports">
                                 <title>Customers by orders total</title>

@@ -21,32 +21,32 @@
 <table cellspacing="0" class="data-table" id="checkout-review-table">
     <thead>
         <tr>
-            <th><?=$this->__('Product Name')?></th>
-            <th class="a-right"><?=$this->__('Price')?></th>
-            <th class="a-center"><?=$this->__('Qty')?></th>
-            <th class="a-right"><?=$this->__('Subtotal')?></th>
+            <th><?php echo $this->__('Product Name') ?></th>
+            <th class="a-right"><?php echo $this->__('Price') ?></th>
+            <th class="a-center"><?php echo $this->__('Qty') ?></th>
+            <th class="a-right"><?php echo $this->__('Subtotal') ?></th>
         </tr>
     </thead>
     <tfoot>
-<?$l=sizeof($this->getTotals()); $i=0; foreach($this->getTotals() as $total): $i++?>
+<?php $l=sizeof($this->getTotals()); $i=0; foreach($this->getTotals() as $total): $i++ ?>
         <tr>
-            <td style="<?=$total->getStyle()?>" class="a-right" colspan="3"><?=$total->getTitle()?></td>
-            <td style="<?=$total->getStyle()?>" class="a-right"><?=$this->helper('checkout')->formatPrice($total->getValue())?></td>
+            <td style="<?php echo $total->getStyle() ?>" class="a-right" colspan="3"><?php echo $total->getTitle() ?></td>
+            <td style="<?php echo $total->getStyle() ?>" class="a-right"><?php echo $this->helper('checkout')->formatPrice($total->getValue()) ?></td>
         </tr>
-<?endforeach?>
+<?php endforeach ?>
     </tfoot>
     <tbody>
-<?$l=sizeof($this->getItems()); $i=0; foreach($this->getItems() as $item): $i++?>
+<?php $l=sizeof($this->getItems()); $i=0; foreach($this->getItems() as $item): $i++ ?>
         <tr>
             <td>
-                <?=$item->getName()?>
-                <?=$this->helper('checkout')->getQuoteItemProductDescription($item)?>
+                <?php echo $item->getName() ?>
+                <?php echo $this->helper('checkout')->getQuoteItemProductDescription($item) ?>
             </td>
-            <td class="a-right"><?=$this->helper('checkout')->formatPrice($item->getCalculationPrice())?></td>
-            <td class="a-center"><?=$item->getQty()*1?></td>
-            <td class="a-right"><?=$this->helper('checkout')->formatPrice($item->getRowTotal())?></td>
+            <td class="a-right"><?php echo $this->helper('checkout')->formatPrice($item->getCalculationPrice()) ?></td>
+            <td class="a-center"><?php echo $item->getQty()*1 ?></td>
+            <td class="a-right"><?php echo $this->helper('checkout')->formatPrice($item->getRowTotal()) ?></td>
         </tr>
-<?endforeach?>
+<?php endforeach ?>
     </tbody>
 </table>
 <script type="text/javascript">decorateTable('checkout-review-table')</script>

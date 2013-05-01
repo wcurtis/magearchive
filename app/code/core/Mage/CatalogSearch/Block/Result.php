@@ -95,10 +95,6 @@ class Mage_CatalogSearch_Block_Result extends Mage_Core_Block_Template
 
             Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($this->_productCollection);
             Mage::getSingleton('catalog/product_visibility')->addVisibleInSearchFilterToCollection($this->_productCollection);
-            
-            Mage::dispatchEvent('catalog_block_product_list_collection', array(
-                'collection'=>$this->_productCollection,
-            ));
         }
 
         return $this->_productCollection;

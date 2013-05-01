@@ -49,12 +49,12 @@ abstract class Mage_Adminhtml_Block_Extensions_Custom_Edit_Tab_Abstract extends 
 
     public function getSelected($key, $value)
     {
-        return $this->getData($key)==$value ? 'selected' : '';
+        return $this->getData($key)==$value ? 'selected="selected"' : '';
     }
 
     public function getChecked($key)
     {
-        return $this->getData($key) ? 'checked' : '';
+        return $this->getData($key) ? 'checked="checked"' : '';
     }
 
     public function getAddRowButtonHtml($container, $template, $title='Add')

@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Report_Shopcart_abandoned_Grid extends Mage_Adminhtml_Block_Widget_Grid
+class Mage_Adminhtml_Block_Report_Shopcart_Abandoned_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
 
     public function __construct()
@@ -51,7 +51,6 @@ class Mage_Adminhtml_Block_Report_Shopcart_abandoned_Grid extends Mage_Adminhtml
             ->addCustomerName()
             ->addCustomerEmail()
             ->addAttributeToSelect('coupon_code')
-            ->addQuoteItems()
             ->addSubtotal($storeIds)
             ->groupByAttribute('entity_id')
             ->setOrder('updated_at');
@@ -78,11 +77,11 @@ class Mage_Adminhtml_Block_Report_Shopcart_abandoned_Grid extends Mage_Adminhtml
             'sortable'  =>false
         ));
 
-        $this->addColumn('items', array(
+        $this->addColumn('items_count', array(
             'header'    =>Mage::helper('reports')->__('Number of Items'),
             'width'     =>'80px',
             'align'     =>'right',
-            'index'     =>'items',
+            'index'     =>'items_count',
             'sortable'  =>false
         ));
 

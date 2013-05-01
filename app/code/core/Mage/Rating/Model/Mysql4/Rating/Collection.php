@@ -81,6 +81,9 @@ class Mage_Rating_Model_Mysql4_Rating_Collection extends Mage_Core_Model_Mysql4_
         if(!is_array($storeId)) {
            $storeId = array($storeId === null ? -1 : $storeId);
         }
+        if (empty($storeId)) {
+        	return $this;
+        }
         $condition = $this->getConnection()->quoteInto('store.store_id IN(?)', $storeId);
 
 

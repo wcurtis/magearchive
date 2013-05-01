@@ -131,7 +131,13 @@ class Mage_Core_Model_Mysql4_Translate_String extends Mage_Core_Model_Mysql4_Abs
             ->where('string=?', $string)
         ;
         if ($row = $write->fetchRow($select)) {
-            if ($row['translate']!=$translate) {
+            $original = $string;
+            if (strpos($original, '::')!==false) {
+                list($scope, $original) = explode('::', $original);
+            }
+            if ($original == $translate) {
+                $write->delete($table, 'key_id='.(int)$row['key_id']);
+            } elseif ($row['translate']!=$translate) {
                 $write->update($table, array('translate'=>$translate), 'key_id='.(int)$row['key_id']);
             }
         } else {

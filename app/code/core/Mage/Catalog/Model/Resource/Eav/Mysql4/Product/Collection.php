@@ -30,6 +30,9 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
     protected $_productWebsiteTable;
     protected $_productCategoryTable;
 
+    protected $_addUrlRewrite = false;
+    protected $_urlRewriteCategory = '';
+
     /**
      * Initialize resources
      */
@@ -47,7 +50,12 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
      */
     protected function _afterLoad()
     {
-        Mage::dispatchEvent('catalog_product_collection_load_after', array('collection'=>$this));
+    	if ($this->_addUrlRewrite) {
+    	   $this->_addUrlRewrite($this->_urlRewriteCategory);
+    	}
+        if (count($this)>0) {
+            Mage::dispatchEvent('catalog_product_collection_load_after', array('collection'=>$this));
+        }
         return $this;
     }
 
@@ -59,6 +67,10 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
      */
     public function addIdFilter($productId)
     {
+        if (empty($productId)) {
+            $this->_setIsLoaded(true);
+            return $this;
+        }
         if (is_array($productId)) {
             if (!empty($productId)) {
                 $condition = array('in'=>$productId);
@@ -162,30 +174,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
         $this->joinField($alias, 'catalog/category_product', 'position', 'product_id=entity_id', $categoryCondition);
         return $this;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function joinMinimalPrice()
     {
@@ -362,5 +350,74 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
             'set_distinct.attribute_set_id');
 
         return $this->getConnection()->fetchCol($select);
+    }
+
+    /**
+     * Joins url rewrite rules to collection
+     *
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection
+     */
+    public function joinUrlRewrite()
+    {
+        $this->joinTable('core/url_rewrite', 'entity_id=entity_id', array('request_path'), '{{table}}.type='.Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT, 'left');
+
+        return $this;
+    }
+
+
+    public function addUrlRewrite($categoryId = '')
+    {
+        $this->_addUrlRewrite = true;
+        $this->_urlRewriteCategory = $categoryId;
+        return $this;
+    }
+
+    protected function _addUrlRewrite()
+    {
+        $urlRewrites = null;
+        if ($this->_cacheConf) {
+            if (!($urlRewrites = Mage::app()->loadCache($this->_cacheConf['prefix'].'urlrewrite'))) {
+                $urlRewrites = null;
+            } else {
+                $urlRewrites = unserialize($urlRewrites);
+            }
+        }
+
+        if (!$urlRewrites) {
+            $productIds = array();
+            foreach($this->getItems() as $item) {
+                $productIds[] = $item->getEntityId();
+            }
+            if (!count($productIds)) {
+                return;
+            }
+
+            $select = $this->getConnection()->select()
+                ->from($this->getTable('core/url_rewrite'), array('product_id', 'request_path'))
+                ->where('store_id=?', Mage::app()->getStore()->getId())
+                ->where('is_system=?', 1)
+                ->where('category_id=?', $this->_urlRewriteCategory)
+                ->where('product_id IN(?)', $productIds);
+            $urlRewrites = array();
+
+            foreach ($this->getConnection()->fetchAll($select) as $row) {
+                $urlRewrites[$row['product_id']] = $row['request_path'];
+            }
+
+            if ($this->_cacheConf) {
+                Mage::app()->saveCache(
+                    serialize($urlRewrites),
+                    $this->_cacheConf['prefix'].'urlrewrite',
+                    array_merge($this->_cacheConf['tags'], array(Mage_Catalog_Model_Product_Url::CACHE_TAG)),
+                    $this->_cacheLifetime
+                );
+            }
+        }
+
+        foreach($this->getItems() as $item) {
+            if (isset($urlRewrites[$item->getEntityId()])) {
+                $item->setData('request_path', $urlRewrites[$item->getEntityId()]);
+            }
+        }
     }
 }

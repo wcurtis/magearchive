@@ -33,10 +33,20 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
 
     protected function _beforeSave()
     {
-        if( $this->getCouponCode() ) {
+        if($coupon = $this->getCouponCode()) {
             $this->getResource()->addUniqueField( array('field' => 'coupon_code', 'title' => Mage::helper('salesRule')->__('Coupon with the same code') ) );
+            Mage::app()->cleanCache('salesrule_coupon_'.$coupon);
         }
         return parent::_beforeSave();
+    }
+
+
+    protected function _beforeDelete()
+    {
+        if ($coupon = $this->getCouponCode()) {
+            Mage::app()->cleanCache('salesrule_coupon_'.$coupon);
+        }
+        parent::_beforeDelete();
     }
 
     public function getConditionsInstance()

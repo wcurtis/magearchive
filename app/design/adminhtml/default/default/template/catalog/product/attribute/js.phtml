@@ -19,6 +19,22 @@
  */
 ?>
 <script type="text/javascript">
+
+function toggleApplyVisibility(select) {
+    if ($(select).value == 1) {
+        $(select).next('select').removeClassName('no-display');
+        $(select).next('select').removeClassName('ignore-validate');
+
+    } else {
+        $(select).next('select').addClassName('no-display');
+        $(select).next('select').addClassName('ignore-validate');
+        var options = $(select).next('select').options;
+        for( var i=0; i < options.length; i++) {
+            options[i].selected = false;
+        }
+    }
+}
+
 function checkOptionsPanelVisibility(){
     if($('matage-options-panel')){
         var panel = $('matage-options-panel');
@@ -36,7 +52,7 @@ function bindAttributeInputType()
     checkOptionsPanelVisibility();
     switchDefaultValueField();
     checkIsConfigurableVisibility();
-    if($('frontend_input') && ($('frontend_input').value=='select')){
+    if($('frontend_input') && ($('frontend_input').value=='select' || $('frontend_input').value=='multiselect' || $('frontend_input').value=='price')){
         if($('is_filterable')){
             $('is_filterable').disabled = false;
         }
@@ -50,6 +66,18 @@ function bindAttributeInputType()
         if($('is_filterable')){
             $('is_filterable').selectedIndex=0;
             $('is_filterable').disabled = true;
+        }
+    }
+    switchIsFilterable();
+}
+
+function switchIsFilterable()
+{
+    if ($('is_filterable')) {
+        if ($('is_filterable').selectedIndex == 0) {
+            $('position').disabled = true;
+        } else {
+            $('position').disabled = false;
         }
     }
 }
@@ -106,12 +134,15 @@ function switchDefaultValueField()
     setRowVisibility('is_global', scopeVisibility);
 
     if(currentValue == 'media_image') {
-        $($('front_fieldset').parentNode).hide();
+        $('front_fieldset').previous().hide();
+        $('front_fieldset').hide();
+
         setRowVisibility('is_required', false);
         setRowVisibility('is_unique', false);
         setRowVisibility('frontend_class', false);
     } else {
-        $($('front_fieldset').parentNode).show();
+        $('front_fieldset').previous().show();
+        $('front_fieldset').show();
         setRowVisibility('is_required', true);
         setRowVisibility('is_unique', true);
         setRowVisibility('frontend_class', true);
@@ -132,6 +163,7 @@ function setRowVisibility(id, isVisible)
         if (isVisible) {
             tr.show();
         } else {
+            tr.blur();
             tr.hide();
         }
     }
@@ -150,6 +182,10 @@ function checkIsConfigurableVisibility()
 if($('frontend_input')){
     Event.observe($('frontend_input'), 'change', bindAttributeInputType);
     Event.observe($('is_global'), 'change', checkIsConfigurableVisibility);
+}
+
+if ($('is_filterable')) {
+    Event.observe($('is_filterable'), 'change', switchIsFilterable);
 }
 bindAttributeInputType();
 

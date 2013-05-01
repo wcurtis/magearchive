@@ -20,65 +20,65 @@
 ?>
 
     <div class="page-head">
-            <h3><?=$this->__('Order #%s (%s)', $order->getOrderId(), $order->getStatus())?></h3>
+            <h3><?php echo $this->__('Order #%s (%s)', $order->getOrderId(), $order->getStatus()) ?></h3>
         </div>
 
     <div class="col2-set">
             <div class="col-1">
-                <h4><?=$this->__('Billing Information')?></h4>
+                <h4><?php echo $this->__('Billing Information') ?></h4>
                 <address>
-                        <?=$order->getAddressByType('billing')->toString('{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: 
-                        {{telephone}}')?>
+                        <?php echo $order->getAddressByType('billing')->toString('{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: 
+                        {{telephone}}') ?>
                 </address>
             </div>
             <div class="col-2">
-                <h4><?=$this->__('Payment Method')?></h4>
-        <?=$this->getChildHtml('payment')?>
+                <h4><?php echo $this->__('Payment Method') ?></h4>
+        <?php echo $this->getChildHtml('payment') ?>
             </div>
         </div>
     <p></p>
         <div class="col2-set">
             <div class="col-1">
-                <h4><?=$this->__('Shipping Information')?></h4>
+                <h4><?php echo $this->__('Shipping Information') ?></h4>
                 <address>
-                        <?=$order->getAddressByType('shipping')->toString('{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: 
-                        {{telephone}}')?>
+                        <?php echo $order->getAddressByType('shipping')->toString('{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: 
+                        {{telephone}}') ?>
                 </address></div>
             <div class="col-2">
-                <h4><?=$this->__('Shipping Method')?></h4>
-                <?=$order->getShippingDescription()?>
+                <h4><?php echo $this->__('Shipping Method') ?></h4>
+                <?php echo $order->getShippingDescription() ?>
             </div>
         </div>
     <p></p>
-    <?$_items = $order->getEntitiesByType('item')?>
+    <?php $_items = $order->getEntitiesByType('item') ?>
     <table cellspacing="0" width="100%" class="data-table" id="my-orders-table">
         <thead>
             <tr>
-                <th><?=$this->__('Items Order')?></th>
-                <th class="a-center"><?=$this->__('Qty')?></th>
-                <th class="a-right"><?=$this->__('Price')?></th>
-                <th class="a-right"><?=$this->__('Ext. Price')?></th>
+                <th><?php echo $this->__('Items Order') ?></th>
+                <th class="a-center"><?php echo $this->__('Qty') ?></th>
+                <th class="a-right"><?php echo $this->__('Price') ?></th>
+                <th class="a-right"><?php echo $this->__('Ext. Price') ?></th>
             </tr>
         </thead>
         <tfoot>
             <tr>
                 <td class="a-right" colspan="4">
-                    <?=$this->__('Grand Total: %s', $order->getGrandTotal())?>
+                    <?php echo $this->__('Grand Total: %s', $order->getGrandTotal()) ?>
                 </td>
             </tr>
         </tfoot>
         <tbody>
-            <?foreach($_items as $_item):?>
+            <?php foreach($_items as $_item): ?>
             <tr>
-                <td><?=$_item->getName()?></td>
-                <td class="a-center"><?=$_item->getQty()?></td>
-                <td class="a-right"><?=$_item->getPrice()?></td>
-                <td class="a-right"><?=$_item->getRowTotal()?></td>
+                <td><?php echo $_item->getName() ?></td>
+                <td class="a-center"><?php echo $_item->getQty() ?></td>
+                <td class="a-right"><?php echo $_item->getPrice() ?></td>
+                <td class="a-right"><?php echo $_item->getRowTotal() ?></td>
             </tr>   
-            <?endforeach?> 
+            <?php endforeach ?> 
         </tbody>
     </table>
 <script type="text/javascript">decorateTable('my-orders-table')</script>
     <div class="button-set">
-            <a href="<?=$this->getUrl('customer/order/history')?>" class="left">&laquo; <?=$this->__('Back')?></a>
+            <a href="<?php echo $this->getUrl('customer/order/history') ?>" class="left">&laquo; <?php echo $this->__('Back') ?></a>
     </div>

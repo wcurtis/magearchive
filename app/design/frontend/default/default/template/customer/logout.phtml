@@ -19,9 +19,9 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__("You're now Logged Out")?></h3>
+    <h3><?php echo $this->__("You're now Logged Out") ?></h3>
 </div>
-<p><?=$this->__('You have been successfully logged out and will be redirected to our homepage in 5 seconds.')?></p>
+<p><?php echo $this->__('You have been successfully logged out and will be redirected to our homepage in 5 seconds.') ?></p>
 <script type="text/javascript">
-setTimeout(function(){ location.href = '<?=$this->getUrl()?>'},5000);
+setTimeout(function(){ location.href = '<?php echo $this->getUrl() ?>'},5000);
 </script>

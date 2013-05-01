@@ -19,34 +19,34 @@
  */
 ?>
 
-<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('main', $this->getQuote(), $this->getStoreId())):?>
+<?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('main', $this->getQuote(), $this->getStoreId())): ?>
 <div class="clear"></div>
 <div class="giftmessage-order-create">
     <div class="entry-edit">
         <div class="entry-edit-head">
-            <h4 class="fieldset-legend head-gift-message"><?=Mage::helper('sales')->__('Gift Message')?></h4>
+            <h4 class="fieldset-legend head-gift-message"><?php echo Mage::helper('sales')->__('Gift Message') ?></h4>
         </div>
         <fieldset>
         <table cellpadding="0" cellpadding="0" border="0" width="100%">
             <tr>
                 <td width="50%">
                 <div class="entire-order">
-                    <div class="section-head"><?=Mage::helper('sales')->__('Add a gift message for the <strong>entire order</strong>')?></div>
-                    <?=$this->getFormHtml($this->getQuote(), 'main')?>
+                    <div class="section-head"><?php echo Mage::helper('sales')->__('Add a gift message for the <strong>entire order</strong>') ?></div>
+                    <?php echo $this->getFormHtml($this->getQuote(), 'main') ?>
                 </div>
                 </td>
                 <td>
-                <?if ($_items=$this->getItems()):?>
+                <?php if ($_items=$this->getItems()): ?>
                     <div class="each-order-item">
-                        <div class="section-head"><?=Mage::helper('sales')->__('Add a gift message for <strong>each gift item</strong>')?></div>
+                        <div class="section-head"><?php echo Mage::helper('sales')->__('Add a gift message for <strong>each gift item</strong>') ?></div>
                         <div class="scroll">
-                            <?foreach ($_items as $_item):?>
-                                <div class="item-head"><?=$_item->getName()?></div>
-                                <?=$this->getFormHtml($_item, 'item');?>
-                            <?endforeach;?>
+                            <?php foreach ($_items as $_item): ?>
+                                <div class="item-head"><?php echo $_item->getName() ?></div>
+                                <?php echo $this->getFormHtml($_item, 'item'); ?>
+                            <?php endforeach; ?>
                         </div>
                     </div>
-                <?endif?>
+                <?php endif ?>
                 </td>
             </tr>
         </table>
@@ -75,4 +75,4 @@ if(!window.toogleRequired) {
 }
 order.giftmessageFieldsBind('order:giftmessage');
 </script>
-<?endif;?>
+<?php endif; ?>

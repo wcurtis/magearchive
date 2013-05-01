@@ -103,11 +103,10 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
 
     protected function _afterSave(Varien_Object $product)
     {
-        parent::_afterSave($product);
-
         $this->_saveWebsiteIds($product)
             ->_saveCategories($product);
 
+        parent::_afterSave($product);
     	return $this;
     }
 

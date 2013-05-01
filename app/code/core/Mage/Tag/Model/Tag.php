@@ -110,4 +110,9 @@ class Mage_Tag_Model_Tag extends Mage_Core_Model_Abstract
     {
         return Mage::getUrl('tag/customer/remove', array('tagId' => $this->getTagId()));
     }
+    
+    public function getPopularCollection()
+    {
+        return Mage::getResourceModel('tag/popular_collection');
+    }
 }

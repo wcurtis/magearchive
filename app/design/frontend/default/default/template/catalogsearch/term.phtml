@@ -19,18 +19,18 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('Popular Search Terms')?></h3>
+    <h3><?php echo $this->__('Popular Search Terms') ?></h3>
 </div>
-<?if( sizeof($this->getTerms()) > 0 ):?>
+<?php if( sizeof($this->getTerms()) > 0 ): ?>
 <div class="box base-mini mini-product-tags">
     <div class="content">
     <ul class="bare-list">
-        <?foreach ($this->getTerms() as $_term):?>
-            <li><a href="<?=$this->getSearchUrl($_term)?>" style="font-size:<?=$_term->getRatio()*70+75?>%;"><?=$_term->getName()?></a></li>
-        <?endforeach;?>
+        <?php foreach ($this->getTerms() as $_term): ?>
+            <li><a href="<?php echo $this->getSearchUrl($_term) ?>" style="font-size:<?php echo $_term->getRatio()*70+75 ?>%;"><?php echo $_term->getName() ?></a></li>
+        <?php endforeach; ?>
     </ul>
     </div>
 </div>
-<?else:?>
-    <div><?=$this->__('There is no search terms.');?></div>
-<?endif?>
+<?php else: ?>
+    <div><?php echo $this->__('There is no search terms.'); ?></div>
+<?php endif ?>

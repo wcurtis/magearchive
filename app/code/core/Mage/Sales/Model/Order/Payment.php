@@ -162,7 +162,7 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
             $invoice = $this->_invoice();
         }
 
-        $this->getMethodInstance()->capture($this, $invoice->getBaseGrandTotal());
+        $this->getMethodInstance()->capture($this, sprintf('%.2f', $invoice->getBaseGrandTotal()));
 
         $invoice->setTransactionId($this->getLastTransId());
         return $this;
@@ -243,8 +243,11 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     {
         if ($this->getMethodInstance()->canRefund() && $creditmemo->getDoTransaction()) {
             $this->setCreditmemo($creditmemo);
-            $this->getMethodInstance()->refund($this, $creditmemo->getBaseGrandTotal());
-            $creditmemo->setTransactionId($this->getLastTransId());
+            if ($creditmemo->getInvoice()) {
+                $this->setRefundTransactionId($creditmemo->getInvoice()->getTransactionId());
+                $this->getMethodInstance()->refund($this, $creditmemo->getBaseGrandTotal());
+                $creditmemo->setTransactionId($this->getLastTransId());
+            }
         }
 
         $this->setAmountRefunded($this->getAmountRefunded()+$creditmemo->getGrandTotal());

@@ -26,6 +26,9 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Created extends Mage_Adminhtml_Block_Widget
 {
+    protected $_configurableProduct;
+    protected $_product;
+
     public function __construct()
     {
         parent::__construct();
@@ -53,6 +56,90 @@ class Mage_Adminhtml_Block_Catalog_Product_Created extends Mage_Adminhtml_Block_
 
     public function getProductId()
     {
-        return (int) $this->getRequest()->getParam('product');
+        return (int) $this->getRequest()->getParam('id');
+    }
+
+    /**
+     * Indentifies edit mode of popup
+     *
+     * @return boolean
+     */
+    public function isEdit()
+    {
+        return (bool) $this->getRequest()->getParam('edit');
+    }
+
+    /**
+     * Retrive serialized json with configurable attributes values of simple
+     *
+     * @return string
+     */
+    public function getAttributesJson()
+    {
+        $result = array();
+        foreach ($this->getAttributes() as $attribute) {
+            $value = $this->getProduct()->getAttributeText($attribute->getAttributeCode());
+
+            $result[] = array(
+                'label'         => $value,
+                'value_index'   => $this->getProduct()->getData($attribute->getAttributeCode()),
+                'attribute_id'  => $attribute->getId()
+            );
+        }
+
+        return Zend_Json::encode($result);
+    }
+
+    public function getAttributes()
+    {
+        if ($this->getConfigurableProduct()->getId()) {
+            return $this->getConfigurableProduct()->getTypeInstance()->getUsedProductAttributes();
+        }
+
+        $attributes = array();
+
+        $attributesIds = $this->getRequest()->getParam('required');
+        if ($attributesIds) {
+            $attributesIds = explode(',', $attributesIds);
+            foreach ($attributesIds as $attributeId) {
+                $attribute = $this->getProduct()->getTypeInstance()->getAttributeById($attributeId);
+                if (!$attribute) {
+                    continue;
+                }
+                $attributes[] = $attribute;
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Retrive configurable product for created/edited simple
+     *
+     * @return Mage_Catalog_Model_Product
+     */
+    public function getConfigurableProduct()
+    {
+        if (is_null($this->_configurableProduct)) {
+            $this->_configurableProduct = Mage::getModel('catalog/product')
+                ->setStore(0)
+                ->load($this->getRequest()->getParam('product'));
+        }
+        return $this->_configurableProduct;
+    }
+
+    /**
+     * Retrive product
+     *
+     * @return Mage_Catalog_Model_Product
+     */
+    public function getProduct()
+    {
+        if (is_null($this->_product)) {
+            $this->_product = Mage::getModel('catalog/product')
+                ->setStore(0)
+                ->load($this->getRequest()->getParam('id'));
+        }
+        return $this->_product;
     }
 } // Class Mage_Adminhtml_Block_Catalog_Product_Created End

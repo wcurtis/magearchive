@@ -163,12 +163,11 @@ class Mage_Core_Model_Layout_Update
 
     public function loadCache()
     {
-        $result = Mage::app()->loadCache($this->getCacheId());
-        if (false===$result) {
+        if (!Mage::app()->useCache('layout')) {
             return false;
         }
-        if (!Mage::app()->useCache('layout')) {
-            Mage::app()->removeCache($this->getCacheId());
+        
+        if (!$result = Mage::app()->loadCache($this->getCacheId())) {
             return false;
         }
 

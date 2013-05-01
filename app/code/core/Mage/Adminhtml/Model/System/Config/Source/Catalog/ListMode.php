@@ -24,7 +24,7 @@ class Mage_Adminhtml_Model_System_Config_Source_Catalog_ListMode
     public function toOptionArray()
     {
         return array(
-            array('value'=>'', 'label'=>''),
+            //array('value'=>'', 'label'=>''),
             array('value'=>'grid', 'label'=>Mage::helper('adminhtml')->__('Grid only')),
             array('value'=>'list', 'label'=>Mage::helper('adminhtml')->__('List only')),
             array('value'=>'grid-list', 'label'=>Mage::helper('adminhtml')->__('Grid (default) / List')),

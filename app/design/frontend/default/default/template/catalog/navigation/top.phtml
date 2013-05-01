@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Top menu for store
  *
@@ -27,12 +27,12 @@
 ?>
 <div class="header-nav-container">
     <div class="header-nav">
-        <h4 class="no-display"><?=$this->__('Category Navigation:')?></h4>
+        <h4 class="no-display"><?php echo $this->__('Category Navigation:') ?></h4>
         <ul id="nav">
-        <?foreach ($this->getStoreCategories() as $_category):?>
-            <?=$this->drawItem($_category)?>
-        <?endforeach?>
+        <?php foreach ($this->getStoreCategories() as $_category): ?>
+            <?php echo $this->drawItem($_category) ?>
+        <?php endforeach ?>
         </ul>
     </div>
-    <?=$this->getChildHtml('topLeftLinks')?>
+    <?php echo $this->getChildHtml('topLeftLinks') ?>
 </div>

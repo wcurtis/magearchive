@@ -190,6 +190,16 @@ Object.extend(Validation, {
     hideAdvice : function(elm, advice){
         if(advice != null) advice.hide();
     },
+    ajaxError : function(elm, errorMsg) {
+        var name = 'validate-ajax';
+        var advice = Validation.getAdvice(name, elm);
+        if (advice == null) {
+            advice = this.createAdvice(name, elm, false, errorMsg);
+        }
+        this.showAdvice(elm, advice, 'validate-ajax');
+        elm.addClassName('validation-failed');
+        elm.addClassName('validate-ajax');
+    },
     test : function(name, elm, useTitle) {
         var v = Validation.get(name);
         var prop = '__advice'+name.camelize();
@@ -197,28 +207,8 @@ Object.extend(Validation, {
         if(Validation.isVisible(elm) && !v.test($F(elm), elm)) {
             //if(!elm[prop]) {
                 var advice = Validation.getAdvice(name, elm);
-                if(advice == null) {
-                    var errorMsg = useTitle ? ((elm && elm.title) ? elm.title : v.error) : v.error;
-                    try {
-                        if(Translator){
-                            errorMsg = Translator.translate(errorMsg);
-                        }
-                    }
-                    catch(e){}
-
-                    advice = '<div class="validation-advice" id="advice-' + name + '-' + Validation.getElmID(elm) +'" style="display:none">' + errorMsg + '</div>'
-
-                    this.insertAdvice(elm, advice);
-                    advice = Validation.getAdvice(name, elm);
-                    if($(elm).hasClassName('absolute-advice')) {
-                        var dimensions = $(elm).getDimensions();
-                        var originalPosition = Position.cumulativeOffset(elm);
-
-                        advice._adviceTop = (originalPosition[1] + dimensions.height) + 'px';
-                        advice._adviceLeft = (originalPosition[0])  + 'px';
-                        advice._adviceWidth = (dimensions.width)  + 'px';
-                        advice._adviceAbsolutize = true;
-                    }
+                if (advice == null) {
+                    advice = this.createAdvice(name, elm, useTitle);
                 }
                 this.showAdvice(elm, advice, name);
             //}
@@ -247,6 +237,34 @@ Object.extend(Validation, {
     },
     getAdvice : function(name, elm) {
         return $('advice-' + name + '-' + Validation.getElmID(elm)) || $('advice-' + Validation.getElmID(elm));
+    },
+    createAdvice : function(name, elm, useTitle, customError) {
+        var v = Validation.get(name);
+        var errorMsg = useTitle ? ((elm && elm.title) ? elm.title : v.error) : v.error;
+        if (customError) {
+            errorMsg = customError;
+        }
+        try {
+            if (Translator){
+                errorMsg = Translator.translate(errorMsg);
+            }
+        }
+        catch(e){}
+
+        advice = '<div class="validation-advice" id="advice-' + name + '-' + Validation.getElmID(elm) +'" style="display:none">' + errorMsg + '</div>'
+
+        this.insertAdvice(elm, advice);
+        advice = Validation.getAdvice(name, elm);
+        if($(elm).hasClassName('absolute-advice')) {
+            var dimensions = $(elm).getDimensions();
+            var originalPosition = Position.cumulativeOffset(elm);
+
+            advice._adviceTop = (originalPosition[1] + dimensions.height) + 'px';
+            advice._adviceLeft = (originalPosition[0])  + 'px';
+            advice._adviceWidth = (dimensions.width)  + 'px';
+            advice._adviceAbsolutize = true;
+        }
+        return advice;
     },
     getElmID : function(elm) {
         return elm.id ? elm.id : elm.name;
@@ -497,7 +515,8 @@ Validation.addAllThese([
                 }
 
                 return false;
-            }]
+            }],
+     ['validate-ajax', '', function(v, elm) { return true; }]
 ]);
 
 

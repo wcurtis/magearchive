@@ -51,7 +51,7 @@ class Mage_Admin_Model_Permissions_User extends Mage_Core_Model_Abstract
         if ( !is_null($this->getIsActive()) ) {
             $data['is_active']  = intval($this->getIsActive());
         }
-        
+
         $this->setData($data);
         $this->_getResource()->save($this);
         return $this;
@@ -91,7 +91,7 @@ class Mage_Admin_Model_Permissions_User extends Mage_Core_Model_Abstract
         $this->_getResource()->add($this);
         return $this;
     }
-    
+
     public function userExists()
     {
         $result = $this->_getResource()->userExists($this);
@@ -101,11 +101,11 @@ class Mage_Admin_Model_Permissions_User extends Mage_Core_Model_Abstract
     public function getCollection() {
         return Mage::getResourceModel('admin/permissions_user_collection');
     }
-    
+
     # Protected methods
     protected function _getEncodedPassword($pwd)
     {
-        return md5($pwd);
+        return Mage::helper('core')->getHash($pwd, 2);
     }
 
 }

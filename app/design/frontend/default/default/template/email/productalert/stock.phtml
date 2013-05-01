@@ -18,25 +18,25 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if ($_products = $this->getProducts()):?>
-<p><?=$this->__('You are receiving this notification because you subscribed to receive alerts when the following products are back in stock:')?></p>
+<?php if ($_products = $this->getProducts()): ?>
+<p><?php echo $this->__('You are receiving this notification because you subscribed to receive alerts when the following products are back in stock:') ?></p>
 <p><table>
-<?foreach ($_products as $_product):?>
+<?php foreach ($_products as $_product): ?>
     <tr>
-        <td width="80"><a href="<?=$_product->getProductUrl()?>"><img src="<?=$_product->getThumbnailUrl()?>" border="0" align="left" height="75" width="75"></a></td>
+        <td width="80"><a href="<?php echo $_product->getProductUrl() ?>"><img src="<?php echo $_product->getThumbnailUrl() ?>" border="0" align="left" height="75" width="75"></a></td>
         <td>
-            <div><a href="<?=$_product->getProductUrl()?>"><b><?=$_product->getName()?></b></a></div>
-            <?if ($shortDescription = $_product->getShortDescription()):?>
-            <p><small><?=$shortDescription?></small></p>
-            <?endif;?>
-            <p><b><?=$this->__('Price:')?></b> <?=Mage::helper('core')->currency($_product->getPrice())?>
-            <?if ($_product->getPrice() != $_product->getFinalPrice()):?>
-            <br /><b><?=$this->__('Special price:')?></b> <font color="red"><?=Mage::helper('core')->currency($_product->getFinalPrice())?></font>
-            <?endif;?></p>
-            <p><small><a href="<?=$this->getProductUnsubscribeUrl($_product->getId())?>"><?=$this->__('Click here not to receive alerts for this product')?></a></small></p>
+            <div><a href="<?php echo $_product->getProductUrl() ?>"><b><?php echo $_product->getName() ?></b></a></div>
+            <?php if ($shortDescription = $_product->getShortDescription()): ?>
+            <p><small><?php echo $shortDescription ?></small></p>
+            <?php endif; ?>
+            <p><b><?php echo $this->__('Price:') ?></b> <?php echo Mage::helper('core')->currency($_product->getPrice()) ?>
+            <?php if ($_product->getPrice() != $_product->getFinalPrice()): ?>
+            <br /><b><?php echo $this->__('Special price:') ?></b> <font color="red"><?php echo Mage::helper('core')->currency($_product->getFinalPrice()) ?></font>
+            <?php endif; ?></p>
+            <p><small><a href="<?php echo $this->getProductUnsubscribeUrl($_product->getId()) ?>"><?php echo $this->__('Click here not to receive alerts for this product') ?></a></small></p>
         </td>
     </tr>
-<?endforeach;?>
+<?php endforeach; ?>
 </table>
-<p><a href="<?=$this->getUnsubscribeUrl()?>"><?=$this->__('Unsubscribe from all stock alerts')?></a></p>
-<?endif;?>
+<p><a href="<?php echo $this->getUnsubscribeUrl() ?>"><?php echo $this->__('Unsubscribe from all stock alerts') ?></a></p>
+<?php endif; ?>

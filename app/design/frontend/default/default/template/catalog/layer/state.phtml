@@ -18,23 +18,23 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Category layered navigation state
  * 
  * @see Mage_Catalog_Block_Layer_State
  */
 ?>
-<?$_filters = $this->getActiveFilters()?>
-<?if(!empty($_filters)):?>
-    <h4><?=$this->__('Currently Shopping by')?></h4>
+<?php $_filters = $this->getActiveFilters() ?>
+<?php if(!empty($_filters)): ?>
+    <h4><?php echo $this->__('Currently Shopping by') ?></h4>
     <ol class="narrowed-category">
-    <?foreach ($_filters as $_filter):?>
+    <?php foreach ($_filters as $_filter): ?>
         <li>
-            <a href="<?=$_filter->getRemoveUrl()?>" class="widget-btn"/><img src="<?=$this->getSkinUrl('images/list_remove_btn.gif')?>" alt="<?=$this->__('Remove This Item')?>"/></a>
-            <span class="label"><?=$_filter->getName()?>: </span><?=$_filter->getLabel()?>
+            <a href="<?php echo $_filter->getRemoveUrl() ?>" class="widget-btn"><img src="<?php echo $this->getSkinUrl('images/list_remove_btn.gif') ?>" alt="<?php echo $this->__('Remove This Item') ?>"/></a>
+            <span class="label"><?php echo $_filter->getName() ?>: </span><?php echo $_filter->getLabel() ?>
         </li>
-    <?endforeach;?>
+    <?php endforeach; ?>
     </ol>
-        <div class="actions"><a href="<?=$this->getClearUrl()?>"><?=$this->__('Clear All Items')?></a></div>
-<?endif;?>
+        <div class="actions"><a href="<?php echo $this->getClearUrl() ?>"><?php echo $this->__('Clear All Items') ?></a></div>
+<?php endif; ?>

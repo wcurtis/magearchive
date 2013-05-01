@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Ship to multiple address template
  *
@@ -26,11 +26,12 @@
  */
 ?>
 <div class="page-head button-level">
-    <h3><?=$this->__('Ship to Multiple Addresses')?></h3>
-    <button class="form-button-alt" type="button" onclick="setLocation('<?=$this->getNewAddressUrl()?>')"><span><?=$this->__('Enter a New Address')?></span></button>
+    <h3><?php echo $this->__('Ship to Multiple Addresses') ?></h3>
+    <button class="form-button-alt" type="button" onclick="setLocation('<?php echo $this->getNewAddressUrl() ?>')"><span><?php echo $this->__('Enter a New Address') ?></span></button>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
-<form action="<?=$this->getPostActionUrl()?>" method="post">
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<form action="<?php echo $this->getPostActionUrl() ?>" method="post">
+<fieldset>
     <input type="hidden" name="continue" value="0" id="can_continue_flag"/>
     <table cellspacing="0" id="multiship-addresses-table" class="data-table box-table">
         <col width="300"/>
@@ -39,35 +40,37 @@
         <col width="30"/>
         <thead>
             <tr>
-                <th><?=$this->__('Product')?></th>
-                <th class="a-center"><?=$this->__('Qty')?></th>
-                <th><?=$this->__('Send to')?></th>
-                <th><?=$this->__('Remove')?></th>
+                <th><?php echo $this->__('Product') ?></th>
+                <th class="a-center"><?php echo $this->__('Qty') ?></th>
+                <th><?php echo $this->__('Send to') ?></th>
+                <th><?php echo $this->__('Remove') ?></th>
             </tr>
         </thead>
         <tfoot>
             <tr>
-                <td colspan="100" class="a-right"><button class="form-button-alt" type="submit" onclick="$('can_continue_flag').value=0"><span><?=$this->__('Update Qty &amp; Addresses')?></span></button></td>
+                <td colspan="100" class="a-right"><button class="form-button-alt" type="submit" onclick="$('can_continue_flag').value=0"><span><?php echo $this->__('Update Qty &amp; Addresses') ?></span></button></td>
             </tr>
+        </tfoot>
         <tbody>
-        <?foreach ($this->getItems() as $_index => $_item):?>
+        <?php foreach ($this->getItems() as $_index => $_item): ?>
             <tr>
                 <td class="attributes-col">
-                    <a href="<?=$this->helper('checkout')->getQuoteItemProductUrl($_item)?>">
-                        <strong><?=$this->helper('checkout')->getQuoteItemProductName($_item)?></strong>
+                    <a href="<?php echo $this->helper('checkout')->getQuoteItemProductUrl($_item) ?>">
+                        <strong><?php echo $this->helper('checkout')->getQuoteItemProductName($_item) ?></strong>
                     </a>
-                    <?=$this->helper('checkout')->getQuoteItemProductDescription($_item)?>
+                    <?php echo $this->helper('checkout')->getQuoteItemProductDescription($_item) ?>
                 </td>
-                <td class="a-center"><input name="ship[<?=$_index?>][<?=$_item->getQuoteItemId()?>][qty]" value="<?=$_item->getQty()?>" size="2" class="input-text qty"/></td>
-                <td><?=$this->getAddressesHtmlSelect($_item, $_index)?></td>
-                <td class="a-center"><a href="<?=$this->getItemDeleteUrl($_item)?>"><img src="<?=$this->getSkinUrl('images/btn_trash.gif')?>" width="16" height="16" alt="<?=$this->__('Remove Item')?>"/></td>
+                <td class="a-center"><input name="ship[<?php echo $_index ?>][<?php echo $_item->getQuoteItemId() ?>][qty]" value="<?php echo $_item->getQty() ?>" size="2" class="input-text qty"/></td>
+                <td><?php echo $this->getAddressesHtmlSelect($_item, $_index) ?></td>
+                <td class="a-center"><a href="<?php echo $this->getItemDeleteUrl($_item) ?>"><img src="<?php echo $this->getSkinUrl('images/btn_trash.gif') ?>" width="16" height="16" alt="<?php echo $this->__('Remove Item') ?>"/></a></td>
             </tr>
-        <?endforeach;?>
+        <?php endforeach; ?>
         </tbody>
     </table>
     <script type="text/javascript">decorateTable('multiship-addresses-table')</script>
 <div class="button-set">
-    <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Shopping Cart')?></a>
-    <button  class="form-button" type="submit" onclick="$('can_continue_flag').value=1"><span><?=$this->__('Continue to Shipping Information')?></span></button>
+    <a href="<?php echo $this->getBackUrl() ?>" class="left"><?php echo $this->__('&laquo; Back to Shopping Cart') ?></a>
+    <button  class="form-button" type="submit" onclick="$('can_continue_flag').value=1"><span><?php echo $this->__('Continue to Shipping Information') ?></span></button>
 </div>
+</fieldset>
 </form>

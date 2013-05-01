@@ -47,6 +47,9 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form extends Mage_Adminhtml_Block_
         foreach ($childNames as  $name) {
             $this->setChild($name, $this->getLayout()->createBlock('adminhtml/sales_order_create_' . $name));
         }
+        $this->getLayout()->getBlock('head')
+            ->addJs('mage/adminhtml/sales.js')
+            ->addJs('mage/adminhtml/giftmessage.js');
         return parent::_prepareLayout();
     }
 

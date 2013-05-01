@@ -21,14 +21,14 @@
 <div class="content-header">
 <table cellspacing="0">
     <tr>
-        <td style="width:50%;"><h3 class="icon-head head-products"><?=Mage::helper('catalog')->__('Products')?></h3></td>
+        <td style="width:50%;"><h3 class="icon-head head-products"><?php echo Mage::helper('catalog')->__('Products') ?></h3></td>
         <td class="a-right">
-            <?=$this->getAddNewButtonHtml()?>
+            <?php echo $this->getAddNewButtonHtml() ?>
         </td>
     </tr>
 </table>
 </div>
-<?=$this->getStoreSwitcherHtml()?>
+<?php echo $this->getStoreSwitcherHtml() ?>
 <div>
-    <?=$this->getGridHtml()?>
+    <?php echo $this->getGridHtml() ?>
 </div>

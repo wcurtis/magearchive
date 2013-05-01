@@ -43,6 +43,7 @@ abstract class Mage_Catalog_Block_Product_View_Abstract extends Mage_Core_Block_
         $res = array();
         if (is_array($prices)) {
             foreach ($prices as $price) {
+                $price['price_qty'] = $price['price_qty']*1;
                 if ($product->getPrice() != $product->getFinalPrice()) {
                     if ($price['price']<$product->getFinalPrice()) {
                         $price['savePercent'] = ceil(100 - (( 100/$product->getFinalPrice() ) * $price['price'] ));

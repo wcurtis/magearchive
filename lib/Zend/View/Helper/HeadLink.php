@@ -13,7 +13,7 @@
  * so we can mail you a copy immediately.
  *
  * @package    Zend_View
- * @subpackage Helpers
+ * @subpackage Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -28,7 +28,7 @@ require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
  * @see        http://www.w3.org/TR/xhtml1/dtds.html
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
- * @subpackage Helpers
+ * @subpackage Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -296,7 +296,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
     public function toString($indent = null)
     {
         $indent = (null !== $indent)
-                ? $this->_getWhitespace($indent)
+                ? $this->getWhitespace($indent)
                 : $this->getIndent();
 
         $items = array();
@@ -343,7 +343,9 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
         }
         if (0 < count($args)) {
             $conditionalStylesheet = array_shift($args);
-            $conditionalStylesheet = (string) $conditionalStylesheet;
+            if (false !== $conditionalStylesheet) {
+                $conditionalStylesheet = (string) $conditionalStylesheet;
+            }
         }
 
         $attributes = compact('rel', 'type', 'href', 'media', 'conditionalStylesheet');

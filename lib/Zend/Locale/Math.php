@@ -16,7 +16,7 @@
  * @package    Zend_Locale
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Math.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Math.php 8584 2008-03-06 18:36:46Z thomas $
  */
 
 
@@ -65,9 +65,9 @@ class Zend_Locale_Math
     public static function round($op1, $precision = 0)
     {
         if (self::$_bcmathDisabled) {
-            return (string) round($op1, $precision);
+            return self::normalize(round($op1, $precision));
         }
-        $op1 = trim($op1);
+        $op1 = trim(self::normalize($op1));
         $length = strlen($op1);
         if (($decPos = strpos($op1, '.')) === false) {
             $op1 .= '.0';
@@ -119,16 +119,15 @@ class Zend_Locale_Math
      */
     public static function normalize($value)
     {
-        $value = (string) $value;
         $convert = localeconv();
-        $value = str_replace($convert['thousands_sep'], "",$value);
-        $value = str_replace($convert['positive_sign'], "",$value);
+        $value = str_replace($convert['thousands_sep'], "",(string) $value);
+        $value = str_replace($convert['positive_sign'], "", $value);
         $value = str_replace($convert['decimal_point'], ".",$value);
         if (!empty($convert['negative_sign']) and (strpos($value, $convert['negative_sign']))) {
-            $value = str_replace($convert['negative_sign'], "",$value);
-            $value = "-".$value;
+            $value = str_replace($convert['negative_sign'], "", $value);
+            $value = "-" . $value;
         }
-        return (string) $value;
+        return $value;
     }
 
     /**
@@ -140,13 +139,12 @@ class Zend_Locale_Math
      */
     public static function localize($value)
     {
-        $value = (string) $value;
         $convert = localeconv();
-        $value = str_replace(".", $convert['decimal_point'], $value);
+        $value = str_replace(".", $convert['decimal_point'], (string) $value);
         if (!empty($convert['negative_sign']) and (strpos($value, "-"))) {
             $value = str_replace("-", $convert['negative_sign'], $value);
         }
-        return (string) $value;
+        return $value;
     }
 }
 

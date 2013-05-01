@@ -205,5 +205,9 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_ProductAlert>
+        <Mage_CatalogIndex>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_CatalogIndex>
     </modules>
 </config>

@@ -83,7 +83,7 @@ class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
             }
 
             $url = $simplexml->addChild('url');
-            $url->addChild('loc', $category->getCategoryUrl());
+            $url->addChild('loc', $category->getUrl());
 
             $url->addChild('lastmod', $date);
             $url->addChild('changefreq', $changefreq);

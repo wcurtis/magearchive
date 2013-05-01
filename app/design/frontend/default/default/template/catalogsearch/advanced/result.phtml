@@ -19,43 +19,43 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->__('Catalog Advanced Search')?></h3>
+    <h3><?php echo $this->__('Catalog Advanced Search') ?></h3>
 </div>
 
-<?if($this->getResultCount()):?>
+<?php if($this->getResultCount()): ?>
     <div class="advanced-search-found-amount">
-        <?=$this->helper('catalogsearch')
-            ->__('<b>%d item(s)</b> were found using the following search criteria', $this->getResultCount());?>
+        <?php echo $this->helper('catalogsearch')
+            ->__('<b>%d item(s)</b> were found using the following search criteria', $this->getResultCount()); ?>
     </div>
-<?else:?>
-    <div class="advanced-search-nothing-found">No items were found using the following search criteria. <a href="<?=$this->getFormUrl();?>"><?=$this->helper('catalogsearch')->__('Modify your search');?></a></div>
-<?endif;?>
+<?php else: ?>
+    <div class="advanced-search-nothing-found">No items were found using the following search criteria. <a href="<?php echo $this->getFormUrl(); ?>"><?php echo $this->helper('catalogsearch')->__('Modify your search'); ?></a></div>
+<?php endif; ?>
 
-<?$searchCriterias=$this->getSearchCriterias();?>
+<?php $searchCriterias=$this->getSearchCriterias(); ?>
 <div class="advanced-search-summary-box">
-    <?foreach (array('left', 'right') as $side):?>
-        <?if(@$searchCriterias[$side]):?>
+    <?php foreach (array('left', 'right') as $side): ?>
+        <?php if(@$searchCriterias[$side]): ?>
             <ul>
-                <?foreach($searchCriterias[$side] as $criteria):?>
-                    <li><span><?=$this->htmlEscape($criteria['name']);?>:</span> <?=$this->htmlEscape($criteria['value']);?></li>
-                <?endforeach;?>
+                <?php foreach($searchCriterias[$side] as $criteria): ?>
+                    <li><span><?php echo $this->htmlEscape($criteria['name']); ?>:</span> <?php echo $this->htmlEscape($criteria['value']); ?></li>
+                <?php endforeach; ?>
             </ul>
-        <?endif;?>
-    <?endforeach;?>
+        <?php endif; ?>
+    <?php endforeach; ?>
 
-    <?if($this->getResultCount()):?>
+    <?php if($this->getResultCount()): ?>
         <div class="advanced-search-summary-tip">
             Don't see what you're looking for?
-            <a href="<?=$this->getFormUrl();?>"><?=$this->helper('catalogsearch')->__('Modify your search');?></a>
+            <a href="<?php echo $this->getFormUrl(); ?>"><?php echo $this->helper('catalogsearch')->__('Modify your search'); ?></a>
         </div>
-    <?endif;?>
+    <?php endif; ?>
     <div style="clear:both;"></div>
 </div>
 
 <br />
 
 
-<?if($this->getResultCount()):?>
-    <?=$this->getProductListHtml()?>
-<?endif;?>
-<?$this->getSearchCriterias();?>
+<?php if($this->getResultCount()): ?>
+    <?php echo $this->getProductListHtml() ?>
+<?php endif; ?>
+<?php $this->getSearchCriterias(); ?>

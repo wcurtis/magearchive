@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `{$this->getTable('dataflow_session')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('dataflow_session')}`;
 CREATE TABLE `{$this->getTable('dataflow_session')}` (
   `session_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `{$this->getTable('dataflow_session')}` (
   PRIMARY KEY  (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$this->getTable('dataflow_import_data')}`;
+-- DROP TABLE IF EXISTS `{$this->getTable('dataflow_import_data')}`;
 CREATE TABLE `{$this->getTable('dataflow_import_data')}` (
   `import_id` int(11) NOT NULL auto_increment,
   `session_id` int(11) default NULL,

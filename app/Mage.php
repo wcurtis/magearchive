@@ -72,9 +72,11 @@ final class Mage {
 
     static private $_useCache = array();
 
+    static private $_objects;
+
     public static function getVersion()
     {
-        return '0.8.17240';
+        return '0.9.17740';
     }
 
     /**
@@ -145,6 +147,24 @@ final class Mage {
     public static function getRoot()
     {
         return Mage::registry('appRoot');
+    }
+
+    /**
+     * Varien Objects Cache
+     *
+     * @param string $key optional, if specified will load this key
+     * @return Varien_Object_Cache
+     */
+    public static function objects($key=null)
+    {
+        if (!self::$_objects) {
+            self::$_objects = new Varien_Object_Cache;
+        }
+        if (is_null($key)) {
+            return self::$_objects;
+        } else {
+            return self::$_objects->load($key);
+        }
     }
 
     /**
@@ -250,7 +270,8 @@ final class Mage {
     public static function dispatchEvent($name, array $data=array())
     {
         Varien_Profiler::start('DISPATCH EVENT:'.$name);
-        $result = Mage::registry('events')->dispatch($name, $data);
+        $result = Mage::app()->dispatchEvent($name, $data);
+        #$result = Mage::registry('events')->dispatch($name, $data);
         Varien_Profiler::stop('DISPATCH EVENT:'.$name);
         return $result;
     }

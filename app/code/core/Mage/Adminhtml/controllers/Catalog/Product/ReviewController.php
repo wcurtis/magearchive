@@ -63,7 +63,7 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
         $this->loadLayout();
         $this->_setActiveMenu('catalog/review');
 
-        $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
+        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
         $this->_addContent($this->getLayout()->createBlock('adminhtml/review_add'));
         $this->_addContent($this->getLayout()->createBlock('adminhtml/review_product_grid'));
@@ -269,6 +269,7 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
                     ->setEntityPkValue($productId)
                     ->setStoreId($product->getStoreId())
                     ->setStatusId($data['status_id'])
+                    ->setCustomerId(0)//0 is for administrator only
                     ->save();
 
                 $arrRatingId = $this->getRequest()->getParam('ratings', array());

@@ -268,7 +268,7 @@ class Mage_productAlert_Model_Observer
         return $this;
     }
 
-    public function process(Varien_Event_Observer $observer)
+    public function process($observer)
     {
         $email = Mage::getModel('productalert/email');
         /* @var $email Mage_ProductAlert_Model_Email */

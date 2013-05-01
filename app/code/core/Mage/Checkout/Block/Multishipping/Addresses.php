@@ -52,6 +52,7 @@ class Mage_Checkout_Block_Multishipping_Addresses extends Mage_Checkout_Block_Mu
     {
         $select = $this->getLayout()->createBlock('core/html_select')
             ->setName('ship['.$index.']['.$item->getQuoteItemId().'][address]')
+            ->setId('ship_'.$index.'_'.$item->getQuoteItemId().'_address')
             ->setValue($item->getCustomerAddressId())
             ->setOptions($this->getAddressOptions());
 

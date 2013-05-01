@@ -69,8 +69,8 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Main extends Mage_Adminhtml_Bl
             'name'      => 'is_active',
             'required' => true,
             'options'    => array(
-                '1' => Mage::helper('catalogrule')->__('Enabled'),
-                '0' => Mage::helper('catalogrule')->__('Disabled'),
+                '1' => Mage::helper('catalogrule')->__('Active'),
+                '0' => Mage::helper('catalogrule')->__('Inactive'),
             ),
         ));
 

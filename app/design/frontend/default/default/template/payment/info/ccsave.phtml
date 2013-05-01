@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<strong><?=$this->__('Name on Card')?>:</strong> <span class="nowrap"><?=$this->getPayment()->getCcOwner()?></span><br/>
-<strong><?=$this->__('Card Type')?>:</strong> <span class="nowrap"><?=$this->getCcTypeName($this->getPayment()->getCcType())?></span><br/>
-<strong><?=$this->__('Credit Card Number')?>:</strong> <span class="nowrap"><?=($this->getPrivacyDependentCcNumber() ? $this->getPrivacyDependentCcNumber($this->getPayment()) : $this->getPayment()->getCcNumber())?></span><br/>
-<strong><?=$this->__('Expiration Date')?>:</strong> <span class="nowrap"><?=$this->getPayment()->getCcExpMonth()?>/<?=$this->getPayment()->getCcExpYear()?></span>
+<strong><?php echo $this->__('Name on Card') ?>:</strong> <span class="nowrap"><?php echo $this->getPayment()->getCcOwner() ?></span><br/>
+<strong><?php echo $this->__('Card Type') ?>:</strong> <span class="nowrap"><?php echo $this->getCcTypeName($this->getPayment()->getCcType()) ?></span><br/>
+<strong><?php echo $this->__('Credit Card Number') ?>:</strong> <span class="nowrap"><?php echo ($this->getPrivacyDependentCcNumber() ? $this->getPrivacyDependentCcNumber($this->getPayment()) : $this->getPayment()->getCcNumber()) ?></span><br/>
+<strong><?php echo $this->__('Expiration Date') ?>:</strong> <span class="nowrap"><?php echo $this->getPayment()->getCcExpMonth() ?>/<?php echo $this->getPayment()->getCcExpYear() ?></span>

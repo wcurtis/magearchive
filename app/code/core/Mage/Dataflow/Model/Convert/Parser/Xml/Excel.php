@@ -31,7 +31,7 @@ class Mage_Dataflow_Model_Convert_Parser_Xml_Excel extends Mage_Dataflow_Model_C
     public function parse()
     {
         $dom = new DOMDocument();
-        //$dom->loadXML($this->getData());        
+//        $dom->loadXML($this->getData());        
         if (Mage::app()->getRequest()->getParam('files')) {
             $path = Mage::app()->getConfig()->getTempVarDir().'/import/';
             $file = $path.Mage::app()->getRequest()->getParam('files');
@@ -39,8 +39,9 @@ class Mage_Dataflow_Model_Convert_Parser_Xml_Excel extends Mage_Dataflow_Model_C
                 $dom->load($file);
             }
         } else {
+
             $this->validateDataString();
-            $dom = $this->getData();
+            $dom->loadXML($this->getData());  
         }
         
         $worksheets = $dom->getElementsByTagName('Worksheet');

@@ -105,19 +105,26 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
         } else {
             $destCountry = self::USA_COUNTRY_ID;
         }
+
         $r->setDestCountryId($destCountry);
 
-        $countries = Mage::getResourceModel('directory/country_collection')
-                        ->addCountryIdFilter($destCountry)
-                        ->load()
-                        ->getItems();
-        $country = array_shift($countries);
-        $r->setDestCountryName($country->getName());
+        /*
+        for GB, we cannot use United Kingdom
+        */
+        if ($destCountry=='GB') {
+           $countryName = 'Great Britain and Northern Ireland';
+        } else {
+             $countries = Mage::getResourceModel('directory/country_collection')
+                            ->addCountryIdFilter($destCountry)
+                            ->load()
+                            ->getItems();
+            $country = array_shift($countries);
+            $countryName = $country->getName();
+        }
+        $r->setDestCountryName($countryName);
 
         if ($request->getDestPostcode()) {
             $r->setDestPostal($request->getDestPostcode());
-        } else {
-
         }
 
         $r->setWeightPounds(floor($request->getPackageWeight()));
@@ -157,7 +164,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
     {
         $r = $this->_rawRequest;
 
-        if ($r->getDestCountryId() == self::USA_COUNTRY_ID) {
+        if ($r->getDestCountryId() == self::USA_COUNTRY_ID || $r->getDestCountryId() == self::PUERTORICO_COUNTRY_ID) {
             $xml = new SimpleXMLElement('<RateV3Request/>');
 
             $xml->addAttribute('USERID', $r->getUserId());

@@ -112,7 +112,7 @@ class Mage_GoogleCheckout_Block_Adminhtml_Shipping_Merchant
 
     protected function _getSelected($key, $value)
     {
-        return $this->getElement()->getData('value/'.$key)==$value ? 'selected' : '';
+        return $this->getElement()->getData('value/'.$key)==$value ? 'selected="selected"' : '';
     }
 
     protected function _getAddRowButtonHtml($container, $template, $title='Add')

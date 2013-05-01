@@ -33,20 +33,23 @@ class Mage_Catalog_Model_Convert_Adapter_Product
 
     );
 
-    protected $_product = null;
-    protected $_stockItem = null;
 
     public function __construct()
     {
         $this->setVar('entity_type', 'catalog/product');
-        $this->setProduct(Mage::getModel('catalog/product'));
-        $this->setStockItem(Mage::getModel('cataloginventory/stock_item'));
+        if (!Mage::registry('Object_Cache_Product')) {
+            $this->setProduct(Mage::getModel('catalog/product'));
+        }
+
+        if (!Mage::registry('Object_Cache_StockItem')) {
+            $this->setStockItem(Mage::getModel('cataloginventory/stock_item'));
+        }
     }
 
-    protected function _getCollectioForLoad($entityType)
+    protected function _getCollectionForLoad($entityType)
     {
-        $collection = parent::_getCollectioForLoad($entityType);
-        $collection->setStore($this->getStoreId());
+        $collection = parent::_getCollectionForLoad($entityType);
+        $collection->setStore($this->getStoreId())->addStoreFilter();
         return $collection;
     }
 
@@ -61,34 +64,69 @@ class Mage_Catalog_Model_Convert_Adapter_Product
 		$attrFilterArray ['status'] = 'eq';
 		$attrFilterArray ['price'] = 'fromTo';
 		$attrFilterArray ['qty'] = 'fromTo';
+		$attrFilterArray ['store_id'] = 'eq';
 
 		$attrToDb = array(
 		  'type'=>'type_id',
 		  'attribute_set'=>'attribute_set_id'
 		);
+		
+		$filters = $this->_parseVars();
 
-		parent::setFilter($attrFilterArray,$attrToDb);
+		if ($qty = $this->getFieldValue($filters, 'qty')) {                
+			
+			$qtyAttr = array();
+			$qtyAttr['alias'] = 'qty';
+			$qtyAttr['attribute'] = 'cataloginventory/stock_item';
+			$qtyAttr['field'] = 'qty';
+			$qtyAttr['bind'] = 'product_id=entity_id';
+			$qtyAttr['cond'] = "{{table}}.qty between '".(isset($qty['from'])?$qty['from']:0)."' and '".(isset($qty['to'])?$qty['to']:0)."'";
+        	$qtyAttr['joinType'] = 'inner';
+        	$this->setJoinFeild($qtyAttr);
+		}		
+
+
+		parent::setFilter($attrFilterArray,$attrToDb); 
+
+		if ($price = $this->getFieldValue($filters, 'price')) {
+			$this->_filter[] = array('attribute'=>'price','from'=>$price['from'],'to'=>$price['to']);
+			$this->setJoinAttr(array(
+					   'alias' => 'price',
+        	           'attribute' => 'catalog_product/price',
+                       'bind' => 'entity_id',
+                       'joinType' => 'LEFT'
+                    ));
+		}
+		$this->_getCollectionForLoad($this->getVar('entity_type'));
+		
 		parent::load();
 	}
 
 	public function setProduct(Mage_Catalog_Model_Product $object)
 	{
-	    $this->_product = $object;
+	    $id = Varien_Object_Cache::singleton()->save($object);
+	    //$this->_product = $object;
+	    Mage::register('Object_Cache_Product', $id);
 	}
 
 	public function getProduct()
 	{
-	    return $this->_product;
+	    return Varien_Object_Cache::singleton()->load(Mage::registry('Object_Cache_Product'));
 	}
 
 	public function setStockItem(Mage_CatalogInventory_Model_Stock_Item $object)
 	{
-	    $this->_stockItem = $object;
+	    $id = Varien_Object_Cache::singleton()->save($object);
+	    //$this->_product = $object;
+	    Mage::register('Object_Cache_StockItem', $id);
+
+	    //$this->_stockItem = $object;
 	}
 
 	public function getStockItem()
 	{
-	    return $this->_stockItem;
+	    return Varien_Object_Cache::singleton()->load(Mage::registry('Object_Cache_StockItem'));
+	    //return $this->_stockItem;
 	}
 
     public function save()
@@ -213,15 +251,23 @@ class Mage_Catalog_Model_Convert_Adapter_Product
         $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
 
 
+
         $product->importFromTextArray($row);
+        //echo '<pre>';
+        //print_r($product->getData());
         $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
+
+
+        if (!$product->getData()) {
+            return;
+        }
+
         try {
             $product->save();
             $productId = $product->getId();
             $product->unsetData();
 
             $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
-
             if ($stockItem) {
                 $stockItem->loadByProduct($productId);
                 if (!$stockItem->getId()) {
@@ -238,8 +284,6 @@ class Mage_Catalog_Model_Convert_Adapter_Product
 
             $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
 
-            unset($row);
-
             $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
 
             $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
@@ -250,6 +294,7 @@ class Mage_Catalog_Model_Convert_Adapter_Product
         } catch (Exception $e) {
 
         }
+        unset($row);
         return array('memory'=>$memory);
     }
 

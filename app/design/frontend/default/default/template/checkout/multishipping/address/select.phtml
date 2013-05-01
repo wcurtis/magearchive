@@ -19,36 +19,36 @@
  */
 ?>
 <div class="page-head button-level">
-    <h3><?=$this->__('Change Billing Address')?></h3>
-    <button class="form-button-alt" onclick="setLocation('<?=$this->getAddNewUrl()?>')"><span><?=$this->__('Add New Address')?></span></button>
+    <h3><?php echo $this->__('Change Billing Address') ?></h3>
+    <button class="form-button-alt" onclick="setLocation('<?php echo $this->getAddNewUrl() ?>')"><span><?php echo $this->__('Add New Address') ?></span></button>
 </div>
-<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
 <div class="content-box">
-<?$_index=0?>
-<?foreach ($this->getAddressCollection() as $_address):?>
-    <?if($_index%3==0):?><div class="col3-set box-set"><?endif;?>
-    <div class="col-<?=($_index%3+1)?>">
+<?php $_index=0 ?>
+<?php foreach ($this->getAddressCollection() as $_address): ?>
+    <?php if($_index%3==0): ?><div class="col3-set box-set"><?php endif; ?>
+    <div class="col-<?php echo ($_index%3+1) ?>">
         <div class="box">
             <p class="actions">
-                <a href="<?=$this->getEditAddressUrl($_address)?>"><?=$this->__('Edit Address')?></a><span class="separator">|</span>
-                <a href="<?=$this->getSetAddressUrl($_address)?>"><strong><?=$this->__('Select Address')?></strong></a>
+                <a href="<?php echo $this->getEditAddressUrl($_address) ?>"><?php echo $this->__('Edit Address') ?></a><span class="separator">|</span>
+                <a href="<?php echo $this->getSetAddressUrl($_address) ?>"><strong><?php echo $this->__('Select Address') ?></strong></a>
             </p>
             <address>
-                <?=$_address->format('html')?>
-                <?if($this->isAddressDefaultBilling($_address)):?>
-                <br/><strong><?=$this->__('Default Billing')?></strong>
-                <?endif;?>
-                <?if($this->isAddressDefaultShipping($_address)):?>
-                <br/><strong><?=$this->__('Default Shipping')?></strong>
-                <?endif;?>
+                <?php echo $_address->format('html') ?>
+                <?php if($this->isAddressDefaultBilling($_address)): ?>
+                <br/><strong><?php echo $this->__('Default Billing') ?></strong>
+                <?php endif; ?>
+                <?php if($this->isAddressDefaultShipping($_address)): ?>
+                <br/><strong><?php echo $this->__('Default Shipping') ?></strong>
+                <?php endif; ?>
             </address>
         </div>
     </div>
-    <?if($_index && $_index%3==0):?></div><br/><?endif;?>
-<?$_index++?>
-<?endforeach;?>
-<?if(!$_index || $_index%3!=0):?></div><br/><?endif;?>
+    <?php if($_index && $_index%3==0): ?></div><br/><?php endif; ?>
+<?php $_index++ ?>
+<?php endforeach; ?>
+<?php if(!$_index || $_index%3!=0): ?></div><br/><?php endif; ?>
 </div>
 <div class="button-set">
-    <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Billing Information')?></a>
+    <a href="<?php echo $this->getBackUrl() ?>" class="left"><?php echo $this->__('&laquo; Back to Billing Information') ?></a>
 </div>

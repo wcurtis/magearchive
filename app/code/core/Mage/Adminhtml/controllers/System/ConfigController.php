@@ -110,7 +110,7 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         }
 
         try {
-            Mage::app()->removeCache('config_global');
+            Mage::app()->cleanCache(array('config'));
             Mage::getModel('adminhtml/config_data')
                 ->setSection($this->getRequest()->getParam('section'))
                 ->setWebsite($this->getRequest()->getParam('website'))
@@ -128,6 +128,18 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         catch (Exception $e) {
             $session->addException($e, Mage::helper('adminhtml')->__('Error while saving this configuration: '.$e->getMessage()));
         }
+
+        /**
+         * saving fieldset states
+         */
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        $extra = $adminUser->getExtra();
+        foreach ($this->getRequest()->getPost('config_state') as $fieldset => $state) {
+            $extra['configState'][$fieldset] = $state;
+        }
+        $adminUser->setExtra($extra);
+        $adminUser->unsPassword();
+        $adminUser->save();
 
         $this->_redirect('*/*/edit', array('_current' => array('section', 'website', 'store')));
     }

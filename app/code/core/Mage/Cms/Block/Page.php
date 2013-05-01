@@ -29,7 +29,14 @@ class Mage_Cms_Block_Page extends Mage_Core_Block_Abstract
     public function getPage()
     {
         if (!$this->hasData('page')) {
-            $this->setData('page', Mage::getSingleton('cms/page'));
+            if ($this->getPageId()) {
+                $page = Mage::getModel('cms/page')
+                    ->setStoreId(Mage::app()->getStore()->getId())
+                    ->load($this->getPageId(), 'identifier');
+            } else {
+                $page = Mage::getSingleton('cms/page');
+            }
+            $this->setData('page', $page);
         }
         return $this->getData('page');
     }

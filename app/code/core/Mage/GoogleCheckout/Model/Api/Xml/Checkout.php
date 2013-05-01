@@ -76,6 +76,7 @@ EOT;
                 <unit-price currency="{$this->getCurrency()}">{$discount}</unit-price>
                 <quantity>1</quantity>
                 <item-weight unit="{$weightUnit}" value="0.01" />
+                <tax-table-selector>none</tax-table-selector>
             </item>
 
 EOT;
@@ -190,11 +191,14 @@ EOT;
 
         $addressCategory = Mage::getStoreConfig('google/checkout_shipping_carrier/address_category');
 
+//      $taxRate = $this->_getShippingTaxRate();
+//      <additional-variable-charge-percent>{$taxRate}</additional-variable-charge-percent>
+
         $xml = <<<EOT
                 <carrier-calculated-shipping>
                     <shipping-packages>
                         <shipping-package>
-                            <ship-from id="Test">
+                            <ship-from id="Origin">
                                 <city>{$city}</city>
                                 <region>{$region}</region>
                                 <postal-code>{$postcode}</postal-code>
@@ -304,9 +308,24 @@ EOT;
         return $xml;
     }
 
+    protected function _getShippingTaxRate()
+    {
+        $shippingTaxRate = 0;
+        if ($shippingTaxClass = Mage::getStoreConfig('sales/tax/shipping_tax_class')) {
+            if (Mage::getStoreConfig('sales/tax/based_on')==='origin') {
+                $shippingTaxRate = Mage::helper('tax')->getTaxData()
+                    ->setProductClassId($shippingTaxClass)
+                    ->getRate();
+                $shippingTaxed = 'true';
+            }
+        }
+        return $shippingTaxRate;
+    }
+
     protected function _getTaxTablesXml()
     {
-        #return '';//TODO
+        $shippingTaxRate = $this->_getShippingTaxRate()/100;
+        $shippingTaxed = $shippingTaxRate>0 ? 'true' : 'false';
 
         $xml = <<<EOT
             <tax-tables merchant-calculated="true">
@@ -316,11 +335,22 @@ EOT;
                             <tax-area>
                                 <world-area/>
                             </tax-area>
-                            <rate>0</rate>
+                            <rate>{$shippingTaxRate}</rate>
+                            <shipping-taxed>{$shippingTaxed}</shipping-taxed>
                         </default-tax-rule>
                     </tax-rules>
                 </default-tax-table>
                 <alternate-tax-tables>
+                    <alternate-tax-table name="none" standalone="false">
+                        <alternate-tax-rules>
+                            <alternate-tax-rule>
+                                <tax-area>
+                                    <world-area/>
+                                </tax-area>
+                                <rate>0</rate>
+                            </alternate-tax-rule>
+                        </alternate-tax-rules>
+                    </alternate-tax-table>
 
 EOT;
         foreach ($this->_getTaxRules() as $group=>$taxRates) {
@@ -338,7 +368,7 @@ EOT;
 
 EOT;
                 if ($rate['country']==='US') {
-                    if (!empty($rate['postcode'])) {
+                    if (!empty($rate['postcode']) && $rate['postcode']!=='*') {
                         $xml .= <<<EOT
                                     <us-zip-area>
                                         <zip-pattern>{$rate['postcode']}</zip-pattern>

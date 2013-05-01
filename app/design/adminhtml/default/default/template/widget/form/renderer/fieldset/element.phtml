@@ -18,15 +18,15 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_element = $this->getElement()?>
-<?if (!$_element->getNoDisplay()):?>
+<?php $_element = $this->getElement() ?>
+<?php if (!$_element->getNoDisplay()): ?>
 <tr>
-    <?if ($_element->getType()=='hidden'):?>
-    <td colspan="3" class="hidden"><?=trim($_element->getElementHtml())?></td>
-    <?else:?>
-    <td class="label"><?=trim($_element->getLabelHtml())?></td>
-    <td class="value"><?=trim($_element->getElementHtml())?></td>
-    <td<?if ($_element->getNote()):?> class="note"<?endif?>><small><?=$_element->getNote()?></small></td>
-    <?endif;?>
+    <?php if ($_element->getType()=='hidden'): ?>
+    <td colspan="3" class="hidden"><?php echo trim($_element->getElementHtml()) ?></td>
+    <?php else: ?>
+    <td class="label"><?php echo trim($_element->getLabelHtml()) ?></td>
+    <td class="value"><?php echo trim($_element->getElementHtml()) ?></td>
+    <td<?php if ($_element->getNote()): ?> class="note"<?php endif ?>><small><?php echo $_element->getNote() ?></small></td>
+    <?php endif; ?>
 </tr>
-<?endif;?>
+<?php endif; ?>

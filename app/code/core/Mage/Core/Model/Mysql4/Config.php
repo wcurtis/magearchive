@@ -69,9 +69,6 @@ class Mage_Core_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
             return $this;
         }
 
-        #$tables = $read->fetchAll("show tables like 'core_%'");
-        #print_r($tables);
-
         // initialize websites config
         $websites = array();
         $rows = $read->fetchAssoc("select website_id, code, name from ".$this->getTable('website'));
@@ -95,15 +92,6 @@ class Mage_Core_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
 
         $subst_from = array();
         $subst_to = array();
-
-        // get default distribution config vars
-        /*
-        $vars = Mage::getConfig()->getDistroServerVars();
-        foreach ($vars as $k=>$v) {
-            $subst_from[] = '{{'.$k.'}}';
-            $subst_to[] = $v;
-        }
-        */
 
         // load all configuration records from database, which are not inherited
         $rows = $read->fetchAll("select scope, scope_id, path, value from ".$this->getMainTable().($cond ? ' where '.$cond : ''));

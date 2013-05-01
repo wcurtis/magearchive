@@ -106,8 +106,8 @@ class Mage_CatalogSearch_Block_Advanced_Form extends Mage_Core_Block_Template
     {
         $dataType   = $attribute->getBackend()->getType();
         $imputType  = $attribute->getFrontend()->getInputType();
-        if ($imputType == 'select') {
-            return $imputType;
+        if ($imputType == 'select' || $imputType == 'multiselect') {
+            return 'select';
         }
 
         if ($dataType == 'int' || $dataType == 'decimal') {
@@ -130,7 +130,7 @@ class Mage_CatalogSearch_Block_Advanced_Form extends Mage_Core_Block_Template
 
         // 2 - avoid yes/no selects to be multiselects
         if (is_array($options) && count($options)>2) {
-            $extra = 'multiple size="4"';
+            $extra = 'multiple="multiple" size="4"';
             $name.= '[]';
         }
         else {

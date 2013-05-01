@@ -30,7 +30,7 @@ $installer = $this;
 
 $installer->startSetup();
 $installer->run("
-DROP TABLE IF EXISTS `{$installer->getTable('newsletter_problem')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('newsletter_problem')}`;
 CREATE TABLE `{$installer->getTable('newsletter_problem')}` (
   `problem_id` int(7) unsigned NOT NULL auto_increment,
   `subscriber_id` int(7) unsigned default NULL,
@@ -44,7 +44,7 @@ CREATE TABLE `{$installer->getTable('newsletter_problem')}` (
   CONSTRAINT `FK_PROBLEM_SUBSCRIBER` FOREIGN KEY (`subscriber_id`) REFERENCES `{$installer->getTable('newsletter_subscriber')}` (`subscriber_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter problems';
 
-DROP TABLE IF EXISTS `{$installer->getTable('newsletter_queue')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('newsletter_queue')}`;
 CREATE TABLE `{$installer->getTable('newsletter_queue')}` (
   `queue_id` int(7) unsigned NOT NULL auto_increment,
   `template_id` int(7) unsigned NOT NULL default '0',
@@ -56,7 +56,7 @@ CREATE TABLE `{$installer->getTable('newsletter_queue')}` (
   CONSTRAINT `FK_QUEUE_TEMPLATE` FOREIGN KEY (`template_id`) REFERENCES `{$installer->getTable('newsletter_template')}` (`template_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter queue';
 
-DROP TABLE IF EXISTS `{$installer->getTable('newsletter_queue_link')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('newsletter_queue_link')}`;
 CREATE TABLE `{$installer->getTable('newsletter_queue_link')}` (
   `queue_link_id` int(9) unsigned NOT NULL auto_increment,
   `queue_id` int(7) unsigned NOT NULL default '0',
@@ -69,7 +69,7 @@ CREATE TABLE `{$installer->getTable('newsletter_queue_link')}` (
   CONSTRAINT `FK_QUEUE_LINK_SUBSCRIBER` FOREIGN KEY (`subscriber_id`) REFERENCES `{$installer->getTable('newsletter_subscriber')}` (`subscriber_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter queue to subscriber link';
 
-DROP TABLE IF EXISTS `{$installer->getTable('newsletter_queue_store_link')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('newsletter_queue_store_link')}`;
 CREATE TABLE `{$installer->getTable('newsletter_queue_store_link')}` (
   `queue_id` int(7) unsigned NOT NULL default '0',
   `store_id` smallint(5) unsigned NOT NULL default '0',
@@ -79,7 +79,7 @@ CREATE TABLE `{$installer->getTable('newsletter_queue_store_link')}` (
   CONSTRAINT `FK_LINK_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES `{$installer->getTable('newsletter_queue')}` (`queue_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$installer->getTable('newsletter_subscriber')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('newsletter_subscriber')}`;
 CREATE TABLE `{$installer->getTable('newsletter_subscriber')}` (
   `subscriber_id` int(7) unsigned NOT NULL auto_increment,
   `store_id` smallint(5) unsigned default '0',
@@ -94,7 +94,7 @@ CREATE TABLE `{$installer->getTable('newsletter_subscriber')}` (
   CONSTRAINT `FK_NEWSLETTER_SUBSCRIBER_STORE` FOREIGN KEY (`store_id`) REFERENCES `{$installer->getTable('core_store')}` (`store_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter subscribers';
 
-DROP TABLE IF EXISTS `{$installer->getTable('newsletter_template')}`;
+-- DROP TABLE IF EXISTS `{$installer->getTable('newsletter_template')}`;
 CREATE TABLE `{$installer->getTable('newsletter_template')}` (
   `template_id` int(7) unsigned NOT NULL auto_increment,
   `template_code` varchar(150) default NULL,

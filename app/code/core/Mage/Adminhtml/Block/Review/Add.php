@@ -93,7 +93,9 @@ class Mage_Adminhtml_Block_Review_Add extends Mage_Adminhtml_Block_Widget_Form_C
             }();
 
              Event.observe(window, \'load\', function(){
-                 Event.observe($("select_stores"), \'change\', review.updateRating);
+             	if ($("select_stores")) {
+             		Event.observe($("select_stores"), \'change\', review.updateRating);
+             	}
            });
         ';
     }

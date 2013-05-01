@@ -20,7 +20,7 @@
 ?>
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('adminhtml')->__('Product Categories')?></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('adminhtml')->__('Product Categories') ?></h4>
     </div>
     <fieldset id="grop_fields">
         <input type="hidden" name="categories" id="product_categories" value="">
@@ -30,7 +30,7 @@
     Note: if selected product or category has been associated in this module, you can't select one of them.
     </div>
 </div>
-<?if($this->getRootNode() && $this->getRootNode()->hasChildren()):?>
+<?php if($this->getRootNode() && $this->getRootNode()->hasChildren()): ?>
 <script type="text/javascript">
 var _root = '';
 var _tree = '';
@@ -42,7 +42,7 @@ Ext.EventManager.onDocumentReady(function() {
         containerScroll: true,
 		rootUIProvider: Ext.tree.CheckboxNodeUI,
 		selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
-		rootVisible: '<?=$this->getRootNode()->getIsVisible()?>'
+		rootVisible: '<?php echo $this->getRootNode()->getIsVisible() ?>'
 	});
 
 
@@ -77,10 +77,10 @@ Ext.EventManager.onDocumentReady(function() {
 
 	// set the root node
     var root = new Ext.tree.TreeNode({
-        text: '<?=$this->getRootNode()->getName()?>',
+        text: '<?php echo $this->getRootNode()->getName() ?>',
         draggable:false,
-        checked:'<?=$this->getRootNode()->getChecked()?>',
-        id:'<?=$this->getRootNode()->getId()?>',
+        checked:'<?php echo $this->getRootNode()->getChecked() ?>',
+        id:'<?php echo $this->getRootNode()->getId() ?>',
         uiProvider: Ext.tree.CheckboxNodeUI
     });
 
@@ -88,7 +88,7 @@ Ext.EventManager.onDocumentReady(function() {
     _root = root;
 
 	tree.setRootNode(root);
-	//buildCategoryTree(root, <?=$this->getTreeJson()?>);
+	//buildCategoryTree(root, <?php echo $this->getTreeJson() ?>);
     tree.addListener('click', categoryClick.createDelegate(this));
 
     // render the tree
@@ -200,4 +200,4 @@ Ext.tree.TreePanel.prototype.getHirechyName = function(node){
 
 
 </script>
-<?endif;?>
+<?php endif; ?>

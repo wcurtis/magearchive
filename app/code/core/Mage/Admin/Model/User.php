@@ -26,6 +26,9 @@
  */
 class Mage_Admin_Model_User extends Varien_Object
 {
+    const XML_PATH_FORGOT_EMAIL_TEMPLATE    = 'system/emails/forgot_email_template';
+    const XML_PATH_FORGOT_EMAIL_IDENTITY    = 'system/emails/forgot_email_identity';
+
     public function __construct()
     {
         parent::__construct();
@@ -140,4 +143,23 @@ class Mage_Admin_Model_User extends Varien_Object
     {
         return $this->getResource()->hasAssigned2Role($userId);
     }
+
+    /**
+     * Send email with new user password
+     *
+     * @return Mage_Admin_Model_User
+     */
+    public function sendNewPasswordEmail()
+    {
+        Mage::getModel('core/email_template')
+            ->setDesignConfig(array('area'=>'adminhtml', 'store'=>$this->getStoreId()))
+            ->sendTransactional(
+                Mage::getStoreConfig(self::XML_PATH_FORGOT_EMAIL_TEMPLATE),
+                Mage::getStoreConfig(self::XML_PATH_FORGOT_EMAIL_IDENTITY),
+                $this->getEmail(),
+                $this->getName(),
+                array('user'=>$this));
+        return $this;
+    }
+    
 }

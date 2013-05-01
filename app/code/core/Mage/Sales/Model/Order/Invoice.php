@@ -43,6 +43,9 @@ class Mage_Sales_Model_Order_Invoice extends Mage_Core_Model_Abstract
 
     protected $_saveBeforeDestruct = false;
 
+    protected $_eventPrefix = 'sales_order_invoice';
+    protected $_eventObject = 'invoice';
+
     public function __destruct()
     {
         if ($this->_saveBeforeDestruct) {
@@ -214,6 +217,7 @@ class Mage_Sales_Model_Order_Invoice extends Mage_Core_Model_Abstract
         $this->getOrder()->setBaseTotalPaid(
             $this->getOrder()->getBaseTotalPaid()+$this->getBaseGrandTotal()
         );
+        Mage::dispatchEvent('sales_order_invoice_pay', array($this->_eventObject=>$this));
         return $this;
     }
 
@@ -255,6 +259,7 @@ class Mage_Sales_Model_Order_Invoice extends Mage_Core_Model_Abstract
             $this->getOrder()->getBaseTotalInvoiced()-$this->getBaseGrandTotal()
         );
         $this->getOrder()->setState(Mage_Sales_Model_Order::STATE_PROCESSING, true);
+        Mage::dispatchEvent('sales_order_invoice_cancel', array($this->_eventObject=>$this));
         return $this;
     }
 

@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Stock item collection resource model
  *
@@ -30,7 +30,7 @@ class Mage_CatalogInventory_Model_Mysql4_Stock_Item_Collection extends Mage_Core
     {
         $this->_init('cataloginventory/stock_item');
     }
-    
+
     /**
      * Add stock filter to collection
      *
@@ -47,7 +47,7 @@ class Mage_CatalogInventory_Model_Mysql4_Stock_Item_Collection extends Mage_Core
         }
         return $this;
     }
-    
+
     /**
      * Add product filter to collection
      *
@@ -67,6 +67,7 @@ class Mage_CatalogInventory_Model_Mysql4_Stock_Item_Collection extends Mage_Core
         }
         if (empty($productIds)) {
             $productIds[] = false;
+            $this->_setIsLoaded(true);
         }
         $this->addFieldToFilter('product_id', array('in'=>$productIds));
         return $this;

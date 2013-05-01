@@ -28,6 +28,8 @@ class Mage_Catalog_Model_Product_Url extends Varien_Object
     protected static $_url;
     protected static $_urlRewrite;
 
+    const CACHE_TAG = 'url_rewrite';
+
     /**
     * @return Mage_Core_Model_Url
     */
@@ -58,6 +60,11 @@ class Mage_Catalog_Model_Product_Url extends Varien_Object
      */
     public function getProductUrl($product)
     {
+        if ($product->hasData('request_path') && $product->getRequestPath() != '') {
+            $url = $this->getUrlInstance()->getBaseUrl().$product->getRequestPath();
+            return $url;
+        }
+    
         Varien_Profiler::start('REWRITE: '.__METHOD__);
         $rewrite = $this->getUrlRewrite();
         if ($product->getStoreId()) {

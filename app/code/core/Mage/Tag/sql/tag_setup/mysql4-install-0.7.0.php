@@ -25,7 +25,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('tag')};
+-- DROP TABLE IF EXISTS {$this->getTable('tag')};
 CREATE TABLE {$this->getTable('tag')} (
   `tag_id` int(11) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
@@ -33,7 +33,7 @@ CREATE TABLE {$this->getTable('tag')} (
   PRIMARY KEY (`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('tag_relation')};
+-- DROP TABLE IF EXISTS {$this->getTable('tag_relation')};
 CREATE TABLE {$this->getTable('tag_relation')} (
   `tag_relation_id` int(11) unsigned NOT NULL auto_increment,
   `tag_id` int(11) unsigned NOT NULL default '0',
@@ -53,7 +53,7 @@ CREATE TABLE {$this->getTable('tag_relation')} (
   CONSTRAINT `tag_relation_ibfk_4` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS {$this->getTable('tag_summary')};
+-- DROP TABLE IF EXISTS {$this->getTable('tag_summary')};
 CREATE TABLE {$this->getTable('tag_summary')} (
    `tag_id` int(11) unsigned NOT NULL default '0',
    `store_id` smallint(5) unsigned NOT NULL default '0',

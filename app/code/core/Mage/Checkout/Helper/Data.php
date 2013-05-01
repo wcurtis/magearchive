@@ -31,10 +31,7 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getCheckout()
     {
-        if (empty($this->_checkout)) {
-            $this->_checkout = Mage::getSingleton('checkout/session');
-        }
-        return $this->_checkout;
+        return Mage::getSingleton('checkout/session');
     }
 
     /**
@@ -44,19 +41,19 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getQuote()
     {
-        if (empty($this->_quote)) {
-            $this->_quote = $this->getCheckout()->getQuote();
-        }
-        return $this->_quote;
+        return $this->getCheckout()->getQuote();
     }
 
-    public function getQuoteItemProduct($item)
+    public function getQuoteItemProduct(Mage_Sales_Model_Quote_Item_Abstract $item)
     {
-        if ($superProduct = $item->getSuperProduct()) {
-            return $superProduct;
+        $superProduct = $item->getSuperProduct();
+        if ($superProduct) {
+            $product = $superProduct;
+        } else {
+            $product = $item->getProduct();
         }
 
-        return $item->getProduct();
+        return $product;
     }
 
     /**

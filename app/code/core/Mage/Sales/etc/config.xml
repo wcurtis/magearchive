@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Sales>
-            <version>0.8.12</version>
+            <version>0.8.18</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Customer />
@@ -38,9 +38,13 @@
             <sales_entity>
                 <class>Mage_Sales_Model_Entity</class>
                 <entities>
-                    <quote><table>sales_quote_entity</table></quote>
+                    <quote><table>sales_quote</table></quote>
+                    <quote_address><table>sales_quote_address</table></quote_address>
+                    <quote_item><table>sales_quote_item</table></quote_item>
+                    <quote_entity><table>sales_quote_entity</table></quote_entity>
                     <quote_temp><table>sales_quote_temp</table></quote_temp>
-                    <order><table>sales_order_entity</table></order>
+                    <order><table>sales_order</table></order>
+                    <order_entity><table>sales_order_entity</table></order_entity>
                 </entities>
             </sales_entity>
         </models>
@@ -317,11 +321,6 @@
                                 </creditmemo>
                             </children>
                         </sales>
-                        <report>
-                            <children>
-                                <sales translate="title"><title>Sales Report</title></sales>
-                            </children>
-                        </report>
                     </children>
                 </admin>
             </resources>

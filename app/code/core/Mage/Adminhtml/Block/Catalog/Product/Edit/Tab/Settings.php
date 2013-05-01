@@ -44,7 +44,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Settings extends Mage_Adminh
         $form = new Varien_Data_Form();
         $fieldset = $form->addFieldset('settings', array('legend'=>Mage::helper('catalog')->__('Create Product Settings')));
 
-        $entityType = Mage::registry('product')->getResource()->getConfig();
+        $entityType = Mage::registry('product')->getResource()->getEntityType();
 
         $fieldset->addField('attribute_set_id', 'select', array(
             'label' => Mage::helper('catalog')->__('Attribute Set'),

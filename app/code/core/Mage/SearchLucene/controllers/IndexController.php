@@ -34,8 +34,8 @@ class Mage_SearchLucene_IndexController extends Mage_Core_Controller_Front_Actio
         $index = Zend_Search_Lucene::open($index_dir);
         $indexSize = $index->count();
         $documents = $index->numDocs();
-        echo "Index size : " . $indexSize ."<br>";
-        echo "Documents : " . $documents ."<br>";
+        echo "Index size : " . $indexSize ."<br/>";
+        echo "Documents : " . $documents ."<br/>";
     }
 
 

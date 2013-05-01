@@ -59,12 +59,16 @@ class Mage_Adminhtml_Block_Cms_Block_Grid extends Mage_Adminhtml_Block_Widget_Gr
             'index'     => 'identifier'
         ));
 
-        $this->addColumn('store_id', array(
-            'header'    => Mage::helper('cms')->__('Store View'),
-            'index'     => 'store_id',
-            'type'      => 'store',
-            'store_all' => true
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('store_id', array(
+                'header'    => Mage::helper('cms')->__('Store View'),
+                'index'     => 'store_id',
+                'type'      => 'store',
+                'store_all' => true,
+                'store_view' => true,
+                'filter_condition_callback' => array($this, '_filterStoreCondition'),
+            ));
+        }
 
         $this->addColumn('is_active', array(
             'header'    => Mage::helper('cms')->__('Status'),
@@ -89,6 +93,22 @@ class Mage_Adminhtml_Block_Cms_Block_Grid extends Mage_Adminhtml_Block_Widget_Gr
         ));
 
         return parent::_prepareColumns();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $this->getCollection()->walk('afterLoad');
+        parent::_afterLoadCollection();
+    }
+
+    protected function _filterStoreCondition($collection, $column)
+    {
+        if (!$value = $column->getFilter()->getValue()) {
+            return;
+        }
+        $res = Mage::getSingleton('core/resource');
+        $collection->getSelect()->join(array('s'=>$res->getTableName('cms/block_store')), 's.block_id=main_table.block_id')
+            ->where('s.store_id=0 or s.store_id=?', $value);
     }
 
     /**

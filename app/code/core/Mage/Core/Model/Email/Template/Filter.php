@@ -33,31 +33,27 @@ class Mage_Core_Model_Email_Template_Filter extends Varien_Filter_Template
 	{
 		$blockParameters = $this->_getIncludeParameters($construction[2]);
 		$layout = Mage::app()->getFrontController()->getAction()->getLayout();
+
 		if (isset($blockParameters['type'])) {
     		$type = $blockParameters['type'];
-
     		$block = $layout->createBlock($type, null, $blockParameters);
-    		if (!$block) {
-    		    return '';
-    		}
-    		return $block->toHtml();
-		}
-
-		if (isset($blockParameters['id'])) {
+		} elseif (isset($blockParameters['id'])) {
 		    $block = $layout->createBlock('cms/block');
-
-		    if (!$block) {
-		        return '';
+		    if ($block) {
+    		    $block->setBlockId($blockParameters['id'])
+    		        ->setBlockParams($blockParameters);
 		    }
-
-		    $block
-		        ->setBlockId($blockParameters['id'])
-		        ->setBlockParams($blockParameters);
-
-		    return $block->toHtml();
 		}
-
-        return '';
+		if (!$block) {
+		    return '';
+		}
+		if (isset($blockParameters['output'])) {
+		    $method = $blockParameters['output'];
+		}
+		if (!isset($method) || !is_string($method) || !is_callable(array($block, $method))) {
+		    $method = 'toHtml';
+		}
+        return $block->$method();
 	}
 
 	protected function _getBlockParameters($value)

@@ -51,7 +51,7 @@ class Mage_Adminhtml_PollController extends Mage_Adminhtml_Controller_Action
             $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Poll Manager'), Mage::helper('adminhtml')->__('Poll Manager'), $this->getUrl('*/*/'));
             $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Edit Poll'), Mage::helper('adminhtml')->__('Edit Poll'));
 
-            $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
+            $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
             $this->_addContent($this->getLayout()->createBlock('adminhtml/poll_edit'))
                 ->_addLeft($this->getLayout()->createBlock('adminhtml/poll_edit_tabs'));
 

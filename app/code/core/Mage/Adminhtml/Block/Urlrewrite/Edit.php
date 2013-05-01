@@ -36,7 +36,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Edit extends Mage_Adminhtml_Block_Widget_F
         parent::__construct();
 
         $this->_updateButton('save', 'label', Mage::helper('adminhtml')->__('Save Url'));
-        $this->_updateButton('delete', 'label', Mage::helper('adminhtml')->__('Delete Tag'));
+        $this->_updateButton('delete', 'label', Mage::helper('adminhtml')->__('Delete Url'));
     }
 
     public function getHeaderText()

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog category image attribute backend model
  *
@@ -26,6 +27,12 @@
  */
 class Mage_Catalog_Model_Category_Attribute_Backend_Image extends Mage_Eav_Model_Entity_Attribute_Backend_Abstract
 {
+
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Object $object
+     */
     public function beforeSave($object)
     {
         $value = $object->getData($this->getAttribute()->getName());
@@ -37,7 +44,7 @@ class Mage_Catalog_Model_Category_Attribute_Backend_Image extends Mage_Eav_Model
             return;
         }
 
-        $path = Mage::getBaseDir('media') . '/catalog/category/';
+        $path = Mage::getBaseDir('media') . DS . 'catalog' . DS . 'category' . DS;
 
         try {
             $uploader = new Varien_File_Uploader($this->getAttribute()->getName());
@@ -47,25 +54,11 @@ class Mage_Catalog_Model_Category_Attribute_Backend_Image extends Mage_Eav_Model
 
             $object->setData($this->getAttribute()->getName(), $uploader->getUploadedFileName());
             $this->getAttribute()->getEntity()->saveAttribute($object, $this->getAttribute()->getName());
-        } catch (Exception $e){
+        } catch (Exception $e) {
+            /** @TODO ??? */
             return;
         }
 
-        /*if( $_FILES['image']['error'] > 0 ) {
-            return $this;
-        }
-
-        $path = Mage::getBaseDir('media') . '/catalog/category' . '/' . $this->getScope();
-        if ('default' != $this->getScope()) {
-            $path .= '/' . $this->getScopeId();
-        }
-
-        die($path);
-
-        $uploader = new Varien_File_Uploader('image');
-        $uploader->save($path);
-
-        $object->setImage($uploader->getUploadedFileName());
-        return $this;*/
     }
+
 }

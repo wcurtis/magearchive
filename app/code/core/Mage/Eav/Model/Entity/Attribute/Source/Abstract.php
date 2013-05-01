@@ -87,7 +87,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Source_Abstract implements Mage_E
     public function getOptionId($value)
     {
         foreach ($this->getAllOptions() as $option) {
-            if (strcasecmp($option['label'], $value)==0) {
+            if (strcasecmp($option['label'], $value)==0 || $option['value'] == $value) {
                 return $option['value'];
             }
         }

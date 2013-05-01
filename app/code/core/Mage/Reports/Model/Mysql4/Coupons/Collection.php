@@ -31,12 +31,6 @@ class Mage_Reports_Model_Mysql4_Coupons_Collection extends Mage_Sales_Model_Enti
     protected $_from = '';
     protected $_to = '';
 
-    public function __construct()
-    {
-        parent::__construct();
-        return $this;
-    }
-
     public function setDateRange($from, $to)
     {
         $this->_from = $from;

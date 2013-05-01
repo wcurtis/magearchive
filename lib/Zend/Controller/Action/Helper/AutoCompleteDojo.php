@@ -16,7 +16,7 @@
  * @package    Zend_Controller
  * @subpackage Action_Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: AutoCompleteDojo.php 8123 2008-02-18 17:08:01Z matthew $
+ * @version    $Id: AutoCompleteDojo.php 8691 2008-03-08 04:25:04Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -43,17 +43,10 @@ class Zend_Controller_Action_Helper_AutoCompleteDojo extends Zend_Controller_Act
      */
     public function validateData($data)
     {
-        if (is_array($data)) {
-            $count = count($data);
-            if (array_keys($data) == range(0, $count - 1)) {
-                foreach ($data as $item) {
-                    if (!is_scalar($item)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
+        if (is_array($data) && isset($data['items']) && is_array($data['items'])) {
+            return true;
         }
+
         return false;
     }
 
@@ -66,6 +59,14 @@ class Zend_Controller_Action_Helper_AutoCompleteDojo extends Zend_Controller_Act
      */
     public function prepareAutoCompletion($data, $keepLayouts = false)
     {
-        return $this->encodeJson($data, $keepLayouts);
+        $items = array();
+        foreach ($data as $key => $value) {
+            $items[] = array('label' => $value, 'name' => $value);
+        }
+        $final = array(
+            'identifier' => 'name',
+            'items'      => $items,
+        );
+        return $this->encodeJson($final, $keepLayouts);
     }
 }

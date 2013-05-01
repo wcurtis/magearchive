@@ -205,11 +205,11 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
     {
         $this->getResponse()
             ->setHttpResponseCode(200)
-            ->setHeader('Content-Disposition', 'attachment; filename='.$fileName)
-            ->setHeader('Last-Modified', date('r'))
-            ->setHeader('Accept-Ranges', 'bytes')
-            ->setHeader('Content-Length', strlen($content))
+            ->setHeader('Pragma', 'public', true)
+            ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true)
             ->setHeader('Content-type', $contentType, true)
+            ->setHeader('Content-Length', strlen($content))
+            ->setHeader('Content-Disposition', 'attachment; filename='.$fileName)
             ->setBody($content);
     }
 

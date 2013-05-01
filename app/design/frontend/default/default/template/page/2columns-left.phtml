@@ -18,44 +18,44 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?
+<?php 
 /**
  * Template for Mage_Page_Block_Html
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$this->getLang()?>" lang="<?=$this->getLang()?>">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>" lang="<?php echo $this->getLang() ?>">
 <head>
-    <?=$this->getChildHtml('head')?>
+    <?php echo $this->getChildHtml('head') ?>
 </head>
 
-<body <?=$this->getBodyClass()?'class="'.$this->getBodyClass().'"':''?>>
-    <!--<p class="demo-notice"><span><?=$this->__('This is a demo store. Any orders placed through this store will not be honored or fulfilled.')?></span></p>-->
+<body <?php echo $this->getBodyClass()?'class="'.$this->getBodyClass().'"':'' ?>>
+    <!--<p class="demo-notice"><span><?php echo $this->__('This is a demo store. Any orders placed through this store will not be honored or fulfilled.') ?></span></p>-->
 
 <!-- [start] header -->
     <div class="header">
-        <?=$this->getChildHtml('header')?>
+        <?php echo $this->getChildHtml('header') ?>
     </div>
 <!-- [end] header -->
 
     <!-- [start] middle -->
     <div class="middle-container">
         <div class="middle col-2-left-layout">
-            <?=$this->getChildHtml('breadcrumbs')?>
+            <?php echo $this->getChildHtml('breadcrumbs') ?>
 
 
 
             <!-- [start] left -->
             <div class="col-left side-col">
-                <?=$this->getChildHtml('left')?>&nbsp;
+                <?php echo $this->getChildHtml('left') ?>&nbsp;
             </div>
             <div id="main" class="col-main">
             <!-- [start] global messages -->
-                <?=$this->getChildHtml('global_messages')?>
+                <?php echo $this->getChildHtml('global_messages') ?>
             <!-- [end] global messages -->
             <!-- [start] content -->
-                <?=$this->getChildHtml('content')?>
+                <?php echo $this->getChildHtml('content') ?>
             <!-- [end] content -->
             </div>
         </div>
@@ -66,11 +66,11 @@
         <!-- [start] footer -->
     <div class="footer-container">
         <div class="footer">
-        <?=$this->getChildHtml('footer')?>
+        <?php echo $this->getChildHtml('footer') ?>
         </div>
     </div>
         <!-- [end] footer -->
 
-<?=$this->getChildHtml('before_body_end')?>
+<?php echo $this->getChildHtml('before_body_end') ?>
     </body>
 </html>

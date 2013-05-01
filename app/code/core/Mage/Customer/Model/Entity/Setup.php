@@ -32,10 +32,19 @@ class Mage_Customer_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
     {
         return array(
             'customer' => array(
+                'entity_model'          =>'customer/customer',
                 'table'                 => 'customer/entity',
                 'increment_model'       => 'eav/entity_increment_numeric',
                 'increment_per_store'   => false,
                 'attributes' => array(
+//                    'entity_id'         => array('type'=>'static'),
+//                    'entity_type_id'    => array('type'=>'static'),
+//                    'attribute_set_id'  => array('type'=>'static'),
+//                    'increment_id'      => array('type'=>'static'),
+//                    'created_at'        => array('type'=>'static'),
+//                    'updated_at'        => array('type'=>'static'),
+//                    'is_active'         => array('type'=>'static'),
+
                     'website_id' => array(
                         'type'          => 'static',
                         'label'         => 'Create In',
@@ -100,8 +109,18 @@ class Mage_Customer_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
             ),
 
             'customer_address'=>array(
-                'table'=> 'customer/address_entity',
+                'entity_model'  =>'customer/customer_address',
+                'table' => 'customer/address_entity',
                 'attributes' => array(
+//                    'entity_id'         => array('type'=>'static'),
+//                    'entity_type_id'    => array('type'=>'static'),
+//                    'attribute_set_id'  => array('type'=>'static'),
+//                    'increment_id'      => array('type'=>'static'),
+//                    'parent_id'         => array('type'=>'static'),
+//                    'created_at'        => array('type'=>'static'),
+//                    'updated_at'        => array('type'=>'static'),
+//                    'is_active'         => array('type'=>'static'),
+
                     'firstname' => array(
                         'label'         => 'First Name',
                         'sort_order'    => 1,

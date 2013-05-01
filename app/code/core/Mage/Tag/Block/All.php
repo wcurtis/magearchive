@@ -41,13 +41,8 @@ class Mage_Tag_Block_All extends Mage_Core_Block_Template
     {
         if (empty($this->_tags)) {
             $this->_tags = array();
-            $tags = Mage::getResourceModel('tag/tag_collection')
-                 ->addStatusFilter(Mage_Tag_Model_Tag::STATUS_APPROVED)
-                ->addPopularity()
-                ->setActiveFilter()
-                ->addStoreFilter(Mage::app()->getStore()->getId())
-                ->setOrder('popularity', 'DESC')
-                ->addStatusFilter(Mage_Tag_Model_Tag::STATUS_APPROVED)
+            $tags = Mage::getModel('tag/tag')->getPopularCollection()
+                ->joinFields(Mage::app()->getStore()->getId())
                 ->limit(100)
                 ->load()
                 ->getItems();

@@ -140,7 +140,7 @@ class Mage_Adminhtml_Block_Rating_Edit_Tab_Form extends Mage_Adminhtml_Block_Wid
 <ul class="messages">
     <li class="notice-msg">
         <ul>
-            <li>'.Mage::helper('rating')->__('If you do not specify an rating title for a store then the default value will be used.').'</li>
+            <li>'.Mage::helper('rating')->__('If you do not specify a rating title for a store then the default value will be used.').'</li>
         </ul>
     </li>
 </ul>

@@ -49,11 +49,19 @@ class Mage_Reports_Model_Totals
         {
             if ($a['total'] == 'avg') {
                 if ($field !== '') {
-                    $data[$field] = $a['value']/$count;
+                    if ($count != 0) {
+                        $data[$field] = $a['value']/$count;
+                    } else {
+                        $data[$field] = 0;
+                    }
                 }
             } else if ($a['total'] == 'sum') {
                 if ($field !== '') {
                     $data[$field] = $a['value'];
+                }
+            } else if (strpos($a['total'], '/') !== FALSE) {
+                if ($field !== '') {
+                    $data[$field] = 0;
                 }
             }
         }

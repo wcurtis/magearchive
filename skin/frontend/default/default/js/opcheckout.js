@@ -630,6 +630,16 @@ Payment.prototype = {
         * if there is an error in payment, need to show error message
         */
         if (response.error) {
+            if (response.fields) {
+                var fields = response.fields.split(',');
+                for (var i=0;i<fields.length;i++) {
+                    var field = null;
+                    if (field = $(fields[i])) {
+                        Validation.ajaxError(field, response.error);
+                    }
+                }
+                return;
+            }
             alert(response.error);
             return;
         }
@@ -656,11 +666,13 @@ Review.prototype = {
     save: function(){
     	if (checkout.loadWaiting!=false) return;
         checkout.setLoadWaiting('review');
+        var params = Form.serialize(payment.form);
+        params.save = true;
         var request = new Ajax.Request(
             this.saveUrl,
             {
                 method:'post',
-                parameters:{save:true},
+                parameters:params,
                 onComplete: this.onComplete,
                 onSuccess: this.onSave,
 				onFailure: checkout.ajaxFailure.bind(checkout)

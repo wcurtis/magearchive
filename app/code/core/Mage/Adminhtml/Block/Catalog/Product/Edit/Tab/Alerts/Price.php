@@ -44,7 +44,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts_Price extends Mage_Ad
         $productId = $this->getRequest()->getParam('id');
         $websiteId = 0;
         if ($store = $this->getRequest()->getParam('store')) {
-            $websiteId = Mage::app()->getStore($storeId)->getWebsiteId();
+            $websiteId = Mage::app()->getStore($store)->getWebsiteId();
         }
         $collection = Mage::getModel('productalert/price')
             ->getCustomerCollection()

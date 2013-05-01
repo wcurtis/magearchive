@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $this->getOrder())):?>
+<?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $this->getOrder())): ?>
 <script type="text/javascript">
 function giftMessageToogle(giftMessageIdentifier)
 {
@@ -48,137 +48,137 @@ function giftMessageToogle(giftMessageIdentifier)
     return false;
 }
 </script>
-<?endif;?>
-<? $_order = $this->getOrder() ?>
+<?php endif; ?>
+<?php  $_order = $this->getOrder() ?>
 
-<h4><?=$this->__('Items Ordered')?>
+<h4><?php echo $this->__('Items Ordered') ?>
 
-<? if ($_order->getTracksCollection()->count()) : ?>
+<?php  if ($_order->getTracksCollection()->count()) : ?>
 <span class="separator">|</span>
-<a href="#" id="linkId" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?=$this->__('Track your order')?>"><?=$this->__('Track your order')?></a>
-<?endif;?>
+<a href="#" id="linkId" onclick="popWin('<?php echo $this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId()) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?php echo $this->__('Track your order') ?>"><?php echo $this->__('Track your order') ?></a>
+<?php endif; ?>
 </h4>
 <table cellspacing="0" class="data-table" id="my-orders-table">
     <thead>
         <tr>
-            <th><?=$this->__('Product Name')?></th>
-            <th width="5%"><?=$this->__('SKU')?></th>
-            <th width="10%"><?=$this->__('Price')?></th>
-            <th class="a-center wrap" width="6%"><?=$this->__('Qty Ordered')?></th>
-            <th class="a-center wrap" width="6%"><?=$this->__('Qty Shipped')?></th>
-            <th class="a-center wrap" width="6%"><?=$this->__('Qty Canceled')?></th>
-            <th class="a-right" width="10%"><?=$this->__('Subtotal')?></th>
+            <th><?php echo $this->__('Product Name') ?></th>
+            <th width="5%"><?php echo $this->__('SKU') ?></th>
+            <th width="10%"><?php echo $this->__('Price') ?></th>
+            <th class="a-center wrap" width="6%"><?php echo $this->__('Qty Ordered') ?></th>
+            <th class="a-center wrap" width="6%"><?php echo $this->__('Qty Shipped') ?></th>
+            <th class="a-center wrap" width="6%"><?php echo $this->__('Qty Canceled') ?></th>
+            <th class="a-right" width="10%"><?php echo $this->__('Subtotal') ?></th>
         </tr>
     </thead>
     <tbody>
-        <?$_items = $_order->getItemsCollection();?>
-        <?$_count = $_items->count();?>
-        <?$_index = 0;?>
-        <?foreach ($_items as $_item):?>
-            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-row-<?=$_item->getId()?>">
+        <?php $_items = $_order->getItemsCollection(); ?>
+        <?php $_count = $_items->count(); ?>
+        <?php $_index = 0; ?>
+        <?php foreach ($_items as $_item): ?>
+            <tr <?php echo ($_index++ > $_count ? ' class="last"' : '') ?> id="order-item-row-<?php echo $_item->getId() ?>">
                 <td>
-                    <?=$_item->getName()?>
-                    <?=$_item->getDescription()?>
-                    <?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()):?>
-                        <br /><a href="#" id="order-item-gift-message-link-<?=$_item->getId()?>" class="giftmessage-preview-link expand" onclick="return giftMessageToogle('<?=$_item->getId()?>')"><?=$this->__('Gift Message')?></a>
-                    <?endif;?>
+                    <?php echo $_item->getName() ?>
+                    <?php echo $_item->getDescription() ?>
+                    <?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()): ?>
+                        <br /><a href="#" id="order-item-gift-message-link-<?php echo $_item->getId() ?>" class="giftmessage-preview-link expand" onclick="return giftMessageToogle('<?php echo $_item->getId() ?>')"><?php echo $this->__('Gift Message') ?></a>
+                    <?php endif; ?>
                 </td>
-                <td class="nowrap"><?=$_item->getSku()?> </td>
-                <td class="nowrap a-right"><?=$_order->formatPrice($_item->getPrice())?> </td>
-                <td class="a-center"><?=$_item->getQtyOrdered()*1?> </td>
-                <td class="a-center"><?=$_item->getQtyShipped()*1?> </td>
-                <td class="a-center"><?=$_item->getQtyCanceled()*1?> </td>
-                <td class="last a-right nowrap"><?=$_order->formatPrice($_item->getRowTotal())?> </td>
+                <td class="nowrap"><?php echo $_item->getSku() ?> </td>
+                <td class="nowrap a-right"><?php echo $_order->formatPrice($_item->getPrice()) ?> </td>
+                <td class="a-center"><?php echo $_item->getQtyOrdered()*1 ?> </td>
+                <td class="a-center"><?php echo $_item->getQtyShipped()*1 ?> </td>
+                <td class="a-center"><?php echo $_item->getQtyCanceled()*1 ?> </td>
+                <td class="last a-right nowrap"><?php echo $_order->formatPrice($_item->getRowTotal()) ?> </td>
             </tr>
-            <?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()):?>
-            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-gift-message-<?=$_item->getId()?>" style="display:none;">
-                <?$_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_item);?>
+            <?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()): ?>
+            <tr <?php echo ($_index++ > $_count ? ' class="last"' : '') ?> id="order-item-gift-message-<?php echo $_item->getId() ?>" style="display:none;">
+                <?php $_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_item); ?>
                 <td class="giftmessage-row last" colspan="7">
                 <div class="left">
                      <ul>
                         <li>
-                            <label><?=$this->__('From')?></label> <?=$this->htmlEscape($_giftMessage->getRecipient())?>
+                            <label><?php echo $this->__('From') ?></label> <?php echo $this->htmlEscape($_giftMessage->getRecipient()) ?>
                         </li>
                         <li>
-                            <label><?=$this->__('To')?></label> <?=$this->htmlEscape($_giftMessage->getSender())?>
+                            <label><?php echo $this->__('To') ?></label> <?php echo $this->htmlEscape($_giftMessage->getSender()) ?>
                         </li>
-                        <li><?=$this->helper('giftmessage/message')->getEscapedGiftMessage($_item)?></li>
+                        <li><?php echo $this->helper('giftmessage/message')->getEscapedGiftMessage($_item) ?></li>
                      </ul>
 
                 </div>
-                <div class="right"><a href="#" onclick="return giftMessageToogle('<?=$_item->getId()?>')"><img src="<?=$this->getSkinUrl('images/gift-message-close.gif')?>"></a></div>
+                <div class="right"><a href="#" onclick="return giftMessageToogle('<?php echo $_item->getId() ?>')"><img src="<?php echo $this->getSkinUrl('images/gift-message-close.gif') ?>"></a></div>
                 </td>
             </tr>
-            <?endif?>
-        <?endforeach;?>
+            <?php endif ?>
+        <?php endforeach; ?>
 
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="6" class="a-right"><?=$this->__('Order Subtotal')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_order->getSubtotal())?></td>
+            <td colspan="6" class="a-right"><?php echo $this->__('Order Subtotal') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_order->getSubtotal()) ?></td>
         </tr>
-        <?if ($_order->getDiscountAmount() > 0):?>
+        <?php if ($_order->getDiscountAmount() > 0): ?>
             <tr>
-                <td colspan="6" class="a-right"><?=$this->__('Discount '.($_order->getCouponCode()?'('.$_order->getCouponCode().')':''))?></td>
-                <td class="last a-right"><?=$_order->formatPrice(0.00 - $_order->getDiscountAmount())?></td>
+                <td colspan="6" class="a-right"><?php echo $this->__('Discount '.($_order->getCouponCode()?'('.$_order->getCouponCode().')':'')) ?></td>
+                <td class="last a-right"><?php echo $_order->formatPrice(0.00 - $_order->getDiscountAmount()) ?></td>
             </tr>
-        <?endif;?>
-        <?if ($_order->getTaxAmount() > 0):?>
+        <?php endif; ?>
+        <?php if ($_order->getTaxAmount() > 0): ?>
             <tr>
-                <td colspan="6" class="a-right"><?=$this->__('Tax')?></td>
-                <td class="last a-right"><?=$_order->formatPrice($_order->getTaxAmount())?></td>
+                <td colspan="6" class="a-right"><?php echo $this->__('Tax') ?></td>
+                <td class="last a-right"><?php echo $_order->formatPrice($_order->getTaxAmount()) ?></td>
             </tr>
-        <?endif;?>
-        <?if ($_order->getShippingAmount() || $_order->getShippingDescription()):?>
+        <?php endif; ?>
+        <?php if ($_order->getShippingAmount() || $_order->getShippingDescription()): ?>
             <tr>
-                <td colspan="6" class="a-right"><?=$this->__('Shipping & Handling')?></td>
-                <td class="last a-right"><?=$_order->formatPrice($_order->getShippingAmount())?></td>
+                <td colspan="6" class="a-right"><?php echo $this->__('Shipping & Handling') ?></td>
+                <td class="last a-right"><?php echo $_order->formatPrice($_order->getShippingAmount()) ?></td>
             </tr>
-        <?endif;?>
+        <?php endif; ?>
         <tr>
-            <td colspan="6" class="a-right"><?=$this->__('Grand Total')?></td>
-            <td class="last a-right"><?=$_order->formatPrice($_order->getGrandTotal())?></td>
+            <td colspan="6" class="a-right"><?php echo $this->__('Grand Total') ?></td>
+            <td class="last a-right"><?php echo $_order->formatPrice($_order->getGrandTotal()) ?></td>
         </tr>
-        <?if ($_order->isCurrencyDifferent()):?>
+        <?php if ($_order->isCurrencyDifferent()): ?>
         <tr>
-            <td colspan="6" class="a-right"><?=$this->__('Grand Total to be charged')?></td>
-            <td class="last a-right"><?=$_order->formatBasePrice($_order->getBaseGrandTotal())?></td>
+            <td colspan="6" class="a-right"><?php echo $this->__('Grand Total to be charged') ?></td>
+            <td class="last a-right"><?php echo $_order->formatBasePrice($_order->getBaseGrandTotal()) ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
     </tfoot>
 </table>
 <script type="text/javascript">decorateTable('my-orders-table')</script>
 
-<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $_order) && $_order->getGiftMessageId()):?>
+<?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $_order) && $_order->getGiftMessageId()): ?>
 <div class="giftmessage">
-    <?$_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_order);?>
-    <strong><?=$this->__('Gift Message for this Order')?></strong>
+    <?php $_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_order); ?>
+    <strong><?php echo $this->__('Gift Message for this Order') ?></strong>
      <ul>
         <li>
-            <label><?=$this->__('From')?></label> <?=$this->htmlEscape($_giftMessage->getRecipient())?>
+            <label><?php echo $this->__('From') ?></label> <?php echo $this->htmlEscape($_giftMessage->getRecipient()) ?>
         </li>
         <li>
-            <label><?=$this->__('To')?></label> <?=$this->htmlEscape($_giftMessage->getSender())?>
+            <label><?php echo $this->__('To') ?></label> <?php echo $this->htmlEscape($_giftMessage->getSender()) ?>
         </li>
-        <li><?=$this->helper('giftmessage/message')->getEscapedGiftMessage($_order)?></li>
+        <li><?php echo $this->helper('giftmessage/message')->getEscapedGiftMessage($_order) ?></li>
      </ul>
 </div>
-<?endif;?>
-<?$_history = $this->getOrder()->getVisibleStatusHistory()?>
-<?if (count($_history)):?>
+<?php endif; ?>
+<?php $_history = $this->getOrder()->getVisibleStatusHistory() ?>
+<?php if (count($_history)): ?>
     <div class="clear">&nbsp;</div>
-    <h4><?=$this->__('About Your Order')?></h4>
+    <h4><?php echo $this->__('About Your Order') ?></h4>
     <div>
         <dl>
-            <?foreach ($_history as $_historyItem):?>
-                <dt><?=$this->formatDate($_historyItem->getCreatedAt(), 'medium', true)?></dt>
-                <dd><?=$_historyItem->getComment()?></dd>
-            <?endforeach;?>
+            <?php foreach ($_history as $_historyItem): ?>
+                <dt><?php echo $this->formatDate($_historyItem->getCreatedAt(), 'medium', true) ?></dt>
+                <dd><?php echo $_historyItem->getComment() ?></dd>
+            <?php endforeach; ?>
         </dl>
     </div>
-<?endif;?>
+<?php endif; ?>
 
 <div class="button-set">
-    <a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back to My Orders')?></a>
+    <a href="<?php echo $this->getBackUrl() ?>" class="left">&laquo; <?php echo $this->__('Back to My Orders') ?></a>
 </div>

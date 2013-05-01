@@ -65,7 +65,6 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Adminhtml_Blo
             echo '<ul>';
 
             ob_implicit_flush();
-
             $profile->run();
             foreach ($profile->getExceptions() as $e) {
                 switch ($e->getLevel()) {

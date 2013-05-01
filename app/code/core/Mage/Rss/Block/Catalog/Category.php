@@ -46,7 +46,7 @@ class Mage_Rss_Block_Catalog_Category extends Mage_Rss_Block_Abstract
                 $layer = Mage::getSingleton('catalog/layer')->setStore($storeId);
                 //want to load all products no matter anchor or not
                 $category->setIsAnchor(true);
-                $newurl = $category->getCategoryUrl();
+                $newurl = $category->getUrl();
                 $title = $category->getName();
                 $data = array('title' => $title,
                         'description' => $title,

@@ -18,30 +18,30 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?=$this->helper('adminhtml/media_js')->includeScript('lib/flex.js')?>
-<?=$this->helper('adminhtml/media_js')->includeSkinScript('js/flexuploader.js')?>
-<?=$this->helper('adminhtml/media_js')->getTranslatorScript()?>
-<div id="<?=$this->getHtmlId()?>" class="uploader">
+<?php echo $this->helper('adminhtml/media_js')->includeScript('lib/flex.js') ?>
+<?php echo $this->helper('adminhtml/media_js')->includeScript('mage/adminhtml/flexuploader.js') ?>
+<?php echo $this->helper('adminhtml/media_js')->getTranslatorScript() ?>
+<div id="<?php echo $this->getHtmlId() ?>" class="uploader">
     <div class="buttons">
-        <?=$this->getBrowseButtonHtml()?>
-        <?=$this->getUploadButtonHtml()?>
-        <div id="<?=$this->getHtmlId()?>-install-flash" style="display:none">
-            <?=Mage::helper('media')->__('This content requires last version of Adobe Flash Player. <a href="%s">Get Flash</a>', 'http://www.adobe.com/go/getflash/')?>
+        <?php echo $this->getBrowseButtonHtml() ?>
+        <?php echo $this->getUploadButtonHtml() ?>
+        <div id="<?php echo $this->getHtmlId() ?>-install-flash" style="display:none">
+            <?php echo Mage::helper('media')->__('This content requires last version of Adobe Flash Player. <a href="%s">Get Flash</a>', 'http://www.adobe.com/go/getflash/') ?>
         </div>
     </div>
     <div class="clear"></div>
-    <div class="no-display" id="<?=$this->getHtmlId()?>-template">
+    <div class="no-display" id="<?php echo $this->getHtmlId() ?>-template">
         <div id="{{id}}" class="file-row">
         <span class="file-info">{{name}} ({{size}})</span>
-        <span class="delete-button"><?=$this->getDeleteButtonHtml()?></span>
+        <span class="delete-button"><?php echo $this->getDeleteButtonHtml() ?></span>
         <span class="progress-text"></span>
         <div class="clear"></div>
         </div>
     </div>
-    <div class="no-display" id="<?=$this->getHtmlId()?>-template-progress">
+    <div class="no-display" id="<?php echo $this->getHtmlId() ?>-template-progress">
         {{percent}}% {{uploaded}} / {{total}}
     </div>
 </div>
 <script type="text/javascript">
-<?=$this->getJsObjectName()?> = new Flex.Uploader('<?=$this->getHtmlId()?>', '<?=$this->getSkinUrl('media/uploader.swf')?>', <?=$this->getConfigJson()?>);
+<?php echo $this->getJsObjectName() ?> = new Flex.Uploader('<?php echo $this->getHtmlId() ?>', '<?php echo $this->getSkinUrl('media/uploader.swf') ?>', <?php echo $this->getConfigJson() ?>);
 </script>

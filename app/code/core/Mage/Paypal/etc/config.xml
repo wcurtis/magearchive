@@ -65,7 +65,7 @@
         <blocks>
             <paypal><class>Mage_Paypal_Block</class></paypal>
         </blocks>
-	</global>
+    </global>
     <frontend>
         <secure_url>
             <paypal_express>/paypal/express</paypal_express>

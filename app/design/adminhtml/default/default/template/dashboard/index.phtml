@@ -23,7 +23,7 @@
 function changePeriod(obj)
 {
     var periodParam = obj.value ? 'period/'+obj.value + '/' : '';
-    setLocation('<?=$this->getSwitchUrl()?>'+periodParam);
+    setLocation('<?php echo $this->getSwitchUrl() ?>'+periodParam);
 }
 function toggleCal(id) {
     $('dashboard_'+id+'_cal_div').toggle();
@@ -34,44 +34,44 @@ function toggleCal(id) {
     <table cellspacing="0">
         <tr>
             <td>
-                <h3 class="head-dashboard"><?=$this->__('Dashboard')?></h3>
+                <h3 class="head-dashboard"><?php echo $this->__('Dashboard') ?></h3>
             </td>
         </tr>
     </table>
 </div>
 <div class="dashboard-container">
-    <?=$this->getStoreSwitcherHtml()?>
+    <?php echo $this->getStoreSwitcherHtml() ?>
     <table cellspacing="25" width="100%">
         <tr>
             <td>
                 <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?=$this->__('Sales Statistics')?></h4></div>
-                    <fieldset><?=$this->getChildHtml('sales')?></fieldset>
+                    <div class="entry-edit-head"><h4><?php echo $this->__('Sales Statistics') ?></h4></div>
+                    <fieldset><?php echo $this->getChildHtml('sales') ?></fieldset>
                 </div>
                 <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?=$this->__('Last 5 Orders')?></h4></div>
-                    <fieldset class="np"><?=$this->getChildHtml('lastOrders');?></fieldset>
+                    <div class="entry-edit-head"><h4><?php echo $this->__('Last 5 Orders') ?></h4></div>
+                    <fieldset class="np"><?php echo $this->getChildHtml('lastOrders'); ?></fieldset>
                 </div>
                 <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?=$this->__('Last 5 Search Terms')?></h4></div>
-                    <fieldset class="np"><?=$this->getChildHtml('lastSearches');?></fieldset>
+                    <div class="entry-edit-head"><h4><?php echo $this->__('Last 5 Search Terms') ?></h4></div>
+                    <fieldset class="np"><?php echo $this->getChildHtml('lastSearches'); ?></fieldset>
                 </div>
                 <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?=$this->__('Top 5 Search Terms')?></h4></div>
-                    <fieldset class="np"><?=$this->getChildHtml('topSearches');?></fieldset>
+                    <div class="entry-edit-head"><h4><?php echo $this->__('Top 5 Search Terms') ?></h4></div>
+                    <fieldset class="np"><?php echo $this->getChildHtml('topSearches'); ?></fieldset>
                 </div>
             </td>
             <td>
                 <div class="entry-edit" style="border:1px solid #ccc;">
-                    <?=$this->getChildHtml('diagrams')?>
+                    <?php echo $this->getChildHtml('diagrams') ?>
                     <center>
                         <div id="diagram_tab_content"></div>
                     </center>
                     <div style="margin:20px;">
-                        <?=$this->getChildHtml('totals')?>
+                        <?php echo $this->getChildHtml('totals') ?>
                     </div>
                     <div style="margin:20px;">
-                        <?=$this->getChildHtml('grids')?>
+                        <?php echo $this->getChildHtml('grids') ?>
                         <div id="grid_tab_content"></div>
                     </div>
                 </div>

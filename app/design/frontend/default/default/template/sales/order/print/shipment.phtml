@@ -18,79 +18,79 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_order = $this->getOrder()?>
+<?php $_order = $this->getOrder() ?>
 <!--<div class="page-head button-level">
-    <h2><?=$this->__('My Orders - Details')?></h2>
-    <button class="form-button"><span><?=$this->__('Print All Shipments')?></span></button>
+    <h2><?php echo $this->__('My Orders - Details') ?></h2>
+    <button class="form-button"><span><?php echo $this->__('Print All Shipments') ?></span></button>
 </div>-->
-<h3><?=$this->__('Order #%s', $_order->getRealOrderId())?></h3>
-<?$_shipment = $this->getShipment()?>
-<?if($_shipment):?>
-    <?$_shipments = array($_shipment);?>
-<?else:?>
-    <?$_shipments = $_order->getShipmentsCollection()?>
-<?endif;?>
+<h3><?php echo $this->__('Order #%s', $_order->getRealOrderId()) ?></h3>
+<?php $_shipment = $this->getShipment() ?>
+<?php if($_shipment): ?>
+    <?php $_shipments = array($_shipment); ?>
+<?php else: ?>
+    <?php $_shipments = $_order->getShipmentsCollection() ?>
+<?php endif; ?>
 
-<?foreach ($_shipments as $_shipment):?>
+<?php foreach ($_shipments as $_shipment): ?>
     <div class="divider"></div>
     <div class="head">
-        <h3><?=$this->__('Shipment #%s', $_shipment->getIncrementId())?></h3>
+        <h3><?php echo $this->__('Shipment #%s', $_shipment->getIncrementId()) ?></h3>
     </div>
     <div class="col2-set">
         <div class="col-1">
-            <h4><?=$this->__('Shipping Address')?></h4>
-            <?$_shipping = $_shipment->getShippingAddress()?>
-            <address><?=$_shipping->getFirstname()?> <?=$_shipping->getLastname()?><br/>
-            <?=$_shipping->getCompany()?><br/>
-            <?=$_shipping->getStreet()?><br/>
-            <?=$_shipping->getCity()?>, <?=$_shipping->getRegion()?> <?=$_shipping->getPostcode()?><br/>
-            <strong>T</strong> | <?=$_shipping->getTelephone();
-            if ($_shipping->getFax()):?><br /><strong>F</strong> | <?=$_shipping->getFax()?><?endif;?></address>
+            <h4><?php echo $this->__('Shipping Address') ?></h4>
+            <?php $_shipping = $_shipment->getShippingAddress() ?>
+            <address><?php echo $_shipping->getFirstname() ?> <?php echo $_shipping->getLastname() ?><br/>
+            <?php echo $_shipping->getCompany() ?><br/>
+            <?php echo $_shipping->getStreet() ?><br/>
+            <?php echo $_shipping->getCity() ?>, <?php echo $_shipping->getRegion() ?> <?php echo $_shipping->getPostcode() ?><br/>
+            <strong>T</strong> | <?php echo $_shipping->getTelephone();
+            if ($_shipping->getFax()): ?><br /><strong>F</strong> | <?php echo $_shipping->getFax() ?><?php endif; ?></address>
         </div>
         <div class="col-2">
-            <h4><?=$this->__('Billing Address')?></h4>
-            <?$_billing = $_shipment->getbillingAddress()?>
-            <address><?=$_order->getBillingAddress()->format('html')?></address>
+            <h4><?php echo $this->__('Billing Address') ?></h4>
+            <?php $_billing = $_shipment->getbillingAddress() ?>
+            <address><?php echo $_order->getBillingAddress()->format('html') ?></address>
         </div>
     </div>
     <br/>
     <div class="col2-set">
         <div class="col-1">
-            <h4><?=$this->__('Shipping Method')?></h4>
-             <?=$_order->getShippingDescription()?>
+            <h4><?php echo $this->__('Shipping Method') ?></h4>
+             <?php echo $_order->getShippingDescription() ?>
         </div>
         <div class="col-2">
-            <h4><?=$this->__('Payment Method')?></h4>
-            <?=$this->getPaymentInfoHtml()?>
+            <h4><?php echo $this->__('Payment Method') ?></h4>
+            <?php echo $this->getPaymentInfoHtml() ?>
         </div>
     </div>
     <br/>
-    <h4><?=$this->__('Items Ordered')?></h4>
+    <h4><?php echo $this->__('Items Ordered') ?></h4>
     <table cellspacing="0" class="data-table">
         <thead>
             <tr>
-                <th><?=$this->__('Product Name')?></th>
-                <th class="a-center" width="10%"><?=$this->__('SKU')?></th>
-                <th class="a-center" width="10%"><?=$this->__('Qty Shipped')?></th>
+                <th><?php echo $this->__('Product Name') ?></th>
+                <th class="a-center" width="10%"><?php echo $this->__('SKU') ?></th>
+                <th class="a-center" width="10%"><?php echo $this->__('Qty Shipped') ?></th>
             </tr>
         </thead>
         <tbody>
-            <?$_items = $_shipment->getItemsCollection();?>
-            <?$_count = $_items->count();?>
-            <?$_index = 0;?>
-            <?foreach ($_items as $_item):?>
-                <tr<?=($_index++ > $_count ? ' class="last"' : '')?>>
+            <?php $_items = $_shipment->getItemsCollection(); ?>
+            <?php $_count = $_items->count(); ?>
+            <?php $_index = 0; ?>
+            <?php foreach ($_items as $_item): ?>
+                <tr<?php echo ($_index++ > $_count ? ' class="last"' : '') ?>>
                 <td>
-                    <?=$_item->getName()?>
-                    <?=$_item->getDescription()?>
+                    <?php echo $_item->getName() ?>
+                    <?php echo $_item->getDescription() ?>
                 </td>
-                <td class="a-center"><?=$_item->getSku()?></td>
-                <td class="a-center"><?=$_item->getQty()*1?></td>
+                <td class="a-center"><?php echo $_item->getSku() ?></td>
+                <td class="a-center"><?php echo $_item->getQty()*1 ?></td>
 
-            <?endforeach;?>
+            <?php endforeach; ?>
             </tr>
         </tbody>
     </table>
     <br/>
-<?endforeach;?>
+<?php endforeach; ?>
 <script type="text/javascript">window.print();</script>

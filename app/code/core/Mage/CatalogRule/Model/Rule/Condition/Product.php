@@ -25,7 +25,7 @@ class Mage_CatalogRule_Model_Rule_Condition_Product extends Mage_Rule_Model_Cond
     {
         $obj = Mage::getSingleton('eav/config')
             ->getAttribute('catalog_product', $this->getAttribute());
-        if (!$obj->getEntity()) {
+        if ($obj && !$obj->getEntity()) {
             $obj->setEntity(Mage::getResourceSingleton('catalog/product'));
         }
         return $obj;
@@ -44,7 +44,7 @@ class Mage_CatalogRule_Model_Rule_Condition_Product extends Mage_Rule_Model_Cond
 
         $attributes = array();
         foreach ($productAttributes as $attr) {
-            if (!$attr->getIsVisible()) {
+            if (!$attr->isAllowedForRuleCondition()) {
                 continue;
             }
             $attributes[$attr->getAttributeCode()] = $attr->getFrontend()->getLabel();
@@ -127,6 +127,9 @@ class Mage_CatalogRule_Model_Rule_Condition_Product extends Mage_Rule_Model_Cond
 
     public function collectValidatedAttributes($productCollection)
     {
+        $attributes = $this->getRule()->getCollectedAttributes();
+        $attributes[$this->getAttribute()] = true;
+        $this->getRule()->setCollectedAttributes($attributes);
         $productCollection->addAttributeToSelect($this->getAttribute());
         return $this;
     }
@@ -168,11 +171,12 @@ class Mage_CatalogRule_Model_Rule_Condition_Product extends Mage_Rule_Model_Cond
     public function getValueElement()
     {
         $element = parent::getValueElement();
-
-        switch ($this->getAttributeObject()->getFrontendInput()) {
-            case 'date':
-                $element->setImage(Mage::getDesign()->getSkinUrl('images/grid-cal.gif'));
-                break;
+        if ($this->getAttributeObject()) {
+            switch ($this->getAttributeObject()->getFrontendInput()) {
+                case 'date':
+                    $element->setImage(Mage::getDesign()->getSkinUrl('images/grid-cal.gif'));
+                    break;
+            }
         }
 
         return $element;
@@ -199,9 +203,11 @@ class Mage_CatalogRule_Model_Rule_Condition_Product extends Mage_Rule_Model_Cond
             case 'sku': case 'category_ids':
                 return true;
         }
-        switch ($this->getAttributeObject()->getFrontendInput()) {
-            case 'date':
-                return true;
+        if ($this->getAttributeObject()) {
+            switch ($this->getAttributeObject()->getFrontendInput()) {
+                case 'date':
+                    return true;
+            }
         }
         return false;
     }

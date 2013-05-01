@@ -49,10 +49,6 @@ class Mage_Adminhtml_UrlrewriteController extends Mage_Adminhtml_Controller_Acti
     public function indexAction()
     {
     	$this->_initAction();
-
-        /**
-         * Append customers block to content
-         */
         $this->_addContent(
             $this->getLayout()->createBlock('adminhtml/urlrewrite')
         );
@@ -107,7 +103,7 @@ class Mage_Adminhtml_UrlrewriteController extends Mage_Adminhtml_Controller_Acti
         $this->loadLayout();
         $this->_setActiveMenu('adminhtml/urlrewrite');
 
-        $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
+        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
         $this->_addContent($this->getLayout()->createBlock('adminhtml/urlrewrite_add'));
 
@@ -127,10 +123,12 @@ class Mage_Adminhtml_UrlrewriteController extends Mage_Adminhtml_Controller_Acti
             // Saving urlrewrite data
             try {
             	if (!$model->getId()) {
-            		$model->setType($data['type']);
+            		$model->setIsSystem(0);
             		$model->setStoreId($data['store_id']);
                     $model->setIdPath($data['id_path']);
                     $model->setTargetPath($data['target_path']);
+                    $model->setProductId($data['product_id'] ? $data['product_id'] : null);
+                    $model->setCategoryId($data['category_id'] ? $data['category_id'] : null);
             	}
             	$model->setRequestPath($this->_formatUrlKey($data['request_path']));
             	$model->setOptions($data['options']);
@@ -169,7 +167,7 @@ class Mage_Adminhtml_UrlrewriteController extends Mage_Adminhtml_Controller_Acti
     {
         $this->getResponse()->setBody($this->getLayout()->createBlock('adminhtml/urlrewrite_product_grid')->toHtml());
     }
-    
+
     public function getCategoryInfoAction()
     {
         $response = new Varien_Object();

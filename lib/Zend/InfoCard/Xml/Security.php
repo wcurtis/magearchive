@@ -17,7 +17,7 @@
  * @subpackage Zend_InfoCard_Xml_Security
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Security.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Security.php 8600 2008-03-06 20:48:18Z darby $
  * @author     John Coggeshall <john@zend.com>
  */
 
@@ -145,9 +145,19 @@ class Zend_InfoCard_Xml_Security
                 throw new Zend_InfoCard_Xml_Security_Exception("Unknown or unsupported DigestMethod Requested");
         }
 
-        $dValue = base64_decode((string)$sxe->Signature->SignedInfo->Reference->DigestValue, true);
+        $base64DecodeSupportsStrictParam = version_compare(PHP_VERSION, '5.2.0', '>=');
 
-        $signatureValue = base64_decode((string)$sxe->Signature->SignatureValue, true);
+        if ($base64DecodeSupportsStrictParam) {
+            $dValue = base64_decode((string)$sxe->Signature->SignedInfo->Reference->DigestValue, true);
+        } else {
+            $dValue = base64_decode((string)$sxe->Signature->SignedInfo->Reference->DigestValue);
+        }
+
+        if ($base64DecodeSupportsStrictParam) {
+            $signatureValue = base64_decode((string)$sxe->Signature->SignatureValue, true);
+        } else {
+            $signatureValue = base64_decode((string)$sxe->Signature->SignatureValue);
+        }
 
         $transformer = new Zend_InfoCard_Xml_Security_Transform();
 

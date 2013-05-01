@@ -16,7 +16,7 @@
  * @package    Zend_View
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Form.php 8118 2008-02-18 16:10:32Z matthew $
+ * @version    $Id: Form.php 8487 2008-02-29 21:33:49Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -54,11 +54,11 @@ class Zend_View_Helper_Form extends Zend_View_Helper_FormElement
      * Render HTML form
      *
      * @param  string $name Form name
-     * @param  string $content Form content
-     * @param  array $attribs HTML form attributes
+     * @param  null|array $attribs HTML form attributes
+     * @param  false|string $content Form content
      * @return string
      */
-    public function form($name, $content, $attribs = null)
+    public function form($name, $attribs = null, $content = false)
     {
         $info = $this->_getInfo($name, $content, $attribs);
         extract($info);
@@ -74,9 +74,12 @@ class Zend_View_Helper_Form extends Zend_View_Helper_FormElement
                . $name
                . $id
                . $this->_htmlAttribs($attribs)
-               . '>'
-               . $content
-               . '</form>';
+               . '>';
+
+        if (false !== $content) {
+            $xhtml .= $content
+                   .  '</form>';
+        }
 
         return $xhtml;
     }

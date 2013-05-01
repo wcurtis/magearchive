@@ -18,7 +18,7 @@
  * @subpackage Adapter
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 8146 2008-02-18 21:01:22Z doctorrock83 $
+ * @version    $Id: Abstract.php 8711 2008-03-09 18:08:32Z thomas $
  */
 
 
@@ -742,6 +742,10 @@ abstract class Zend_Db_Adapter_Abstract
     {
         $this->_connect();
 
+        if ($value instanceof Zend_Db_Select) {
+            return '(' . $value->__toString() . ')';
+        }
+
         if ($value instanceof Zend_Db_Expr) {
             return $value->__toString();
         }
@@ -810,7 +814,7 @@ abstract class Zend_Db_Adapter_Abstract
         } else {
             while ($count > 0) {
                 if (strpos($text, '?') != false) {
-                    $text = substr_replace($text, $this->quote($value), strpos($text, '?'), 1);
+                    $text = substr_replace($text, $this->quote($value, $type), strpos($text, '?'), 1);
                 }
                 --$count;
             }
@@ -884,6 +888,8 @@ abstract class Zend_Db_Adapter_Abstract
     {
         if ($ident instanceof Zend_Db_Expr) {
             $quoted = $ident->__toString();
+        } elseif ($ident instanceof Zend_Db_Select) {
+            $quoted = '(' . $ident->__toString() . ')';
         } else {
             if (is_string($ident)) {
                 $ident = explode('.', $ident);

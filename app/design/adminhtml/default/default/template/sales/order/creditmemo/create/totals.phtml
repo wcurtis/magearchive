@@ -18,65 +18,65 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?$_source  = $this->getSource()?>
-<?$this->setPriceDataObject($_source)?>
-<?$_currency= $this->getCurrency()?>
-<?if ($_source):?>
+<?php $_source  = $this->getSource() ?>
+<?php $this->setPriceDataObject($_source) ?>
+<?php $_currency= $this->getCurrency() ?>
+<?php if ($_source): ?>
 <table cellspacing="0" width="100%">
     <col/>
     <col width="100"/>
     <tfoot>
         <tr>
             <td class="label a-right">
-                <strong><?=$this->helper('sales')->__('Total Refund')?></strong>
+                <strong><?php echo $this->helper('sales')->__('Total Refund') ?></strong>
             </td>
             <td class="emph" align="right">
-                <?=$this->displayPriceAttribute('grand_total', true)?>
+                <?php echo $this->displayPriceAttribute('grand_total', true) ?>
             </td>
         </tr>
     </tfoot>
     <tbody>
-        <?if ((float) $_source->getSubtotal()):?>
+        <?php if ((float) $_source->getSubtotal()): ?>
         <tr>
-            <td class="a-right"><?=$this->helper('sales')->__('Subtotal')?></td>
-            <td align="right"><?=$this->displayPriceAttribute('subtotal')?></td>
+            <td class="a-right"><?php echo $this->helper('sales')->__('Subtotal') ?></td>
+            <td align="right"><?php echo $this->displayPriceAttribute('subtotal') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
 
-        <?if ((float) $_source->getTaxAmount()):?>
+        <?php if ((float) $_source->getTaxAmount()): ?>
         <tr>
-            <td class="a-right"><?=$this->helper('sales')->__('Tax')?></td>
-            <td align="right"><?=$this->displayPriceAttribute('tax_amount')?></td>
+            <td class="a-right"><?php echo $this->helper('sales')->__('Tax') ?></td>
+            <td align="right"><?php echo $this->displayPriceAttribute('tax_amount') ?></td>
         </tr>
-        <?endif;?>
-        <?if ((float) $_source->getDiscountAmount()):?>
+        <?php endif; ?>
+        <?php if ((float) $_source->getDiscountAmount()): ?>
         <tr>
-            <td class="a-right"><?=$this->helper('sales')->__('Discount')?></td>
-            <td align="right"><?=$this->displayPriceAttribute('discount_amount')?></td>
+            <td class="a-right"><?php echo $this->helper('sales')->__('Discount') ?></td>
+            <td align="right"><?php echo $this->displayPriceAttribute('discount_amount') ?></td>
         </tr>
-        <?endif;?>
+        <?php endif; ?>
         <tr>
-            <td class="a-right"><?=$this->helper('sales')->__('Refund Shipping')?></td>
+            <td class="a-right"><?php echo $this->helper('sales')->__('Refund Shipping') ?></td>
             <td align="right">
-                <input type="text" name="creditmemo[shipping_amount]" value="<?=$_source->getBaseShippingAmount()*1?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="shipping_amount"/>
+                <input type="text" name="creditmemo[shipping_amount]" value="<?php echo $_source->getBaseShippingAmount()*1 ?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="shipping_amount"/>
             </td>
         </tr>
         <tr>
             <td colspan="2" id="shipping_amount_adv" class="advice-bg-right"></td>
         </tr>
         <tr>
-            <td class="a-right"><?=$this->helper('sales')->__('Adjustment Refund')?></td>
+            <td class="a-right"><?php echo $this->helper('sales')->__('Adjustment Refund') ?></td>
             <td align="right">
-                <input type="text" name="creditmemo[adjustment_positive]" value="<?=$_source->getBaseAdjustmentFeePositive()*1?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="adjustment_positive"/>
+                <input type="text" name="creditmemo[adjustment_positive]" value="<?php echo $_source->getBaseAdjustmentFeePositive()*1 ?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="adjustment_positive"/>
             </td>
         </tr>
         <tr>
             <td colspan="2" id="adjustment_positive_adv" class="advice-bg-right"></td>
         </tr>
         <tr>
-            <td class="a-right"><?=$this->helper('sales')->__('Adjustment Fee')?></td>
+            <td class="a-right"><?php echo $this->helper('sales')->__('Adjustment Fee') ?></td>
             <td align="right">
-                <input type="text" name="creditmemo[adjustment_negative]" value="<?=$_source->getBaseAdjustmentFeeNegative()*1?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="adjustment_negative"/>
+                <input type="text" name="creditmemo[adjustment_negative]" value="<?php echo $_source->getBaseAdjustmentFeeNegative()*1 ?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="adjustment_negative"/>
             </td>
         </tr>
         <tr>
@@ -86,7 +86,7 @@
 </table>
 <script type="text/javascript">
 Validation.addAllThese([
-    ['not-negative-amount', '<?=$this->helper('sales')->__('Please enter positive number in this field.')?>', function(v) {
+    ['not-negative-amount', '<?php echo $this->helper('sales')->__('Please enter positive number in this field.') ?>', function(v) {
         if(v.length)
             return parseFloat(v) >= 0;
         else
@@ -97,4 +97,4 @@ if ($('shipping_amount')) $('shipping_amount').advaiceContainer = $('shipping_am
 if ($('adjustment_positive')) $('adjustment_positive').advaiceContainer = $('adjustment_positive_adv');
 if ($('adjustment_negative')) $('adjustment_negative').advaiceContainer = $('adjustment_negative_adv');
 </script>
-<?endif;?>
+<?php endif; ?>

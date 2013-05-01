@@ -18,24 +18,24 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if(!empty($links)):?>
+<?php if(!empty($links)): ?>
 <ul class="breadcrumbs">
-    <?$_size=count($links);?>
-    <?foreach ($links as $_index=>$_link):?>
+    <?php $_size=count($links); ?>
+    <?php foreach ($links as $_index=>$_link): ?>
     <li>
-        <?if(empty($_link['url'])):?>
-            <?if($_index!=$_size-1):?>
-                <span><?=$_link['label']?></span>
-            <?else:?>
-                <strong><?=$_link['label']?></strong>
-            <?endif;?>
-        <?else:?>
-            <a href="<?=$_link['url']?>" title="<?=$_link['title']?>"><?=$_link['label']?></a>
-        <?endif;?>
-        <?if($_index!=$_size-1):?>
+        <?php if(empty($_link['url'])): ?>
+            <?php if($_index!=$_size-1): ?>
+                <span><?php echo $_link['label'] ?></span>
+            <?php else: ?>
+                <strong><?php echo $_link['label'] ?></strong>
+            <?php endif; ?>
+        <?php else: ?>
+            <a href="<?php echo $_link['url'] ?>" title="<?php echo $_link['title'] ?>"><?php echo $_link['label'] ?></a>
+        <?php endif; ?>
+        <?php if($_index!=$_size-1): ?>
             &raquo;
-        <?endif;?>
+        <?php endif; ?>
     </li>
-    <?endforeach;?>
+    <?php endforeach; ?>
 </ul>
-<?endif;?>
+<?php endif; ?>

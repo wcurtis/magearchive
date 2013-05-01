@@ -75,6 +75,9 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
         );
         $prices = $attribute->getValues();
         foreach ($prices as $data) {
+            if(empty($data['pricing_value'])) {
+                continue;
+            }
         	$priceObject = new Varien_Object($data);
         	$this->_getWriteAdapter()->insert($this->_priceTable, array(
         	   'product_super_attribute_id' => $attribute->getId(),

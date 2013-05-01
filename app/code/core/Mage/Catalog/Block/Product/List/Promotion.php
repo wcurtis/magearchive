@@ -11,9 +11,6 @@ class Mage_Catalog_Block_Product_List_Promotion extends Mage_Catalog_Block_Produ
             $collection->addAttributeToFilter('promotion', 1);
 
             $this->_productCollection = $collection;
-            Mage::dispatchEvent('catalog_block_product_list_collection', array(
-                'collection'=>$this->_productCollection,
-            ));
         }
         return $this->_productCollection;
     }

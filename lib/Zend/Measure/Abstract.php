@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Measure
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Abstract.php 8064 2008-02-16 10:58:39Z thomas $
+ * @version    $Id: Abstract.php 8704 2008-03-08 20:21:22Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -214,7 +214,7 @@ abstract class Zend_Measure_Abstract
                     }
                 }
             } else {
-                $value = $value * ($this->_UNITS[$this->getType()][0]);
+                $value = call_user_func(Zend_Locale_Math::$mul, $value, $this->_UNITS[$this->getType()][0], 25);
             }
             
             // Convert to expected value
@@ -238,7 +238,7 @@ abstract class Zend_Measure_Abstract
                     }
                 }
             } else {
-                $value = $value / ($this->_UNITS[$type][0]);
+                $value = @call_user_func(Zend_Locale_Math::$div, $value, $this->_UNITS[$type][0], 25);
             }
 
             $this->_value = $value;

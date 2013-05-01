@@ -37,6 +37,9 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
     protected $_items;
     protected $_order;
 
+    protected $_eventPrefix = 'sales_order_creditmemo';
+    protected $_eventObject = 'creditmemo';
+
     /**
      * Initialize creditmemo resource model
      */
@@ -175,9 +178,10 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
 
     public function canRefund()
     {
-        if ($this->getState() != self::STATE_CANCELED &&
-            $this->getState() != self::STATE_REFUNDED &&
-            $this->getOrder()->getPayment()->canRefund()) {
+        if ($this->getState() != self::STATE_CANCELED
+            && $this->getState() != self::STATE_REFUNDED
+            && $this->getOrder()->getPayment()->canRefund()
+            ) {
             return true;
         }
         return false;
@@ -261,6 +265,7 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
         }
 
         $this->getOrder()->getPayment()->refund($this);
+        Mage::dispatchEvent('sales_order_creditmemo_refund', array($this->_eventObject=>$this));
         return $this;
     }
 
@@ -294,7 +299,7 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
             );
         }
 
-
+        Mage::dispatchEvent('sales_order_creditmemo_cancel', array($this->_eventObject=>$this));
         return $this;
     }
 

@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Directory URL helper
  *
@@ -31,14 +31,20 @@ class Mage_Directory_Helper_Url extends Mage_Core_Helper_Url
      */
     public function getSwitchCurrencyUrl()
     {
+        if ($this->_getRequest()->getAlias('rewrite_request_path')) {
+            $url = Mage::app()->getStore()->getBaseUrl() . $this->_getRequest()->getAlias('rewrite_request_path');
+        }
+        else {
+            $url = $this->getCurrentUrl();
+        }
         $params = array(
-            Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL => $this->getCurrentBase64Url()
+            Mage_Core_Controller_Front_Action::PARAM_NAME_URL_ENCODED => Mage::helper('core')->urlEncode($url)
         );
         return $this->_getUrl('directory/currency/switch', $params);
     }
-    
+
     public function getLoadRegionsUrl()
     {
-        
+
     }
 }

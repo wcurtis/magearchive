@@ -110,7 +110,7 @@ class Mage_Sendfriend_ProductController extends Mage_Core_Controller_Front_Actio
             } catch (Mage_Core_Exception $e) {
                 Mage::getSingleton('catalog/session')->addError($e->getMessage());
             } catch (Exception $e) {
-            echo $e;
+                //echo $e;
                 Mage::getSingleton('catalog/session')
                     ->addException($e, Mage::helper('sendfriend')
                     ->__('Some emails was not sent')

@@ -41,4 +41,5 @@ class Mage_Customer_Model_Entity_Customer_Collection extends Mage_Eav_Model_Enti
             ->group('email.email');
         return $this;
     }
+    
 }

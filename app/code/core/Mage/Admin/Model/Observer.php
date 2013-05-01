@@ -32,7 +32,9 @@ class Mage_Admin_Model_Observer
         $request = Mage::app()->getRequest();
         $user = $session->getUser();
 
-        if (!$user) {
+        if ($request->getActionName() == 'forgotpassword') {
+        	$request->setDispatched(true);
+        } elseif (!$user) {
             if ($request->getPost('login')) {
                 $postLogin  = $request->getPost('login');
                 $username   = $postLogin['username'];
@@ -47,11 +49,13 @@ class Mage_Admin_Model_Observer
                     } elseif (!Mage::getModel('admin/user')->hasAssigned2Role($user->getId())) {
                         if (!$request->getParam('messageSent')) {
                                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Access Denied.'));
+                                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('<a href="%s">Forgot your password?</a>', Mage::helper('adminhtml')->getUrl('adminhtml/index/forgotpassword')));
                                 $request->setParam('messageSent', true);
                         }
                     } else {
                         if ($user->getId()) {
                             $session->setUser($user);
+                            $session->setAcl(Mage::getResourceModel('admin/acl')->loadAcl());
                             header('Location: '.$request->getRequestUri());
                             exit;
                         } else {
@@ -75,7 +79,6 @@ class Mage_Admin_Model_Observer
                         ->setActionName('login')
                         ->setDispatched(false);
                 }
-
                 return false;
             }
         } else {
@@ -91,8 +94,5 @@ class Mage_Admin_Model_Observer
                 $user->setReloadAclFlag('0')->save();
             }
         }
-
     }
-
-
 }

@@ -27,3 +27,5 @@ require_once 'app/Mage.php';
 
 umask(0);
 Mage::run('default');
+
+//echo "<pre>".print_r(array_keys(Mage::objects()->getAllObjects()),1)."</pre>";

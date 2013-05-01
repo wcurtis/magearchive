@@ -18,34 +18,34 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<script type="text/javascript" src="<?=$this->getSkinUrl('js/giftmessage.js')?>"></script>
-<?if(!$this->getSaveMode()):?>
-<form action="<?=$this->getSaveUrl()?>" id="message-form" method="post" class="a-left">
+<?php echo $this->helper('core/js')->includeScript('mage/adminhtml/giftmessage.js') ?>
+<?php if(!$this->getSaveMode()): ?>
+<form action="<?php echo $this->getSaveUrl() ?>" id="message-form" method="post" class="a-left">
 
-    <?=$this->getFormHtml();?>
-    <?=$this->getSaveButtonHtml()?>
-    <?=$this->getCancelButtonHtml()?>
-    <?if($this->getMessage()->getGiftMessageId()):?>
-    <?=$this->getRemoveButtonHtml()?>
-    <?endif;?>
+    <?php echo $this->getFormHtml(); ?>
+    <?php echo $this->getSaveButtonHtml() ?>
+    <?php echo $this->getCancelButtonHtml() ?>
+    <?php if($this->getMessage()->getGiftMessageId()): ?>
+    <?php echo $this->getRemoveButtonHtml() ?>
+    <?php endif; ?>
 </form>
-<?elseif($this->getSaveMode()=='save'):?>
-<h3><?=Mage::helper('giftmessage')->__('Your gift message successfully saved')?></h3>
-<br /><?=$this->getCloseButtonHtml()?>
-<?else:?>
-<h3><?=Mage::helper('giftmessage')->__('Your gift message successfully removed')?></h3>
-<br /><?=$this->getCloseButtonHtml()?>
-<?endif;?>
+<?php elseif($this->getSaveMode()=='save'): ?>
+<h3><?php echo Mage::helper('giftmessage')->__('Your gift message successfully saved') ?></h3>
+<br /><?php echo $this->getCloseButtonHtml() ?>
+<?php else: ?>
+<h3><?php echo Mage::helper('giftmessage')->__('Your gift message successfully removed') ?></h3>
+<br /><?php echo $this->getCloseButtonHtml() ?>
+<?php endif; ?>
 <script type="text/javascript">
 <!--
-<?if(!$this->getSaveMode()):?>
-    var giftMessageWindowObject = new GiftMessageWindow('<?=$this->getUniqueId()?>','message-form', '<?=$this->getRemoveUrl()?>');
-    giftMessageWindowObject.confirmMessage = '<?=$this->getEscapedForJs(Mage::helper('giftmessage')->__('Are you sure?'))?>';
-<?else:?>
-    var giftMessageWindowObject = new GiftMessageWindow('<?=$this->getUniqueId()?>', null, '<?=$this->getRemoveUrl()?>');
+<?php if(!$this->getSaveMode()): ?>
+    var giftMessageWindowObject = new GiftMessageWindow('<?php echo $this->getUniqueId() ?>','message-form', '<?php echo $this->getRemoveUrl() ?>');
+    giftMessageWindowObject.confirmMessage = '<?php echo $this->getEscapedForJs(Mage::helper('giftmessage')->__('Are you sure?')) ?>';
+<?php else: ?>
+    var giftMessageWindowObject = new GiftMessageWindow('<?php echo $this->getUniqueId() ?>', null, '<?php echo $this->getRemoveUrl() ?>');
     Event.observe(window, 'load', function(evt) {
-        giftMessageWindowObject.updateParent('<?=$this->getEditUrl()?>', '<?=$this->getButtonUrl()?>');
+        giftMessageWindowObject.updateParent('<?php echo $this->getEditUrl() ?>', '<?php echo $this->getButtonUrl() ?>');
     });
-<?endif;?>
+<?php endif; ?>
 //-->
 </script>

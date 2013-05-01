@@ -86,7 +86,7 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
             $controller = !empty($p[1]) ? $p[1] : $front->getDefault('controller');
         }
         $controllerFileName = $this->getControllerFileName($realModule, $controller);
-        if (!$controllerFileName || !is_readable($controllerFileName)) {
+        if (!$this->validateControllerFileName($controllerFileName)) {
             return false;
         }
 
@@ -189,7 +189,10 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
 
     public function validateControllerFileName($fileName)
     {
-
+        if ($fileName && is_readable($fileName) && false===strpos($fileName, '//')) {
+            return true;
+        }
+        return false;
     }
 
     public function getControllerClassName($realModule, $controller)

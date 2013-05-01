@@ -72,6 +72,13 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree extends Varien_Data_T
         if (!is_array($exclude)) {
             $exclude = array($exclude);
         }
+
+        $collection->initCache(
+            Mage::app()->getCache(),
+            'tree',
+            array(Mage_Catalog_Model_Category::CACHE_TAG)
+        );
+
         $nodeIds = array();
         foreach ($this->getNodes() as $node) {
             if (!in_array($node->getId(), $exclude)) {
@@ -129,7 +136,8 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree extends Varien_Data_T
 
         $collection->addAttributeToSelect('name')
             ->addAttributeToSelect('url_key')
-            ->addAttributeToSelect('is_active');
+            ->addAttributeToSelect('is_active')
+            ->joinUrlRewrite();
 
         if ($sorted) {
             if (is_string($sorted)) {

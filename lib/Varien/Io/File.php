@@ -56,6 +56,15 @@ class Varien_Io_File extends Varien_Io_Abstract
     const GREP_DIRS = 'dirs_only';
 
     /**
+     * If this variable is set to TRUE, our library will be able to automaticaly create
+     * non-existant directories.
+     *
+     * @var bool
+     * @access protected
+     */
+    protected $_allowCreateFolders = false;
+
+    /**
      * Open a connection
      *
      * Possible arguments:
@@ -66,9 +75,30 @@ class Varien_Io_File extends Varien_Io_Abstract
      */
     public function open(array $args=array())
     {
+        if (!empty($args['path'])) {
+            if ($args['path']) {
+                if($this->_allowCreateFolders ) {
+                    $this->_createDestinationFolder($args['path']);
+                }
+            }
+        }
+
         $this->_iwd = getcwd();
         $this->cd(!empty($args['path']) ? $args['path'] : $this->_iwd);
         return true;
+    }
+
+    /**
+     * Used to set {@link _allowCreateFolders} value
+     *
+     * @param mixed $flag
+     * @access public
+     * @return void
+     */
+    public function setAllowCreateFolders($flag)
+    {
+        $this->_allowCreateFolders = $flag;
+        return $this;
     }
 
     /**
@@ -225,6 +255,52 @@ class Varien_Io_File extends Varien_Io_Abstract
         return $result;
     }
 
+    public function getDestinationFolder($filepath)
+    {
+        preg_match('/^(.*[!\/])/', $filepath, $mathces);
+        if (isset($mathces[0])) {
+        	return $mathces[0];
+        }
+        return false;
+    }
+
+    private function _createDestinationFolder($destinationFolder)
+    {
+        if( !$destinationFolder ) {
+            return $this;
+        }
+        if (!(@is_dir($destinationFolder) || @mkdir($destinationFolder, 0777, true))) {
+            throw new Exception("Unable to create directory '{$destinationFolder}'.");
+        }
+        return $this;
+
+        $destinationFolder = str_replace('/', DIRECTORY_SEPARATOR, $destinationFolder);
+        $path = explode(DIRECTORY_SEPARATOR, $destinationFolder);
+        $newPath = null;
+        $oldPath = null;
+        foreach( $path as $key => $directory ) {
+            if (trim($directory)=='') {
+                continue;
+            }
+            if (strlen($directory)===2 && $directory{1}===':') {
+                $newPath = $directory;
+                continue;
+            }
+            $newPath.= ( $newPath != DIRECTORY_SEPARATOR ) ? DIRECTORY_SEPARATOR . $directory : $directory;
+            if( is_dir($newPath) ) {
+                $oldPath = $newPath;
+                continue;
+            } else {
+                if( is_writable($oldPath) ) {
+                    mkdir($newPath, 0777);
+                } else {
+                    throw new Exception("Unable to create directory '{$newPath}'. Access forbidden.");
+                }
+            }
+            $oldPath = $newPath;
+        }
+        return $this;
+    }
     /**
      * Delete a file
      *
@@ -454,5 +530,5 @@ class Varien_Io_File extends Varien_Io_Abstract
         }
         $this->_cwd = $dir;
         return $dir;
-    }    
+    }
 }

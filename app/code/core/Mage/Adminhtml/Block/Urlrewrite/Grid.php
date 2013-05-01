@@ -58,15 +58,14 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
             ));
         }
 
-        $this->addColumn('type', array(
+        $this->addColumn('is_system', array(
             'header'    =>$this->__('Type'),
             'width'     => '50px',
-            'index'     => 'type',
+            'index'     => 'is_system',
             'type'      => 'options',
             'options'   => array(
-                Mage_Core_Model_Url_Rewrite::TYPE_CATEGORY  => $this->__('Category'),
-                Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT   => $this->__('Product'),
-                Mage_Core_Model_Url_Rewrite::TYPE_CUSTOM    => $this->__('Custom')
+                1 => $this->__('System'),
+                0 => $this->__('Custom')
             ),
         ));
 
@@ -110,7 +109,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
 
     public function getRowUrl($row)
     {
-        //return $this->getUrl('*/*/edit', array('id'=>$row->getId()));
+        return $this->getUrl('*/*/edit', array('id'=>$row->getId()));
         //return $this->getUrl('*/*/view', array('id' => $row->getId()));
     }
 

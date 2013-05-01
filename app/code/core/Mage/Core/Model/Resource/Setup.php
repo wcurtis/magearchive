@@ -268,9 +268,8 @@ class Mage_Core_Model_Resource_Setup
                             $result = false;
                     }
                     if ($result) {
-                        $this->run("replace into ".$this->getTable('core/resource')." (code, version) values ('".$this->_resourceName."', '".$resourceFile['toVersion']."')");
-                        #Mage::getResourceModel('core/resource')->setDbVersion(
-                        #	$this->_resourceName, $resourceFile['toVersion']);
+                        /*$this->run("replace into ".$this->getTable('core/resource')." (code, version) values ('".$this->_resourceName."', '".$resourceFile['toVersion']."')");*/
+                        Mage::getResourceModel('core/resource')->setDbVersion($this->_resourceName, $resourceFile['toVersion']);
                     }
                 }
                 catch (Exception $e){
@@ -487,7 +486,6 @@ class Mage_Core_Model_Resource_Setup
 
     public function startSetup()
     {
-
         $this->_conn->multi_query("SET SQL_MODE='';
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';

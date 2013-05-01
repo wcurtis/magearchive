@@ -19,34 +19,34 @@
  */
 ?>
 <div class="entry-edit">
-    <?foreach ($this->getReleases() as $_log):?>
+    <?php foreach ($this->getReleases() as $_log): ?>
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=$_log['version']['release']?> (<?=$_log['stability']['release']?>)</h4>
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $_log['version']['release'] ?> (<?php echo $_log['stability']['release'] ?>)</h4>
     </div>
     <fieldset>
-        <legend><?=$_log['version']['release']?> (<?=$_log['stability']['release']?>)</legend>
+        <legend><?php echo $_log['version']['release'] ?> (<?php echo $_log['stability']['release'] ?>)</legend>
 
         <table class="" cellspacing="5">
             <tbody>
-                <tr><th><?=$this->__("Date:")?></th><td><?=$_log['date']?></td></tr>
-                <tr><th><?=$this->__("Version:")?></th><td><?=$_log['version']['release']?> (<?=$_log['stability']['release']?>)</td></tr>
-                <tr><th><?=$this->__("API:")?></th><td><?=$_log['version']['api']?> (<?=$_log['stability']['api']?>)</td></tr>
-                <tr><th><?=$this->__("License:")?></th><td>
-                    <?if (is_array($_log['license'])):?>
-                        <?if ($_uri = $_log['license']['attribs']['uri']):?>
-                            <a href="<?=$_uri?>" target="_blank">
-                        <?endif?>
-                        <?=$_log['license']['_content']?>
-                        <?if ($_uri):?>
+                <tr><th><?php echo $this->__("Date:") ?></th><td><?php echo $_log['date'] ?></td></tr>
+                <tr><th><?php echo $this->__("Version:") ?></th><td><?php echo $_log['version']['release'] ?> (<?php echo $_log['stability']['release'] ?>)</td></tr>
+                <tr><th><?php echo $this->__("API:") ?></th><td><?php echo $_log['version']['api'] ?> (<?php echo $_log['stability']['api'] ?>)</td></tr>
+                <tr><th><?php echo $this->__("License:") ?></th><td>
+                    <?php if (is_array($_log['license'])): ?>
+                        <?php if ($_uri = $_log['license']['attribs']['uri']): ?>
+                            <a href="<?php echo $_uri ?>" target="_blank">
+                        <?php endif ?>
+                        <?php echo $_log['license']['_content'] ?>
+                        <?php if ($_uri): ?>
                             </a>
-                        <?endif?>
-                    <?else:?>
-                        <?=$_log['license']?>
-                    <?endif?>
+                        <?php endif ?>
+                    <?php else: ?>
+                        <?php echo $_log['license'] ?>
+                    <?php endif ?>
                 </td></tr>
-                <tr><th><?=$this->__("Notes:")?></th><td><?=nl2br($_log['notes'])?></td></tr>
+                <tr><th><?php echo $this->__("Notes:") ?></th><td><?php echo nl2br($_log['notes']) ?></td></tr>
             </tbody>
         </table>
     </fieldset>
-    <?endforeach?>
+    <?php endforeach ?>
 </div>

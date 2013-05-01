@@ -21,48 +21,48 @@
 <fieldset id="order_history_block">
     <div id="history_form" class="order-history-form">
         <span class="field-row">
-            <div><?=Mage::helper('sales')->__('Add Order Comments')?></div>
-            <label class="normal" for="history_status"><?=Mage::helper('sales')->__('Status')?></label><br/>
+            <div><?php echo Mage::helper('sales')->__('Add Order Comments') ?></div>
+            <label class="normal" for="history_status"><?php echo Mage::helper('sales')->__('Status') ?></label><br/>
             <select name="history[status]" class="select" id="history_status">
-            <?foreach ($this->getStatuses() as $_code=>$_label):?>
-                <option value="<?=$_code?>"<?if($_code==$this->getOrder()->getStatus()):?> selected<?endif;?>><?=$_label?></option>
-            <?endforeach;?>
+            <?php foreach ($this->getStatuses() as $_code=>$_label): ?>
+                <option value="<?php echo $_code ?>"<?php if($_code==$this->getOrder()->getStatus()): ?> selected<?php endif; ?>><?php echo $_label ?></option>
+            <?php endforeach; ?>
             </select>
         </span>
         <span class="field-row">
-            <label class="normal" for="history_comment"><?=Mage::helper('sales')->__('Comment')?></label>
+            <label class="normal" for="history_comment"><?php echo Mage::helper('sales')->__('Comment') ?></label>
             <textarea name="history[comment]" class="input-text" style="height:6em;width:99%" id="history_comment"></textarea>
         </span>
         <div class="f-left">
             <input name="history[is_customer_notified]" type="checkbox" id="history_notify" value="1"/>
-            <label class="normal" for="history_notify"><?=Mage::helper('sales')->__('Notify Customer')?></label>
+            <label class="normal" for="history_notify"><?php echo Mage::helper('sales')->__('Notify Customer') ?></label>
         </div>
         <div class="f-right">
-            <?=$this->getChildHtml('submit_button')?>
+            <?php echo $this->getChildHtml('submit_button') ?>
         </div>
         <div class="clear"></div>
     </div>
     <div class="divider"></div>
     <ul class="note-list">
-    <?foreach ($this->getOrder()->getStatusHistoryCollection(true) as $_history):?>
+    <?php foreach ($this->getOrder()->getStatusHistoryCollection(true) as $_history): ?>
         <li>
-            <strong><?=$this->helper('core')->formatDate($_history->getCreatedAt(), 'medium')?></strong>
-            <?=$this->helper('core')->formatTime($_history->getCreatedAt(), 'medium')?><span class="separator">|</span><strong><?=$_history->getStatusLabel()?></strong><br/><small><?=$this->helper('sales')->__('Customer')?>
+            <strong><?php echo $this->helper('core')->formatDate($_history->getCreatedAt(), 'medium') ?></strong>
+            <?php echo $this->helper('core')->formatTime($_history->getCreatedAt(), 'medium') ?><span class="separator">|</span><strong><?php echo $_history->getStatusLabel() ?></strong><br/><small><?php echo $this->helper('sales')->__('Customer') ?>
             <strong class="subdue">
-                <?if ($_history->getIsCustomerNotified()):?>
-                <?=$this->helper('sales')->__('Notified')?>
-                <img src="<?=$this->getSkinUrl('images/ico_success.gif')?>" width="16" height="16"/>
-                <?else:?>
-                <?=$this->helper('sales')->__('Not Notified')?>
-                <?endif;?>
+                <?php if ($_history->getIsCustomerNotified()): ?>
+                <?php echo $this->helper('sales')->__('Notified') ?>
+                <img src="<?php echo $this->getSkinUrl('images/ico_success.gif') ?>" width="16" height="16"/>
+                <?php else: ?>
+                <?php echo $this->helper('sales')->__('Not Notified') ?>
+                <?php endif; ?>
             </strong></small>
-            <?if($_history->getComment()):?>
-                <br/><?=$_history->getComment()?>
-            <?endif;?>
+            <?php if($_history->getComment()): ?>
+                <br/><?php echo $_history->getComment() ?>
+            <?php endif; ?>
         </li>
-    <?endforeach;?>
+    <?php endforeach; ?>
     </ul>
     <script type="text/javascript">
-    if($('order_status'))$('order_status').update('<?=$this->getOrder()->getStatusLabel()?>');
+    if($('order_status'))$('order_status').update('<?php echo $this->getOrder()->getStatusLabel() ?>');
     </script>
 </fieldset>

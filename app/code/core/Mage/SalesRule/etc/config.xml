@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_SalesRule>
-            <version>0.7.5</version>
+            <version>0.7.6</version>
         </Mage_SalesRule>
     </modules>
     <global>

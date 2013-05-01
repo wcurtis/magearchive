@@ -42,6 +42,11 @@
                 </entities>
             </paypaluk_mysql4>
         </models>
+        <helpers>
+            <paypaluk>
+                <class>Mage_PaypalUk_Helper</class>
+            </paypaluk>
+        </helpers>
         <resources>
             <paypaluk_setup>
                 <setup>
@@ -130,6 +135,7 @@
     <default>
         <paypal>
             <wpuk>
+                <url>https://pilot-payflowpro.verisign.com/transaction</url>
                 <user backend_model="adminhtml/system_config_backend_encrypted"/>
                 <pwd backend_model="adminhtml/system_config_backend_encrypted"/>
             </wpuk>
