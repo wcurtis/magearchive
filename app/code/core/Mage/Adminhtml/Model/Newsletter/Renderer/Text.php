@@ -31,7 +31,7 @@ class Mage_Adminhtml_Model_Newsletter_Renderer_Text implements Varien_Data_Form_
     {
         $html = '<span class="field-row">'."\n";
         if ($element->getLabel()) {
-            $html.= '<label for="'.$element->getHtmlId().'">'.$element->getLabel().'</label>'."\n";
+            $html.= '<label for="'.$element->getHtmlId().'">'.$element->getLabel().'fdasdf</label>'."\n";
         }
         $html.= '<iframe src="' . $element->getValue() . '" id="' . $element->getHtmlId() . '" frameborder="0" class="template-preview"/>';
         $html.= '</span>'."\n";

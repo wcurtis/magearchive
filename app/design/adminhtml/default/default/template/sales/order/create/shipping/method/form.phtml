@@ -30,7 +30,7 @@
                 <?$_code=$_rate->getCode()?>
                 <li>
                    <?if ($_rate->getErrorMessage()):?>
-                        <?=$_rate->getErrorMessage()?></strong>
+                        <?=$_rate->getErrorMessage()?>
                    <?else:?>
                         <?$_checked = $this->isMethodActive($_code) ? 'checked' : ''?>
                         <input <?=$_radioProperty?> value="<?=$_code?>" id="s_method_<?=$_code?>" <?=$_checked?>/>
@@ -52,7 +52,7 @@
             <!--input type="text" class="input-text" style="width:70px"/-->
             <br/>
             <a href="#" onclick="$('order:shipping-method-info').hide();$('order:shipping-method-choose').show();return false">
-                <?=Mage::helper('sales')->__('Click to change shipping method')?></i>
+                <?=Mage::helper('sales')->__('Click to change shipping method')?>
             </a>
         </div>
     <?else:?>

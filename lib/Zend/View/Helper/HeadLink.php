@@ -14,7 +14,7 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -29,7 +29,7 @@ require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_Standalone
@@ -72,13 +72,13 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
         if (null !== $attributes) {
             $item = $this->createData($attributes);
             switch ($placement) {
-                case self::SET:
+                case Zend_View_Helper_Placeholder_Container_Abstract::SET:
                     $this->set($item);
                     break;
-                case self::PREPEND:
+                case Zend_View_Helper_Placeholder_Container_Abstract::PREPEND:
                     $this->prepend($item);
                     break;
-                case self::APPEND:
+                case Zend_View_Helper_Placeholder_Container_Abstract::APPEND:
                 default:
                     $this->append($item);
                     break;
@@ -149,17 +149,18 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
                 $item       = $this->$dataMethod($args);
             }
 
-            if ('offsetSet' == $action) {
-                $this->offsetSet($index, $item);
-            } else {
-                $this->$action($item);
+            if ($item) {
+                if ('offsetSet' == $action) {
+                    $this->offsetSet($index, $item);
+                } else {
+                    $this->$action($item);
+                }
             }
 
             return $this;
         }
 
-        require_once 'Zend/View/Exception.php';
-        throw new Zend_View_Exception(sprintf('Method "%s" does not exist', $method));
+        return parent::__call($method, $args);
     }
 
     /**
@@ -197,7 +198,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('append() expects a data token; please use one of the custom append*() methods');
         }
 
-        return parent::append($value);
+        return $this->getContainer()->append($value);
     }
 
     /**
@@ -214,7 +215,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('offsetSet() expects a data token; please use one of the custom offsetSet*() methods');
         }
 
-        return parent::offsetSet($index, $value);
+        return $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -230,7 +231,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('prepend() expects a data token; please use one of the custom prepend*() methods');
         }
 
-        return parent::prepend($value);
+        return $this->getContainer()->prepend($value);
     }
 
     /**
@@ -246,7 +247,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('set() expects a data token; please use one of the custom set*() methods');
         }
 
-        return parent::set($value);
+        return $this->getContainer()->set($value);
     }
 
     
@@ -267,9 +268,13 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             }
         }
         
-        $link .= '/>';
+        if ($this->view instanceof Zend_View_Abstract) {
+            $link .= ($this->view->doctype()->isXhtml()) ? '/>' : '>';
+        } else {
+            $link .= '/>';
+        }
 
-        if ($link == '<link />') {
+        if (($link == '<link />') || ($link == '<link >')) {
             return '';
         }
 
@@ -318,7 +323,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
      * Create item for stylesheet link item
      * 
      * @param  array $args 
-     * @return stdClass
+     * @return stdClass|false Returns fals if stylesheet is a duplicate
      */
     public function createDataStylesheet(array $args)
     {
@@ -327,6 +332,10 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
         $media                 = 'screen';
         $conditionalStylesheet = false;
         $href                  = array_shift($args);
+
+        if ($this->_isDuplicateStylesheet($href)) {
+            return false;
+        }
 
         if (0 < count($args)) {
             $media = array_shift($args);
@@ -341,6 +350,21 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
         return $this->createData($attributes);
     }
 
+    /**
+     * Is the linked stylesheet a duplicate?
+     * 
+     * @param  string $uri 
+     * @return bool
+     */
+    protected function _isDuplicateStylesheet($uri)
+    {
+        foreach ($this->getContainer() as $item) {
+            if (($item->rel == 'stylesheet') && ($item->href == $uri)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Create item for alternate link item

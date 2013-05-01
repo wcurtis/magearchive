@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Adminhtml_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Adminhtml_Block_Sales_Order_Abstract
 {
     protected function _construct()
     {
@@ -34,7 +34,17 @@ class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Adminhtml_Block_Te
     public function getOrderStoreName()
     {
         if ($this->getOrder()) {
-            return Mage::app()->getStore($this->getOrder()->getStoreId())->getName();
+            $storeId = $this->getOrder()->getStoreId();
+            if (is_null($storeId)) {
+                return nl2br($this->getOrder()->getStoreName());
+            }
+            $store = Mage::app()->getStore($storeId);
+            $name = array(
+                $store->getWebsite()->getName(),
+                $store->getGroup()->getName(),
+                $store->getName()
+            );
+            return implode('<br/>', $name);
         }
         return null;
     }

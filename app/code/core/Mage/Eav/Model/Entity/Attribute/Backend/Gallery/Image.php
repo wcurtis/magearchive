@@ -30,12 +30,12 @@ class Mage_Eav_Model_Entity_Attribute_Backend_Gallery_Image extends Varien_Objec
 
     public function getSourceUrl()
     {
-        if ($this->getAttribute()->getEntity()->getStoreId() == 0) {
+/*        if ($this->getAttribute()->getEntity()->getStoreId() == 0) {
             $url = Mage::getBaseUrl('media').'upload/' . $this->getType() . '/' . $this->getValue();
         }
         else {
             $url = $this->getAttribute()->getEntity()->getStore()->getBaseUrl('media') . 'upload/'. $this->getType() . '/' . $this->getValue();
-        }
+        }*/
         return $url;
     }
     

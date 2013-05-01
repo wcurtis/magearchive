@@ -26,7 +26,7 @@
  */
 class Mage_Customer_Model_Entity_Wishlist_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
-    public function __construct()
+    protected function _construct()
     {
         $this->setEntity(Mage::getResourceSingleton('customer/wishlist'));
     }

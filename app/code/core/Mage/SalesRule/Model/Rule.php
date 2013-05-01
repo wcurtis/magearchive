@@ -31,6 +31,14 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
         $this->setIdFieldName('rule_id');
     }
 
+    protected function _beforeSave()
+    {
+        if( $this->getCouponCode() ) {
+            $this->getResource()->addUniqueField( array('field' => 'coupon_code', 'title' => Mage::helper('salesRule')->__('Coupon with the same code') ) );
+        }
+        return parent::_beforeSave();
+    }
+
     public function getConditionsInstance()
     {
         return Mage::getModel('salesrule/rule_condition_combine');
@@ -38,9 +46,8 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
 
     public function getActionsInstance()
     {
-        return Mage::getModel('salesrule/rule_action_collection');
+        return Mage::getModel('salesrule/rule_condition_product_combine');
     }
-
 
     public function toString($format='')
     {
@@ -53,6 +60,19 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
              . $this->getConditions()->toStringRecursive() ."\n\n"
              . $this->getActions()->toStringRecursive() ."\n\n";
         return $str;
+    }
+
+    public function loadPost(array $rule)
+    {
+        $arr = $this->_convertFlatToRecursive($rule);
+		if (isset($arr['conditions'])) {
+    		$this->getConditions()->loadArray($arr['conditions'][1]);
+		}
+		if (isset($arr['actions'])) {
+    		$this->getActions()->loadArray($arr['actions'][1], 'actions');
+		}
+
+    	return $this;
     }
 
     /**
@@ -110,20 +130,21 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
         return Mage::getResourceModel('salesrule/rule_collection');
     }
 
-    protected function _afterSave()
-    {
-        $this->_getResource()->updateRuleProductData($this);
-        parent::_afterSave();
-    }
-
-    public function validate(Varien_Object $quote)
-    {
-        if ($this->getUsesPerCustomer() && $quote->getCustomer()) {
-            $customerUses = $this->_getResource()->getCustomerUses($this, $quote->getCustomerId());
-            if ($customerUses >= $this->getUsesPerCustomer()) {
-                return false;
-            }
-        }
-        return parent::validate($quote);
-    }
+//    protected function _afterSave()
+//    {
+//        $this->_getResource()->updateRuleProductData($this);
+//        parent::_afterSave();
+//    }
+//
+//    public function validate(Varien_Object $quote)
+//    {
+//
+//        if ($this->getUsesPerCustomer() && $quote->getCustomer()) {
+//            $customerUses = $this->_getResource()->getCustomerUses($this, $quote->getCustomerId());
+//            if ($customerUses >= $this->getUsesPerCustomer()) {
+//                return false;
+//            }
+//        }
+//        return parent::validate($quote);
+//    }
 }

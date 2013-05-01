@@ -77,4 +77,13 @@ class Mage_Sales_Block_Order_Shipment extends Mage_Core_Block_Template
     {
         return Mage::getUrl('*/*/creditmemo', array('order_id' => $order->getId()));
     }
+
+
+    public function getPrintShipmentUrl($shipment){
+        return Mage::getUrl('*/*/printShipment', array('shipment_id' => $shipment->getId()));
+    }
+
+    public function getPrintAllShipmentsUrl($order){
+        return Mage::getUrl('*/*/printShipment', array('order_id' => $order->getId()));
+    }
 }

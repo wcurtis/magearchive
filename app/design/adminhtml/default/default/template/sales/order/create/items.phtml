@@ -19,10 +19,9 @@
  */
 ?>
 <div class="entry-edit">
-    <div>
-        <div style="float: right;"><?=$this->getButtonsHtml()?></div>
+    <div class="entry-edit-head">
         <h4 class="icon-head head-cart"><?=$this->getHeaderText()?></h4>
-        <div class="clear"></div>
+        <div class="form-buttons"><?=$this->getButtonsHtml()?></div>
     </div>
     <?=$this->getChildHtml()?>
 </div>

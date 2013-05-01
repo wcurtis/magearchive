@@ -14,7 +14,7 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -28,7 +28,7 @@ require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */ 
 class Zend_View_Helper_HeadTitle extends Zend_View_Helper_Placeholder_Container_Standalone
@@ -62,6 +62,12 @@ class Zend_View_Helper_HeadTitle extends Zend_View_Helper_Placeholder_Container_
         return $this;
     }
 
+    /**
+     * Turn helper into string
+     * 
+     * @param  string|null $indent 
+     * @return string
+     */
     public function toString($indent = null)
     {
         $indent = (null !== $indent)
@@ -76,5 +82,15 @@ class Zend_View_Helper_HeadTitle extends Zend_View_Helper_Placeholder_Container_
         $separator = $this->_escape($this->getSeparator());
 
         return $indent . '<title>' . implode($separator, $items) . '</title>';
+    }
+
+    /**
+     * Cast to string
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
     }
 }

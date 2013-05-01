@@ -21,16 +21,15 @@
 <div id="<?=$this->getHtmlId()?>">
 <table cellspacing="0" cellpadding="0" class="massaction">
 <tr>
-    <td>
-        <a href="#" onclick="return <?=$this->getJsObjectName()?>.selectAll()"><?=$this->__('Select All')?></a>
-        <div class="delimiter">&nbsp;</div>
+    <td><a href="#" onclick="return <?=$this->getJsObjectName()?>.selectAll()"><?=$this->__('Select All')?></a>
+        <span class="separator">|</span>
         <a href="#" onclick="return <?=$this->getJsObjectName()?>.unselectAll()"><?=$this->__('Unselect All')?></a>
-        <div class="delimiter">&nbsp;</div>
+        <span class="separator">|</span>
         <a href="#" onclick="return <?=$this->getJsObjectName()?>.selectVisible()"><?=$this->__('Select Visible')?></a>
-        <div class="delimiter">&nbsp;</div>
+        <span class="separator">|</span>
         <a href="#" onclick="return <?=$this->getJsObjectName()?>.unselectVisible()"><?=$this->__('Unselect Visible')?></a>
-        <div class="delimiter">&nbsp;</div>
-        <span id="<?=$this->getHtmlId()?>-count">0</span> <?=$this->__('items selected')?>
+        <span class="separator">|</span>
+        <strong id="<?=$this->getHtmlId()?>-count">0</strong> <?=$this->__('items selected')?>
     </td>
     <td>
         <div class="right">

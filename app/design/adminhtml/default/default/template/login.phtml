@@ -26,6 +26,9 @@
     <style type="text/css" media="all">
         /*<![CDATA[*/ @import "<?=$this->getSkinUrl('styles.css')?>"; /*]]>*/
     </style>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('reset.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('boxes.css')?>" media="all"/>
+
     <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/prototype.js"></script>
     <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/validation.js"></script>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/form.js')?>"></script>
@@ -53,7 +56,7 @@
                         <input onclick="loginForm.submit()" type="image" src="<?=$this->getSkinUrl('images/btn_login.gif')?>" value="<?=Mage::helper('adminhtml')->__('Login')?>"/>
                     </div>
                 </fieldset>
-                <p class="legal"><?=Mage::helper('adminhtml')->__('&copy; Copyright 2007 Varien. Magento is a trademark of Irubin Consulting Inc')?></p>
+                <p class="legal"><?=Mage::helper('adminhtml')->__('Magento is a trademark of Irubin Consulting Inc. DBA Varien. Copyright &copy; %s Irubin Consulting Inc.', date('Y'))?></p>
             </form>
             <div class="bottom"></div>
             <script type="text/javascript">

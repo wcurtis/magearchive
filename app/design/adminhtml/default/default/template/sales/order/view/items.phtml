@@ -46,17 +46,21 @@
         <tbody>
             <?$_items = $this->getItemsCollection()?>
             <?$i=0;foreach ($_items as $_item):$i++?>
+                <?$this->setPriceDataObject($_item)?>
                 <tr class="<?=($i%2==0)?'even':'odd'?>">
                     <td class="giftmessage-single-item"><?=$this->renderInfoColumn($_item)?></td>
                     <td><?=$_item->getStatus()?></td>
-                    <td class="price"><?=$_order->formatPrice($_item->getOriginalPrice())?></td>
-                    <td class="price"><?=$_order->formatPrice($_item->getPrice())?></td>
+                    <td class="price"><?=$this->displayPriceAttribute('original_price')?></td>
+                    <td class="price"><?=$this->displayPriceAttribute('price')?></td>
                     <td><?=$this->getQtyHtml($_item)?></td>
-                    <td class="price"><?=$_order->formatPrice($_item->getRowTotal())?></td>
-                    <td class="price"><?=$_order->formatPrice($_item->getTaxAmount())?></td>
-                    <td class="price"><?=$_order->formatPrice(-$_item->getDiscountAmount())?></td>
+                    <td class="price"><?=$this->displayPriceAttribute('row_total')?></td>
+                    <td class="price"><?=$this->displayPriceAttribute('tax_amount')?></td>
+                    <td class="price"><?=$this->displayPriceAttribute('discount_amount')?></td>
                     <td class="last price">
-                        <?=$_order->formatPrice($_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount())?>
+                        <?=$this->displayPrices(
+                            $_item->getBaseRowTotal()-$_item->getBaseDiscountAmount()+$_item->getBaseTaxAmount(),
+                            $_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount()
+                        )?>
                     </td>
                 </tr>
             <?endforeach;?>

@@ -20,6 +20,16 @@
  */
 -->
 <config>
+    <tabs>
+        <general translate="label" module="core">
+            <label>General</label>
+            <sort_order>100</sort_order>
+        </general>
+        <advanced translate="label" module="core">
+            <label>Advanced</label>
+            <sort_order>999999</sort_order>
+        </advanced>
+    </tabs>
     <sections>
         <!--<web_track translate="label" module="core">
             <label>Web tracking</label>
@@ -31,8 +41,9 @@
         </web_track>-->
         <advanced translate="label" module="core">
             <label>Advanced</label>
+            <tab>advanced</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>800</sort_order>
+            <sort_order>910</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -79,9 +90,11 @@
             </groups>
         </advanced>
         <trans_email translate="label" module="core">
+            <class>separator-top</class>
             <label>Store Email Addresses</label>
+            <tab>general</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>110</sort_order>
+            <sort_order>90</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -218,38 +231,10 @@
                 </ident_support>
             </groups>
         </trans_email>
-        <allow translate="label" module="core">
-            <label>Locale Settings</label>
-            <frontend_type>text</frontend_type>
-            <sort_order>40</sort_order>
-            <show_in_default>1</show_in_default>
-            <show_in_website>0</show_in_website>
-            <show_in_store>0</show_in_store>
-            <groups>
-                <currency translate="label">
-                    <label>Currency</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>1</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
-                    <show_in_store>0</show_in_store>
-                    <fields>
-                        <code translate="label">
-                            <label>Allowed Currencies</label>
-                            <frontend_type>multiselect</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_locale</backend_model>
-                            <source_model>adminhtml/system_config_source_locale_currency_all</source_model>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </code>
-                    </fields>
-                </currency>
-            </groups>
-        </allow>
+
         <design translate="label" module="core">
             <label>Design</label>
+            <tab>general</tab>
             <frontend_type>text</frontend_type>
             <sort_order>30</sort_order>
             <show_in_default>1</show_in_default>
@@ -328,16 +313,36 @@
         </design>
         <dev translate="label" module="core">
             <label>Developer</label>
+            <tab>advanced</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>900</sort_order>
+            <sort_order>920</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
+                <restrict translate="label">
+                    <label>Developer Client Restrictions</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <allow_ips translate="label comment">
+                            <label>Allowed IPs (comma separated)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Leave empty for access from any location</comment>
+                        </allow_ips>
+                    </fields>
+                </restrict>
                 <debug translate="label">
                     <label>Debug</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>1</sort_order>
+                    <sort_order>20</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -362,12 +367,78 @@
                         </template_hints>
                     </fields>
                 </debug>
+                <translate_inline>
+                    <label>Translate Inline</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled for Frontend</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <active_admin translate="label">
+                            <label>Enabled for Admin</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </active_admin>
+                    </fields>
+                </translate_inline>
+                <log>
+                    <label>Log Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>40</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <file translate="label comment">
+                            <label>File Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>located in {{base_dir}}/var/log</comment>
+                        </file>
+                        <exception_file translate="label comment">
+                            <label>Exception Log File Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>located in {{base_dir}}/var/log</comment>
+                        </exception_file>
+                    </fields>
+                </log>
             </groups>
         </dev>
         <general translate="label" module="core">
             <label>General</label>
+            <tab>general</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>1</sort_order>
+            <sort_order>10</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -446,12 +517,33 @@
                         </timezone>
                     </fields>
                 </locale>
+                <price translate="label">
+                    <label>Price</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>15</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <scope translate="label">
+                            <label>Scope</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_price_scope</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </scope>
+                    </fields>
+                </price>
             </groups>
         </general>
         <system translate="label" module="core">
+            <class>separator-top</class>
             <label>System</label>
+            <tab>advanced</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>700</sort_order>
+            <sort_order>900</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -522,10 +614,19 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+                        <disable translate="label">
+                            <label>Disable email communications</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </disable>
                         <host translate="label">
                             <label>Host</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>1</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -533,17 +634,45 @@
                         <port translate="label">
                             <label>Port (25)</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>1</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </port>
+                        <!--
+                        <auth translate="label">
+                            <label>Authentication method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_smtpauth</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </auth>
+                        <username translate="label">
+                            <label>Username</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </username>
+                        <password translate="label">
+                            <label>Password</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </password>
+                        -->
                     </fields>
                 </smtp>
             </groups>
         </system>
         <web translate="label" module="core">
             <label>Web</label>
+            <tab>general</tab>
             <frontend_type>text</frontend_type>
             <sort_order>20</sort_order>
             <show_in_default>1</show_in_default>

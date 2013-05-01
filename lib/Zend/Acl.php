@@ -15,26 +15,26 @@
  *
  * @category   Zend
  * @package    Zend_Acl
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Acl.php 2797 2007-01-16 01:35:30Z bkarwin $
+ * @version    $Id: Acl.php 8245 2008-02-21 14:01:46Z darby $
  */
 
 
 /**
- * Zend_Acl_Resource_Interface
+ * @see Zend_Acl_Resource_Interface
  */
 require_once 'Zend/Acl/Resource/Interface.php';
 
 
 /**
- * Zend_Acl_Role_Registry
+ * @see Zend_Acl_Role_Registry
  */
 require_once 'Zend/Acl/Role/Registry.php';
 
 
 /**
- * Zend_Acl_Assert_Interface
+ * @see Zend_Acl_Assert_Interface
  */
 require_once 'Zend/Acl/Assert/Interface.php';
 
@@ -42,7 +42,7 @@ require_once 'Zend/Acl/Assert/Interface.php';
 /**
  * @category   Zend
  * @package    Zend_Acl
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Acl
@@ -171,7 +171,7 @@ class Zend_Acl
      */
     public function inheritsRole($role, $inherit, $onlyParents = false)
     {
-        return $this->_getRoleRegistry()->inherits($role, $inherit, $onlyParents = false);
+        return $this->_getRoleRegistry()->inherits($role, $inherit, $onlyParents);
     }
 
     /**

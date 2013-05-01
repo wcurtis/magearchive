@@ -235,7 +235,6 @@ class Mage_Core_Model_Layout_Update
             && !$this->fetchDbLayoutUpdates($handle)) {
             #$this->removeHandle($handle);
         }
-
         return $this;
     }
 

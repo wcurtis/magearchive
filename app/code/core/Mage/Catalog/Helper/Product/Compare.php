@@ -91,8 +91,10 @@ class Mage_Catalog_Helper_Product_Compare extends Mage_Core_Helper_Url
      */
     public function getAddToCartUrl($product)
     {
+        $beforeCompareUrl = base64_encode(Mage::getSingleton('catalog/session')->getBeforeCompareUrl());
         $params = array(
-            'product'=>$product->getId()
+            'product'=>$product->getId(),
+            Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL => $beforeCompareUrl
         );
 
         return $this->_getUrl('checkout/cart/add', $params);

@@ -100,8 +100,8 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
     public function preDispatch()
     {
         Mage::getDesign()->setArea('adminhtml')
-            ->setPackageName('default')
-            ->setTheme('default');
+            ->setPackageName((string)Mage::getConfig()->getNode('stores/admin/design/package/name'))
+            ->setTheme((string)Mage::getConfig()->getNode('stores/admin/design/theme/default_clean'));
 
         $this->getLayout()->setArea('adminhtml');
 
@@ -120,7 +120,6 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
 
     public function deniedAction()
     {
-
         if (!Mage::getSingleton('admin/session')->isLoggedIn()) {
             $this->_redirect('*/index/login');
             return;
@@ -209,7 +208,7 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
             ->setHeader('Content-Disposition', 'attachment; filename='.$fileName)
             ->setHeader('Last-Modified', date('r'))
             ->setHeader('Accept-Ranges', 'bytes')
-            ->setHeader('Content-Length', sizeof($content))
+            ->setHeader('Content-Length', strlen($content))
             ->setHeader('Content-type', $contentType, true)
             ->setBody($content);
     }

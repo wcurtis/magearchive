@@ -19,11 +19,16 @@
  */
 ?>
 <div class="entry-edit">
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('adminhtml')->__('Product Categories')?></h4>
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('adminhtml')->__('Product Categories')?></h4>
+    </div>
     <fieldset id="grop_fields">
         <input type="hidden" name="categories" id="product_categories" value="">
         <div id="tree-div" class="tree"></div>
     </fieldset>
+    <div>
+    Note: if selected product or category has been associated in this module, you can't select one of them.
+    </div>
 </div>
 <?if($this->getRootNode() && $this->getRootNode()->hasChildren()):?>
 <script type="text/javascript">
@@ -185,7 +190,7 @@ Ext.tree.TreePanel.prototype.getHirechyName = function(node){
     }
 
     text = node.text.split('(')[0].trim().toLowerCase();
-    if (!text.match(/root/)  && text != 'undefined') checked.unshift(text);
+    if (!(text.match(/root/i) || text.match(/default/i))   && text != 'undefined') checked.unshift(text);
     if (node.parentNode) {
     	checked = checked.concat(this.getHirechyName(node.parentNode));
     }

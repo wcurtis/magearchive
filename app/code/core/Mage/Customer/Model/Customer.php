@@ -30,22 +30,34 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     const XML_PATH_FORGOT_EMAIL_IDENTITY    = 'customer/password/forgot_email_identity';
     const XML_PATH_DEFAULT_EMAIL_DOMAIN     = 'customer/create_account/email_domain';
 
+    const SUBSCRIBED_YES = 'yes';
+    const SUBSCRIBED_NO = 'no';
+
     protected $_eventPrefix = 'customer';
     protected $_eventObject = 'customer';
 
-    protected $_addressCollection;
-    protected $_isAddressCollectionLoaded;
-    protected $_store;
+    protected $_addresses = null;
+
+    protected $_regions   = null;
+    protected $_website   = null;
+    protected $_errors    = array();
 
     function _construct()
     {
         $this->_init('customer/customer');
+        $this->_regions = Mage::getResourceModel('directory/region_collection');
+        $this->_website = Mage::getModel('core/website');
     }
 
-    public function __destruct()
+    /**
+     * Retrieve customer sharing configuration model
+     *
+     * @return unknown
+     */
+    public function getSharingConfig()
     {
-        unset($this->_addressCollection);
-        unset($this->_loadedAddressCollection);
+        return Mage::getSingleton('customer/config_share');
+
     }
 
     /**
@@ -57,10 +69,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function authenticate($login, $password)
     {
-        if ($this->_getResource()->authenticate($this, $login, $password)) {
-            return $this;
-        }
-        return false;
+        return $this->loadByEmail($login)->validatePassword($password);
     }
 
     /**
@@ -130,7 +139,8 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function addAddress(Mage_Customer_Model_Address $address)
     {
-        $this->getAddressCollection()->addItem($address);
+        $this->getAddresses();
+        $this->_addresses[] = $address;
         return $this;
     }
 
@@ -153,27 +163,28 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function getAddressCollection()
     {
-        if (empty($this->_addressCollection)) {
-            $this->_addressCollection = Mage::getResourceModel('customer/address_collection');
-        }
-        return $this->_addressCollection;
+        return Mage::getResourceModel('customer/address_collection');
     }
 
     /**
-     * Retrieve loaded customer address collection
+     * Retrieve customer address array
      *
-     * @return Mage_Eav_Model_Entity_Collection_Abstract
+     * @return array
      */
-    public function getLoadedAddressCollection()
+    public function getAddresses()
     {
-        $collection = $this->getAddressCollection();
-        if (!$this->_isAddressCollectionLoaded) {
-            $collection->setCustomerFilter($this)
+        if (is_null($this->_addresses)) {
+            $this->_addresses = array();
+            $collection = $this->getAddressCollection()
+                ->setCustomerFilter($this)
                 ->addAttributeToSelect('*')
                 ->load();
+            foreach ($collection as $address) {
+            	$this->_addresses[] = $address;
+            }
         }
 
-        return $collection;
+        return $this->_addresses;
     }
 
     /**
@@ -188,6 +199,12 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
             ->getAttributesByCode();
     }
 
+    /**
+     * Set plain and hashed password
+     *
+     * @param string $password
+     * @return Mage_Customer_Model_Customer
+     */
     public function setPassword($password)
     {
         $this->setData('password', $password);
@@ -201,9 +218,45 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      * @param   string $password
      * @return  string
      */
-    public function hashPassword($password)
+    public function hashPassword($password, $salt=null)
     {
-        return $this->_getResource()->getHashPassword($password);
+        if (is_null($salt)) {
+            $chars = 'ABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+            $l = strlen($chars)-1;
+            $salt = $chars[rand(0, $l)].$chars[rand(0, $l)];
+        }
+        if (false !== $salt) {
+            $hash = md5($salt.$password).':'.$salt;
+        } else {
+            $hash = md5($password);
+        }
+        return $hash;
+    }
+
+    /**
+     * Retrieve random password
+     *
+     * @param   int $length
+     * @return  string
+     */
+    public function generatePassword($length=6)
+    {
+        return substr(md5(uniqid(rand(), true)), 0, $length);
+    }
+
+    /**
+     * Validate password with salted hash
+     *
+     * @param string $password
+     * @return boolean
+     */
+    public function validatePassword($password)
+    {
+        if (!($pHash = $this->getPasswordHash())) {
+            return false;
+        }
+        $h = explode(':', $pHash);
+        return md5((isset($h[1]) ? $h[1] : '').$password) == $h[0];
     }
 
     /**
@@ -239,7 +292,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         $addressId = $this->getData($attributeCode);
         $primaryAddress = false;
         if ($addressId) {
-            foreach ($this->getLoadedAddressCollection() as $address) {
+            foreach ($this->getAddresses() as $address) {
                 if ($addressId == $address->getId()) {
                     return $address;
                 }
@@ -331,7 +384,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     {
         $addresses = array();
         $primatyIds = $this->getPrimaryAddressIds();
-        foreach ($this->getLoadedAddressCollection() as $address) {
+        foreach ($this->getAddresses() as $address) {
             if (!in_array($address->getId(), $primatyIds)) {
                 $addresses[] = $address;
             }
@@ -345,17 +398,6 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
             return false;
         }
         return ($address->getId() == $this->getDefaultBilling()) || ($address->getId() == $this->getDefaultShipping());
-    }
-
-    /**
-     * Retrieve random password
-     *
-     * @param   int $length
-     * @return  string
-     */
-    public function generatePassword($length=6)
-    {
-        return substr(md5(uniqid(rand(), true)), 0, $length);
     }
 
     /**
@@ -445,10 +487,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function getStore()
     {
-        if (is_null($this->_store)) {
-            $this->_store = Mage::app()->getStore($this->getStoreId());
-        }
-        return $this->_store;
+        return Mage::app()->getStore($this->getStoreId());
     }
 
     /**
@@ -469,28 +508,273 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
      */
     public function setStore(Mage_Core_Model_Store $store)
     {
-        $this->_store = $store;
-        $storeId = $store->getId();
-        $this->setStoreId($storeId);
-        foreach ($this->getLoadedAddressCollection() as $address) {
-            /* @var $address Mage_Customer_Model_Address */
-            $address->setStoreId($storeId);
-        }
+        $this->setStoreId($store->getId());
         return $this;
     }
 
     /**
-     * Enter description here...
+     * Get regions collection object
      *
-     * @param int $storeId
-     * @return Mage_Customer_Model_Customer
+     * @return unknown
      */
-    public function setStoreId($storeId)
+    public function getRegionCollection()
     {
-        $this->setData('store_id', $storeId);
-        if (! is_null($this->_store) && ($this->_store->getId() != $storeId)) {
-            $this->_store = null;
+        return $this->_regions;
+    }
+
+    /**
+     * Retrieve website
+     *
+     * @return uMage_Core_Model_Website
+     */
+    public function getWebsite()
+    {
+        return $this->_website;
+    }
+
+    /**
+     * Importing customer data from text array
+     *
+     * @param array $row
+     * @return uMage_Customer_Model_Customer
+     */
+    public function importFromTextArray(array $row)
+    {
+        $this->resetErrors();
+        $hlp = Mage::helper('customer');
+        $line = $row['i'];
+        $row = $row['row'];
+
+        $regions = $this->getRegionCollection();
+//        $config = Mage::getSingleton('eav/config')->getEntityType('customer');
+
+        $website = $this->getWebsite()->load($row['website_code'], 'code');
+
+        if (!$website->getId()) {
+            $this->addError($hlp->__('Invalid website, skipping the record, line: %s', $line));
+
+        } else {
+            $row['website_id'] = $website->getWebsiteId();
+            $this->setWebsiteId($row['website_id']);
         }
+
+        // Validate Email
+        if (empty($row['email'])) {
+            $this->addError($hlp->__('Missing email, skipping the record, line: %s', $line));
+        } else {
+            $this->loadByEmail($row['email']);
+        }
+
+        if (empty($row['entity_id'])) {
+            if ($this->getData('entity_id')) {
+                $this->addError($hlp->__('Customer email (%s) already exists, skipping the record , line: %s', $row['email'], $line));
+            }
+        } else {
+            if ($row['entity_id'] != $this->getData('entity_id')) {
+                $this->addError($hlp->__('CustomerID and email didn\'t match, skipping the record , line: %s', $line));
+            } else {
+                $this->unsetData();
+                $this->load($row['entity_id']);
+                if (isset($row['store_view'])) {
+                    $storeId = Mage::app()->getStore($row['store_view'])->getId();
+                    if ($storeId) $this->setStoreId($storeId);
+                }
+            }
+        }
+
+        if (empty($row['website_code'])) {
+            $this->addError($hlp->__('Missing website, skipping the record, line: %s', $line));
+        }
+
+        if (empty($row['group'])) {
+            $row['group'] = 'General';
+        }
+
+        if (empty($row['firstname'])) {
+            $this->addError($hlp->__('Missing firstname, skipping the record, line: %s', $line));
+        }
+        if (empty($row['lastname'])) {
+            $this->addError($hlp->__('Missing lastname, skipping the record, line: %s', $line));
+        }
+
+        if (!empty($row['password_new'])) {
+            $this->setPassword($row['password_new']);
+            unset($row['password_new']);
+            if (!empty($row['password_hash'])) unset($row['password_hash']);
+        }
+
+        if ($errors = $this->getErrors()) {
+            $this->unsetData();
+            $this->printError(join("<br />",$errors));
+            return;
+        }
+//        $entity = $this->getResource();
+        foreach ($row as $field=>$value) {
+
+//            $attribute = $entity->getAttribute($field);
+//            if (!$attribute) {
+//                echo $field;
+//                continue;
+//            }
+//            if ($attribute->usesSource()) {
+//                $source = $attribute->getSource();
+//                $optionId = $config->getSourceOptionId($source, $value);
+//                if (is_null($optionId)) {
+//                    $this->printError($hlp->__("Invalid attribute option specified for attribute attribute %s (%s)", $field, $value), $line);
+//                }
+//                $value = $optionId;
+//            }
+
+            $this->setData($field, $value);
+        }
+
+        if (!$this->validateAddress($row, 'billing')) {
+            $this->printError($hlp->__('Invalid billing address for (%s)', $row['email']), $line);
+        } else {
+            // Handling billing address
+            $billingAddress = $this->getPrimaryBillingAddress();
+            if (!$billingAddress  instanceof Mage_Customer_Model_Address) {
+                $billingAddress = new Mage_Customer_Model_Address();
+            }
+
+            $regions->addRegionNameFilter($row['billing_region'])->load();
+            if ($regions) foreach($regions as $region) {
+                $regionId = $region->getId();
+            }
+
+            $billingAddress->setFirstname($row['firstname']);
+            $billingAddress->setLastname($row['lastname']);
+            $billingAddress->setCity($row['billing_city']);
+            $billingAddress->setRegion($row['billing_region']);
+            $billingAddress->setRegionId($regionId);
+            $billingAddress->setCountryId($row['billing_country']);
+            $billingAddress->setPostcode($row['billing_postcode']);
+            $billingAddress->setStreet(array($row['billing_street1'],$row['billing_street2']));
+            if (isset($row['billing_telephone'])) {
+                $billingAddress->setTelephone($row['billing_telephone']);
+            }
+
+            if (!$billingAddress->getId()) {
+                $billingAddress->setIsDefaultBilling(true);
+                if ($this->getDefaultBilling()) {
+                    $this->setData('default_billing', '');
+                }
+                $this->addAddress($billingAddress);
+            } // End handling billing address
+        }
+
+        if (!$this->validateAddress($row, 'shipping')) {
+            $this->printError($hlp->__('Invalid shipping address for (%s)', $row['email']), $line);
+        } else {
+            // Handling shipping address
+            $shippingAddress = $this->getPrimaryShippingAddress();
+            if (!$shippingAddress instanceof Mage_Customer_Model_Address) {
+                $shippingAddress = new Mage_Customer_Model_Address();
+            }
+
+            $regions->addRegionNameFilter($row['shipping_region'])->load();
+
+            if ($regions) foreach($regions as $region) {
+               $regionId = $region->getId();
+            }
+
+            $shippingAddress->setFirstname($row['firstname']);
+            $shippingAddress->setLastname($row['lastname']);
+            $shippingAddress->setCity($row['shipping_city']);
+            $shippingAddress->setRegion($row['shipping_region']);
+            $shippingAddress->setRegionId($regionId);
+            $shippingAddress->setCountryId($row['shipping_country']);
+            $shippingAddress->setPostcode($row['shipping_postcode']);
+            $shippingAddress->setStreet(array($row['shipping_street1'], $row['shipping_street2']));
+            if (!empty($row['shipping_telephone'])) {
+                $shippingAddress->setTelephone($row['shipping_telephone']);
+            }
+
+            if (!$shippingAddress->getId()) {
+               $shippingAddress->setIsDefaultShipping(true);
+               $this->addAddress($shippingAddress);
+            }
+            // End handling shipping address
+        }
+        if (!empty($row['is_subscribed'])) {
+            $this->setIsSubscribed(strtolower($row['is_subscribed'])==self::SUBSCRIBED_YES ? 1 : 0);
+        }
+        unset($row);
         return $this;
     }
+
+    function unsetSubscription()
+    {
+        if (isset($this->_isSubscribed)) {
+            unset($this->_isSubscribed);
+        }
+    }
+
+    function cleanAllAddresses() {
+        $this->_addresses = null;
+    }
+
+    function addError($error)
+    {
+        $this->_errors[] = $error;
+    }
+
+    function getErrors()
+    {
+        return $this->_errors;
+    }
+
+    function resetErrors()
+    {
+        $this->_errors = array();
+    }
+
+    function printError($error, $line = null)
+    {
+        if ($error == null) return false;
+        $img = 'error_msg_icon.gif';
+        $liStyle = 'background-color:#FDD; ';
+        echo '<li style="'.$liStyle.'">';
+        echo '<img src="'.Mage::getDesign()->getSkinUrl('images/'.$img).'" class="v-middle"/>';
+        echo $error;
+        if ($line) {
+            echo '<small>, Line: <b>'.$line.'</b></small>';
+        }
+        echo "</li>";
+    }
+
+    function validateAddress(array $data, $type = 'billing')
+    {
+        $fields = array('city',
+            'country', 'postcode',
+            'telephone', 'street1');
+        $usca = array('US', 'CA');
+        $prefix = $type ? $type.'_':'';
+
+        if ($data) {
+            foreach($fields as $field) {
+                if (!isset($data[$prefix.$field])) {
+                    return false;
+                }
+                if ($field == 'country'
+                    && in_array(strtolower($data[$prefix.$field]), array('US', 'CA'))) {
+
+                    if (!isset($data[$prefix.'region'])) {
+                        return false;
+                    }
+
+                    $region = Mage::getModel('directory/region')
+                        ->loadByName($data[$prefix.'region']);
+                    if (!$region->getId()) {
+                        return false;
+                    }
+                    unset($region);
+                }
+            }
+            unset($data);
+            return true;
+        }
+        return false;
+    }
+
 }

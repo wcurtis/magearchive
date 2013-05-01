@@ -14,7 +14,7 @@
  *
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
  */
@@ -37,7 +37,7 @@ require_once 'Zend/Db/Statement/Db2.php';
 
 /**
  * @package    Zend_Db
- * @copyright  Copyright (c) 2005-2007 Zend Technologies Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @author     Joscha Feth <jffeth@de.ibm.com>
  * @author     Salvador Ledezma <ledezma@us.ibm.com>
@@ -520,6 +520,7 @@ class Zend_Db_Adapter_Db2 extends Zend_Db_Adapter_Abstract
      *
      * @param integer $mode
      * @return void
+     * @throws Zend_Db_Adapter_Db2_Exception
      */
     public function setFetchMode($mode)
     {

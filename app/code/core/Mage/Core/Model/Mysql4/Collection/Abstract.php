@@ -19,7 +19,7 @@
  */
 
 
-class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_Db
+abstract class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_Db
 {
     /**
      * Model name
@@ -56,13 +56,11 @@ class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_
      */
     public function __construct($resource=null)
     {
+        parent::__construct();
         $this->_construct();
-
         $this->_resource = $resource;
-
-        parent::__construct($this->getResource()->getReadConnection());
-
-        $this->getSelect()->from(array('main_table' => $this->getResource()->getMainTable()));
+        $this->setConnection($this->getResource()->getReadConnection());
+        $this->_initSelect();
     }
 
     /**
@@ -74,6 +72,12 @@ class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_
 
     }
 
+    protected function _initSelect()
+    {
+        $this->getSelect()->from(array('main_table' => $this->getResource()->getMainTable()));
+        return $this;
+    }
+
     /**
      * Standard resource collection initalization
      *
@@ -83,7 +87,7 @@ class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_
     protected function _init($model, $resourceModel=null)
     {
         $this->setModel($model);
-        if (empty($resourceModel)) {
+        if (is_null($resourceModel)) {
             $resourceModel = $model;
         }
         $this->setResourceModel($resourceModel);

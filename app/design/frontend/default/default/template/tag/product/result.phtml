@@ -33,7 +33,7 @@
         <?$iterator = 0?>
         <?foreach($this->getProducts() as $_product):?>
             <tr <?if($iterator % 2 == 0):?>class="odd"<?$iterator++;endif;?>>
-                <td><a href="<?=$_product->getProductUrl();?>"><img src="<?=$_product->getSmallImageUrl()?>" alt="" height="100" width="100"></a></td>
+                <td><a href="<?=$_product->getProductUrl();?>"><img src="<?=$this->helper('catalog/image')->init($_product, 'small_image')->resize(100, 100);?>" alt="" height="100" width="100"></a></td>
                 <td>
 
                     <h5><a href="<?=$_product->getProductUrl()?>"><?=$_product->getName()?></a></h5>

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Abstract config form element renderer
  *
@@ -28,11 +29,24 @@ class Mage_Adminhtml_Block_System_Config_Form_Field
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
+
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
         return $element->getElementHtml();
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
         $html = '<tr><td class="label">'.$element->getLabel().'</td>';
@@ -100,4 +114,5 @@ class Mage_Adminhtml_Block_System_Config_Form_Field
         $html.= '</tr>';
         return $html;
     }
+
 }

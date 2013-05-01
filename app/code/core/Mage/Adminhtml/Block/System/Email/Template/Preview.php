@@ -40,11 +40,6 @@ class Mage_Adminhtml_Block_System_Email_Template_Preview extends Mage_Adminhtml_
         Varien_Profiler::start("email_template_proccessing");
         $vars = array();
 
-        if($this->getRequest()->getParam('subscriber')) {
-        	$vars['subscriber'] = Mage::getModel('newsletter/subscriber')
-        		->load($this->getRequest()->getParam('subscriber'));
-        }
-
         $templateProcessed = $template->getProcessedTemplate($vars, true);
 
         if($template->isPlain()) {

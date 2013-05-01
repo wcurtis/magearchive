@@ -38,7 +38,7 @@ class Mage_Page_Block_Html extends Mage_Core_Block_Template
             'current'   => $this->getRequest()->getRequestUri()
         );
 
-        $action = Mage::registry('action');
+        $action = Mage::app()->getFrontController()->getAction();
         if ($action) {
             $this->addBodyClass($action->getFullActionName());
         }
@@ -83,5 +83,16 @@ class Mage_Page_Block_Html extends Mage_Core_Block_Template
             $this->setData('lang', substr(Mage::app()->getLocale()->getLocaleCode(), 0, 2));
         }
         return $this->getData('lang');
+    }
+
+    public function setTheme($theme)
+    {
+        $arr = explode('/', $theme);
+        if (isset($arr[1])) {
+            Mage::getDesign()->setPackageName($arr[0])->setTheme($arr[1]);
+        } else {
+            Mage::getDesign()->setTheme($theme);
+        }
+        return $this;
     }
 }

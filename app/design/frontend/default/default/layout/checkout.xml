@@ -29,12 +29,9 @@ Default layout, loads most of the pages
     <default>
 
         <!-- Mage_Checkout -->
-        <reference name="top.right.links">
+        <reference name="top.links">
             <block type="checkout/links" name="checkout_cart_link">
                 <action method="addCartLink"></action>
-            </block>
-
-            <block type="checkout/links" name="checkout_link">
                 <action method="addCheckoutLink"></action>
             </block>
         </reference>
@@ -223,7 +220,7 @@ One page checkout main layout
         </reference>
         <reference name="right">
             <action method="unsetChildren"></action>
-            
+
             <block type="checkout/onepage_progress" name="checkout.progress" before="-" template="checkout/onepage/progress.phtml"/>
         </reference>
         <reference name="content">
@@ -259,6 +256,16 @@ One page checkout progress block
             </block>
         </block>
     </checkout_onepage_progress>
+
+<!--
+One page checkout payment methods block
+-->
+    <checkout_onepage_paymentmethod>
+        <block type="checkout/onepage_payment_methods" name="root" output="toHtml" template="checkout/onepage/payment/methods.phtml">
+            <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+        </block>
+    </checkout_onepage_paymentmethod>
+
 
 <!--
 One page checkout shipping methods block

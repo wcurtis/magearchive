@@ -33,6 +33,7 @@ class Mage_Page_Block_Html_Pager extends Mage_Core_Block_Template
     protected $_limitVarName    = 'limit';
     protected $_availableLimit  = array(10=>10,20=>20,50=>50);
     protected $_dispersion      = 3;
+    protected $_displayPages    = 5;
     protected $_showPerPage		= true;
 
     public function __construct()
@@ -73,6 +74,9 @@ class Mage_Page_Block_Html_Pager extends Mage_Core_Block_Template
         return $this;
     }
 
+    /**
+     * @return
+     */
     public function getCollection()
     {
         return $this->_collection;
@@ -167,13 +171,39 @@ class Mage_Page_Block_Html_Pager extends Mage_Core_Block_Template
 
     public function getPages()
     {
-        $pages = array();
-        for ($i=$this->getCollection()->getCurPage(-$this->_dispersion); $i <= $this->getCollection()->getCurPage(+($this->_dispersion-1)); $i++)
-        {
-            $pages[] = $i;
-        }
+        $collection = $this->getCollection();
 
+        $pages = array();
+        if ($collection->getLastPageNumber() <= $this->_displayPages) {
+            $pages = range(1, $collection->getLastPageNumber());
+        }
+        else {
+            $half = ceil($this->_displayPages / 2);
+            if ($collection->getCurPage() >= $half && $collection->getCurPage() <= $collection->getLastPageNumber() - $half) {
+                $start  = ($collection->getCurPage() - $half) + 1;
+                $finish = ($start + $this->_displayPages) - 1;
+            }
+            elseif ($collection->getCurPage() < $half) {
+                $start  = 1;
+                $finish = $this->_displayPages;
+            }
+            elseif ($collection->getCurPage() > ($collection->getLastPageNumber() - $half)) {
+                $finish = $collection->getLastPageNumber();
+                $start  = $finish - $this->_displayPages + 1;
+            }
+
+            $pages = range($start, $finish);
+        }
         return $pages;
+
+//        $pages = array();
+//        for ($i=$this->getCollection()->getCurPage(-$this->_dispersion); $i <= $this->getCollection()->getCurPage(+($this->_dispersion-1)); $i++)
+//        {
+//
+//            $pages[] = $i;
+//        }
+//
+//        return $pages;
     }
 
     public function getFirstPageUrl()

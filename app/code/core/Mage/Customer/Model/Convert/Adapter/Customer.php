@@ -20,11 +20,16 @@
  */
 
 
-class Mage_Customer_Model_Convert_Adapter_Customer extends Mage_Eav_Model_Convert_Adapter_Entity
+class Mage_Customer_Model_Convert_Adapter_Customer
+    extends Mage_Eav_Model_Convert_Adapter_Entity
 {
+    protected $_customer = null;
+    protected $_address = null;
     public function __construct()
     {
         $this->setVar('entity_type', 'customer/customer');
+        $this->setCustomer(Mage::getModel('customer/customer'));
+        //$this->setAddress(Mage::getModel('catalog/'))
     }
 
     public function load()
@@ -53,6 +58,16 @@ class Mage_Customer_Model_Convert_Adapter_Customer extends Mage_Eav_Model_Conver
         parent::load();
     }
 
+    public function setCustomer(Mage_Customer_Model_Customer $customer)
+    {
+        $this->_customer = $customer;
+    }
+
+    public function getCustomer()
+    {
+        return $this->_customer;
+    }
+
     public function save()
     {
         $stores = array();
@@ -64,14 +79,14 @@ class Mage_Customer_Model_Convert_Adapter_Customer extends Mage_Eav_Model_Conver
         if ($collections instanceof Mage_Customer_Model_Entity_Customer_Collection) {
             $collections = array($collections->getEntity()->getStoreId()=>$collections);
         } elseif (!is_array($collections)) {
-            $this->addException(Mage::helper('customer')->__('No product collections found'), Varien_Convert_Exception::FATAL);
+            $this->addException(Mage::helper('customer')->__('No product collections found'), Mage_Dataflow_Model_Convert_Exception::FATAL);
         }
 
         foreach ($collections as $storeId=>$collection) {
             $this->addException(Mage::helper('customer')->__('Records for "'.$stores[$storeId].'" store found'));
 
             if (!$collection instanceof Mage_Customer_Model_Entity_Customer_Collection) {
-                $this->addException(Mage::helper('customer')->__('Customer collection expected'), Varien_Convert_Exception::FATAL);
+                $this->addException(Mage::helper('customer')->__('Customer collection expected'), Mage_Dataflow_Model_Convert_Exception::FATAL);
             }
             try {
                 $i = 0;
@@ -84,23 +99,58 @@ class Mage_Customer_Model_Convert_Adapter_Customer extends Mage_Eav_Model_Conver
                         #Mage::getResourceSingleton('catalog_entity/convert')->addProductToStore($model->getId(), 0);
                     }
                     if (!$new || 0!==$storeId) {
-                        /*
-                        if (0!==$storeId) {
-                            Mage::getResourceSingleton('catalog_entity/convert')->addProductToStore($model->getId(), $storeId);
-                        }
-                        */
+
+//                        if (0!==$storeId) {
+//                            Mage::getResourceSingleton('catalog_entity/convert')->addProductToStore($model->getId(), $storeId);
+//                        }
+
                         $model->save();
                     }
                     $i++;
                 }
                 $this->addException(Mage::helper('customer')->__("Saved ".$i." record(s)"));
             } catch (Exception $e) {
-                if (!$e instanceof Varien_Convert_Exception) {
+                if (!$e instanceof Mage_Dataflow_Model_Convert_Exception) {
                     $this->addException(Mage::helper('customer')->__('Problem saving the collection, aborting. Error: %s', $e->getMessage()),
-                        Varien_Convert_Exception::FATAL);
+                        Mage_Dataflow_Model_Convert_Exception::FATAL);
                 }
             }
         }
         return $this;
     }
+
+    /*
+     * saveRow function for saving each customer data
+     *
+     * params args array
+     * return array
+     */
+    public function saveRow($args)
+    {
+        $mem = memory_get_usage(); $origMem = $mem; $memory = $mem;
+        $customer = $this->getCustomer();
+        set_time_limit(240);
+        $row = $args;
+        $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
+        $customer->importFromTextArray($row);
+
+        if (!$customer->getData()) {
+            return;
+        }
+
+        $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
+        try {
+            $customer->save();
+            $customerId = $customer->getId();
+            $customer->unsetData();
+            $customer->cleanAllAddresses();
+            $customer->unsetSubscription();
+            $newMem = memory_get_usage(); $memory .= ', '.($newMem-$mem); $mem = $newMem;
+
+        } catch (Exception $e) {
+        }
+        unset($row);
+        return array('memory'=>$memory);
+    }
+
 }

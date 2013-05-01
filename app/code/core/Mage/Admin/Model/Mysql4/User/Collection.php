@@ -32,7 +32,7 @@ class Mage_Admin_Model_Mysql4_User_Collection extends Varien_Data_Collection_Db
     {
         parent::__construct(Mage::getSingleton('core/resource')->getConnection('admin_read'));
         $this->_userTable = Mage::getSingleton('core/resource')->getTableName('admin/user');
-        $this->_sqlSelect->from($this->_userTable);
+        $this->_select->from($this->_userTable);
         
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('admin/user'));
     }

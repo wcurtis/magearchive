@@ -37,4 +37,18 @@ class Mage_Reports_Model_Event extends Mage_Core_Model_Abstract
         $this->setLoggedAt(Mage::getModel('core/date')->gmtDate());
         return parent::_beforeSave();
     }
+    
+    public function updateCustomerType($visitorId, $customerId, $types = null)
+    {
+        if (is_null($types)) {
+            $types = array();
+            foreach (Mage::getModel('reports/event_type')->getCollection() as $eventType) {
+                if ($eventType->getCustomerLogin()) {
+                    $types[$eventType->getId()] = $eventType->getId();
+                }
+            }
+        }
+        $this->getResource()->updateCustomerType($this, $visitorId, $customerId, $types);
+        return $this;
+    }
 }

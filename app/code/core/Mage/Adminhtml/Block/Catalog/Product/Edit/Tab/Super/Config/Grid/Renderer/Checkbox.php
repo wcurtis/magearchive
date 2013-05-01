@@ -47,16 +47,16 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid_Renderer_C
 
     	$result = array();
     	foreach($this->getColumn()->getAttributes() as $attribute) {
-    		if($attribute->getSourceModel()) {
-    			$label = $attribute->getSource()->getOptionText($row->getData($attribute->getAttributeCode()));
+    	    $productAttribute = $attribute->getProductAttribute();
+    		if($productAttribute->getSourceModel()) {
+    			$label = $productAttribute->getSource()->getOptionText($row->getData($productAttribute->getAttributeCode()));
     		} else {
-    			$label = $row->getData($attribute->getAttributeCode());
+    			$label = $row->getData($productAttribute->getAttributeCode());
     		}
-
     		$item = array();
-    		$item['label'] = $label;
-    		$item['attribute_id'] = $attribute->getAttributeId();
-    		$item['value_index']	= $row->getData($attribute->getAttributeCode());
+    		$item['label']        = $label;
+    		$item['attribute_id'] = $productAttribute->getId();
+    		$item['value_index']  = $row->getData($productAttribute->getAttributeCode());
     		$result[] = $item;
     	}
 

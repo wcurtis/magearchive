@@ -38,48 +38,164 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
         $this->_initAction()
             ->_setActiveMenu('report/sales')
             ->_addBreadcrumb(Mage::helper('adminhtml')->__('Sales Report'), Mage::helper('adminhtml')->__('Sales Report'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_sales'))
             ->renderLayout();
     }
 
-    public function productsAction()
+    /**
+     * Export sales report grid to CSV format
+     */
+    public function exportSalesCsvAction()
+    {
+        $fileName   = 'sales.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_sales_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export sales report grid to Excel XML format
+     */
+    public function exportSalesExcelAction()
+    {
+        $fileName   = 'sales.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_sales_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function taxAction()
     {
         $this->_initAction()
-            ->_setActiveMenu('report/product')
-            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Products Report'), Mage::helper('adminhtml')->__('Products Report'))
-            ->_addContent($this->getLayout()->createBlock('adminhtml/report_product'))
+            ->_setActiveMenu('report/tax')
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Tax'), Mage::helper('adminhtml')->__('Tax'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_tax'))
             ->renderLayout();
     }
-    
+
     /**
-     * Export products report grid to CSV format
+     * Export tax report grid to CSV format
      */
-    public function exportProductsCsvAction()
+    public function exportTaxCsvAction()
     {
-        $fileName   = 'products.csv';
-        $content    = $this->getLayout()->createBlock('adminhtml/report_product_grid')
+        $fileName   = 'tax.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_tax_grid')
             ->getCsv();
-        
-        $this->_sendUploadResponse($fileName, $content);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export products report to XML format
+     * Export tax report grid to Excel XML format
      */
-    public function exportProductsXmlAction()
+    public function exportTaxExcelAction()
     {
-        $fileName   = 'products.xml';
-        $content    = $this->getLayout()->createBlock('adminhtml/report_product_grid')
-            ->getXml();
+        $fileName   = 'tax.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_tax_grid')
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function invoicedAction()
+    {
+        $this->_initAction()
+            ->_setActiveMenu('report/invoiced')
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Total Invoiced'), Mage::helper('adminhtml')->__('Total Invoiced'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_invoiced'))
+            ->renderLayout();
+    }
+
+    /**
+     * Export invoiced report grid to CSV format
+     */
+    public function exportInvoicedCsvAction()
+    {
+        $fileName   = 'invoiced.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_invoiced_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export invoiced report grid to Excel XML format
+     */
+    public function exportInvoicedExcelAction()
+    {
+        $fileName   = 'invoiced.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_invoiced_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function refundedAction()
+    {
+        $this->_initAction()
+            ->_setActiveMenu('report/refunded')
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Total Refunded'), Mage::helper('adminhtml')->__('Total Refunded'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_refunded'))
+            ->renderLayout();
+    }
+
+    /**
+     * Export refunded report grid to CSV format
+     */
+    public function exportRefundedCsvAction()
+    {
+        $fileName   = 'refunded.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_refunded_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export refunded report grid to Excel XML format
+     */
+    public function exportRefundedExcelAction()
+    {
+        $fileName   = 'refunded.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_refunded_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function couponsAction()
     {
         $this->_initAction()
             ->_setActiveMenu('report/coupons')
-            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Coupons Reports'), Mage::helper('adminhtml')->__('Coupons Reports'))
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Coupons'), Mage::helper('adminhtml')->__('Coupons'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_coupons'))
             ->renderLayout();
+    }
+
+    /**
+     * Export coupons report grid to CSV format
+     */
+    public function exportCouponsCsvAction()
+    {
+        $fileName   = 'coupons.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_coupons_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export coupons report grid to Excel XML format
+     */
+    public function exportCouponsExcelAction()
+    {
+        $fileName   = 'coupons.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_coupons_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function wishlistAction()
@@ -99,31 +215,31 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
         $fileName   = 'wishlist.csv';
         $content    = $this->getLayout()->createBlock('adminhtml/report_wishlist_grid')
             ->getCsv();
-        
-        $this->_sendUploadResponse($fileName, $content);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export wishlist report to XML format
+     * Export wishlist report to Excel XML format
      */
-    public function exportWishlistXmlAction()
+    public function exportWishlistExcelAction()
     {
         $fileName   = 'wishlist.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_wishlist_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
-    
+
     public function searchAction()
     {
         $this->_initAction()
             ->_setActiveMenu('report/search')
-            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Search Report'), Mage::helper('adminhtml')->__('Search Report'))
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Search Terms'), Mage::helper('adminhtml')->__('Search Terms'))
             ->_addContent($this->getLayout()->createBlock('adminhtml/report_search'))
             ->renderLayout();
     }
-    
+
     /**
      * Export search report grid to CSV format
      */
@@ -132,22 +248,22 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
         $fileName   = 'search.csv';
         $content    = $this->getLayout()->createBlock('adminhtml/report_search_grid')
             ->getCsv();
-        
-        $this->_sendUploadResponse($fileName, $content);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export search report to XML format
+     * Export search report to Excel XML format
      */
-    public function exportSearchXmlAction()
+    public function exportSearchExcelAction()
     {
         $fileName   = 'search.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_search_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
-
+/*
     public function customersAction()
     {
         $this->_initAction()
@@ -155,7 +271,7 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
             ->_addBreadcrumb(Mage::helper('adminhtml')->__('Best Customers'), Mage::helper('adminhtml')->__('Best Customers'))
             ->renderLayout();
     }
-
+*/
     public function ordersAction()
     {
         $this->_initAction()
@@ -172,11 +288,86 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
             ->renderLayout();
     }
 
+    public function accountsAction()
+    {
+        $this->_initAction()
+            ->_setActiveMenu('report/accounts')
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('New Accounts'), Mage::helper('adminhtml')->__('New Accounts'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_accounts'))
+            ->renderLayout();
+    }
+
+    /**
+     * Export new accounts report grid to CSV format
+     */
+    public function exportAccountsCsvAction()
+    {
+        $fileName   = 'new_accounts.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_accounts_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export new accounts report grid to Excel XML format
+     */
+    public function exportAccountsExcelAction()
+    {
+        $fileName   = 'accounts.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_accounts_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function shippingAction()
+    {
+        $this->_initAction()
+            ->_setActiveMenu('report/shipping')
+            ->_addBreadcrumb(Mage::helper('adminhtml')->__('Shipping'), Mage::helper('adminhtml')->__('Shipping'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_shipping'))
+            ->renderLayout();
+    }
+
+    /**
+     * Export shipping report grid to CSV format
+     */
+    public function exportShippingCsvAction()
+    {
+        $fileName   = 'shipping.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_shipping_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export shipping report grid to Excel XML format
+     */
+    public function exportShippingExcelAction()
+    {
+        $fileName   = 'shipping.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_shipping_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
     protected function _isAllowed()
     {
 	    switch ($this->getRequest()->getActionName()) {
             case 'sales':
                 return Mage::getSingleton('admin/session')->isAllowed('report/sales');
+                break;
+            case 'tax':
+                return Mage::getSingleton('admin/session')->isAllowed('report/tax');
+                break;
+            case 'invoiced':
+                return Mage::getSingleton('admin/session')->isAllowed('report/invoiced');
+                break;
+            case 'refunded':
+                return Mage::getSingleton('admin/session')->isAllowed('report/refunded');
                 break;
             case 'products':
                 return Mage::getSingleton('admin/session')->isAllowed('report/products');
@@ -190,9 +381,17 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
             case 'search':
                 return Mage::getSingleton('admin/session')->isAllowed('report/search');
                 break;
+            case 'accounts':
+                return Mage::getSingleton('admin/session')->isAllowed('report/accounts');
+                break;
+            case 'shipping':
+                return Mage::getSingleton('admin/session')->isAllowed('report/shipping');
+                break;
+            /*
             case 'customers':
                 return Mage::getSingleton('admin/session')->isAllowed('report/shopcart');
                 break;
+            */
             case 'orders':
                 return Mage::getSingleton('admin/session')->isAllowed('report/orders');
                 break;
@@ -204,16 +403,4 @@ class Mage_Adminhtml_ReportController extends Mage_Adminhtml_Controller_Action
                 break;
         }
     }
-    
-    protected function _sendUploadResponse($fileName, $content)
-    {
-        header('HTTP/1.1 200 OK');
-        header('Content-Disposition: attachment; filename='.$fileName);
-        header('Last-Modified: '.date('r'));
-        header("Accept-Ranges: bytes");
-        header("Content-Length: ".sizeof($content));
-        header("Content-type: application/octet-stream");
-        echo $content;
-        exit;
-    }   
 }

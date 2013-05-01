@@ -1,0 +1,96 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_order = $this->getOrder()?>
+<!--<div class="page-head button-level">
+    <h2><?=$this->__('My Orders - Details')?></h2>
+    <button class="form-button"><span><?=$this->__('Print All Shipments')?></span></button>
+</div>-->
+<h3><?=$this->__('Order #%s', $_order->getRealOrderId())?></h3>
+<?$_shipment = $this->getShipment()?>
+<?if($_shipment):?>
+    <?$_shipments = array($_shipment);?>
+<?else:?>
+    <?$_shipments = $_order->getShipmentsCollection()?>
+<?endif;?>
+
+<?foreach ($_shipments as $_shipment):?>
+    <div class="divider"></div>
+    <div class="head">
+        <h3><?=$this->__('Shipment #%s', $_shipment->getIncrementId())?></h3>
+    </div>
+    <div class="col2-set">
+        <div class="col-1">
+            <h4><?=$this->__('Shipping Address')?></h4>
+            <?$_shipping = $_shipment->getShippingAddress()?>
+            <address><?=$_shipping->getFirstname()?> <?=$_shipping->getLastname()?><br/>
+            <?=$_shipping->getCompany()?><br/>
+            <?=$_shipping->getStreet()?><br/>
+            <?=$_shipping->getCity()?>, <?=$_shipping->getRegion()?> <?=$_shipping->getPostcode()?><br/>
+            <strong>T</strong> | <?=$_shipping->getTelephone();
+            if ($_shipping->getFax()):?><br /><strong>F</strong> | <?=$_shipping->getFax()?><?endif;?></address>
+        </div>
+        <div class="col-2">
+            <h4><?=$this->__('Billing Address')?></h4>
+            <?$_billing = $_shipment->getbillingAddress()?>
+            <address><?=$_order->getBillingAddress()->format('html')?></address>
+        </div>
+    </div>
+    <br/>
+    <div class="col2-set">
+        <div class="col-1">
+            <h4><?=$this->__('Shipping Method')?></h4>
+             <?=$_order->getShippingDescription()?>
+        </div>
+        <div class="col-2">
+            <h4><?=$this->__('Payment Method')?></h4>
+            <?=$this->getPaymentInfoHtml()?>
+        </div>
+    </div>
+    <br/>
+    <h4><?=$this->__('Items Ordered')?></h4>
+    <table cellspacing="0" class="data-table">
+        <thead>
+            <tr>
+                <th><?=$this->__('Product Name')?></th>
+                <th class="a-center" width="10%"><?=$this->__('SKU')?></th>
+                <th class="a-center" width="10%"><?=$this->__('Qty Shipped')?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?$_items = $_shipment->getItemsCollection();?>
+            <?$_count = $_items->count();?>
+            <?$_index = 0;?>
+            <?foreach ($_items as $_item):?>
+                <tr<?=($_index++ > $_count ? ' class="last"' : '')?>>
+                <td>
+                    <?=$_item->getName()?>
+                    <?=$_item->getDescription()?>
+                </td>
+                <td class="a-center"><?=$_item->getSku()?></td>
+                <td class="a-center"><?=$_item->getQty()*1?></td>
+
+            <?endforeach;?>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+<?endforeach;?>
+<script type="text/javascript">window.print();</script>

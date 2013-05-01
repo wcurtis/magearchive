@@ -24,7 +24,7 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
 
     protected function _goBack()
     {
-        if (!Mage::getStoreConfig('sales/cart/redirect_to_cart')
+        if (!Mage::getStoreConfig('checkout/cart/redirect_to_cart')
             && !$this->getRequest()->getParam('in_cart')
             && $backUrl = $this->_getRefererUrl()) {
 
@@ -141,8 +141,8 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
             if (count($wishlistIds) && $this->getRequest()->getParam('wishlist_next')){
                 $wishlistId = array_shift($wishlistIds);
 
-        		$wishlist = Mage::getModel('wishlist/wishlist')
-        				->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer(), true);
+                $wishlist = Mage::getModel('wishlist/wishlist')
+                        ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer(), true);
                 $wishlist->getItemCollection()->load();
 
                 foreach($wishlist->getItemCollection() as $wishlistItem){
@@ -252,8 +252,9 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
             ->setCountryId($country)
             ->setCity($city)
             ->setPostcode($postcode)
+            ->setRegionId($this->getRequest()->getParam('region_id'))
+            ->setRegion($this->getRequest()->getParam('region'))
             ->setCollectShippingRates(true);
-
         $this->getQuote()/*->collectTotals()*/->save();
 
         $this->_goBack();

@@ -72,6 +72,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
              * Totals data
              */
             ->setGrandTotal($order->getGrandTotal())
+            ->setBaseGrandTotal($order->getBaseGrandTotal())
 
             /**
              * Another data
@@ -106,7 +107,15 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setShippingAmount($order->getShippingAmount())
             ->setGiftcertAmount($order->getGiftcertAmount())
             ->setCustbalanceAmount($order->getCustbalanceAmount())
-            ->setGrandTotal($order->getGrandTotal());
+            ->setGrandTotal($order->getGrandTotal())
+
+            ->setBaseSubtotal($order->getBaseSubtotal())
+            ->setBaseTaxAmount($order->getBaseTaxAmount())
+            ->setBaseDiscountAmount($order->getBaseDiscountAmount())
+            ->setBaseShippingAmount($order->getBaseShippingAmount())
+            ->setBaseGiftcertAmount($order->getBaseGiftcertAmount())
+            ->setBaseCustbalanceAmount($order->getBaseCustbalanceAmount())
+            ->setBaseGrandTotal($order->getBaseGrandTotal());
         return $address;
     }
 
@@ -189,7 +198,12 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setTaxAmount($item->getTaxAmount())
             ->setRowWeight($item->getRowWeight())
             ->setRowTotal($item->getRowTotal())
-            ->setAppliedRuleIds($item->getAppliedRuleIds());
+            ->setAppliedRuleIds($item->getAppliedRuleIds())
+
+            ->setBaseDiscountAmount($item->getBaseDiscountAmount())
+            ->setBaseTaxAmount($item->getBaseTaxAmount())
+            ->setBaseRowTotal($item->getBaseRowTotal())
+            ;
 
         return $quoteItem;
     }
@@ -204,6 +218,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
     {
         $invoice = Mage::getModel('sales/order_invoice');
         $invoice->setOrder($order)
+            ->setStoreId($order->getStoreId())
             ->setCustomerId($order->getCustomerId())
             ->setBillingAddressId($order->getBillingAddressId())
             ->setShippingAddressId($order->getShippingAddressId())
@@ -231,6 +246,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setSku($item->getSku())
             ->setDescription($item->getDescription())
             ->setPrice($item->getPrice())
+            ->setBasePrice($item->getBasePrice())
             ->setCost($item->getCost());
 
         return $invoiceItem;
@@ -246,6 +262,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
     {
         $shipment = Mage::getModel('sales/order_shipment');
         $shipment->setOrder($order)
+            ->setStoreId($order->getStoreId())
             ->setCustomerId($order->getCustomerId())
             ->setBillingAddressId($order->getBillingAddressId())
             ->setShippingAddressId($order->getShippingAddressId())
@@ -273,6 +290,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setSku($item->getSku())
             ->setDescription($item->getDescription())
             ->setPrice($item->getPrice())
+            ->setBasePrice($item->getBasePrice())
             ->setWeight($item->getWeight());
 
         return $shipmentItem;
@@ -288,6 +306,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
     {
         $creditmemo = Mage::getModel('sales/order_creditmemo');
         $creditmemo->setOrder($order)
+            ->setStoreId($order->getStoreId())
             ->setCustomerId($order->getCustomerId())
             ->setBillingAddressId($order->getBillingAddressId())
             ->setShippingAddressId($order->getShippingAddressId())
@@ -315,6 +334,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setSku($item->getSku())
             ->setDescription($item->getDescription())
             ->setPrice($item->getPrice())
+            ->setBasePrice($item->getBasePrice())
             ->setCost($item->getCost());
 
         return $creditmemoItem;

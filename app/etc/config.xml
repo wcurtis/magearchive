@@ -55,6 +55,7 @@
                     <tr_TR/>
                     <en_GB/>
                     <vi_VN/>
+                    <lt_LT/>
                 </codes>
                 <currencies>
                     <ADP/>  <AED/>  <AFN/>  <ALL/>  <AMD/>  <ANG/>  <AOA/>  <ARA/>  <ARS/>
@@ -100,20 +101,12 @@
             </default_setup>
             <default_write>
                 <connection>
-                    <host>localhost</host>
-                    <username></username>
-                    <password/>
-                    <dbname>magento</dbname>
-
-                    <model>mysql4</model>
-                    <initStatements>SET NAMES utf8</initStatements>
-                    <type>pdo_mysql</type>
-                    <active>0</active>
+                    <use>default_setup</use>
                 </connection>
             </default_write>
             <default_read>
                 <connection>
-                    <use>default_write</use>
+                    <use>default_setup</use>
                 </connection>
             </default_read>
 

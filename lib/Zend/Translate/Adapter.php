@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Date.php 2498 2006-12-23 22:13:38Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -26,7 +26,7 @@ require_once 'Zend/Locale.php';
 /**
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Translate_Adapter {
@@ -105,7 +105,7 @@ abstract class Zend_Translate_Adapter {
                         array_pop($filename);
                         $filename = implode('.', $filename);
                         if (Zend_Locale::isLocale($filename)) {
-                            $locale = (string) $info;
+                            $locale = (string) $filename;
                         } else {
                             $found = false;
                             $parts = explode('.', $filename);
@@ -223,7 +223,7 @@ abstract class Zend_Translate_Adapter {
 
 
     /**
-     * Returns the avaiable languages from this adapter
+     * Returns the available languages from this adapter
      *
      * @return array
      */
@@ -241,7 +241,7 @@ abstract class Zend_Translate_Adapter {
 
 
     /**
-     * Returns all avaiable message ids from this adapter
+     * Returns all available message ids from this adapter
      * If no locale is given, the actual language will be used
      *
      * @param  $locale  String|Zend_Locale  Language to return the message ids from
@@ -257,7 +257,7 @@ abstract class Zend_Translate_Adapter {
 
 
     /**
-     * Returns all avaiable translations from this adapter
+     * Returns all available translations from this adapter
      * If no locale is given, the actual language will be used
      * If 'all' is given the complete translation dictionary will be returned
      *
@@ -277,7 +277,7 @@ abstract class Zend_Translate_Adapter {
 
 
     /**
-     * Is the wished language avaiable ?
+     * Is the wished language available ?
      *
      * @param  string|Zend_Locale  $locale  Language to search for, identical with locale identifier,
      *                                      see Zend_Locale for more information

@@ -13,7 +13,7 @@
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
  * @category   Mage
- * @package    Mage_Shipping
+ * @package    Mage_Sitemap
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
@@ -24,7 +24,6 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
-
 DROP TABLE IF EXISTS `{$this->getTable('sitemap')}`;
 CREATE TABLE IF NOT EXISTS `{$this->getTable('sitemap')}` (
   `sitemap_id` int(11) NOT NULL auto_increment,
@@ -35,7 +34,6 @@ CREATE TABLE IF NOT EXISTS `{$this->getTable('sitemap')}` (
   `store_id` int(11) default NULL,
   PRIMARY KEY  (`sitemap_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-    ");
+");
 
 $installer->endSetup();

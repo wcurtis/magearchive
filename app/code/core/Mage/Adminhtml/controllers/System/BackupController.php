@@ -66,11 +66,12 @@ class Mage_Adminhtml_System_BackupController extends Mage_Adminhtml_Controller_A
                 ->setPath(Mage::getBaseDir("var") . DS . "backups");
 
         try {
-	    $dbDump = Mage::getModel('backup/db')->renderSql();
-	    $backup->setFile($dbDump);
+    	    $dbDump = Mage::getModel('backup/db')->renderSql();
+    	    $backup->setFile($dbDump);
+            $this->_getSession()->addSuccess(Mage::helper('adminhtml')->__('Backup successfully created'));
         }
         catch (Exception  $e) {
-        	    // Nothing
+        	 // Nothing
         }
         $this->_redirect('*/*');
     }
@@ -114,11 +115,13 @@ class Mage_Adminhtml_System_BackupController extends Mage_Adminhtml_Controller_A
 	                ->setType($this->getRequest()->getParam('type'))
 	                ->setPath(Mage::getBaseDir("var") . DS . "backups")
 	                ->deleteFile();
-        } 
+
+	        $this->_getSession()->addSuccess(Mage::helper('adminhtml')->__('Backup record was deleted'));
+        }
         catch (Exception $e) {
         		// Nothing
         }
-        
+
         $this->_redirect('*/*/');
 
     }
@@ -126,6 +129,16 @@ class Mage_Adminhtml_System_BackupController extends Mage_Adminhtml_Controller_A
     protected function _isAllowed()
     {
 	    return Mage::getSingleton('admin/session')->isAllowed('system/tools/backup');
+    }
+
+    /**
+     * Retrive adminhtml session model
+     *
+     * @return Mage_Adminhtml_Model_Session
+     */
+    protected function _getSession()
+    {
+        return Mage::getSingleton('adminhtml/session');
     }
 
 }

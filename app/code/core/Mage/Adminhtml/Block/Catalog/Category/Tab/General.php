@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_Block_Widget_Form
+class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_Block_Catalog_Form
 {
 
     protected $_category;
@@ -48,16 +48,17 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
     parent::_prepareLayout();
         $form = new Varien_Data_Form();
         $form->setHtmlIdPrefix('_general');
+        $form->setDataObject($this->getCategory());
 
         $fieldset = $form->addFieldset('base_fieldset', array('legend'=>Mage::helper('catalog')->__('General Information')));
 
         $this->_setFieldset($this->getCategory()->getAttributes(true), $fieldset);
 
         if (!$this->getCategory()->getId()) {
-            $fieldset->addField('parent_id', 'select', array(
-                'name'  => 'parent_id',
+            $fieldset->addField('path', 'select', array(
+                'name'  => 'path',
                 'label' => Mage::helper('catalog')->__('Parent Category'),
-                'value' => $this->getRequest()->getParam('parent'),
+                'value' => base64_decode($this->getRequest()->getParam('parent')),
                 'values'=> $this->_getParentCategoryOptions(),
                 //'required' => true,
                 //'class' => 'required-entry'
@@ -87,9 +88,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
 
         if ($node) {
             $options[] = array(
-               'value' => $node->getId(),
-               'label' => $node->getName(),
-               'style' => 'padding-left:'.(10*$node->getLevel()).'px',
+               'value' => $node->getPathId(),
+               'label' => str_repeat('&nbsp;', max(0, 3*($node->getLevel()-1))) . $node->getName(),
             );
 
             foreach ($node->getChildren() as $child) {

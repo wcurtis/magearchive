@@ -37,6 +37,9 @@ class Mage_Catalog_Block_Product_List_Random extends Mage_Catalog_Block_Product_
             $collection->setPage(1, $numProducts);
 
             $this->_productCollection = $collection;
+            Mage::dispatchEvent('catalog_block_product_list_collection', array(
+                'collection'=>$this->_productCollection,
+            ));
         }
         return $this->_productCollection;
     }

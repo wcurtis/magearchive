@@ -28,46 +28,49 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
 
     public function _beforeSave(Mage_Core_Model_Abstract $object)
     {
-        $object->setFromDate($this->formatDate($object->getFromDate()));
+        $startDate = $object->getFromDate();
+        if ($startDate=='') {
+            //$startDate = Mage::app()->getLocale()->date();
+            $startDate = Mage::getModel('core/date')->gmtDate();
+        }
+        $object->setFromDate($this->formatDate($startDate));
         $object->setToDate($this->formatDate($object->getToDate()));
         parent::_beforeSave($object);
     }
 
     public function updateRuleProductData(Mage_CatalogRule_Model_Rule $rule)
     {
-        foreach ($rule->getActions()->getActions() as $action) {
-            break;
-        }
-
         $ruleId = $rule->getId();
 
         $write = $this->_getWriteAdapter();
         $write->delete($this->getTable('catalogrule/rule_product'), $write->quoteInto('rule_id=?', $ruleId));
 
-        if (empty($action) || !$rule->getIsActive()) {
+        if (!$rule->getIsActive()) {
             return $this;
         }
 
         $productIds = $rule->getMatchingProductIds();
-        $storeIds = explode(',', $rule->getStoreIds());
+        $websiteIds = explode(',', $rule->getWebsiteIds());
         $customerGroupIds = explode(',', $rule->getCustomerGroupIds());
 
         $fromTime = strtotime($rule->getFromDate());
-        $toTime = strtotime($rule->getToDate())+86400;
+        $toTime = strtotime($rule->getToDate());
+        $toTime = $toTime ? $toTime+86400 : 0;
+
         $sortOrder = (int)$rule->getSortOrder();
-        $actionOperator = $action->getOperator();
-        $actionAmount = $action->getValue();
+        $actionOperator = $rule->getSimpleAction();
+        $actionAmount = $rule->getDiscountAmount();
         $actionStop = $rule->getStopRulesProcessing();
 
         $rows = array();
-        $header = 'replace into '.$this->getTable('catalogrule/rule_product').' (rule_id, from_time, to_time, store_id, customer_group_id, product_id, action_operator, action_amount, action_stop, sort_order) values ';
+        $header = 'replace into '.$this->getTable('catalogrule/rule_product').' (rule_id, from_time, to_time, website_id, customer_group_id, product_id, action_operator, action_amount, action_stop, sort_order) values ';
         try {
             $write->beginTransaction();
 
             foreach ($productIds as $productId) {
-                foreach ($storeIds as $storeId) {
+                foreach ($websiteIds as $websiteId) {
                     foreach ($customerGroupIds as $customerGroupId) {
-                        $rows[] = "('$ruleId', '$fromTime', '$toTime', '$storeId', '$customerGroupId', '$productId', '$actionOperator', '$actionAmount', '$actionStop', '$sortOrder')";
+                        $rows[] = "('$ruleId', '$fromTime', '$toTime', '$websiteId', '$customerGroupId', '$productId', '$actionOperator', '$actionAmount', '$actionStop', '$sortOrder')";
                         if (sizeof($rows)==100) {
                             $sql = $header.join(',', $rows);
                             $write->query($sql);
@@ -110,7 +113,7 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         $sql = "select * from ".$this->getTable('catalogrule/rule_product')." where
             (".$read->quoteInto('from_time=0 or from_time<=?', strtotime($toDate))
             ." or ".$read->quoteInto('to_time=0 or to_time>=?', strtotime($fromDate)).")
-            order by to_time, from_time, store_id, customer_group_id, product_id, sort_order";
+            order by to_time, from_time, website_id, customer_group_id, product_id, sort_order";
         return $read->fetchAll($sql);
     }
 
@@ -142,18 +145,17 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         $fromTime = strtotime($fromDate);
         $toTime = strtotime($toDate);
         for ($time=$fromTime; $time<=$toTime; $time+=86400) {
-            $date = $this->formatDate($time);
             foreach ($ruleProducts as $r) {
                 if (!(($r['from_time']==0 || $r['from_time']<=$time) && ($r['to_time']==0 || $r['to_time']>=$time))) {
                     continue;
                 }
 
-                $key = $this->formatDate($time).'|'.$r['store_id'].'|'.$r['customer_group_id'].'|'.$r['product_id'];
+                $key = $time.'|'.$r['website_id'].'|'.$r['customer_group_id'].'|'.$r['product_id'];
 
                 if (!isset($prices[$key])) {
                     $product = $products->getItemById($r['product_id']);
                     if ($product) {
-                        $prices[$key] = $product->getPrice();
+                        $prices[$key] = array('price'=>$product->getPrice(), 'from_time'=>$r['from_time'], 'to_time'=>$r['to_time']);
                     } else {
                         $prices[$key] = false;
                     }
@@ -168,20 +170,27 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
                 $amount = $r['action_amount'];
                 switch ($r['action_operator']) {
                     case 'to_fixed':
-                        $prices[$key] = $amount;
+                        $prices[$key]['price'] = $amount;
                         break;
 
                     case 'to_percent':
-                        $prices[$key] = $prices[$key]*$amount/100;
+                        $prices[$key]['price'] = $prices[$key]['price']*$amount/100;
                         break;
 
                     case 'by_fixed':
-                        $prices[$key] -= $amount;
+                        $prices[$key]['price'] -= $amount;
                         break;
 
                     case 'by_percent':
-                        $prices[$key] = $prices[$key]*(1-$amount/100);
+                        $prices[$key]['price'] = $prices[$key]['price']*(1-$amount/100);
                         break;
+                }
+
+                if ($r['from_time']>$prices[$key]['from_time']) {
+                    $prices[$key]['from_time'] = $r['from_time'];
+                }
+                if ($r['to_time']<$prices[$key]['to_time']) {
+                    $prices[$key]['to_time'] = $r['to_time'];
                 }
 
                 if ($r['action_stop']) {
@@ -191,14 +200,14 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         }
 
         $write = $this->_getWriteAdapter();
-        $header = 'replace into '.$this->getTable('catalogrule/rule_product_price').' (rule_date, store_id, customer_group_id, product_id, rule_price) values ';
+        $header = 'replace into '.$this->getTable('catalogrule/rule_product_price').' (rule_date, website_id, customer_group_id, product_id, rule_price, latest_start_date, earliest_end_date) values ';
 
         try {
             $write->beginTransaction();
 
-            foreach ($prices as $key=>$value) {
+            foreach ($prices as $key=>$row) {
                 $k = explode('|', $key);
-                $rows[] = "('{$k[0]}', {$k[1]}, {$k[2]}, {$k[3]}, {$value})";
+                $rows[] = "('{$this->formatDate($k[0])}', '{$k[1]}', '{$k[2]}', '{$k[3]}', '{$row['price']}', '{$this->formatDate($row['from_time'])}', '{$this->formatDate($row['to_time'])}')";
                 if (sizeof($rows)==100) {
                     $sql = $header.join(',', $rows);
                     $write->query($sql);
@@ -222,25 +231,25 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         return $this;
     }
 
-    public function getRulePrice($date, $sId, $gId, $pId)
+    public function getRulePrice($date, $wId, $gId, $pId)
     {
         $read = $this->_getReadAdapter();
         $select = $read->select()
             ->from($this->getTable('catalogrule/rule_product_price'), 'rule_price')
             ->where('rule_date=?', $this->formatDate($date))
-            ->where('store_id=?', $sId)
+            ->where('website_id=?', $wId)
             ->where('customer_group_id=?', $gId)
             ->where('product_id=?', $pId);
         return $read->fetchOne($select);
     }
 
-    public function getRulesForProduct($date, $sId, $pId)
+    public function getRulesForProduct($date, $wId, $pId)
     {
         $read = $this->_getReadAdapter();
         $select = $read->select()
             ->from($this->getTable('catalogrule/rule_product_price'), '*')
             ->where('rule_date=?', $this->formatDate($date))
-            ->where('store_id=?', $sId)
+            ->where('website_id=?', $wId)
             ->where('product_id=?', $pId);
         return $read->fetchAll($select);
     }

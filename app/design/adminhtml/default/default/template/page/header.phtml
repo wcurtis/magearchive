@@ -22,7 +22,7 @@
     <a href="<?=$this->getHomeLink()?>"><img src="<?=$this->getSkinUrl($this->__('images/logo.gif'))?>" alt="<?=$this->__('Magento Logo')?>" class="logo"/></a>
     <div class="header-right">
         <p class="super">
-            <?=$this->__("Logged in as %s", $this->getUser()->getUsername())?><span class="separator">|</span><?=$this->__("Today is %s", $this->formatDate(null, 'long'))?><span class="separator">|</span><a href="<?=$this->getLogoutLink()?>" class="link-logout"><?=$this->__('Log Out')?></a>
+            <?=$this->__("Logged in as %s", $this->getUser()->getUsername())?><span class="separator">|</span><?=$this->formatDate(null, 'long')?><span class="separator">|</span><a href="<?=$this->getLogoutLink()?>" class="link-logout"><?=$this->__('Log Out')?></a>
         </p>
         <?php if ( Mage::getSingleton('admin/session')->isAllowed('admin/global_search') ): ?>
         <fieldset>

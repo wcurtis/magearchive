@@ -34,10 +34,10 @@ class Mage_CatalogRule_Model_Observer
             $date = mktime(0,0,0);
         }
 
-        if ($observer->hasStoreId()) {
-            $sId = $observer->getStoreId();
+        if ($observer->hasWebsiteId()) {
+            $wId = $observer->getWebsiteId();
         } else {
-            $sId = Mage::app()->getStore()->getId();
+            $wId = Mage::app()->getWebsite()->getId();
         }
 
         if ($observer->hasCustomerGroupId()) {
@@ -49,10 +49,10 @@ class Mage_CatalogRule_Model_Observer
         $product = $observer->getEvent()->getProduct();
         $pId = $product->getId();
 
-        $key = "$date|$sId|$gId|$pId";
+        $key = "$date|$wId|$gId|$pId";
         if (!isset($this->_rulePrices[$key])) {
             $rulePrice = Mage::getResourceModel('catalogrule/rule')
-                ->getRulePrice($date, $sId, $gId, $pId);
+                ->getRulePrice($date, $wId, $gId, $pId);
             $this->_rulePrices[$key] = $rulePrice;
         }
         if ($this->_rulePrices[$key]!==false) {
@@ -71,14 +71,14 @@ class Mage_CatalogRule_Model_Observer
             $product = $observer->getEvent()->getProduct();
 
             $date = mktime(0,0,0);
-            $sId = $ruleData->getStoreId();
+            $wId = $ruleData->getWebsiteId();
             $gId = $ruleData->getCustomerGroupId();
             $pId = $product->getId();
 
-            $key = "$date|$sId|$gId|$pId";
+            $key = "$date|$wId|$gId|$pId";
             if (!isset($this->_rulePrices[$key])) {
                 $rulePrice = Mage::getResourceModel('catalogrule/rule')
-                    ->getRulePrice($date, $sId, $gId, $pId);
+                    ->getRulePrice($date, $wId, $gId, $pId);
                 $this->_rulePrices[$key] = $rulePrice;
             }
             if ($this->_rulePrices[$key]!==false) {

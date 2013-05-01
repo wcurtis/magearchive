@@ -54,53 +54,61 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Reviews extends Mage_Adminhtml_Bloc
     protected function _prepareColumns()
     {
         $this->addColumn('id', array(
-            'header'    =>Mage::helper('customer')->__('ID'),
-            'width'     =>5,
-            'align'     =>'center',
-            'sortable'  =>true,
-            'index'     =>'entity_id'
+            'header'    => Mage::helper('customer')->__('ID'),
+            'width'     => 5,
+            'align'     => 'center',
+            'sortable'  => true,
+            'index'     => 'entity_id'
         ));
+
         $this->addColumn('firstname', array(
-            'header'    =>Mage::helper('customer')->__('First Name'),
-            'index'     =>'firstname'
+            'header'    => Mage::helper('customer')->__('First Name'),
+            'index'     => 'firstname'
         ));
+
         $this->addColumn('lastname', array(
-            'header'    =>Mage::helper('customer')->__('Last Name'),
-            'index'     =>'lastname'
+            'header'    => Mage::helper('customer')->__('Last Name'),
+            'index'     => 'lastname'
         ));
+
         $this->addColumn('email', array(
-            'header'    =>Mage::helper('customer')->__('Email'),
-            'width'     =>40,
-            'align'     =>'center',
-            'index'     =>'email'
+            'header'    => Mage::helper('customer')->__('Email'),
+            'width'     => 40,
+            'align'     => 'center',
+            'index'     => 'email'
         ));
+
         $this->addColumn('telephone', array(
-            'header'    =>Mage::helper('customer')->__('Telephone'),
-            'align'     =>'center',
-            'index'     =>'billing_telephone'
+            'header'    => Mage::helper('customer')->__('Telephone'),
+            'align'     => 'center',
+            'index'     => 'billing_telephone'
         ));
+
         $this->addColumn('billing_postcode', array(
-            'header'    =>Mage::helper('customer')->__('ZIP/Postal Code'),
-            'index'     =>'billing_postcode',
+            'header'    => Mage::helper('customer')->__('ZIP/Postal Code'),
+            'index'     => 'billing_postcode',
         ));
+
         $this->addColumn('billing_country_id', array(
-            'header'    =>Mage::helper('customer')->__('Country'),
-            'type'      =>'country',
-            'index'     =>'billing_country_id',
+            'header'    => Mage::helper('customer')->__('Country'),
+            'type'      => 'country',
+            'index'     => 'billing_country_id',
         ));
+
         $this->addColumn('customer_since', array(
-            'header'    =>Mage::helper('customer')->__('Customer Since'),
+            'header'    => Mage::helper('customer')->__('Customer Since'),
             'type'      => 'date',
             'format'    => 'Y.m.d',
-            'index'     =>'created_at',
+            'index'     => 'created_at',
         ));
+
         $this->addColumn('action', array(
-            'header'    =>Mage::helper('customer')->__('Action'),
-            'align'     =>'center',
-            'format'    =>'<a href="'.$this->getUrl('*/sales/edit/id/$entity_id').'">'.Mage::helper('customer')->__('Edit').'</a>',
-            'filter'    =>false,
-            'sortable'  =>false,
-            'is_system' =>true
+            'header'    => Mage::helper('customer')->__('Action'),
+            'align'     => 'center',
+            'format'    => '<a href="'.$this->getUrl('*/sales/edit/id/$entity_id').'">'.Mage::helper('customer')->__('Edit').'</a>',
+            'filter'    => false,
+            'sortable'  => false,
+            'is_system' => true
         ));
 
         $this->setColumnFilter('id')
@@ -115,7 +123,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Reviews extends Mage_Adminhtml_Bloc
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/index', array('_current'=>true));
+        return $this->getUrl('*/*/index', array('_current'=> true));
     }
 
 }

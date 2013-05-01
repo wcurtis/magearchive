@@ -18,64 +18,91 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * Directory module observer
+ * Sitemap module observer
  *
+ * @category   Mage
+ * @package    Mage_Sitemap
  */
 class Mage_Sitemap_Model_Observer
 {
-    const CRON_STRING_PATH = 'crontab/jobs/generate_sitemaps/schedule/cron_expr';
 
+    /**
+     * Enable/disable configuration
+     */
+    const XML_PATH_GENERATION_ENABLED = 'sitemap/generate/enabled';
+
+    /**
+     * Cronjob expression configuration
+     */
+    const XML_PATH_CRON_EXPR = 'crontab/jobs/generate_sitemaps/schedule/cron_expr';
+
+    /**
+     * Error email template configuration
+     */
     const XML_PATH_ERROR_TEMPLATE  = 'sitemap/generate/error_email_template';
+
+    /**
+     * Error email identity configuration
+     */
     const XML_PATH_ERROR_IDENTITY  = 'sitemap/generate/error_email_identity';
+
+    /**
+     * 'Send error emails to' configuration
+     */
     const XML_PATH_ERROR_RECIPIENT = 'sitemap/generate/error_email';
 
+    /**
+     * Generate sitemaps
+     *
+     * @param Mage_Cron_Model_Schedule $schedule
+     */
     public function scheduledGenerateSitemaps($schedule)
     {
-         $generateWarnings = array();
+        $errors = array();
 
-        if( !Mage::getStoreConfig(self::CRON_STRING_PATH ) ) {
+        // check if scheduled generation enabled
+        if ( !Mage::getStoreConfigFlag(self::XML_PATH_GENERATION_ENABLED) ) {
             return;
         }
 
-        $collection = Mage::getResourceModel('sitemap/sitemap_collection')
-            ->load();
+        $collection = Mage::getModel('sitemap/sitemap')->getCollection();
+        /* @var $collection Mage_Sitemap_Model_Mysql4_Sitemap_Collection */
+        $collection->load();
 
         foreach ($collection as $sitemap){
+            /* @var $sitemap Mage_Sitemap_Model_Sitemap */
             try {
+                // if sitemap record exists
                 if ($sitemap->getId()) {
-                    $xml = $sitemap->generateSitemap();
-                    $file = Mage::getBaseDir('base') . '/' . $sitemap->getSitemapPath() . '/' . $sitemap->getSitemapFilename();
-
-                    $file = str_replace('//', '/', $file);
-
-                    $fp = fopen($file, 'w');
+                    // generate sitemap
+                    $xml = $sitemap->generateXml();
+                    // save it to a file
+                    $fp = fopen($sitemap->getPreparedFilename(), 'w');
                     fputs($fp, $xml);
                     fclose($fp);
                 }
+
             } catch (Exception $e) {
-                $generateWarnings[] = Mage::helper('sitemap')->__('FATAL ERROR:') . ' ' . $e->getMessage();
+                // add to error messages
+                $errors[] = Mage::helper('sitemap')->__('ERROR:') . ' ' . $e->getMessage();
             }
         }
 
-        if( sizeof($importWarnings) != 0 ) {
-            /* @var $mailTamplate Mage_Core_Model_Email_Template */
-            $mailTamplate = Mage::getModel('core/email_template');
-            $mailTamplate->setDesignConfig(
-                    array(
-                        'area'  => 'backend',
-                    )
-                )
+        if ( sizeof($errors)  ) {
+            $emailTemplate = Mage::getModel('core/email_template');
+            /* @var $emailTemplate Mage_Core_Model_Email_Template */
+            $emailTemplate->setDesignConfig(array('area'  => 'backend'))
                 ->sendTransactional(
                     Mage::getStoreConfig(self::XML_PATH_ERROR_TEMPLATE),
                     Mage::getStoreConfig(self::XML_PATH_ERROR_IDENTITY),
                     Mage::getStoreConfig(self::XML_PATH_ERROR_RECIPIENT),
                     null,
-                    array(
-                      'warnings'    => join("\n", $generateWarnings),
-                    )
+                    array('warnings' => join("\n", $errors))
                 );
         }
 
     }
+
 }

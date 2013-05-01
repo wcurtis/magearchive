@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Review>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <depends>
                 <Mage_Core />
             </depends>
@@ -112,47 +112,7 @@
                     </reviews_ratings>
                 </children>
              </catalog>
-            <report translate="title" module="catalog">
-                <children>
-                    <review translate="title" module="catalog">
-                        <title>Reviews Report</title>
-                        <children>
-                            <customer translate="title" module="catalog">
-                                <title>Customers Reviews</title>
-                                <action>adminhtml/report_review/customer</action>
-                            </customer>
-                            <product translate="title" module="catalog">
-                                <title>Products Reviews</title>
-                                <action>adminhtml/report_review/product</action>
-                            </product>
-                        </children>
-                    </review>
-                </children>
-            </report>
         </menu>
-        <acl>
-            <resources>
-               <admin>
-                    <children>
-                        <report>
-                            <children>
-                                <review>
-                                    <title>Reviews Report</title>
-                                    <children>
-                                        <customer>
-                                            <title>Customers Reviews</title>
-                                        </customer>
-                                        <product>
-                                            <title>Products Reviews</title>
-                                        </product>
-                                    </children>
-                                </review>
-                            </children>
-                        </report>
-                    </children>
-                </admin>
-            </resources>
-        </acl>
         <translate>
             <modules>
                 <Mage_Review>

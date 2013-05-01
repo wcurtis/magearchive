@@ -18,42 +18,56 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Mage_CatalogSearch_Block_Term extends Mage_Core_Block_Template 
+class Mage_CatalogSearch_Block_Term extends Mage_Core_Block_Template
 {
+    protected $_terms;
+    protected $_minPopularity;
+    protected $_maxPopularity;
 
     public function __construct()
     {
         parent::__construct();
     }
-    
-    protected function _prepareLayout()
+
+    protected function _loadTerms()
     {
-        parent::_prepareLayout();
-        $pager = $this->getLayout()->createBlock('page/html_pager', 'catalogsearch.pager');
-        $pager->setAvailableLimit(array(50=>50));
-		$pager->setCollection($this->getTermCollection());
-        $pager->setShowPerPage(false);
-        $this->setChild('pager', $pager);
-        $this->getTermCollection()->load(); 
+        if (empty($this->_terms)) {
+            $this->_terms = array();
+            $terms = Mage::getResourceModel('catalogsearch/query_collection')
+                ->setPopularQueryFilter()
+                ->setPopularQueryFilter(Mage::app()->getStore()->getId())
+                ->setOrder('popularity', 'DESC')
+                ->setPageSize(100)
+                ->load()
+                ->getItems();
+
+            if( count($terms) == 0 ) {
+                return $this;
+            }
+
+
+            $this->_maxPopularity = reset($terms)->getPopularity();
+            $this->_minPopularity = end($terms)->getPopularity();
+            $range = $this->_maxPopularity - $this->_minPopularity;
+            $range = ( $range == 0 ) ? 1 : $range;
+            foreach ($terms as $term) {
+                if( !$term->getPopularity() ) {
+                    continue;
+                }
+                $term->setRatio(($term->getPopularity()-$this->_minPopularity)/$range);
+                $this->_terms[$term->getName()] = $term;
+            }
+            ksort($this->_terms);
+        }
         return $this;
     }
-    
-    public function getTermCollection()
+
+    public function getTerms()
     {
-        $collection = $this->getData('term_collection');
-        if (is_null($collection)) {
-        	$collection =  Mage::getResourceModel('catalogsearch/query_collection')
-                ->setPopularQueryFilter();		               				
-            $this->setData('term_collection', $collection);
-        }
-        return $collection;
+        $this->_loadTerms();
+        return $this->_terms;
     }
-    
-    public function getPagerHtml()
-    {
-        return $this->_getChildHtml('pager');
-    }
-    
+
     public function getSearchUrl($obj)
 	{
 	    $url = Mage::getModel('core/url');
@@ -62,6 +76,16 @@ class Mage_CatalogSearch_Block_Term extends Mage_Core_Block_Template
 	    * so no need to explicitly called urlencode for the text
 	    */
 	    $url->setQueryParam('q', $obj->name);
-	    return $url->getUrl('catalogsearch/result');	  
-	}	
+	    return $url->getUrl('catalogsearch/result');
+	}
+
+    public function getMaxPopularity()
+    {
+        return $this->_maxPopularity;
+    }
+
+    public function getMinPopularity()
+    {
+        return $this->_minPopularity;
+    }
 }

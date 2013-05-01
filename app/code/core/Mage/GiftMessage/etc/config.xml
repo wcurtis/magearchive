@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_GiftMessage>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
         </Mage_GiftMessage>
     </modules>
     <global>
@@ -68,6 +68,16 @@
             </giftmessage_read>
         </resources>
     </global>
+
+    <default>
+        <sales>
+            <gift_messages>
+                <allow_items>0</allow_items>
+                <allow_order>0</allow_order>
+            </gift_messages>
+        </sales>
+    </default>
+
     <adminhtml>
         <translate>
             <modules>

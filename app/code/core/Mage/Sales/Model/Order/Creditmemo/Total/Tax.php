@@ -23,22 +23,34 @@ class Mage_Sales_Model_Order_Creditmemo_Total_Tax extends Mage_Sales_Model_Order
 {
     public function collect(Mage_Sales_Model_Order_Creditmemo $creditmemo)
     {
-        $totalTax = 0;
+        $totalTax       = 0;
+        $baseTotalTax   = 0;
 
         foreach ($creditmemo->getAllItems() as $item) {
-            $orderItemTax = $item->getOrderItem()->getTaxAmount();
+            $orderItemTax     = $item->getOrderItem()->getTaxAmount();
+            $baseOrderItemTax = $item->getOrderItem()->getBaseTaxAmount();
             $orderItemQty = $item->getOrderItem()->getQtyOrdered();
 
             if ($orderItemTax && $orderItemQty) {
                 $tax = $orderItemTax*$item->getQty()/$orderItemQty;
+                $baseTax = $baseOrderItemTax*$item->getQty()/$orderItemQty;
+
                 $tax = $creditmemo->getStore()->roundPrice($tax);
+                $baseTax = $creditmemo->getStore()->roundPrice($baseTax);
+
                 $item->setTaxAmount($tax);
+                $item->setBaseTaxAmount($baseTax);
+
                 $totalTax += $tax;
+                $baseTotalTax += $baseTax;
             }
         }
 
         $creditmemo->setTaxAmount($totalTax);
+        $creditmemo->setBaseTaxAmount($baseTotalTax);
+
         $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $totalTax);
+        $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseTotalTax);
         return $this;
     }
 }

@@ -40,10 +40,10 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
 
         $locale = Mage::app()->getLocale()->getLocaleCode();
 
-        $this->_sqlSelect->from(array('region'=>$this->_regionTable),
+        $this->_select->from(array('region'=>$this->_regionTable),
             array('region_id'=>'region_id', 'country_id'=>'country_id', 'code'=>'code', 'default_name'=>'default_name')
         );
-        $this->_sqlSelect->joinLeft(array('rname'=>$this->_regionNameTable),
+        $this->_select->joinLeft(array('rname'=>$this->_regionNameTable),
             "region.region_id=rname.region_id AND rname.locale='$locale'", array('name'));
 
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('directory/region'));
@@ -52,19 +52,19 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
     public function addCountryFilter($countryId)
     {
         if (!empty($countryId)) {
-    	    if (is_array($countryId)) {
-	            $this->addFieldToFilter('region.country_id', array('in'=>$countryId));
-    	    } else {
-	            $this->addFieldToFilter('region.country_id', $countryId);
-    	    }
+            if (is_array($countryId)) {
+                $this->addFieldToFilter('region.country_id', array('in'=>$countryId));
+            } else {
+                $this->addFieldToFilter('region.country_id', $countryId);
+            }
         }
         return $this;
     }
 
     public function addCountryCodeFilter($countryCode)
     {
-        $this->_sqlSelect->joinLeft(array('country'=>$this->_countryTable), 'region.country_id=country.country_id');
-        $this->_sqlSelect->where("country.iso3_code = '{$countryCode}'");
+        $this->_select->joinLeft(array('country'=>$this->_countryTable), 'region.country_id=country.country_id');
+        $this->_select->where("country.iso3_code = '{$countryCode}'");
         return $this;
     }
 
@@ -72,9 +72,9 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
     {
         if (!empty($regionCode)) {
             if (is_array($regionCode)) {
-                $this->_sqlSelect->where("region.code IN ('".implode("','", $regionCode)."')");
+                $this->_select->where("region.code IN ('".implode("','", $regionCode)."')");
             } else {
-                $this->_sqlSelect->where("{region.code = '{$regionCode}'");
+                $this->_select->where("{region.code = '{$regionCode}'");
             }
         }
         return $this;
@@ -84,9 +84,9 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
     {
         if (!empty($regionName)) {
             if (is_array($regionName)) {
-                $this->_sqlSelect->where("region.default_name in ('".implode("','", $regionName)."'");
+                $this->_select->where("region.default_name in ('".implode("','", $regionName)."'");
             } else {
-                $this->_sqlSelect->where("region.default_name = '{$regionName}'");
+                $this->_select->where("region.default_name = '{$regionName}'");
             }
         }
         return $this;
@@ -96,9 +96,9 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
     {
         $options = array();
         foreach ($this as $item) {
-        	$options[] = array(
-        	   'value' => $item->getId(),
-        	   'label' => $item->getName()
+            $options[] = array(
+               'value' => $item->getId(),
+               'label' => $item->getName()
             );
         }
         if (count($options)>0) {

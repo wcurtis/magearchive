@@ -36,7 +36,7 @@ class Mage_Review_Model_Mysql4_Review_Status_Collection extends Varien_Data_Coll
         $this->_setIdFieldName('status_id');
         $this->_reviewStatusTable = Mage::getSingleton('core/resource')->getTableName('review/review_status');
 
-        $this->_sqlSelect->from($this->_reviewStatusTable);
+        $this->_select->from($this->_reviewStatusTable);
     }
 
     public function toOptionArray()

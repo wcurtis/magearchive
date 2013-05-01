@@ -112,7 +112,16 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setShippingAmount($address->getShippingAmount())
             ->setGiftcertAmount($address->getGiftcertAmount())
             ->setCustbalanceAmount($address->getCustbalanceAmount())
-            ->setGrandTotal($address->getGrandTotal());
+            ->setGrandTotal($address->getGrandTotal())
+
+            ->setBaseSubtotal($address->getBaseSubtotal())
+            ->setBaseTaxAmount($address->getBaseTaxAmount())
+            ->setBaseDiscountAmount($address->getBaseDiscountAmount())
+            ->setBaseShippingAmount($address->getBaseShippingAmount())
+            ->setBaseGiftcertAmount($address->getBaseGiftcertAmount())
+            ->setBaseCustbalanceAmount($address->getBaseCustbalanceAmount())
+            ->setBaseGrandTotal($address->getBaseGrandTotal());
+
         Mage::dispatchEvent('sales_convert_quote_address_to_order', array('address'=>$address, 'order'=>$order));
         return $order;
     }
@@ -190,15 +199,24 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setIsQtyDecimal($item->getIsQtyDecimal())
             ->setQtyOrdered($item->getQty())
             ->setOriginalPrice($item->getOriginalPrice())
+            ->setAppliedRuleIds($item->getAppliedRuleIds())
+            ->setAdditionalData($item->getAdditionalData())
+
             ->setPrice($item->getCalculationPrice())
             ->setTaxPercent($item->getTaxPercent())
             ->setTaxAmount($item->getTaxAmount())
             ->setRowWeight($item->getRowWeight())
             ->setRowTotal($item->getRowTotal())
-            ->setAppliedRuleIds($item->getAppliedRuleIds());
+
+            ->setBasePrice($item->getBaseCalculationPrice())
+            ->setBaseOriginalPrice($item->getPrice())
+            ->setBaseTaxAmount($item->getBaseTaxAmount())
+            ->setBaseRowTotal($item->getBaseRowTotal());
+
         if (!$item->getNoDiscount()) {
             $orderItem->setDiscountPercent($item->getDiscountPercent())
-                ->setDiscountAmount($item->getDiscountAmount());
+                ->setDiscountAmount($item->getDiscountAmount())
+                ->setBaseDiscountAmount($item->getBaseDiscountAmount());
         }
 
         Mage::dispatchEvent('sales_convert_quote_item_to_order_item',

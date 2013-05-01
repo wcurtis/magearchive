@@ -19,7 +19,7 @@
  */
 ?>
 <div class="content-header">
-    <table cellspacing="0" class="grid-header">
+    <table cellspacing="0">
         <tr>
             <td><h3 class="icon-head head-online-visitors"><?=Mage::helper('reports')->__('Wishlist Report')?></h3></td>
         </tr>
@@ -27,7 +27,7 @@
 </div>
 <?=$this->getChildHtml('grid')?>
 
-<div class="switcher" style="float: left; margin: 10px 10px 10px 0px; padding:15px;">
+<div class="switcher f-left" style="margin: 10px 10px 10px 0px; padding:15px;">
 <?=Mage::helper('reports')->__('Customers that have wishlist: %s%', $this->customer_with_wishlist)?>
 </div>
 

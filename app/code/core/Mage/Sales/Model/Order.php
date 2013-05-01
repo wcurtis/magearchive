@@ -21,50 +21,6 @@
 /**
  * Order model
  *
- * Order Attributes
- *  entity_id (id)
- *  state_id
- *  is_virtual
- *  is_multi_payment
- *
- *  base_currency_code
- *  store_currency_code
- *  order_currency_code
- *  store_to_base_rate
- *  store_to_order_rate
- *
- *  remote_ip
- *  quote_id
- *  quote_address_id
- *  billing_address_id
- *  shipping_address_id
- *  coupon_code
- *  giftcert_code
- *  weight
- *
- *  shipping_method
- *  shipping_description
- *  tracking_numbers
- *
- *  subtotal
- *  tax_amount
- *  shipping_amount
- *  discount_amount
- *  giftcert_amount
- *  custbalance_amount
- *  grand_total
- *
- *  total_paid
- *  total_due
- *  total_qty_ordered
- *  applied_rule_ids
- *
- *  customer_id
- *  customer_group_id
- *  customer_email
- *  customer_note
- *  customer_note_notify
- *
  * Supported events:
  *  sales_order_load_after
  *  sales_order_save_before
@@ -78,11 +34,12 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     /**
      * XML configuration paths
      */
-    const XML_PATH_NEW_ORDER_EMAIL_TEMPLATE     = 'sales/new_order/email_template';
-    const XML_PATH_NEW_ORDER_EMAIL_IDENTITY     = 'sales/new_order/email_identity';
-    const XML_PATH_NEW_ORDER_EMAIL_COPY_TO      = 'sales/new_order/email_copy_to';
-    const XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE  = 'sales/order_update/email_template';
-    const XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY  = 'sales/order_update/email_identity';
+    const XML_PATH_NEW_ORDER_EMAIL_TEMPLATE     = 'sales_email/order/template';
+    const XML_PATH_NEW_ORDER_EMAIL_IDENTITY     = 'sales_email/order/identity';
+    const XML_PATH_NEW_ORDER_EMAIL_COPY_TO      = 'sales_email/order/copy_to';
+    const XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE  = 'sales_email/order_comment/template';
+    const XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY  = 'sales_email/order_comment/identity';
+    const XML_PATH_UPDATE_ORDER_EMAIL_COPY_TO   = 'sales_email/order_comment/copy_to';
 
     /**
      * Order states
@@ -107,6 +64,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     protected $_creditmemos;
     protected $_relatedObjects = array();
     protected $_orderCurrency = null;
+    protected $_storeCurrency = null;
 
     /**
      * Initialize resource model
@@ -114,6 +72,15 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     protected function _construct()
     {
         $this->_init('sales/order');
+    }
+
+    public function unsetData($key=null)
+    {
+        parent::unsetData($key);
+        if (is_null($key)) {
+            $this->_items = null;
+        }
+        return $this;
     }
 
     public function loadByIncrementId($incrementId)
@@ -489,7 +456,9 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
 
     public function hold()
     {
-        //$this->setIsHold(true);
+        if (!$this->canHold()) {
+            Mage::throwException(Mage::helper('sales')->__('Hold action is not available'));
+        }
         $this->setHoldBeforeState($this->getState());
         $this->setHoldBeforeStatus($this->getStatus());
         $this->setState(self::STATE_HOLDED, true);
@@ -498,8 +467,9 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
 
     public function unhold()
     {
-        //$this->setIsHold(false);
         $this->setState($this->getHoldBeforeState(), $this->getHoldBeforeStatus());
+        $this->setHoldBeforeState(null);
+        $this->setHoldBeforeStatus(null);
         return $this;
     }
 
@@ -565,21 +535,16 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function sendNewOrderEmail()
     {
-        $itemsBlock = Mage::getHelper('sales/order_email_items')
-            ->setOrder($this);
+        $itemsBlock = Mage::getBlockSingleton('sales/order_email_items')->setOrder($this);
         $paymentBlock = Mage::helper('payment')->getInfoBlock($this->getPayment());
 
-        $mailTamplate = Mage::getModel('core/email_template');
-        /* @var $mailTamplate Mage_Core_Model_Email_Template */
-        if ($bcc = Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_COPY_TO, $this->getStoreId())) {
-            $mailTamplate->getMail()->addBcc($bcc);
+        $mailTemplate = Mage::getModel('core/email_template');
+        /* @var $mailTemplate Mage_Core_Model_Email_Template */
+        if ($bcc = $this->_getEmails(self::XML_PATH_NEW_ORDER_EMAIL_COPY_TO)) {
+            $mailTemplate->addBcc($bcc);
         }
-        $mailTamplate->setDesignConfig(
-                array(
-                    'area'  => 'frontend',
-                    'store' => $this->getStoreId()
-                )
-            )
+
+        $mailTemplate->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()))
             ->sendTransactional(
                 Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_TEMPLATE, $this->getStoreId()),
                 Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_IDENTITY, $this->getStoreId()),
@@ -602,13 +567,11 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function sendOrderUpdateEmail($comment='')
     {
-        Mage::getModel('core/email_template')
-            ->setDesignConfig(
-                array(
-                    'area'  => 'frontend',
-                    'store' => $this->getStoreId()
-                )
-            )
+        $mailTemplate = Mage::getModel('core/email_template');
+        if ($bcc = $this->_getEmails(self::XML_PATH_UPDATE_ORDER_EMAIL_COPY_TO )) {
+            $mailTemplate->addBcc($bcc);
+        }
+        $mailTemplate->setDesignConfig(array('area'=>'frontend', 'store' => $this->getStoreId()))
             ->sendTransactional(
                 Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE, $this->getStoreId()),
                 Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY, $this->getStoreId()),
@@ -623,18 +586,25 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    protected function _getEmails($configPath)
+    {
+        $data = Mage::getStoreConfig($configPath, $this->getStoreId());
+        if (!empty($data)) {
+            return explode(',', $data);
+        }
+        return false;
+    }
+
 /*********************** ADDRESSES ***************************/
 
     public function getAddressesCollection()
     {
         if (is_null($this->_addresses)) {
-            $this->_addresses = Mage::getResourceModel('sales/order_address_collection');
+            $this->_addresses = Mage::getResourceModel('sales/order_address_collection')
+                ->addAttributeToSelect('*')
+                ->setOrderFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_addresses
-                    ->addAttributeToSelect('*')
-                    ->setOrderFilter($this->getId())
-                    ->load();
                 foreach ($this->_addresses as $address) {
                     $address->setOrder($this);
                 }
@@ -668,13 +638,11 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     public function getItemsCollection()
     {
         if (is_null($this->_items)) {
-            $this->_items = Mage::getResourceModel('sales/order_item_collection');
+            $this->_items = Mage::getResourceModel('sales/order_item_collection')
+                ->addAttributeToSelect('*')
+                ->setOrderFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_items
-                    ->addAttributeToSelect('*')
-                    ->setOrderFilter($this->getId())
-                    ->load();
                 foreach ($this->_items as $item) {
                     $item->setOrder($this);
                 }
@@ -692,6 +660,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             ->setPageSize($limit)
             ->load();
 
+        $products = array();
         foreach ($collection as $item) {
             $products[] = $item->getProductId();
         }
@@ -741,13 +710,11 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     public function getPaymentsCollection()
     {
         if (is_null($this->_payments)) {
-            $this->_payments = Mage::getResourceModel('sales/order_payment_collection');
+            $this->_payments = Mage::getResourceModel('sales/order_payment_collection')
+                ->addAttributeToSelect('*')
+                ->setOrderFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_payments
-                    ->addAttributeToSelect('*')
-                    ->setOrderFilter($this->getId())
-                    ->load();
                 foreach ($this->_payments as $payment) {
                     $payment->setOrder($this);
                 }
@@ -794,7 +761,6 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             $payment->setId($old->getId());
         }
         $this->addPayment($payment);
-
         return $payment;
     }
 
@@ -805,16 +771,15 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      *
      * @return Mage_Sales_Model_Entity_Order_Status_History_Collection
      */
-    public function getStatusHistoryCollection()
+    public function getStatusHistoryCollection($reload=false)
     {
-        if (is_null($this->_statusHistory)) {
-            $this->_statusHistory = Mage::getResourceModel('sales/order_status_history_collection');
+        if (is_null($this->_statusHistory) || $reload) {
+            $this->_statusHistory = Mage::getResourceModel('sales/order_status_history_collection')
+                ->addAttributeToSelect('*')
+                ->setOrderFilter($this->getId())
+                ->setOrder('created_at', 'desc');
 
             if ($this->getId()) {
-                $this->_statusHistory
-                    ->addAttributeToSelect('*')
-                    ->setOrderFilter($this->getId())
-                    ->load();
                 foreach ($this->_statusHistory as $status) {
                     $status->setOrder($this);
                 }
@@ -917,6 +882,41 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Retrieve text formated price value includeing order rate
+     *
+     * @param   float $price
+     * @return  string
+     */
+    public function formatPriceTxt($price)
+    {
+        return $this->getOrderCurrency()->formatTxt($price);
+    }
+
+    /**
+     * Retrieve order website currency for working with base prices
+     *
+     * @return Mage_Directory_Model_Currency
+     */
+    public function getStoreCurrency()
+    {
+        if (is_null($this->_storeCurrency)) {
+            $this->_storeCurrency = Mage::getModel('directory/currency')->load($this->getStoreCurrencyCode());
+        }
+        return $this->_storeCurrency;
+    }
+
+
+    public function formatBasePrice($price)
+    {
+        return $this->getStoreCurrency()->format($price);
+    }
+
+    public function isCurrencyDifferent()
+    {
+        return $this->getOrderCurrencyCode() != $this->getStoreCurrencyCode();
+    }
+
+    /**
      * Retrieve order total due value
      *
      * @return float
@@ -929,13 +929,15 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Retrieve order total paid value
+     * Retrieve order total due value
      *
      * @return float
      */
-    public function getTotalPaid()
+    public function getBaseTotalDue()
     {
-        return $this->getData('total_paid');
+        $total = $this->getBaseGrandTotal()-$this->getBaseTotalPaid();
+        $total = Mage::app()->getStore($this->getStoreId())->roundPrice($total);
+        return max($total, 0);
     }
 
     /**
@@ -946,13 +948,11 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     public function getInvoiceCollection()
     {
         if (is_null($this->_invoices)) {
-            $this->_invoices = Mage::getResourceModel('sales/order_invoice_collection');
+            $this->_invoices = Mage::getResourceModel('sales/order_invoice_collection')
+                ->addAttributeToSelect('*')
+                ->setOrderFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_invoices
-                    ->addAttributeToSelect('*')
-                    ->setOrderFilter($this->getId())
-                    ->load();
                 foreach ($this->_invoices as $invoice) {
                     $invoice->setOrder($this);
                 }
@@ -1014,13 +1014,12 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     public function getTracksCollection()
     {
         if (empty($this->_tracks)) {
-            $this->_tracks = Mage::getResourceModel('sales/order_shipment_track_collection');
+            $this->_tracks = Mage::getResourceModel('sales/order_shipment_track_collection')
+                ->addAttributeToSelect('*')
+                ->setOrderFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_tracks
-                    ->addAttributeToSelect('*')
-                    ->setOrderFilter($this->getId())
-                    ->load();
+                $this->_tracks->load();
             }
         }
         return $this->_tracks;
@@ -1094,7 +1093,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
 
     public function getCreatedAtFormated($format)
     {
-        return Mage::getHelper('core/text')->formatDate($this->getCreatedAt(), $format);
+        return Mage::getBlockSingleton('core/text')->formatDate($this->getCreatedAt(), $format);
     }
 
     public function getEmailCustomerNote()
@@ -1114,6 +1113,11 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     {
         parent::_beforeSave();
         $this->_checkState();
+        if (!$this->getId()) {
+            $store = $this->getStore();
+            $name = array($store->getWebsite()->getName(),$store->getGroup()->getName(),$store->getName());
+            $this->setStoreName(implode("\n", $name));
+        }
         return $this;
     }
 
@@ -1121,10 +1125,6 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     {
         if (!$this->getId()) {
             return $this;
-        }
-
-        if ($this->getState() == self::STATE_NEW) {
-            $this->setState(self::STATE_PROCESSING, true);
         }
 
         if ($this->getState() !== self::STATE_CANCELED
@@ -1143,6 +1143,9 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             }
         }
 
+        if ($this->getState() == self::STATE_NEW) {
+            $this->setState(self::STATE_PROCESSING, true);
+        }
         return $this;
     }
 }

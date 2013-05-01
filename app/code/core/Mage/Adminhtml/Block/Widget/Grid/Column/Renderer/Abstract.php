@@ -100,8 +100,13 @@ abstract class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract extends
             $out .=' span="2"';
         }
 
-        if ($this->getColumn()->getWidth()) {
-            $out .='width="'.$this->getColumn()->getWidth(). (is_numeric($this->getColumn()->getWidth()) ? '%' : '') . '" ';
+        if ($width = $this->getColumn()->getWidth()) {
+            if (is_numeric($width)) {
+               # $width .= '%';
+            } else {
+                $width = (int)$width;
+            }
+            $out .='width="'.$width . '" ';
         }
         return $out;
     }

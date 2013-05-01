@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Session.php 7188 2007-12-18 16:48:27Z darby $
+ * @version    $Id: Session.php 8064 2008-02-16 10:58:39Z thomas $
  * @since      Preview Release 0.2
  */
 
@@ -43,7 +43,7 @@ require_once 'Zend/Session/SaveHandler/Interface.php';
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Session extends Zend_Session_Abstract
@@ -156,6 +156,13 @@ class Zend_Session extends Zend_Session_Abstract
      */
     private static $_defaultOptionsSet = false;
 
+    /**
+     * A reference to the set session save handler
+     *
+     * @var Zend_Session_SaveHandler_Interface
+     */
+    private static $_saveHandler = null;
+
 
     /**
      * Constructor overriding - make sure that a developer cannot instantiate
@@ -212,18 +219,30 @@ class Zend_Session extends Zend_Session_Abstract
      * @param Zend_Session_SaveHandler_Interface $interface
      * @return void
      */
-    public static function setSaveHandler(Zend_Session_SaveHandler_Interface $interface)
+    public static function setSaveHandler(Zend_Session_SaveHandler_Interface $saveHandler)
     {
         session_set_save_handler(
-            array(&$interface, 'open'),
-            array(&$interface, 'close'),
-            array(&$interface, 'read'),
-            array(&$interface, 'write'),
-            array(&$interface, 'destroy'),
-            array(&$interface, 'gc')
+            array(&$saveHandler, 'open'),
+            array(&$saveHandler, 'close'),
+            array(&$saveHandler, 'read'),
+            array(&$saveHandler, 'write'),
+            array(&$saveHandler, 'destroy'),
+            array(&$saveHandler, 'gc')
             );
+        self::$_saveHandler = $saveHandler;
     }
 
+
+    /**
+     * getSaveHandler() - Get the session Save Handler
+     *
+     * @return Zend_Session_SaveHandler_Interface
+     */
+    public static function getSaveHandler()
+    {
+        return self::$_saveHandler;
+    }
+    
 
     /**
      * regenerateId() - Regenerate the session id.  Best practice is to call this after
@@ -340,6 +359,11 @@ class Zend_Session extends Zend_Session_Abstract
      */
     public static function start($options = false)
     {
+        if (self::$_sessionStarted && self::$_destroyed) {
+            require_once 'Zend/Session/Exception.php';
+            throw new Zend_Session_Exception('The session was explicitly destroyed during this request, attempting to re-start is not allowed.');
+        }
+        
         if (self::$_sessionStarted) {
             return; // already started
         }

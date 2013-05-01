@@ -137,8 +137,77 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
 
     public function multi_query($sql)
     {
-        $result = $this->raw_query($sql);
+        ##$result = $this->raw_query($sql);
+
+        #$this->beginTransaction();
+        try {
+            $stmts = $this->_splitMultiQuery($sql);
+            $result = array();
+            foreach ($stmts as $stmt) {
+                $result[] = $this->raw_query($stmt);
+            }
+            #$this->commit();
+        } catch (Exception $e) {
+            #$this->rollback();
+            throw $e;
+        }
         return $result;
+    }
+
+    /**
+     * Split multi statement query
+     *
+     * @param $sql string
+     * @return array
+     */
+    protected function _splitMultiQuery($sql)
+    {
+        $parts = preg_split('#(;|\'|"|\\\\|//|--|\n|/\*|\*/)#', $sql, null, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+        $q = false;
+        $c = false;
+        $stmts = array();
+        $s = '';
+
+        foreach ($parts as $i=>$part) {
+            // strings
+            if (($part==="'" || $part==='"') && ($i===0 || $parts[$i-1]!=='\\')) {
+                if ($q===false) {
+                    $q = $part;
+                } elseif ($q===$part) {
+                    $q = false;
+                }
+            }
+
+            // single line comments
+            if (($part==='//' || $part==='--') && ($i===0 || $parts[$i-1]==="\n")) {
+                $c = $part;
+            } elseif ($part==="\n" && ($c==='//' || $c==='--')) {
+                $c = false;
+            }
+
+            // multi line comments
+            if ($part==='/*' && $c===false) {
+                $c = '/*';
+            } elseif ($part==='*/' && $c==='/*') {
+                $c = false;
+            }
+
+            // statements
+            if ($part===';' && $q===false && $c===false) {
+                if (trim($s)!=='') {
+                    $stmts[] = trim($s);
+                    $s = '';
+                }
+            } else {
+                $s .= $part;
+            }
+        }
+        if (trim($s)!=='') {
+            $stmts[] = trim($s);
+        }
+
+        return $stmts;
     }
 
     public function dropForeignKey($table, $fk)
@@ -157,6 +226,80 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
             return $this->raw_query("ALTER TABLE `$table` DROP KEY `$key`");
         }
         return true;
+    }
+
+    /**
+     * ADD CONSTRAINT
+     *
+     *
+     * @param string $fkName
+     * @param string $tableName
+     * @param string $keyName
+     * @param string $refTableName
+     * @param string $refKeyName
+     * @param string $onUpdate
+     * @param string $onDelete
+     */
+    public function addConstraint($fkName, $tableName, $keyName, $refTableName, $refKeyName, $onDelete = 'cascade', $onUpdate = 'cascade')
+    {
+        if (substr($fkName, 0, 3) != 'FK_') {
+            $fkName = 'FK_' . $fkName;
+        }
+
+        $sql = 'ALTER TABLE `'.$tableName.'` ADD CONSTRAINT `'.$fkName.'`'
+            . 'FOREIGN KEY (`'.$keyName.'`) REFERENCES `'.$refTableName.'` (`'.$refKeyName.'`)';
+        if (!is_null($onDelete)) {
+            $sql .= ' ON DELETE ' . strtoupper($onDelete);
+        }
+        if (!is_null($onUpdate)) {
+            $sql .= ' ON UPDATE ' . strtoupper($onUpdate);
+        }
+
+        return $this->raw_query($sql);
+    }
+
+    public function tableColumnExists($tableName, $columnName)
+    {
+        foreach ($this->fetchAll('DESCRIBE `'.$tableName.'`') as $row) {
+            if ($row['Field'] == $columnName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function addColumn($tableName, $columnName, $definition)
+    {
+        if ($this->tableColumnExists($tableName, $columnName)) {
+            return true;
+        }
+        $result = $this->raw_query("alter table `$tableName` add column `$columnName` ".$definition);
+        return $result;
+    }
+
+    public function dropColumn($tableName, $columnName)
+    {
+        if (!$this->tableColumnExists($tableName, $columnName)) {
+            return true;
+        }
+
+        $create = $this->raw_fetchRow('SHOW CREATE TABLE `'.$tableName.'`', 'Create Table');
+
+        $alterDrop = array();
+        $alterDrop[] = 'DROP COLUMN `'.$columnName.'`';
+
+        /**
+         * find foreign keys for column
+         */
+        $matches = array();
+        preg_match_all('/CONSTRAINT `([^`]*)` FOREIGN KEY \(`([^`]*)`\)/', $create, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            if ($match[2] == $columnName) {
+                $alterDrop[] = 'DROP FOREIGN KEY `'.$match[1].'`';
+            }
+        }
+
+        return $this->raw_query('ALTER TABLE `'.$tableName.'` ' . join(', ', $alterDrop));
     }
 
     /**

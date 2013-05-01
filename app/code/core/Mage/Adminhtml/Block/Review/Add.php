@@ -52,7 +52,6 @@ class Mage_Adminhtml_Block_Review_Add extends Mage_Adminhtml_Block_Widget_Form_C
                     formHidden : true,
 
                     gridRowClick : function(data, click) {
-
                         if(Event.findElement(click,\'TR\').id){
                             review.productInfoUrl = Event.findElement(click,\'TR\').id;
                             review.loadProductData();
@@ -67,7 +66,7 @@ class Mage_Adminhtml_Block_Review_Add extends Mage_Adminhtml_Block_Widget_Form_C
 
                     showForm : function() {
                         toggleParentVis("add_review_form");
-                        toggleParentVis("add_review_grid");
+                        toggleVis("productGrid");
                         toggleVis("save_button");
                         toggleVis("reset_button");
                     },

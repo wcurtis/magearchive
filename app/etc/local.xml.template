@@ -41,15 +41,6 @@
                     <active>1</active>
                 </connection>
             </default_setup>
-            <default_write>
-                <connection>
-                    <host>{{db_host}}</host>
-                    <username>{{db_user}}</username>
-                    <password>{{db_pass}}</password>
-                    <dbname>{{db_name}}</dbname>
-                    <active>1</active>
-                </connection>
-            </default_write>
          </resources>
      </global>
 </config>

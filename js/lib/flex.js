@@ -409,60 +409,48 @@ function FABridge__bridgeInitialized(bridgeName)
 {
     var searchStr = "bridgeName="+ bridgeName;
 
-    if (/Explorer/.test(navigator.appName) || /Konqueror|Safari|KHTML/.test(navigator.appVersion))
+    if (/Explorer/.test(navigator.appName))
     {
-        var flashInstances = document.getElementsByTagName("object");
-        if (flashInstances.length == 1)
+        var flashInstances = $$('object');
+        if (flashInstances.size() == 1)
         {
             FABridge.attachBridge(flashInstances[0], bridgeName);
         }
         else
         {
-            for(var i = 0; i < flashInstances.length; i++)
-            {
-                var inst = flashInstances[i];
-                var params = inst.childNodes;
+            flashInstances.each(function(inst){
+                var params = inst.getElementsBySelector('param');
                 var flash_found = false;
 
-                for (var j = 0; j < params.length; j++)
-                {
-                    var param = params[j];
-                    if (param.nodeType == 1 && param.tagName.toLowerCase() == "param")
-                    {
-                        if (param["name"].toLowerCase() == "flashvars" && param["value"].indexOf(searchStr) >= 0)
-                        {
-                            FABridge.attachBridge(inst, bridgeName);
-                            flash_found = true;
-                            break;
-                        }
+                params.each(function(param) {
+                    if (param["name"].toLowerCase() == "flashvars" && param["value"].indexOf(searchStr) >= 0) {
+                        FABridge.attachBridge(inst, bridgeName);
+                        flash_found = true;
+                        throw $break;
                     }
-                }
+                });
 
                 if (flash_found) {
-                    break;
+                    throw $break;
                 }
-            }
+            });
         }
     }
     else
     {
-        var flashInstances = document.getElementsByTagName("embed");
-        if (flashInstances.length == 1)
+        var flashInstances = $$('embed');
+        if (flashInstances.size() == 1)
         {
             FABridge.attachBridge(flashInstances[0], bridgeName);
         }
         else
         {
-            for(var i = 0; i < flashInstances.length; i++)
-            {
-                var inst = flashInstances[i];
-                var flashVars = inst.attributes.getNamedItem("flashVars").nodeValue;
-                if (flashVars.indexOf(searchStr) >= 0)
-                {
+            flashInstances.each(function(inst){
+                var flashVars = inst.readAttribute('flashVars') || inst.readAttribute('flashvars');
+                if (flashVars.indexOf(searchStr) >= 0) {
                     FABridge.attachBridge(inst, bridgeName);
                 }
-
-            }
+            });
         }
     }
     return true;

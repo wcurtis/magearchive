@@ -21,6 +21,23 @@
 
 class Mage_SalesRule_Model_Observer
 {
+    protected $_validator;
+
+    public function getValidator($event)
+    {
+        if (!$this->_validator) {
+            $this->_validator = Mage::getModel('salesrule/validator')
+                ->init($event->getWebsiteId(), $event->getCustomerGroupId(), $event->getCouponCode());
+        }
+        return $this->_validator;
+    }
+
+    public function sales_quote_address_discount_item($observer)
+    {
+        $this->getValidator($observer->getEvent())
+            ->process($observer->getEvent()->getItem());
+    }
+
     public function sales_order_afterPlace($observer)
     {
         $order = $observer->getEvent()->getOrder();

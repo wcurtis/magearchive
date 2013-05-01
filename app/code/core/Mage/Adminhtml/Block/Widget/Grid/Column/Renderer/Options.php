@@ -26,17 +26,22 @@
  */
 class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Options extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
-
     public function render(Varien_Object $row)
     {
         $options = $this->getColumn()->getOptions();
         if (!empty($options) && is_array($options)) {
             $value = $row->getData($this->getColumn()->getIndex());
-            if (isset($options[$value])) {
+            if (is_array($value)) {
+                $res = array();
+                foreach ($value as $item) {
+                    $res[] = isset($options[$item]) ? $options[$item] : $item;
+                }
+                return implode(', ', $res);
+            }
+            elseif (isset($options[$value])) {
                 return $options[$value];
             }
             return '';
         }
     }
-
 }

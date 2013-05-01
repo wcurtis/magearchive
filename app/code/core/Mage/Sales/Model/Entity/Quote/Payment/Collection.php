@@ -28,10 +28,9 @@
 
 class Mage_Sales_Model_Entity_Quote_Payment_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getSingleton('sales_entity/quote_payment'));
-        $this->setObject('sales/quote_payment');
+        $this->_init('sales/quote_payment');
     }
     
     public function setQuoteFilter($quoteId)

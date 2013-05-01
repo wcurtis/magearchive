@@ -12,6 +12,8 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
+ * @category   Mage
+ * @package    Mage_Catalog
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
@@ -22,28 +24,37 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @module     Catalog
  */
 abstract class Mage_Catalog_Block_Seo_Sitemap_Abstract extends Mage_Core_Block_Template
-{   
-    public function __construct()
+{
+
+    /**
+     * Init pager
+     *
+     * @param string $pagerName
+     */
+    public function bindPager($pagerName)
     {
-        $this->setTemplate('catalog/seo/sitemap/content.phtml');
-    }
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-        $pager = $this->getLayout()->createBlock('page/html_pager', 'catalog.seo.pager');
-        $pager->setAvailableLimit(array(50=>50));
-		$pager->setCollection($this->getMapItemCollection());
-        $pager->setShowPerPage(false);
-        $this->setChild('pager', $pager);
-        $this->getMapItemCollection()->load(); 
-        return $this;
+        $pager = $this->getLayout()->getBlock($pagerName);
+        /* @var $pager Mage_Page_Html_Pager */
+        if ($pager) {
+            $pager->setAvailableLimit(array(50 => 50));
+            $pager->setCollection($this->getCollection());
+            $pager->setShowPerPage(false);
+        }
     }
 
-    public function getPagerHtml()
+    /**
+     * Get item URL
+     *
+     * In most cases should be overriden in descendant blocks
+     *
+     * @param Varien_Object $item
+     * @return string
+     */
+    public function getItemUrl($item)
     {
-        return $this->getChildHtml('pager');
-    }   
+        return $item->getUrl();
+    }
+
 }

@@ -50,6 +50,7 @@ table .col-1, table .col-2, table .col-3, table .col-4 { float:none !important; 
 .col4-set td.spacer { width:4%; }
 
 
+.accent { color:#E76200; font-weight:bold; }
 
 /********************** Form */
 
@@ -61,7 +62,7 @@ input.input-text, textarea { padding:2px; }
 input.form-radio { margin-right:3px;}
 .qty { width:2.5em; }
 .group-select label, .form-list label, .payment-methods label { font-weight:bold;}
-input:focus, select:focus, textarea:focus { background:#edf7fd; outline:0; }
+.input-text:focus, select:focus, textarea:focus { background:#edf7fd; outline:0; }
 .button-set { /* Container for form buttons*/
     clear:both;
     margin-top:4em;
@@ -260,6 +261,7 @@ td.label        { font-weight:bold; }
     color:#0a263c;
     white-space:nowrap;
     }
+.data-table th.wrap {white-space:normal;}
 .data-table th a, .data-table th a:hover { color:#fff;}
 .data-table td { padding:3px 8px; }
 .data-table thead tr { background:url(../images/data_table_th_bg.gif) repeat-x 0 100% #d9e5ee; }
@@ -339,7 +341,7 @@ table.pager ol, table.pager li {
     }
 table.pager li { padding:0 2px; }
 table.view-by td {
-    width:50%;
+    width:33%;
     border-top:1px solid #e2e2e2;
     padding:4px 8px;
     vertical-align:middle;
@@ -423,17 +425,14 @@ h1#logo {
     padding-right:7px;
     padding-left:3px;
     }
-.quick-access li.first { /* padding-left:0; */ }
-.quick-access li.last { /* padding-right:0; background:none; */ }
-.account-access { float: right; padding-right: 5px; }
-.account-access p, .account-access ul, .account-access li { display:inline; color:#fff; }
-.account-access a, .account-access a:hover { color:#ebbc58; /* color:#e1f1fb; */ }
-.account-access ul { padding-left:10px; font-size:.95em; }
-.shop-access { float: right; }
+.quick-access li.first { padding-left:0; }
+.quick-access li.last { padding-right:0; background:none; }
+.shop-access { margin-bottom:6px; }
 .shop-access a, .shop-access a:hover { color:#ebbc58; font-size:.95em; }
 .shop-access li.last { padding-right:0; background:none; }
 .language-switcher { float: right; margin-top: 5px; margin-left: 60px; }
 .language-switcher label { color:#A7C6DD; padding-right: 5px; }
+
 
 /* Breadcrumbs */
 .breadcrumbs {  margin-bottom:13px; font-size:.95em; line-height:1.25em; }
@@ -551,7 +550,7 @@ h1#logo {
 .mini-poll .head h4 { background-image:url(../images/icon_group.gif); }
 .mini-poll td.label { font-weight:bold; padding-right:10px; }
 
-
+.mini-product-view .head h4 { background-image:url(../images/icon_tag_green.gif); }
 
 
 /********************** Footer */
@@ -589,6 +588,7 @@ h1#logo {
 
 .product-shop { float:right; }
 .product-shop .form-button, .product-shop .form-button-alt { margin-right:10px; }
+.out-of-stock {height:18px; padding-top:3px;color:#D83820;font-weight:bold;}
 
 /********************** Rating */
 .ratings {
@@ -790,7 +790,12 @@ h1#logo {
 .best-selling .product-description { margin-left:107px; line-height:1.3em; }
 .best-selling a.product-name, .home-spot .best-selling a.product-name:hover { color:#203548; }
 
-
+.recently h3 { margin:12px 0 6px 0; color:#e25203; font-size:1.2em; }
+.recently .product-image { border:2px solid #dcdcdc;}
+.recently a.product-name, .recently a.product-name:hover { color:#1d7ecf; font-size:11px; }
+.recently .add-to {margin-top:5px;font-size:11px; }
+table.recently-list {width:100%;}
+table.recently-list td {width:20%;}
 
 /********************** Search */
 .advanced-search {
@@ -808,11 +813,12 @@ h1#logo {
     color:#E76200;
     font-weight:bold;
     font-size:1.1em;
-    }
+}
 .advanced-search li {margin-bottom:5px}
-.advanced-search li label {width:150px;float:left}
+.advanced-search li label {width:150px;float:left;}
 .advanced-search .input-text {width:250px}
 .advanced-search select {width:256px;padding:2px}
+.advanced-search .field-row {display:inline;width:250px;}
 .advanced-search .range .input-text {width:70px}
 
 .advanced-search-nothing-found {
@@ -1264,12 +1270,12 @@ tr.grand_total td, p.grand_total { padding-top:5px; padding-bottom:5px; }
    padding:3px 10px;
     }
 .account-nav .head h3 { color:#fff; font-size:1.1em; }
-.account-nav ul { background:#fbfaf6; font-size:1.05em; }
-.account-nav li a, .account-nav li.on { padding:3px 10px 3px 35px;  }
-.account-nav li a { display:block; border-bottom:1px solid #ddd; background:url(../images/account_nav_link_bg.gif) no-repeat 10px 8px; }
+.account-nav ul { background:#fbfaf6; padding:4px 10px 10px 10px; }
+.account-nav li a, .account-nav li.on { padding:3px 0;  }
+.account-nav li a { display:block; border-bottom:1px solid #ddd; /*background:url(../images/account_nav_link_bg.gif) no-repeat 10px 8px;*/ }
 .account-nav li a, .account-nav li a:hover { color:#5f5d5c; text-decoration:none; }
-.account-nav li a:hover { background-image:url(../images/account_nav_on_bg.gif); color:#ea7900; }
-.account-nav li.on { padding:3px 10px 3px 35px; border-bottom:1px solid #ddd; background:url(../images/account_nav_on_bg.gif) no-repeat 10px 8px; color:#ea7900; font-weight:bold; }
+.account-nav li a:hover { color:#ea7900; }
+.account-nav li.on { border-bottom:1px solid #ddd; /* background:url(../images/account_nav_on_bg.gif) no-repeat 10px 8px;*/  color:#ea7900; font-weight:bold; }
 .account-nav li.on a { padding:0; }
 .account-nav li.last, .account-nav li.last a { border-bottom:0; }
 
@@ -1423,6 +1429,7 @@ tr.grand_total td, p.grand_total { padding-top:5px; padding-bottom:5px; }
 /******************[ Mage_CSS_F Overrides]*******************/
 /************************************************************/
 
+.nowrap, nobr, .nobr{ white-space:nowrap; }
 
 /* Alignment */
 .v-top { vertical-align:top; }
@@ -1441,6 +1448,7 @@ tr.grand_total td, p.grand_total { padding-top:5px; padding-bottom:5px; }
 .link-cart { color:#DC6809 !important; font-weight:bold !important;}
 .link-remove { color:#646464 !important;}
 .link-print { background:url(../images/icon_printer.gif) no-repeat 0 2px; padding-left:23px; }
+.link-feed { background:url(../images/icon_feed.png) no-repeat left center; padding-left:18px; }
 
 
 /* For Demo store only */

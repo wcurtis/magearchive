@@ -35,9 +35,10 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
 
         parent::__construct();
 
-        $this->_removeButton('save');
         $this->_removeButton('reset');
         $this->_removeButton('delete');
+        $this->_updateButton('save', 'label', Mage::helper('sales')->__('Send Tracking Information'));
+        $this->_updateButton('save', 'onclick', "setLocation('".$this->getEmailUrl()."')");
     }
 
     /**
@@ -52,8 +53,15 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
 
     public function getHeaderText()
     {
+        if ($this->getShipment()->getEmailSent()) {
+            $emailSent = Mage::helper('sales')->__('Shipment email sent');
+        }
+        else {
+            $emailSent = Mage::helper('sales')->__('Shipment email not sent');
+        }
+
         $header = Mage::helper('sales')
-            ->__('Shipment #%s', $this->getShipment()->getIncrementId());
+            ->__('Shipment #%s (%s)', $this->getShipment()->getIncrementId(), $emailSent);
         return $header;
     }
 
@@ -67,5 +75,9 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
             ));
     }
 
+    public function getEmailUrl()
+    {
+        return $this->getUrl('*/*/email', array('shipment_id'  => $this->getShipment()->getId()));
+    }
 }
 

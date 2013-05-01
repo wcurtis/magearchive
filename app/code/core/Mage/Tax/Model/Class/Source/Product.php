@@ -28,14 +28,14 @@ class Mage_Tax_Model_Class_Source_Product extends Mage_Eav_Model_Entity_Attribut
         		->addFieldToFilter('class_type', 'PRODUCT')
         		->load()
         		->toOptionArray();
-        		
+
             if ($addEmptyOption) {
                 array_unshift($this->_options, array('value'=>'', 'label'=>''));
             }
 		}
 		return $this->_options;
 	}
-	
+
 	public function toOptionArray()
 	{
 		return $this->getAllOptions();

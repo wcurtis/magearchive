@@ -19,7 +19,8 @@
  */
 
 
-abstract class Mage_Eav_Model_Convert_Parser_Abstract extends Varien_Convert_Parser_Abstract
+abstract class Mage_Eav_Model_Convert_Parser_Abstract
+    extends Mage_Dataflow_Model_Convert_Parser_Abstract
 {
     protected $_storesById;
     protected $_attributeSetsById;

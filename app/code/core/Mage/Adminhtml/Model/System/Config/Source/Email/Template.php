@@ -25,7 +25,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Model_System_Config_Source_Email_Template
+class Mage_Adminhtml_Model_System_Config_Source_Email_Template extends Varien_Object
 {
 
     public function toOptionArray()
@@ -37,7 +37,13 @@ class Mage_Adminhtml_Model_System_Config_Source_Email_Template
             Mage::register('config_system_email_template', $collection);
         }
         $options = $collection->toOptionArray();
-        array_unshift($options, array('value'=>'', 'label'=>''));
+        array_unshift(
+            $options,
+            array(
+                'value'=> str_replace('/', '_', $this->getPath()),
+                'label' => Mage::helper('adminhtml')->__('Default')
+            )
+        );
         return $options;
     }
 

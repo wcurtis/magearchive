@@ -41,6 +41,8 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar extends Mage_Adminhtml_Blo
             $button = $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
                 'label' => Mage::helper('sales')->__('Update Changes'),
                 'onclick' => 'order.sidebarApplyChanges()',
+                'before_html' => '<div class="sub-btn-set">',
+                'after_html' => '</div>'
             ));
             $this->setChild('top_button', $button);
         }
@@ -49,6 +51,8 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar extends Mage_Adminhtml_Blo
         $this->setChild('reorder', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_reorder'));
         $this->setChild('viewed', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_viewed'));
         $this->setChild('compared', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_compared'));
+        $this->setChild('pcompared', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_pcompared'));
+        $this->setChild('pviewed', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_pviewed'));
         if ($this->getCustomerId()) {
             $this->setChild('bottom_button', $button);
         }

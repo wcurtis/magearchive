@@ -30,22 +30,33 @@ class Mage_Dataflow_Model_Convert_Parser_Xml_Excel extends Mage_Dataflow_Model_C
 
     public function parse()
     {
-        $this->validateDataString();
-
         $dom = new DOMDocument();
-        $dom->loadXML($this->getData());
-
+        //$dom->loadXML($this->getData());        
+        if (Mage::app()->getRequest()->getParam('files')) {
+            $path = Mage::app()->getConfig()->getTempVarDir().'/import/';
+            $file = $path.Mage::app()->getRequest()->getParam('files');
+            if (file_exists($file)) {
+                $dom->load($file);
+            }
+        } else {
+            $this->validateDataString();
+            $dom = $this->getData();
+        }
+        
         $worksheets = $dom->getElementsByTagName('Worksheet');
-
+        if ($this->getVar('adapter') && $this->getVar('method')) {
+            $adapter = Mage::getModel($this->getVar('adapter'));
+        }
         foreach ($worksheets as $worksheet) {
             $wsName = $worksheet->getAttribute('ss:Name');
             $rows = $worksheet->getElementsByTagName('Row');
             $firstRow = true;
             $fieldNames = array();
             $wsData = array();
-            foreach ($rows as $row) {
+            $i = 0;
+            foreach ($rows as $rowSet) {
                 $index = 1;
-                $cells = $row->getElementsByTagName('Cell');
+                $cells = $rowSet->getElementsByTagName('Cell');
                 $rowData = array();
                 foreach ($cells as $cell) {
                     $value = $cell->getElementsByTagName('Data')->item(0)->nodeValue;
@@ -63,6 +74,13 @@ class Mage_Dataflow_Model_Convert_Parser_Xml_Excel extends Mage_Dataflow_Model_C
                     }
                     $index++;
                 }
+                $row = $rowData;
+                if ($row) {
+                    $loadMethod = $this->getVar('method');
+                    $adapter->$loadMethod(compact('i', 'row'));
+                }                
+                $i++;
+                
                 $firstRow = false;
                 if (!empty($rowData)) {
                     $wsData[] = $rowData;

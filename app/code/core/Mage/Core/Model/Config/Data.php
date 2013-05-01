@@ -19,15 +19,31 @@
  */
 
 
+/**
+ * Config data model
+ *
+ * @category   Mage
+ * @package    Mage_Core
+ */
 class Mage_Core_Model_Config_Data extends Mage_Core_Model_Abstract
 {
+
+    /**
+     * Enter description here...
+     *
+     */
     protected function _construct()
     {
         $this->_init('core/config_data');
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     public function afterLoad()
     {
         $this->_afterLoad();
     }
+
 }

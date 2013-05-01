@@ -22,8 +22,13 @@
 class Mage_Sales_Model_Order_Shipment extends Mage_Core_Model_Abstract
 {
     const STATUS_NEW    = 1;
-    const XML_PATH_UPDATE_EMAIL_TEMPLATE  = 'sales/email/shipment_comment_template';
-    const XML_PATH_UPDATE_EMAIL_IDENTITY  = 'sales/email/shipment_comment_identity';
+
+    const XML_PATH_EMAIL_TEMPLATE   = 'sales_email/shipment/template';
+    const XML_PATH_EMAIL_IDENTITY   = 'sales_email/shipment/identity';
+    const XML_PATH_EMAIL_COPY_TO    = 'sales_email/shipment/copy_to';
+    const XML_PATH_UPDATE_EMAIL_TEMPLATE= 'sales_email/shipment_comment/template';
+    const XML_PATH_UPDATE_EMAIL_IDENTITY= 'sales_email/shipment_comment/identity';
+    const XML_PATH_UPDATE_EMAIL_COPY_TO = 'sales_email/shipment_comment/copy_to';
 
     protected $_items;
     protected $_tracks;
@@ -117,13 +122,11 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Core_Model_Abstract
     public function getItemsCollection()
     {
         if (empty($this->_items)) {
-            $this->_items = Mage::getResourceModel('sales/order_shipment_item_collection');
+            $this->_items = Mage::getResourceModel('sales/order_shipment_item_collection')
+                ->addAttributeToSelect('*')
+                ->setShipmentFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_items
-                    ->addAttributeToSelect('*')
-                    ->setShipmentFilter($this->getId())
-                    ->load();
                 foreach ($this->_items as $item) {
                     $item->setShipment($this);
                 }
@@ -167,13 +170,11 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Core_Model_Abstract
     public function getTracksCollection()
     {
         if (empty($this->_tracks)) {
-            $this->_tracks = Mage::getResourceModel('sales/order_shipment_track_collection');
+            $this->_tracks = Mage::getResourceModel('sales/order_shipment_track_collection')
+                ->addAttributeToSelect('*')
+                ->setShipmentFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_tracks
-                    ->addAttributeToSelect('*')
-                    ->setShipmentFilter($this->getId())
-                    ->load();
                 foreach ($this->_tracks as $track) {
                     $track->setShipment($this);
                 }
@@ -234,11 +235,10 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Core_Model_Abstract
     public function getCommentsCollection()
     {
         if (is_null($this->_comments)) {
-            $this->_comments = Mage::getResourceModel('sales/order_shipment_comment_collection');
+            $this->_comments = Mage::getResourceModel('sales/order_shipment_comment_collection')
+                ->addAttributeToSelect('*')
+                ->setShipmentFilter($this->getId());
             if ($this->getId()) {
-                $this->_comments->addAttributeToSelect('*')
-                    ->setShipmentFilter($this->getId())
-                    ->load();
                 foreach ($this->_comments as $comment) {
                     $comment->setShipment($this);
                 }
@@ -248,26 +248,90 @@ class Mage_Sales_Model_Order_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Sending email with Invoice data
+     *
+     * @return Mage_Sales_Model_Order_Invoice
+     */
+    public function sendEmail($notifyCustomer=true, $comment='')
+    {
+        $order  = $this->getOrder();
+        $bcc    = $this->_getEmails(self::XML_PATH_EMAIL_COPY_TO);
+
+        if (!$notifyCustomer && !$bcc) {
+            return $this;
+        }
+        $paymentBlock   = Mage::helper('payment')->getInfoBlock($order->getPayment());
+        $mailTemplate = Mage::getModel('core/email_template');
+
+        if ($notifyCustomer) {
+            $customerEmail = $order->getCustomerEmail();
+            $mailTemplate->addBcc($bcc);
+        }
+        else {
+            $customerEmail = $bcc;
+        }
+
+        $mailTemplate->setDesignConfig(array('area'=>'frontend', 'store'=>$order->getStoreId()))
+            ->sendTransactional(
+                Mage::getStoreConfig(self::XML_PATH_EMAIL_TEMPLATE, $order->getStoreId()),
+                Mage::getStoreConfig(self::XML_PATH_EMAIL_IDENTITY, $order->getStoreId()),
+                $customerEmail,
+                $order->getBillingAddress()->getName(),
+                array(
+                    'order'       => $order,
+                    'shipment'    => $this,
+                    'comment'     => $comment,
+                    'billing'     => $order->getBillingAddress(),
+                    'payment_html'=> $paymentBlock->toHtml(),
+                )
+            );
+        return $this;
+    }
+
+    /**
      * Sending email with Shipment update information
      *
      * @return Mage_Sales_Model_Order_Shipment
      */
-    public function sendUpdateEmail($comment='')
+    public function sendUpdateEmail($notifyCustomer = true, $comment='')
     {
-        Mage::getModel('core/email_template')
-            ->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()))
+        $bcc = $this->_getEmails(self::XML_PATH_UPDATE_EMAIL_COPY_TO);
+        if (!$notifyCustomer && !$bcc) {
+            return $this;
+        }
+
+        $mailTemplate = Mage::getModel('core/email_template');
+        if ($notifyCustomer) {
+            $customerEmail = $this->getOrder()->getCustomerEmail();
+            $mailTemplate->addBcc($bcc);
+        }
+        else {
+            $customerEmail = $bcc;
+        }
+
+
+        $mailTemplate->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()))
             ->sendTransactional(
                 Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_TEMPLATE, $this->getStoreId()),
                 Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_IDENTITY, $this->getStoreId()),
-                $this->getOrder()->getCustomerEmail(),
+                $customerEmail,
                 $this->getOrder()->getBillingAddress()->getName(),
                 array(
-                    'order'  => $this->getOrder(),
-                    'billing'=>$this->getOrder()->getBillingAddress(),
+                    'order'   => $this->getOrder(),
+                    'billing' => $this->getOrder()->getBillingAddress(),
                     'shipment'=> $this,
-                    'comment'=> $comment
+                    'comment' => $comment
                 )
             );
         return $this;
+    }
+
+    protected function _getEmails($configPath)
+    {
+        $data = Mage::getStoreConfig($configPath, $this->getStoreId());
+        if (!empty($data)) {
+            return explode(',', $data);
+        }
+        return false;
     }
 }

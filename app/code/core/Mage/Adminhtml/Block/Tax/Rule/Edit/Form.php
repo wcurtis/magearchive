@@ -95,7 +95,7 @@ class Mage_Adminhtml_Block_Tax_Rule_Edit_Form extends Mage_Adminhtml_Block_Widge
         $fieldset->addField('tax_rate_type_id', 'select',
             array(
                 'name'      => 'tax_rate_type_id',
-                'label'     => Mage::helper('tax')->__('Customer Tax Class'),
+                'label'     => Mage::helper('tax')->__('Tax Rate'),
                 'class'     => 'required-entry',
                 'values'    => $rates,
                 'value'     => $model->getTaxRateTypeId(),

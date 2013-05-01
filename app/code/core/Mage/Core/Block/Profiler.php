@@ -23,11 +23,9 @@ class Mage_Core_Block_Profiler extends Mage_Core_Block_Abstract
 {
     protected function _toHtml()
     {
-		if (!$this->_beforeToHtml()) {
-			return '';
-		}
-
-    	if (!Mage::getStoreConfig('dev/debug/profiler')) {
+    	if (!$this->_beforeToHtml()
+    	    || !Mage::getStoreConfig('dev/debug/profiler')
+    	    || !Mage::helper('core')->isDevAllowed()) {
     		return '';
     	}
 

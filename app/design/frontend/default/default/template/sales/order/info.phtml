@@ -2,12 +2,19 @@
 
 <div class="page-head button-level">
     <h3><?=$this->__('Order #%s - %s', $_order->getRealOrderId(), $_order->getStatusLabel())?></h3>
-  <?if ($this->helper('sales/reorder')->canReorder($_order)) :?>
-                        	<a href="<?=$this->getReorderUrl($_order)?>" style="font-weight: bold; color: #FF6600;"><?=$this->__('Reorder')?></a>
-                        <?endif?>
+        
+<?if($this->helper('rss/order')->isStatusNotificationAllow()):?>
+<a href="<?=$this->helper('rss/order')->getStatusHistoryRssUrl($_order)?>" class="link-feed"><?=$this->__('Subscribe to Order Status')?></a>
+<?endif;?>
+<?if($this->helper('rss/order')->isStatusNotificationAllow() && $this->helper('sales/reorder')->canReorder($_order)):?><span class="pipe">|</span><?endif?>
+<?if ($this->helper('sales/reorder')->canReorder($_order)) :?>
+<a href="<?=$this->getReorderUrl($_order)?>" class="link-cart"><?=$this->__('Reorder')?></a>
+<?endif?>
+
+
+
 </div>
-
-
+<?=$this->getStatusHistoryRssUrl($_order)?>
 <div class="order-access">
 <div class="order-info">
 <?=$this->__('About Ihis Order:')?>

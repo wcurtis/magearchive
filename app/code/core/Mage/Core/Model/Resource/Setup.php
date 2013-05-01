@@ -23,23 +23,25 @@
  */
 class Mage_Core_Model_Resource_Setup
 {
-    const VERSION_COMPARE_EQUAL  = 0;
-    const VERSION_COMPARE_LOWER  = -1;
-    const VERSION_COMPARE_GREATER= 1;
+    const VERSION_COMPARE_EQUAL   = 0;
+    const VERSION_COMPARE_LOWER   = -1;
+    const VERSION_COMPARE_GREATER = 1;
 
-    protected $_resourceName = null;
-    protected $_resourceConfig = null;
-    protected $_connectionConfig = null;
-    protected $_moduleConfig = null;
+    protected $_resourceName;
+    protected $_resourceConfig;
+    protected $_connectionConfig;
+    protected $_moduleConfig;
 
     /**
      * Setup Connection
      *
      * @var Zend_Db_Adapter_Abstract
      */
-    protected $_conn = null;
+    protected $_conn;
     protected $_tables = array();
     protected $_setupCache = array();
+
+    protected static $_hadUpdates;
 
     public function __construct($resourceName)
     {
@@ -55,7 +57,7 @@ class Mage_Core_Model_Resource_Setup
     /**
      * get Connection
      *
-     * @return Varien_Db_Adapter_Mysqli
+     * @return Varien_Db_Adapter_Pdo_Mysql
      */
     public function getConnection()
     {
@@ -72,7 +74,7 @@ class Mage_Core_Model_Resource_Setup
         if (!isset($this->_tables[$tableName])) {
             $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
             if (Mage::registry('resource')) {
-                $this->_tables[$tableName] = $tablePrefix . Mage::registry('resource')->getTableName($tableName);
+                $this->_tables[$tableName] = $tablePrefix . Mage::getSingleton('core/resource')->getTableName($tableName);
             } else {
                 $this->_tables[$tableName] = $tablePrefix . str_replace('/', '_', $tableName);
             }
@@ -87,6 +89,15 @@ class Mage_Core_Model_Resource_Setup
      */
     static public function applyAllUpdates()
     {
+        $res = Mage::getSingleton('core/resource');
+        /*
+        if ($res->getAutoUpdate() == Mage_Core_Model_Resource::AUTO_UPDATE_NEVER) {
+            return true;
+        }
+        */
+
+        self::$_hadUpdates = false;
+
         $resources = Mage::getConfig()->getNode('global/resources')->children();
         foreach ($resources as $resName=>$resource) {
             if (!$resource->setup) {
@@ -99,6 +110,13 @@ class Mage_Core_Model_Resource_Setup
             $setupClass = new $className($resName);
             $setupClass->applyUpdates();
         }
+/*
+        if (self::$_hadUpdates) {
+            if ($res->getAutoUpdate() == Mage_Core_Model_Resource::AUTO_UPDATE_ONCE) {
+                $res->setAutoUpdate(Mage_Core_Model_Resource::AUTO_UPDATE_NEVER);
+            }
+        }
+*/
         return true;
     }
 
@@ -262,6 +280,7 @@ class Mage_Core_Model_Resource_Setup
             }
             $toVersion = $resourceFile['toVersion'];
         }
+        self::$_hadUpdates = true;
         return $toVersion;
     }
 
@@ -392,6 +411,12 @@ class Mage_Core_Model_Resource_Setup
         return $this;
     }
 
+    public function tableExists($table)
+    {
+        $result = $this->_conn->fetchOne("show tables like '$table'");
+        return !empty($result);
+    }
+
 /******************* CONFIG *****************/
 
     public function addConfigField($path, $label, array $data=array(), $default=null)
@@ -462,10 +487,12 @@ class Mage_Core_Model_Resource_Setup
 
     public function startSetup()
     {
+
         $this->_conn->multi_query("SET SQL_MODE='';
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 ");
+
         return $this;
     }
 

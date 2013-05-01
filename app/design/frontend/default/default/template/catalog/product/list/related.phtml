@@ -32,7 +32,7 @@
             <?if(!$_item->isSuper() && $_item->isSaleable()):?>
                 <input type="checkbox" class="related-checkbox left" id="related-checkbox<?=$_item->getId()?>" name="related_products[]" value="<?=$_item->getId()?>"/>
             <?endif;?>
-                <a href="<?=$_item->getProductUrl()?>"><img src="<?=$_item->getThumbnailUrl()?>" alt="<?=$_item->getName()?>" width="50" height="50"/></a>
+                <a href="<?=$_item->getProductUrl()?>"><img src="<?=$this->helper('catalog/image')->init($_item, 'thumbnail')->resize(50)?>" alt="<?=$_item->getName()?>" width="50" height="50"/></a>
             </div>
             <div class="product-details">
                     <a href="<?=$_item->getProductUrl()?>"><?=$_item->getName()?></a>

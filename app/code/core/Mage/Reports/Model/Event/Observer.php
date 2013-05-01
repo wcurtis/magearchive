@@ -27,12 +27,16 @@
 
 class Mage_Reports_Model_Event_Observer
 {
-    protected function _event($eventTypeId, $objectId, $subjectId = null)
+    protected function _event($eventTypeId, $objectId, $subjectId = null, $subtype = 0)
     {
         if (is_null($subjectId)) {
             $customer = Mage::getSingleton('customer/session')->getCustomer();
             if ($customer->getId()) {
                 $subjectId = $customer->getId();
+            }
+            else {
+                $subjectId = Mage::getSingleton('log/visitor')->getId();
+                $subtype = 1;
             }
         }
 
@@ -42,10 +46,22 @@ class Mage_Reports_Model_Event_Observer
             ->setEventTypeId($eventTypeId)
             ->setObjectId($objectId)
             ->setSubjectId($subjectId)
+            ->setSubtype($subtype)
             ->setStoreId($storeId);
         $eventModel->save();
 
         return $this;
+    }
+    
+    public function customerLogin(Varien_Event_Observer $observer) {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        if (!$customer->getId()) {
+            return $this;
+        }
+        $visitorId = Mage::getSingleton('log/visitor')->getId();
+        $customerId = $customer->getId();
+        $eventModel = Mage::getModel('reports/event');
+        $eventModel->updateCustomerType($visitorId, $customerId);
     }
 
     public function catalogProductView(Varien_Event_Observer $observer)

@@ -38,11 +38,11 @@
             <td>
                 <div>
                     <a href="<?=$item->getProductUrl()?>">
-                        <img src="<?=$item->getSmallImageUrl()?>" alt="<?=htmlspecialchars($item->getName())?>" width="113"/>
+                        <img src="<?=$this->helper('catalog/image')->init($item, 'small_image')->resize(113);?>" alt="<?=htmlspecialchars($item->getName())?>" width="113"/>
                     </a>
                 </div>
                 <div><a href="<?=$item->getProductUrl()?>" title="<?=$item->getName()?>"><?=$item->getName()?></a></div>
-            </td>            
+            </td>
             <td class="align-center"><?=$this->getEscapedDescription($item)?></td>
             <td class="align-center">
                 <a href="#" onclick="setLocation('<?=$this->helper('checkout/cart')->getAddUrl($item)?>');return false;" class="link-cart"><?=$this->__('Add to Cart')?></a><br/>

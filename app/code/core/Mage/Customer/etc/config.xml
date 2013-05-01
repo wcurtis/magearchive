@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Customer>
-            <version>0.7.1</version>
+            <version>0.8.0</version>
             <depends>
                 <Mage_Eav />
             </depends>
@@ -36,7 +36,8 @@
                         <title>Text</title>
                         <defaultFormat><![CDATA[
 {{var firstname}} {{var lastname}}
-{{var street}}
+{{var street1}}
+{{depend street2}}{{var street2}}{{/depend}}
 {{var city}},  {{var postcode}}, {{var region}}
 {{var country}}
 T: {{var telephone}}
@@ -53,7 +54,8 @@ T: {{var telephone}}
                         <title>HTML</title>
                         <defaultFormat><![CDATA[
 {{var firstname}} {{var lastname}}<br/>
-{{var street}}<br/>
+{{var street1}}<br />
+{{depend street2}}{{var street2}}<br />{{/depend}}
 {{var city}}, {{var postcode}}, {{var region}}<br/>
 {{var country}}<br/>
 {{depend telephone}}T: {{var telephone}}{{/depend}}
@@ -62,7 +64,15 @@ T: {{var telephone}}
                     </html>
                     <pdf translate="title" module="customer">
                         <title>PDF</title>
-                        <defaultFormat><![CDATA[ ]]></defaultFormat>
+                        <defaultFormat><![CDATA[
+{{var firstname}} {{var lastname}}|
+{{var street1}}|
+{{depend street2}}{{var street2}}|{{/depend}}
+{{var city}}, {{var postcode}}, {{var region}}|
+{{var country}}|
+{{depend telephone}}T: {{var telephone}}{{/depend}}|
+{{depend fax}}<br/>F: {{var fax}}{{/depend}}|
+            ]]></defaultFormat>
                     </pdf>
                 </formats>
             </address>
@@ -120,6 +130,20 @@ T: {{var telephone}}
                 <to>review/customer</to>
             </review>
         </rewrite>
+        <template>
+            <email>
+                <customer_create_account_email_template translate="label" module="customer">
+                    <label>New account</label>
+                    <file>account_new.html</file>
+                    <type>html</type>
+                </customer_create_account_email_template>
+                <customer_password_forgot_email_template translate="label" module="customer">
+                    <label>New passowrd</label>
+                    <file>password_new.html</file>
+                    <type>html</type>
+                </customer_password_forgot_email_template>
+            </email>
+        </template>
     </global>
     <adminhtml>
         <translate>
@@ -226,12 +250,15 @@ T: {{var telephone}}
 
     <default>
         <customer>
+            <account_share>
+                <scope>1</scope> <!--0 - global, 1 - per website-->
+            </account_share>
             <create_account>
                 <confirm>0</confirm>
                 <default_group>1</default_group>
                 <email_domain>emaildomain.com</email_domain>
                 <email_identity>general</email_identity>
-                <email_template>1</email_template>
+                <email_template>customer_create_account_email_template</email_template>
             </create_account>
 
             <default>
@@ -240,7 +267,7 @@ T: {{var telephone}}
 
             <password>
                 <forgot_email_identity>support</forgot_email_identity>
-                <forgot_email_template>3</forgot_email_template>
+                <forgot_email_template>customer_password_forgot_email_template</forgot_email_template>
             </password>
         </customer>
     </default>

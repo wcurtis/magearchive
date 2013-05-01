@@ -177,4 +177,29 @@ class Mage_Wishlist_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return $this->isAllow() && $this->_isCustomerLogIn();
     }
+
+    public function getCustomerName()
+    {
+        return $this->_getCurrentCustomer()->getName();
+    }
+
+    public function getRssUrl()
+    {
+        $customer = $this->_getCurrentCustomer();
+        $key = $customer->getId().','.$customer->getEmail();
+        return $this->_getUrl('rss/index/wishlist',array('data' => Mage::helper('core')->urlEncode($key), '_secure' => false));
+    }
+
+    public function isRssAllow()
+    {
+         if (Mage::getStoreConfig('rss/wishlist/active')) {
+			return true;
+		}
+		return false;
+    }
+
+    public function defaultCommentString()
+    {
+        return $this->__('Please, enter your comments...');
+    }
 }

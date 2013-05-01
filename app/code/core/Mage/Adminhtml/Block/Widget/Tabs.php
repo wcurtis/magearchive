@@ -47,9 +47,8 @@ class Mage_Adminhtml_Block_Widget_Tabs extends Mage_Adminhtml_Block_Widget
      */
     protected $_destElementId = 'content';
 
-    public function __construct()
+    protected function _construct()
     {
-        parent::__construct();
         $this->setTemplate('widget/tabs.phtml');
     }
 
@@ -141,7 +140,7 @@ class Mage_Adminhtml_Block_Widget_Tabs extends Mage_Adminhtml_Block_Widget
         $this->assign('tabs', $this->_tabs);
         return parent::_beforeToHtml();
     }
-    
+
     public function getJsObjectName()
     {
         return $this->getId() . 'JsTabs';

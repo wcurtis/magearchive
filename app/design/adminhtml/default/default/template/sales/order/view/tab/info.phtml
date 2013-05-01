@@ -28,51 +28,57 @@
     <div class="box-left">
         <!--Payment Method-->
         <div class="entry-edit">
-            <h4 class="icon-head head-payment-method"><?=Mage::helper('sales')->__('Payment Information')?></h4>
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-payment-method"><?=Mage::helper('sales')->__('Payment Information')?></h4>
+            </div>
             <fieldset>
                 <?=$this->getPaymentHtml()?>
+                <div><?=Mage::helper('sales')->__('Order was placed using %s', $_order->getOrderCurrencyCode())?></div>
             </fieldset>
         </div>
     </div>
     <div class="box-right">
         <!--Shipping Method-->
         <div class="entry-edit">
-            <h4 class="icon-head head-shipping-method"><?=Mage::helper('sales')->__('Shipping Information')?></h4>
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-shipping-method"><?=Mage::helper('sales')->__('Shipping &amp; Handling Information')?></h4>
+            </div>
             <fieldset>
                  <? if ($_order->getTracksCollection()->count()) : ?>
 <a href="#" id="linkId" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?=$this->__('Track the order')?>"><?=$this->__('Track the order')?></a>
 <br/>
 <?endif;?>
                 <strong><?=$_order->getShippingDescription()?></strong>
-                (<?=$_order->formatPrice($_order->getShippingAmount())?>)
+                ( <?=$this->displayPriceAttribute('shipping_amount', false, ' ')?> )
             </fieldset>
         </div>
     </div>
     <div class="clear"></div>
 
-    <div class="entry-view">
-        <h4 class="icon-head head-products"><?=Mage::helper('sales')->__('Items Ordered')?></h4>
+    <?=$this->getGiftmessageHtml()?>
+
+    <div class="clear"></div>
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-products"><?=Mage::helper('sales')->__('Items Ordered')?></h4>
+        </div>
     </div>
     <div>
         <?=$this->getItemsHtml()?>
     </div>
     <div class="clear"></div>
     <br/>
-
-    <?=$this->getGiftmessageHtml()?>
-    <div class="box-right">
-        <table cellpadding="0" cellspacing="0" width="100%">
-            <tr>
-                <td width="60%" style="padding-right:20px">
-                    <div><?=$this->getChildHtml('history')?></div>
-                </td>
-                <td>
-                    <div class="box order-totals">
-                        <?=$this->getChildHtml('totals')?>
-                    </div>
-                </td>
-            </tr>
-        </table>
+    <div class="box-left">
+        <div class="entry-edit">
+            <div class="entry-edit-head">
+                <h4><?=Mage::helper('sales')->__('Comments History')?></h4>
+            </div>
+            <?=$this->getChildHtml('history')?>
+        </div>
+    </div>
+    <div class="box-right entry-edit">
+        <div class="entry-edit-head"><h4>Order Totals</h4></div>
+        <div class="order-totals"><?=$this->getChildHtml('totals')?></div>
     </div>
     <div class="clear"></div>
 </div>

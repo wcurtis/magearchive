@@ -28,7 +28,7 @@
         <?for($_j=0;$_j<$this->getColumnCount();$_j++):?>
             <?if($_link=$this->getIterableItem()):?>
             <td>
-                <p class="product-image"><a href="<?=$_link->getProductUrl()?>"><img src="<?=$_link->getSmallImageUrl()?>" width="125" height="125" alt="<?=$_link->getName()?>"/></a></p>
+                <p class="product-image"><a href="<?=$_link->getProductUrl()?>"><img src="<?=$this->helper('catalog/image')->init($_link, 'small_image')->resize(125)?>" width="125" height="125" alt="<?=$_link->getName()?>"/></a></p>
                 <h5><a href="<?=$_link->getProductUrl()?>"><?=$_link->getName()?></a></h5>
                 <?=$this->helper('catalog/product')->getPriceHtml($_link)?>
                 <?=$this->helper('review/product')->getSummaryHtml($_link)?>

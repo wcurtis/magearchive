@@ -18,8 +18,9 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * Admin CMS block edit
+ * CMS block edit form container
  *
  * @category   Mage
  * @package    Mage_Adminhtml
@@ -58,6 +59,11 @@ class Mage_Adminhtml_Block_Cms_Block_Edit extends Mage_Adminhtml_Block_Widget_Fo
         ";
     }
 
+    /**
+     * Get edit form container header text
+     *
+     * @return string
+     */
     public function getHeaderText()
     {
         if (Mage::registry('cms_block')->getId()) {

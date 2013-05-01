@@ -38,7 +38,10 @@
     <tbody>
 <?$l=sizeof($this->getItems()); $i=0; foreach($this->getItems() as $item): $i++?>
         <tr>
-            <td><?=$item->getName()?></td>
+            <td>
+                <?=$item->getName()?>
+                <?=$this->helper('checkout')->getQuoteItemProductDescription($item)?>
+            </td>
             <td class="a-right"><?=$this->helper('checkout')->formatPrice($item->getCalculationPrice())?></td>
             <td class="a-center"><?=$item->getQty()*1?></td>
             <td class="a-right"><?=$this->helper('checkout')->formatPrice($item->getRowTotal())?></td>

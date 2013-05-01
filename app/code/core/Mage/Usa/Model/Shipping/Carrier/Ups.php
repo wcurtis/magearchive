@@ -47,22 +47,11 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
         }
 
         $this->setRequest($request);
-        if (!$request->getUpsRequestMethod()) {
-            if($this->getConfigData('type')=='UPS')
-        		$request->setUpsRequestMethod('cgi');
-        	elseif ($this->getConfigData('type')=='UPS_XML')
-        		$request->setUpsRequestMethod('xml');
-        }
 
-        switch ($request->getUpsRequestMethod()) {
-            case 'cgi':
-                $this->_getCgiQuotes();
-                break;
+        $this->_result = $this->_getQuotes();
 
-            case 'xml':
-                $this->_getXmlQuotes();
-                break;
-        }
+        $this->_updateFreeMethodQuote($request);
+
         return $this->getResult();
     }
 
@@ -129,6 +118,9 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
         }
 
         $r->setWeight($request->getPackageWeight());
+        if ($request->getFreeMethodWeight()!=$request->getPackageWeight()) {
+            $r->setFreeMethodWeight($request->getFreeMethodWeight());
+        }
 
         $r->setValue($request->getPackageValue());
 
@@ -147,6 +139,27 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
     public function getResult()
     {
        return $this->_result;
+    }
+
+    protected function _getQuotes()
+    {
+        switch ($this->getConfigData('type')) {
+            case 'UPS':
+        	   return $this->_getCgiQuotes();
+
+            case 'UPS_XML':
+        	   return $this->_getXmlQuotes();
+        }
+        return null;
+    }
+
+    protected function _setFreeMethodRequest($freeMethod)
+    {
+        $r = $this->_rawRequest;
+
+        $r->setWeight($r->getFreeMethodWeight());
+        $r->setAction($this->getCode('action', 'single'));
+        $r->setProduct($freeMethod);
     }
 
     protected function _getCgiQuotes()
@@ -182,7 +195,7 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             $responseBody = '';
         }
 
-        $this->_parseCgiResponse($responseBody);
+        return $this->_parseCgiResponse($responseBody);
     }
 
 	public function getShipmentByCode($code,$origin = null){
@@ -196,63 +209,6 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
 			return false;
 	}
 
-    protected function _parseXmlResponse($xmlResponse)
-    {
-    	$xml = new Varien_Simplexml_Config();
-		$xml->loadString($xmlResponse);
-		$arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/ResponseStatusCode/text()");
-		$success = (int)$arr[0][0];
-		$result = Mage::getModel('shipping/rate_result');
-
-		if($success===1){
-			$arr = $xml->getXpath("//RatingServiceSelectionResponse/RatedShipment");
-			$allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
-			$costArr = array();
-	        $priceArr = array();
-			foreach ($arr as $shipElement){
-				$code = (string)$shipElement->Service->Code;
-				#$shipment = $this->getShipmentByCode($code);
-				if (in_array($code, $allowedMethods)) {
-                    $costArr[$code] = $shipElement->TotalCharges->MonetaryValue;
-                    $priceArr[$code] = $this->getMethodPrice(floatval($shipElement->TotalCharges->MonetaryValue),$code);
-                }
-			}
-		} else {
-			$arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/Error/ErrorDescription/text()");
-			$errorTitle = (string)$arr[0][0];
-			$error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('ups');
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($errorTitle);
-
-		}
-
-
-        $defaults = $this->getDefaults();
-        if (empty($priceArr)) {
-            $error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('ups');
-            $error->setCarrierTitle($this->getConfigData('title'));
-            if(!isset($errorTitle)){
-            	$errorTitle = Mage::helper('usa')->__('Sorry not Found');
-			}
-            $error->setErrorMessage($errorTitle);
-            $result->append($error);
-        } else {
-            foreach ($priceArr as $method=>$price) {
-                $rate = Mage::getModel('shipping/rate_result_method');
-                $rate->setCarrier('ups');
-                $rate->setCarrierTitle($this->getConfigData('title'));
-                $rate->setMethod($method);
-                $method_arr = $this->getShipmentByCode($method);
-                $rate->setMethodTitle(Mage::helper('usa')->__($method_arr));
-                $rate->setCost($costArr[$method]);
-                $rate->setPrice($price);
-                $result->append($rate);
-            }
-        }
-        $this->_result = $result;
-    }
 
     protected function _parseCgiResponse($response)
     {
@@ -305,7 +261,7 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             }
         }
 #echo "<pre>".print_r($result,1)."</pre>";
-        $this->_result = $result;
+        return $result;
     }
 
     public function getMethodPrice($cost, $method='')
@@ -530,7 +486,7 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             '48_container'   => $r->getContainer(),
             '49_residential' => $r->getDestType(),
         );
-        $params['10_action']=='4'? $params['10_action']='Shop':$params['10_action']='Rate';
+        $params['10_action'] = $params['10_action']=='4'? 'Shop' : 'Rate';
 $xmlRequest .= <<< XMLRequest
 <?xml version="1.0"?>
 <RatingServiceSelectionRequest xml:lang="en-US">
@@ -596,7 +552,65 @@ XMLRequest;
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		$xmlResponse = curl_exec ($ch);
-		$this->_parseXmlResponse($xmlResponse);
+		return $this->_parseXmlResponse($xmlResponse);
+    }
+
+    protected function _parseXmlResponse($xmlResponse)
+    {
+    	$xml = new Varien_Simplexml_Config();
+		$xml->loadString($xmlResponse);
+		$arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/ResponseStatusCode/text()");
+		$success = (int)$arr[0][0];
+		$result = Mage::getModel('shipping/rate_result');
+
+		if($success===1){
+			$arr = $xml->getXpath("//RatingServiceSelectionResponse/RatedShipment");
+			$allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
+			$costArr = array();
+	        $priceArr = array();
+			foreach ($arr as $shipElement){
+				$code = (string)$shipElement->Service->Code;
+				#$shipment = $this->getShipmentByCode($code);
+				if (in_array($code, $allowedMethods)) {
+                    $costArr[$code] = $shipElement->TotalCharges->MonetaryValue;
+                    $priceArr[$code] = $this->getMethodPrice(floatval($shipElement->TotalCharges->MonetaryValue),$code);
+                }
+			}
+		} else {
+			$arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/Error/ErrorDescription/text()");
+			$errorTitle = (string)$arr[0][0];
+			$error = Mage::getModel('shipping/rate_result_error');
+            $error->setCarrier('ups');
+            $error->setCarrierTitle($this->getConfigData('title'));
+            $error->setErrorMessage($errorTitle);
+
+		}
+
+
+        $defaults = $this->getDefaults();
+        if (empty($priceArr)) {
+            $error = Mage::getModel('shipping/rate_result_error');
+            $error->setCarrier('ups');
+            $error->setCarrierTitle($this->getConfigData('title'));
+            if(!isset($errorTitle)){
+            	$errorTitle = Mage::helper('usa')->__('Sorry not Found');
+			}
+            $error->setErrorMessage($errorTitle);
+            $result->append($error);
+        } else {
+            foreach ($priceArr as $method=>$price) {
+                $rate = Mage::getModel('shipping/rate_result_method');
+                $rate->setCarrier('ups');
+                $rate->setCarrierTitle($this->getConfigData('title'));
+                $rate->setMethod($method);
+                $method_arr = $this->getShipmentByCode($method);
+                $rate->setMethodTitle(Mage::helper('usa')->__($method_arr));
+                $rate->setCost($costArr[$method]);
+                $rate->setPrice($price);
+                $result->append($rate);
+            }
+        }
+        return $result;
     }
 
     public function getTracking($trackings)

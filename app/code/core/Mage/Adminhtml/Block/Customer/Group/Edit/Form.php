@@ -37,7 +37,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
 
         $fieldset = $form->addFieldset('base_fieldset', array('legend'=>Mage::helper('customer')->__('Group Information')));
 
-        $fieldset->addField('customer_group_code', 'text',
+        $name = $fieldset->addField('customer_group_code', 'text',
             array(
                 'name'  => 'code',
                 'label' => Mage::helper('customer')->__('Group Name'),
@@ -46,6 +46,10 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
                 'required' => true,
             )
         );
+
+        if ($customerGroup->getId()==0 && $customerGroup->getCustomerGroupCode() ) {
+            $name->setDisabled(true);
+        }
 
         $fieldset->addField('tax_class_id', 'select',
             array(
@@ -58,7 +62,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
             )
         );
 
-        if ($customerGroup->getId()) {
+        if (!is_null($customerGroup->getId())) {
             // If edit add id
             $form->addField('id', 'hidden',
                 array(

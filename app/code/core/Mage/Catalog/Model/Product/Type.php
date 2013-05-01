@@ -24,16 +24,90 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Product_Type extends Varien_Object
+class Mage_Catalog_Model_Product_Type
 {
-    public function __construct()
+    /**
+     * Available product types
+     */
+    const TYPE_SIMPLE       = 'simple';
+    const TYPE_BUNDLE       = 'bundle';
+    const TYPE_CONFIGURABLE = 'configurable';
+    const TYPE_GROUPED      = 'grouped';
+    const TYPE_VIRTUAL      = 'virtual';
+
+    const DEFAULT_TYPE      = 'simple';
+
+    static protected $_types;
+
+    public static function factory($product)
     {
-        parent::__construct();
-        $this->setIdFieldName('type_id');
+        $types = self::getTypes();
+
+        if (!empty($types[$product->getTypeId()]['model'])) {
+            $typeModelName = $types[$product->getTypeId()]['model'];
+        } else {
+            $typeModelName = $types[self::DEFAULT_TYPE]['model'];
+        }
+
+        $typeModel = Mage::getModel($typeModelName);
+        $typeModel->setProduct($product);
+        return $typeModel;
     }
 
-    public function getCollection()
+    static public function getOptionArray()
     {
-        return Mage::getResourceModel('catalog/product_type_collection');
+        $options = array();
+        foreach(self::getTypes() as $typeId=>$type) {
+            $options[$typeId] = $type['label'];
+        }
+
+        return $options;
+    }
+
+    static public function getAllOption()
+    {
+        $options = self::getOptionArray();
+        array_unshift($options, array('value'=>'', 'label'=>''));
+        return $options;
+    }
+
+    static public function getAllOptions()
+    {
+        $res = array();
+        $res[] = array('value'=>'', 'label'=>'');
+        foreach (self::getOptionArray() as $index => $value) {
+        	$res[] = array(
+        	   'value' => $index,
+        	   'label' => $value
+        	);
+        }
+        return $res;
+    }
+
+    static public function getOptions()
+    {
+        $res = array();
+        foreach (self::getOptionArray() as $index => $value) {
+        	$res[] = array(
+        	   'value' => $index,
+        	   'label' => $value
+        	);
+        }
+        return $res;
+    }
+
+    static public function getOptionText($optionId)
+    {
+        $options = self::getOptionArray();
+        return isset($options[$optionId]) ? $options[$optionId] : null;
+    }
+
+    static public function getTypes()
+    {
+        if (is_null(self::$_types)) {
+            self::$_types = Mage::getConfig()->getNode('global/catalog/product/type')->asArray();
+        }
+
+        return self::$_types;
     }
 }

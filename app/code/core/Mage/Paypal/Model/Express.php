@@ -115,7 +115,7 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
 
     public function catchError()
     {
-        if ($this->getApi()->hasError()) {
+        if ($this->getApi()->getError()) {
             $s = Mage::getSingleton('checkout/session');
             $e = $this->getApi()->getError();
             switch ($e['type']) {

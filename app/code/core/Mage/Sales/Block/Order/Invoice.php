@@ -77,4 +77,12 @@ class Mage_Sales_Block_Order_Invoice extends Mage_Core_Block_Template
     {
         return Mage::getUrl('*/*/creditmemo', array('order_id' => $order->getId()));
     }
+
+    public function getPrintInvoiceUrl($invoice){
+        return Mage::getUrl('*/*/printInvoice', array('invoice_id' => $invoice->getId()));
+    }
+
+    public function getPrintAllInvoicesUrl($order){
+        return Mage::getUrl('*/*/printInvoice', array('order_id' => $order->getId()));
+    }
 }

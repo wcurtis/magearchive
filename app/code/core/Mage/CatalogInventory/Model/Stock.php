@@ -92,7 +92,7 @@ class Mage_CatalogInventory_Model_Stock extends Mage_Core_Model_Abstract
             }
             if ($stockItem->checkQty($item->getQtyOrdered())) {
                 $stockItem->subtractQty($item->getQtyOrdered())
-                    ->save();
+                          ->save();
             }
         }
         else {

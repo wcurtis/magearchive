@@ -25,6 +25,9 @@
     <div class="buttons">
         <?=$this->getBrowseButtonHtml()?>
         <?=$this->getUploadButtonHtml()?>
+        <div id="<?=$this->getHtmlId()?>-install-flash" style="display:none">
+            <?=Mage::helper('media')->__('This content requires last version of Adobe Flash Player. <a href="%s">Get Flash</a>', 'http://www.adobe.com/go/getflash/')?>
+        </div>
     </div>
     <div class="clear"></div>
     <div class="no-display" id="<?=$this->getHtmlId()?>-template">

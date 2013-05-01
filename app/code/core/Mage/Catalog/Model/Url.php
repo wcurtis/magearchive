@@ -170,8 +170,8 @@ class Mage_Catalog_Model_Url
             ->addAttributeToSelect('children')
             ->addAttributeToSelect('url_key')
             ->addAttributeToSelect('url_path');
-        $categoryCollection->getEntity()
-            ->setStore($storeId);
+        //$categoryCollection->getEntity()
+            //->setStore($storeId);
         $categoryCollection->load();
 
         $this->_categories = array();
@@ -198,21 +198,22 @@ class Mage_Catalog_Model_Url
         $productCollection = Mage::getResourceModel('catalog/product_collection')
             ->addAttributeToSelect('url_key')
             ->addAttributeToSelect('name');
-        $productCollection->getEntity()
-            ->setStore($storeId);
+        //$productCollection->getEntity()
+            //->setStore($storeId);
         $productCollection->load();
 
         $this->_products[$storeId] = $productCollection->getItems();
 
         $resource = Mage::getSingleton('core/resource');
         $read = $resource->getConnection('catalog_read');
-        $productStoreTable = $resource->getTableName('catalog/product_store');
+        //$productStoreTable = $resource->getTableName('catalog/product_store');
         $categoryProductTable = $resource->getTableName('catalog/category_product');
 
         $select = $read->select()
             ->from(array('cp'=>$categoryProductTable))
-            ->join(array('ps'=>$productStoreTable), 'ps.product_id=cp.product_id', array())
-            ->where('ps.store_id=?', $storeId);
+            //->join(array('ps'=>$productStoreTable), 'ps.product_id=cp.product_id', array())
+            //->where('ps.store_id=?', $storeId)
+            ;
 
         $categoryProducts = $read->fetchAll($select);
         foreach ($categoryProducts as $row) {

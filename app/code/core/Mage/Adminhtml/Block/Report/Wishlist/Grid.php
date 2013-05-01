@@ -95,7 +95,7 @@ class Mage_Adminhtml_Block_Report_Wishlist_Grid extends Mage_Adminhtml_Block_Wid
         ));
 
         $this->addExportType('*/*/exportWishlistCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportWishlistXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportWishlistExcel', Mage::helper('reports')->__('Excel'));
 
         $this->setFilterVisibility(false);
 

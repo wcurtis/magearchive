@@ -69,7 +69,7 @@ class Mage_Adminhtml_Newsletter_QueueController extends Mage_Adminhtml_Controlle
 	    		return;
 	    	}
 
-    		$queue->setQueueStartAt(now())
+    		$queue->setQueueStartAt(Mage::getSingleton('core/date')->gmtDate())
     			->setQueueStatus(Mage_Newsletter_Model_Queue::STATUS_SENDING)
     			->save();
     	}
@@ -140,8 +140,7 @@ class Mage_Adminhtml_Newsletter_QueueController extends Mage_Adminhtml_Controlle
     		->addOnlyForSendingFilter()
     		->load();
 
-         $collection->walk('sendPerSubscriber', array($countOfSubscritions));
-
+        $collection->walk('sendPerSubscriber', array($countOfSubscritions));
     }
 
 
@@ -180,7 +179,7 @@ class Mage_Adminhtml_Newsletter_QueueController extends Mage_Adminhtml_Controlle
     	if($queue->getQueueStatus()==Mage_Newsletter_Model_Queue::STATUS_NEVER) {
     		if($this->getRequest()->getParam('start_at')) {
 	    		$queue->setQueueStartAt(
-	    			date('Y-m-d H:i:s', strtotime($this->getRequest()->getParam('start_at')))
+	    			Mage::getSingleton('core/date')->gmtDate(null, $this->getRequest()->getParam('start_at'))
 	    		);
 	    	} else {
 	    		$queue->setQueueStartAt(null);

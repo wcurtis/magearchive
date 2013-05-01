@@ -29,17 +29,10 @@
     <div class="header-nav">
         <h4 class="no-display"><?=$this->__('Category Navigation:')?></h4>
         <ul id="nav">
-        <?foreach ($this->getStoreCategories(10) as $_category):?>
+        <?foreach ($this->getStoreCategories() as $_category):?>
             <?=$this->drawItem($_category)?>
         <?endforeach?>
         </ul>
     </div>
-
-
-
     <?=$this->getChildHtml('topLeftLinks')?>
-
-
-
-
 </div>

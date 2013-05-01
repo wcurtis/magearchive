@@ -27,6 +27,7 @@
  */
 class Varien_Simplexml_Config
 {
+
     /**
      * Configuration xml
      *
@@ -34,14 +35,39 @@ class Varien_Simplexml_Config
      */
     protected $_xml = null;
 
+    /**
+     * Enter description here...
+     *
+     * @var string
+     */
     protected $_cacheId = null;
 
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     protected $_cacheTags = array();
 
+    /**
+     * Enter description here...
+     *
+     * @var int
+     */
     protected $_cacheLifetime = null;
 
+    /**
+     * Enter description here...
+     *
+     * @var unknown_type
+     */
     protected $_cacheChecksum = false;
 
+    /**
+     * Enter description here...
+     *
+     * @var boolean
+     */
     protected $_cacheSaved = false;
 
     /**
@@ -78,15 +104,15 @@ class Varien_Simplexml_Config
         if (is_null($sourceData)) {
             return;
         }
-	    if ($sourceData instanceof Varien_Simplexml_Element) {
-	       $this->setXml($sourceData);
-	    } elseif (is_string($sourceData) && !empty($sourceData)) {
-	        if (strlen($sourceData)<1000 && is_readable($sourceData)) {
-	            $this->loadFile($sourceData);
-	        } else {
-	            $this->loadString($sourceData);
-	        }
-	    }
+        if ($sourceData instanceof Varien_Simplexml_Element) {
+           $this->setXml($sourceData);
+        } elseif (is_string($sourceData) && !empty($sourceData)) {
+            if (strlen($sourceData)<1000 && is_readable($sourceData)) {
+                $this->loadFile($sourceData);
+            } else {
+                $this->loadString($sourceData);
+            }
+        }
         #$this->setCache(new Varien_Simplexml_Config_Cache_File());
         #$this->getCache()->setConfig($this);
     }
@@ -140,106 +166,193 @@ class Varien_Simplexml_Config
         return $result;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Simplexml_Config_Cache_Abstract $cache
+     * @return Varien_Simplexml_Config
+     */
     public function setCache($cache)
     {
         $this->_cache = $cache;
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Varien_Simplexml_Config_Cache_Abstract
+     */
     public function getCache()
     {
         return $this->_cache;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param boolean $flag
+     * @return Varien_Simplexml_Config
+     */
     public function setCacheSaved($flag)
     {
         $this->_cacheSaved = $flag;
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return boolean
+     */
     public function getCacheSaved()
     {
         return $this->_cacheSaved;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $id
+     * @return Varien_Simplexml_Config
+     */
     public function setCacheId($id)
     {
         $this->_cacheId = $id;
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getCacheId()
     {
         return $this->_cacheId;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param array $tags
+     * @return Varien_Simplexml_Config
+     */
     public function setCacheTags($tags)
     {
         $this->_cacheTags = $tags;
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return array
+     */
     public function getCacheTags()
     {
         return $this->_cacheTags;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param int $lifetime
+     * @return Varien_Simplexml_Config
+     */
     public function setCacheLifetime($lifetime)
     {
         $this->_cacheLifetime = $lifetime;
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return int
+     */
     public function getCacheLifetime()
     {
         return $this->_cacheLifetime;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $data
+     * @return Varien_Simplexml_Config
+     */
     public function setCacheChecksum($data)
     {
         if (is_null($data)) {
             $this->_cacheChecksum = null;
         } elseif (false===$data || 0===$data) {
-    		$this->_cacheChecksum = false;
-    	} else {
-        	$this->_cacheChecksum = md5($data);
-    	}
+            $this->_cacheChecksum = false;
+        } else {
+            $this->_cacheChecksum = md5($data);
+        }
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $data
+     * @return Varien_Simplexml_Config
+     */
     public function updateCacheChecksum($data)
     {
-    	if (false===$this->getCacheChecksum()) {
-    		return $this;
-    	}
-    	if (false===$data || 0===$data) {
-    		$this->_cacheChecksum = false;
-    	} else {
-        	$this->setCacheChecksum($this->getCacheChecksum().':'.$data);
-    	}
+        if (false===$this->getCacheChecksum()) {
+            return $this;
+        }
+        if (false===$data || 0===$data) {
+            $this->_cacheChecksum = false;
+        } else {
+            $this->setCacheChecksum($this->getCacheChecksum().':'.$data);
+        }
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getCacheChecksum()
     {
         return $this->_cacheChecksum;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getCacheChecksumId()
     {
         return $this->getCacheId().'__CHECKSUM';
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return boolean
+     */
     public function fetchCacheChecksum()
     {
         return false;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return boolean
+     */
     public function validateCacheChecksum()
     {
         $newChecksum = $this->getCacheChecksum();
         if (false===$newChecksum) {
-        	return false;
+            return false;
         }
         if (is_null($newChecksum)) {
             return true;
@@ -248,6 +361,11 @@ class Varien_Simplexml_Config
         return $newChecksum===false && $cachedChecksum===false || $newChecksum===$cachedChecksum;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return boolean
+     */
     public function loadCache()
     {
         if (!$this->validateCacheChecksum()) {
@@ -265,22 +383,28 @@ class Varien_Simplexml_Config
         return false;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param array $tags
+     * @return Varien_Simplexml_Config
+     */
     public function saveCache($tags=null)
     {
         if ($this->getCacheSaved()) {
             return $this;
         }
-    	if (false===$this->getCacheChecksum()) {
-    	    return $this;
-    	}
+        if (false===$this->getCacheChecksum()) {
+            return $this;
+        }
 
-    	if (is_null($tags)) {
-    	    $tags = $this->_cacheTags;
-    	}
+        if (is_null($tags)) {
+            $tags = $this->_cacheTags;
+        }
 
-    	if (!is_null($this->getCacheChecksum())) {
+        if (!is_null($this->getCacheChecksum())) {
             $this->_saveCache($this->getCacheChecksum(), $this->getCacheChecksumId(), $tags, $this->getCacheLifetime());
-    	}
+        }
 
         $xmlString = $this->getNode()->asNiceXml('', false);
         $this->_saveCache($xmlString, $this->getCacheId(), $tags, $this->getCacheLifetime());
@@ -290,6 +414,11 @@ class Varien_Simplexml_Config
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Varien_Simplexml_Config
+     */
     public function removeCache()
     {
         $this->_removeCache($this->getCacheId());
@@ -297,16 +426,38 @@ class Varien_Simplexml_Config
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $id
+     * @return boolean
+     */
     protected function _loadCache($id)
     {
         return $this->getCache()->load($id);
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $data
+     * @param string $id
+     * @param array $tags
+     * @param int|boolean $lifetime
+     * @return boolean
+     */
     protected function _saveCache($data, $id, $tags=array(), $lifetime=false)
     {
         return $this->getCache()->save($data, $id, $tags, $lifetime);
     }
 
+    /**
+     * Enter description here...
+     *
+     * @todo check this, as there are no caches that implement remove() method
+     * @param string $id
+     * @return unknown
+     */
     protected function _removeCache($id)
     {
         return $this->getCache()->remove($id);
@@ -338,17 +489,17 @@ class Varien_Simplexml_Config
      */
     public function loadString($string)
     {
-    	if (!empty($string)) {
-    		$xml = simplexml_load_string($string, $this->_elementClass);
-    	}
-    	else {
-    		throw new Exception('"$string" parameter for simplexml_load_string is empty');
-    	}
+        if (!empty($string)) {
+            $xml = simplexml_load_string($string, $this->_elementClass);
+        }
+        else {
+            throw new Exception('"$string" parameter for simplexml_load_string is empty');
+        }
 
-    	if ($xml instanceof Varien_Simplexml_Element) {
-    	    $this->_xml = $xml;
-    	    return true;
-    	}
+        if ($xml instanceof Varien_Simplexml_Element) {
+            $this->_xml = $xml;
+            return true;
+        }
 
         return false;
     }
@@ -457,9 +608,17 @@ class Varien_Simplexml_Config
         return $text;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Simplexml_Config $config
+     * @param boolean $overwrite
+     * @return Varien_Simplexml_Config
+     */
     public function extend(Varien_Simplexml_Config $config, $overwrite=true)
     {
         $this->getNode()->extend($config->getNode(), $overwrite);
         return $this;
     }
+
 }

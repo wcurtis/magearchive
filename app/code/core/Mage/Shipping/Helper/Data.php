@@ -43,4 +43,13 @@ class Mage_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         return $this->_getUrl('shipping/tracking/popup',array("ship_id"=>$shipid));
     }
 
+    public function isFreeMethod($method, $storeId=null)
+    {
+        $arr = explode('_', $method, 2);
+        if (!isset($arr[1])) {
+            return false;
+        }
+        $freeMethod = Mage::getStoreConfig('carriers/'.$arr[0].'/free_method', $storeId);
+        return $freeMethod == $arr[1];
+    }
 }

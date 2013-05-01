@@ -67,12 +67,35 @@ class Mage_Adminhtml_Block_System_Cache_Form extends Mage_Adminhtml_Block_Widget
             ));
         }
 
+        $fieldset = $form->addFieldset('catalog', array(
+            'legend'=>Mage::helper('adminhtml')->__('Catalog')
+        ));
+
         $fieldset->addField('refresh_catalog_rewrites', 'checkbox', array(
             'name'=>'refresh[catalog_rewrites]',
             'label'=>Mage::helper('adminhtml')->__('Refresh Catalog Rewrites'),
             'value'=>1,
         ));
 
+        $fieldset->addField('clear_images_cache', 'checkbox', array(
+            'name'=>'clear_images_cache',
+            'label'=>Mage::helper('adminhtml')->__('Clear Images Cache'),
+            'value'=>1,
+        ));
+/*
+        $fieldset = $form->addFieldset('database', array(
+            'legend'=>Mage::helper('adminhtml')->__('Database')
+        ));
+
+        $values = Mage::getSingleton('adminhtml/system_config_source_dev_dbautoup')
+            ->toOptionArray();
+        $fieldset->addField('db_auto_update', 'select', array(
+            'name'=>'db_auto_update',
+            'label'=>Mage::helper('adminhtml')->__('Auto Updates'),
+            'value'=>Mage::getSingleton('core/resource')->getAutoUpdate(),
+            'values'=>$values,
+        ));
+*/
         $this->setForm($form);
 
         return $this;

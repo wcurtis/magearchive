@@ -24,10 +24,12 @@ class Mage_Sales_Model_Order_Invoice_Total_Tax extends Mage_Sales_Model_Order_In
     public function collect(Mage_Sales_Model_Order_Invoice $invoice)
     {
         $totalTax = 0;
+        $baseTotalTax = 0;
 
         foreach ($invoice->getAllItems() as $item) {
             $orderItem = $item->getOrderItem();
-            $orderItemTax = $orderItem->getTaxAmount();
+            $orderItemTax       = $orderItem->getTaxAmount();
+            $baseOrderItemTax   = $orderItem->getBaseTaxAmount();
             $orderItemQty = $orderItem->getQtyOrdered();
 
             if ($orderItemTax && $orderItemQty) {
@@ -36,19 +38,29 @@ class Mage_Sales_Model_Order_Invoice_Total_Tax extends Mage_Sales_Model_Order_In
                  */
                 if ($item->isLast()) {
                     $tax = $orderItemTax - $orderItem->getTaxInvoiced();
+                    $baseTax = $baseOrderItemTax - $orderItem->getBaseTaxInvoiced();
                 }
                 else {
                     $tax = $orderItemTax*$item->getQty()/$orderItemQty;
+                    $baseTax = $baseOrderItemTax*$item->getQty()/$orderItemQty;
+
                     $tax = $invoice->getStore()->roundPrice($tax);
+                    $baseTax = $invoice->getStore()->roundPrice($baseTax);
                 }
 
                 $item->setTaxAmount($tax);
+                $item->setBaseTaxAmount($baseTax);
+
                 $totalTax += $tax;
+                $baseTotalTax += $baseTax;
             }
         }
 
         $invoice->setTaxAmount($totalTax);
+        $invoice->setBaseTaxAmount($baseTotalTax);
+
         $invoice->setGrandTotal($invoice->getGrandTotal() + $totalTax);
+        $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() + $baseTotalTax);
         return $this;
     }
 }

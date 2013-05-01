@@ -609,6 +609,12 @@
       // Get the curl session object
       $session = curl_init($url);
       $this->log->LogRequest($postargs);
+
+      if (Mage::getStoreConfig('google/checkout/debug')) {
+         $debug = Mage::getModel('googlecheckout/api_debug');
+         $debug->setDir('out')->setUrl($url)->setRequestBody($postargs)->save();
+      }
+
       // Set the POST options.
       curl_setopt($session, CURLOPT_POST, true);
       curl_setopt($session, CURLOPT_HTTPHEADER, $header_arr);
@@ -634,6 +640,11 @@
       }
       // Do the POST and then close the session
       $response = curl_exec($session);
+
+      if (!empty($debug)) {
+          $debug->setResponseBody($response)->save();
+      }
+
       if (curl_errno($session)) {
          $this->log->LogError(curl_error($session));
         return array("CURL_ERR", curl_error($session));

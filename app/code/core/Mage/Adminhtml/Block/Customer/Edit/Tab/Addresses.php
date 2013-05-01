@@ -93,7 +93,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
             $country->addClass('countries');
         }
 
-        $addressCollection = Mage::registry('current_customer')->getLoadedAddressCollection();
+        $addressCollection = Mage::registry('current_customer')->getAddresses();
         $this->assign('customer', Mage::registry('current_customer'));
         $this->assign('addressCollection', $addressCollection);
         $this->setForm($form);

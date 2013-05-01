@@ -19,14 +19,24 @@
  */
 ?>
 <?foreach ($this->getWebsiteCollection() as $_website):?>
-    <?$_storesCollection=$_website->getStoreCollection()->load()?>
-    <?if($_storesCollection->getSize()):?>
-    <h3><?=$_website->getName()?></h3>
-    <?foreach ($_storesCollection as $_store):?>
-        <span class="field-row">
-            <input type="radio" id="store_<?=$_store->getId()?>" class="new-store" onclick="order.setStoreId('<?=$_store->getId()?>')"/>
-            <label for="store_<?=$_store->getId()?>" class="normal"><?=$_store->getName()?></label>
-        </span>
+    <?$showWebsite=false;?>
+    <?foreach ($this->getGroupCollection($_website) as $_group):?>
+        <?$showGroup=false;?>
+        <?foreach ($this->getStoreCollection($_group) as $_store):?>
+            <?if ($showWebsite == false):?>
+                <?$showWebsite = true;?>
+                <h3><?=$_website->getName()?></h3>
+            <?endif;?>
+            <?if ($showGroup == false):?>
+                <?$showGroup = true;?>
+                <h4 style="margin-left:12px;"><?=$_group->getName()?></h4>
+            <?endif;?>
+            <span class="field-row" style="margin-left:28px;">
+                <input type="radio" id="store_<?=$_store->getId()?>" class="new-store" onclick="order.setStoreId('<?=$_store->getId()?>')"/>
+                <label for="store_<?=$_store->getId()?>" class="normal"><?=$_store->getName()?></label>
+            </span>
+        <?endforeach;?>
+        <?if ($showGroup):?>
+        <?endif;?>
     <?endforeach;?>
-    <?endif;?>
 <?endforeach;?>

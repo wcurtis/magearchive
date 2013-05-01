@@ -20,10 +20,10 @@
 ?>
 
 <div class="content-header">
-<table cellspacing="0" class="grid-header"> 
+<table cellspacing="0">
     <tr>
         <td><h3 class="icon-head head-categories"><?=$this->getHeader()?></h3></td>
-        <td class="a-right">
+        <td class="form-buttons">
             <?=$this->getResetButtonHtml()?>
             <?if($this->getCategoryId()):?>
                     <?=$this->getDeleteButtonHtml()?>
@@ -39,19 +39,19 @@
     <input type="hidden" name="category_products" id="in_category_products" value=""/>
     <div id="category_tab_content"></div>
     </form>
-    
+
 <script type="text/javascript" language="javascript">
     var categoryForm = new varienForm('category_edit_form');
-    
+
     function categoryDelete(){
         if(confirm('<?=Mage::helper('catalog')->__('Are you sure you want to delete this category?')?>')){
             location.href = '<?=$this->getDeleteUrl()?>'
         }
     }
-<?if($_gridJsObject=$this->getLayout()->getBlock('category.product.grid')->getJsObjectName()):?>
+<?if(($block = $this->getLayout()->getBlock('category.product.grid')) && ($_gridJsObject=$block->getJsObjectName())):?>
     var categoryProducts = $H(<?=$this->getProductsJson()?>);
     $('in_category_products').value = categoryProducts.toQueryString();
-    
+
     function registerCategoryProduct(grid, element, checked){
         if(checked){
             if(element.positionElement){
@@ -86,7 +86,7 @@
             $('in_category_products').value = categoryProducts.toQueryString();
         }
     }
-    
+
     var tabIndex = 1000;
     function categoryProductRowInit(grid, row){
         var checkbox = $(row).getElementsByClassName('checkbox')[0];
@@ -105,7 +105,7 @@
     <?=$_gridJsObject?>.rows.each(function(row){categoryProductRowInit(<?=$_gridJsObject?>, row)});
 <?endif;?>
 </script>
-    
+
 <?else:?>
 <div class="messages warning-msg">
     <?=Mage::helper('catalog')->__('Set root category for this store in the <a href="%s">configuration</a>', $this->getStoreConfigurationUrl())?>

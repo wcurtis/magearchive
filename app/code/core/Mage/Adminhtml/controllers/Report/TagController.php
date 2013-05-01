@@ -52,19 +52,19 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_customer_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export customer's tags report to XML format
+     * Export customer's tags report to Excel XML format
      */
-    public function exportCustomerXmlAction()
+    public function exportCustomerExcelAction()
     {
         $fileName   = 'tag_customer.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_customer_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function productAction()
@@ -85,19 +85,19 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_product_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export product's tags report to XML format
+     * Export product's tags report to Excel XML format
      */
-    public function exportProductXmlAction()
+    public function exportProductExcelAction()
     {
         $fileName   = 'tag_product.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_product_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
 
@@ -119,19 +119,19 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_popular_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export popular tags report to XML format
+     * Export popular tags report to Excel XML format
      */
-    public function exportPopularXmlAction()
+    public function exportPopularExcelAction()
     {
         $fileName   = 'tag_popular.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_popular_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function customerDetailAction()
@@ -153,19 +153,19 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_customer_detail_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export customer's tags detail report to XML format
+     * Export customer's tags detail report to Excel XML format
      */
-    public function exportCustomerDetailXmlAction()
+    public function exportCustomerDetailExcelAction()
     {
         $fileName   = 'tag_customer_detail.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_customer_detail_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function productDetailAction()
@@ -187,19 +187,19 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_product_detail_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export product's tags detail report to XML format
+     * Export product's tags detail report to Excel XML format
      */
-    public function exportProductDetailXmlAction()
+    public function exportProductDetailExcelAction()
     {
         $fileName   = 'tag_product_detail.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_product_detail_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function tagDetailAction()
@@ -221,19 +221,19 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_popular_detail_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export tag detail report to XML format
+     * Export tag detail report to Excel XML format
      */
-    public function exportTagDetailXmlAction()
+    public function exportTagDetailExcelAction()
     {
         $fileName   = 'tag_detail.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_tag_popular_detail_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     protected function _isAllowed()
@@ -255,17 +255,5 @@ class Mage_Adminhtml_Report_TagController extends Mage_Adminhtml_Controller_Acti
                 return Mage::getSingleton('admin/session')->isAllowed('report/tags');
                 break;
         }
-    }
-
-    protected function _sendUploadResponse($fileName, $content)
-    {
-        header('HTTP/1.1 200 OK');
-        header('Content-Disposition: attachment; filename='.$fileName);
-        header('Last-Modified: '.date('r'));
-        header("Accept-Ranges: bytes");
-        header("Content-Length: ".sizeof($content));
-        header("Content-type: application/octet-stream");
-        echo $content;
-        exit;
     }
 }

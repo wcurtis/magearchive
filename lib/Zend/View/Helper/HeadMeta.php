@@ -14,7 +14,7 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -32,19 +32,18 @@ require_once 'Zend/View/Exception.php';
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_Standalone
 {
-    /**#@+
+    /**
      * Types of attributes
      * @var array
      */
     protected $_typeKeys     = array('name', 'http-equiv');
     protected $_requiredKeys = array('content');
     protected $_modifierKeys = array('lang', 'scheme');
-    /**#@-*/
 
     /**
      * @var string registry key
@@ -154,12 +153,15 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
                 return $this->offsetSet($index, $item);
             }
 
+            if ($action == 'set') {
+                //var_dump($this->getContainer());
+            }
+            
             $this->$action($item);
             return $this;
         }
 
-        require_once 'Zend/View/Exception.php';
-        throw new Zend_View_Exception(sprintf('Invalid action "%s"', $method));
+        return parent::__call($method, $args);
     }
 
     /**
@@ -195,7 +197,7 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('Invalid value passed to append; please use appendMeta()');
         }
 
-        return parent::append($value);
+        return $this->getContainer()->append($value);
     }
 
     /**
@@ -213,9 +215,26 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('Invalid value passed to offsetSet; please use offsetSetMeta()');
         }
 
-        return parent::offsetSet($index, $value);
+        return $this->getContainer()->offsetSet($index, $value);
     }
 
+    /**
+     * OffsetUnset
+     * 
+     * @param  string|int $index
+     * @return void
+     * @throws Zend_View_Exception
+     */
+    public function offsetUnset($index)
+    {
+        if (!in_array($index, $this->getContainer()->getKeys())) {
+            require_once 'Zend/View/Exception.php';
+            throw new Zend_View_Exception('Invalid index passed to offsetUnset.');
+        }
+        
+        return $this->getContainer()->offsetUnset($index);
+    }
+    
     /**
      * Prepend
      * 
@@ -230,7 +249,7 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('Invalid value passed to prepend; please use prependMeta()');
         }
 
-        return parent::prepend($value);
+        return $this->getContainer()->prepend($value);
     }
 
     /**
@@ -247,7 +266,14 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
             throw new Zend_View_Exception('Invalid value passed to set; please use setMeta()');
         }
 
-        return parent::set($value);
+        $container = $this->getContainer();
+        foreach ($container->getArrayCopy() as $index => $item) {
+            if ($item->type == $value->type) {
+                $this->offsetUnset($index);
+            }
+        }
+            
+        return $this->append($value);
     }
 
     /**
@@ -275,8 +301,16 @@ class Zend_View_Helper_HeadMeta extends Zend_View_Helper_Placeholder_Container_S
             $modifiersString .= $key . '="' . $this->_escape($value) . '" ';
         }
 
+        if ($this->view instanceof Zend_View_Abstract) {
+            $tpl = ($this->view->doctype()->isXhtml())
+                 ? '<meta %s="%s" content="%s" %s/>'
+                 : '<meta %s="%s" content="%s" %s>';
+        } else {
+            $tpl = '<meta %s="%s" content="%s" %s/>';
+        }
+
         $meta = sprintf(
-            '<meta %s="%s" content="%s" %s/>',
+            $tpl,
             $type,
             $this->_escape($item->$type),
             $this->_escape($item->content),

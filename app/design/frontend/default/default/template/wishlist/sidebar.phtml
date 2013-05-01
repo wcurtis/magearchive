@@ -17,13 +17,13 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-?> 
+?>
 <?if ($this->helper('wishlist')->isAllow()) :?>
 <?//if($this->getCanDisplayWishlist()):?>
 <div class="box base-mini mini-wishlist">
     <div class="head">
-        <h4><?=$this->helper('wishlist')->__('My Wishlist - <a href="%s">%d Item(s)</a>', 
-                $this->helper('wishlist')->getListUrl(), 
+        <h4><?=$this->helper('wishlist')->__('My Wishlist - <a href="%s">%d Item(s)</a>',
+                $this->helper('wishlist')->getListUrl(),
                 $this->helper('wishlist')->getItemCount()
             )?></h4>
         <h5><?=$this->helper('wishlist')->__('Last Added Items')?></h5>
@@ -34,7 +34,7 @@
         <li>
             <div class="product-images">
                 <a href="<?=$_item->getProductUrl()?>">
-                    <img src="<?=$_item->getThumbnailUrl()?>" alt="<?=$_item->getName()?>" width="50"/>
+                    <img src="<?=$this->helper('catalog/image')->init($_item, 'thumbnail')->resize(50);?>" alt="<?=$_item->getName()?>" width="50"/>
                 </a>
             </div>
             <div class="product-details">

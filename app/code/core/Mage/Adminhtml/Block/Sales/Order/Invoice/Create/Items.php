@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Adminhtml_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Adminhtml_Block_Sales_Order_Abstract
 {
     /**
      * Initialize template
@@ -34,6 +34,7 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Adminht
     {
         parent::_construct();
         $this->setTemplate('sales/order/invoice/create/items.phtml');
+        $this->setOrder($this->getInvoice()->getOrder());
     }
 
     /**
@@ -63,19 +64,21 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Adminht
         );
 
         $orderPayment = $this->getInvoice()->getOrder()->getPayment();
+        $this->setPriceDataObject($orderPayment);
         $totalsBarBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totalbar')
             ->setOrder($this->getInvoice()->getOrder())
-            ->addTotal(Mage::helper('sales')->__('Paid Amount'), $orderPayment->getAmountPaid())
-            ->addTotal(Mage::helper('sales')->__('Refund Amount'), $orderPayment->getAmountRefunded())
-            ->addTotal(Mage::helper('sales')->__('Shipping Amount'), $orderPayment->getShippingCaptured())
-            ->addTotal(Mage::helper('sales')->__('Shipping Refund'), $orderPayment->getShippingRefunded())
-            ->addTotal(Mage::helper('sales')->__('Order Grand Total'), $this->getInvoice()->getOrder()->getGrandTotal(), true);
+            ->addTotal(Mage::helper('sales')->__('Paid Amount'), $this->displayPriceAttribute('amount_paid'))
+            ->addTotal(Mage::helper('sales')->__('Refund Amount'), $this->displayPriceAttribute('amount_refunded'))
+            ->addTotal(Mage::helper('sales')->__('Shipping Amount'), $this->displayPriceAttribute('shipping_captured'))
+            ->addTotal(Mage::helper('sales')->__('Shipping Refund'), $this->displayPriceAttribute('shipping_refunded'));
+        $this->setPriceDataObject($this->getInvoice()->getOrder());
+        $totalsBarBlock->addTotal(Mage::helper('sales')->__('Order Grand Total'), $this->displayPriceAttribute('grand_total'), true);
 
         $this->setChild('totals_bar', $totalsBarBlock);
 
         $totalsBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totals')
             ->setSource($this->getInvoice())
-            ->setCurrency($this->getInvoice()->getOrder()->getOrderCurrency());
+            ->setOrder($this->getInvoice()->getOrder());
         $this->setChild('totals', $totalsBlock);
 
         return parent::_prepareLayout();

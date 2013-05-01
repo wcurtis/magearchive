@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Abstract.php 6320 2007-09-12 00:27:22Z bkarwin $
  */
@@ -42,7 +42,7 @@ require_once 'Zend/Db.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Table_Abstract
@@ -376,7 +376,7 @@ abstract class Zend_Db_Table_Abstract
      */
     public static final function setDefaultAdapter($db = null)
     {
-        Zend_Db_Table_Abstract::$_defaultDb = self::_setupAdapter($db);
+        self::$_defaultDb = self::_setupAdapter($db);
     }
 
     /**
@@ -544,6 +544,9 @@ abstract class Zend_Db_Table_Abstract
     {
         if (! $this->_db) {
             $this->_db = self::getDefaultAdapter();
+            if (!$this->_db instanceof Zend_Db_Adapter_Abstract) {
+            	throw new Zend_Db_Table_Exception('No adapter found for ' . get_class($this));
+            }
         }
     }
 
@@ -727,11 +730,15 @@ abstract class Zend_Db_Table_Abstract
     /**
      * Returns table information.
      *
-     * @return array
+     * You can elect to return only a part of this information by supplying its key name,
+     * otherwise all information is returned as an array.
+     *
+     * @param  $key The specific info part to return OPTIONAL
+     * @return mixed
      */
-    public function info()
+    public function info($key = null)
     {
-        return array(
+        $info = array(
             self::SCHEMA           => $this->_schema,
             self::NAME             => $this->_name,
             self::COLS             => (array) $this->_cols,
@@ -743,6 +750,17 @@ abstract class Zend_Db_Table_Abstract
             self::DEPENDENT_TABLES => $this->_dependentTables,
             self::SEQUENCE         => $this->_sequence
         );
+        
+        if ($key === null) {
+            return $info;
+        }
+        
+        if (!array_key_exists($key, $info)) {
+            require_once 'Zend/Db/Table/Exception.php';
+            throw new Zend_Db_Table_Exception('There is no table information for the key "' . $key . '"');
+        }
+        
+        return $info[$key];
     }
 
     /**
@@ -811,6 +829,7 @@ abstract class Zend_Db_Table_Abstract
          */
         $pkData = array_intersect_key($data, array_flip($primary));
         if (count($primary) == 1) {
+            reset($pkData);
             return current($pkData);
         }
 
@@ -914,17 +933,17 @@ abstract class Zend_Db_Table_Abstract
     }
 
     /**
-     * Fetches rows by primary key.  The argument specifies one or more primary 
-     * key value(s).  To find multiple rows by primary key, the argument must 
+     * Fetches rows by primary key.  The argument specifies one or more primary
+     * key value(s).  To find multiple rows by primary key, the argument must
      * be an array.
      *
-     * This method accepts a variable number of arguments.  If the table has a 
-     * multi-column primary key, the number of arguments must be the same as 
-     * the number of columns in the primary key.  To find multiple rows in a 
-     * table with a multi-column primary key, each argument must be an array 
+     * This method accepts a variable number of arguments.  If the table has a
+     * multi-column primary key, the number of arguments must be the same as
+     * the number of columns in the primary key.  To find multiple rows in a
+     * table with a multi-column primary key, each argument must be an array
      * with the same number of elements.
      *
-     * The find() method always returns a Rowset object, even if only one row 
+     * The find() method always returns a Rowset object, even if only one row
      * was found.
      *
      * @param  mixed $key The value(s) of the primary keys.
@@ -1000,7 +1019,7 @@ abstract class Zend_Db_Table_Abstract
     {
         if (!($where instanceof Zend_Db_Table_Select)) {
             $select = $this->select();
-            
+
             if ($where !== null) {
                 $this->_where($select, $where);
             }
@@ -1016,7 +1035,7 @@ abstract class Zend_Db_Table_Abstract
         } else {
             $select = $where;
         }
-        
+
         $rows = $this->_fetch($select);
 
         $data  = array(
@@ -1027,7 +1046,7 @@ abstract class Zend_Db_Table_Abstract
             'stored'   => true
         );
 
-        Zend_Loader::loadClass($this->_rowsetClass);
+        @Zend_Loader::loadClass($this->_rowsetClass);
         return new $this->_rowsetClass($data);
     }
 
@@ -1044,7 +1063,7 @@ abstract class Zend_Db_Table_Abstract
     {
         if (!($where instanceof Zend_Db_Table_Select)) {
             $select = $this->select();
-            
+
             if ($where !== null) {
                 $this->_where($select, $where);
             }
@@ -1072,7 +1091,7 @@ abstract class Zend_Db_Table_Abstract
             'stored'  => true
         );
 
-        Zend_Loader::loadClass($this->_rowClass);
+        @Zend_Loader::loadClass($this->_rowClass);
         return new $this->_rowClass($data);
     }
 
@@ -1096,21 +1115,20 @@ abstract class Zend_Db_Table_Abstract
     public function createRow(array $data = array())
     {
         $defaults = array_combine($this->_cols, array_fill(0, count($this->_cols), null));
-        $keys = array_flip($this->_cols);
-        $data = array_intersect_key($data, $keys);
-        $data = array_merge($defaults, $data);
-
+        $data = array_intersect_key($data, $defaults);
         $config = array(
             'table'    => $this,
-            'data'     => $data,
+            'data'     => $defaults,
             'readOnly' => false,
             'stored'   => false
         );
 
-        Zend_Loader::loadClass($this->_rowClass);
-        return new $this->_rowClass($config);
+        @Zend_Loader::loadClass($this->_rowClass);
+        $row = new $this->_rowClass($config);
+        $row->setFromArray($data);
+        return $row;
     }
-    
+
     /**
      * Generate WHERE clause from user-supplied string or array
      *

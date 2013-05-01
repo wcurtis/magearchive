@@ -244,7 +244,7 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
         $this->_initSession()
             ->_setActiveMenu('sales/order')
             ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_create'))
-            ->_addJs($this->getLayout()->createBlock('core/template')->setTemplate(
+            ->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate(
                 'sales/order/create/js.phtml'
             ))
             ->renderLayout();

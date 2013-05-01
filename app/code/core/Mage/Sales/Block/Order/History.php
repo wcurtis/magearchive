@@ -43,7 +43,7 @@ class Mage_Sales_Block_Order_History extends Mage_Core_Block_Template
 
         $this->setOrders($orders);
 
-        Mage::registry('action')->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
+        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
     }
 
     protected function _prepareLayout()

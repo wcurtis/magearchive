@@ -42,7 +42,6 @@ class Mage_Adminhtml_Block_Customer_Group_Grid extends Mage_Adminhtml_Block_Widg
     protected function _prepareCollection()
     {
         $collection = Mage::getResourceModel('customer/group_collection')
-        	->addFieldToFilter('customer_group_id', array('neq'=>0))
             ->addTaxClass();
 
         $this->setCollection($collection);

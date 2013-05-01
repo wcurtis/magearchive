@@ -48,8 +48,8 @@ class Mage_Rating_Model_Mysql4_Rating_Collection extends Mage_Core_Model_Mysql4_
      */
     public function addEntityFilter($entity)
     {
-    	$this->_sqlSelect->join($this->getTable('rating_entity'),
-    	   'main_table.entity_id='.$this->getTable('rating_entity').'.entity_id');
+        $this->_select->join($this->getTable('rating_entity'),
+           'main_table.entity_id='.$this->getTable('rating_entity').'.entity_id');
 
         if (is_numeric($entity)) {
             $this->addFilter('entity',
@@ -107,7 +107,7 @@ class Mage_Rating_Model_Mysql4_Rating_Collection extends Mage_Core_Model_Mysql4_
                 ->load();
 
             foreach ($this as $rating) {
-            	$rating->setOptions($collection->getItemsByColumnValue('rating_id', $rating->getId()));
+                $rating->setOptions($collection->getItemsByColumnValue('rating_id', $rating->getId()));
             }
         }
 
@@ -143,10 +143,10 @@ class Mage_Rating_Model_Mysql4_Rating_Collection extends Mage_Core_Model_Mysql4_
         $data = $this->getConnection()->fetchAll($sql);
 
         foreach ($data as $item) {
-        	$rating = $this->getItemById($item['rating_id']);
-            	if ($rating && $item['count']>0) {
-            	    $rating->setSummary($item['sum']/$item['count']);
-            	}
+            $rating = $this->getItemById($item['rating_id']);
+                if ($rating && $item['count']>0) {
+                    $rating->setSummary($item['sum']/$item['count']);
+                }
         }
         return $this;
     }
@@ -172,11 +172,11 @@ class Mage_Rating_Model_Mysql4_Rating_Collection extends Mage_Core_Model_Mysql4_
             return $this;
         }
 
-        $this->_sqlSelect = $this->getConnection()
+        $this->_select = $this->getConnection()
             ->select()
             ->from($this->getTable('rating_store'))
             ->where('rating_id IN(?)', $ratingIds);
-        foreach ($this->getConnection()->fetchAll($this->_sqlSelect) as $row) {
+        foreach ($this->getConnection()->fetchAll($this->_select) as $row) {
             $item = $this->getItemById($row['rating_id']);
             $item->setStores(array_merge($item->getStores(), array($row['store_id'])));
         }

@@ -419,8 +419,12 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
             foreach ($data as $itemId => $info) {
                 $itemQty    = (int) $info['qty'];
                 $itemQty    = $itemQty>0 ? $itemQty : 1;
-
-                $itemPrice  = $this->_parseCustomPrice($info['custom_price']);;
+                if (isset($info['custom_price'])) {
+                    $itemPrice  = $this->_parseCustomPrice($info['custom_price']);;
+                }
+                else {
+                    $itemPrice = null;
+                }
                 $noDiscount = !isset($info['use_discount']);
 
                 if (empty($info['action'])) {
@@ -645,6 +649,10 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
 
         foreach ($quote->getShippingAddress()->getAllItems() as $item) {
             $order->addItem($quoteConvert->itemToOrderItem($item));
+        }
+
+        if ($this->getSendConfirmation()) {
+            $order->setEmailSent(true);
         }
 
         $order->place()

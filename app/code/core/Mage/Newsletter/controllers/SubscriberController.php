@@ -89,12 +89,12 @@
 
     	if($subscriber->getId() && $subscriber->getCode()) {
     		 if($subscriber->confirm($this->getRequest()->getParam('code'))) {
-    		 	Mage::getSingleton('newsletter/session')->addSuccess(Mage::helper('newsletter')->__('Your subscription was successfully confirmed'));
+    		 	Mage::getSingleton('core/session')->addSuccess(Mage::helper('newsletter')->__('Your subscription was successfully confirmed'));
     		 } else {
-    		 	Mage::getSingleton('newsletter/session')->addError(Mage::helper('newsletter')->__('Invalid subscription confirmation code'));
+    		 	Mage::getSingleton('core/session')->addError(Mage::helper('newsletter')->__('Invalid subscription confirmation code'));
     		 }
     	} else {
-    		 Mage::getSingleton('newsletter/session')->addError(Mage::helper('newsletter')->__('Invalid subscription ID'));
+    		 Mage::getSingleton('core/session')->addError(Mage::helper('newsletter')->__('Invalid subscription ID'));
     	}
 
         $this->_redirectUrl(Mage::getBaseUrl());
@@ -102,11 +102,16 @@
 
     public function unsubscribeAction()
     {
-    	$session = Mage::getSingleton('newsletter/session');
-    	$result = Mage::getModel('newsletter/subscriber')->unsubscribe($this->getRequest()->getParam('email'));
+    	$session = Mage::getSingleton('core/session');
+    	$result = Mage::getModel('newsletter/subscriber')
+    	   ->load($this->getRequest()->getParam('id'))
+    	   ->setCheckCode($this->getRequest()->getParam('code'))
+    	   ->unsubscribe();
 
     	if ($result instanceof Exception) {
-    		$session->addError(Mage::helper('newsletter')->__('There was a problem with the un-subscription: %s', $status));
+    		$session->addError(Mage::helper('newsletter')->__('There was a problem with the un-subscription: %s', $result->getMessage()));
+    	} elseif ($result instanceof Mage_Core_Exception) {
+    	    $session->addError($result->getMessage());
     	} else {
     		$session->addSuccess(Mage::helper('newsletter')->__('You have been successfully unsubscribed'));
     	}

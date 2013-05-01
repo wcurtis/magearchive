@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Adminhtml_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Adminhtml_Block_Sales_Order_Abstract
 {
     /**
      * Initialize template
@@ -34,6 +34,7 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Admi
     {
         parent::_construct();
         $this->setTemplate('sales/order/creditmemo/create/items.phtml');
+        $this->setOrder($this->getCreditmemo()->getOrder());
     }
 
     /**
@@ -77,17 +78,19 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Admi
         $totalsBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totals')
             ->setTemplate('sales/order/creditmemo/create/totals.phtml')
             ->setSource($this->getCreditmemo())
-            ->setCurrency($this->getCreditmemo()->getOrder()->getOrderCurrency());
+            ->setOrder($this->getCreditmemo()->getOrder());
         $this->setChild('totals', $totalsBlock);
 
         $orderPayment = $this->getCreditmemo()->getOrder()->getPayment();
+        $this->setPriceDataObject($orderPayment);
         $totalsBarBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totalbar')
             ->setOrder($this->getCreditmemo()->getOrder())
-            ->addTotal(Mage::helper('sales')->__('Paid Amount'), $orderPayment->getAmountPaid())
-            ->addTotal(Mage::helper('sales')->__('Refund Amount'), $orderPayment->getAmountRefunded())
-            ->addTotal(Mage::helper('sales')->__('Shipping Amount'), $orderPayment->getShippingCaptured())
-            ->addTotal(Mage::helper('sales')->__('Shipping Refund'), $orderPayment->getShippingRefunded())
-            ->addTotal(Mage::helper('sales')->__('Order Grand Total'), $this->getCreditmemo()->getOrder()->getGrandTotal(), true);
+            ->addTotal(Mage::helper('sales')->__('Paid Amount'), $this->displayPriceAttribute('amount_paid'))
+            ->addTotal(Mage::helper('sales')->__('Refund Amount'), $this->displayPriceAttribute('amount_refunded'))
+            ->addTotal(Mage::helper('sales')->__('Shipping Amount'), $this->displayPriceAttribute('shipping_captured'))
+            ->addTotal(Mage::helper('sales')->__('Shipping Refund'), $this->displayPriceAttribute('shipping_refunded'));
+        $this->setPriceDataObject($this->getCreditmemo()->getOrder());
+        $totalsBarBlock->addTotal(Mage::helper('sales')->__('Order Grand Total'), $this->displayPriceAttribute('grand_total'), true);
 
         $this->setChild('totals_bar', $totalsBarBlock);
 
@@ -110,11 +113,6 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Admi
             return $this->getCreditmemo()->getOrder()->getPayment()->canCapturePartial();
         }
         return true;
-    }
-
-    public function formatPrice($price)
-    {
-        return $this->getCreditmemo()->getOrder()->formatPrice($price);
     }
 
     public function getUpdateButtonHtml()

@@ -50,12 +50,12 @@ function giftMessageToogle(giftMessageIdentifier)
 </script>
 <?endif;?>
 <? $_order = $this->getOrder() ?>
-
+<a href="<?=$this->getPrintAllInvoicesUrl($_order)?>" target="_blank"><?=$this->__('Print All Invoices')?></a>
 <?foreach ($_order->getInvoiceCollection() as $_invoice):?>
 <br />
 <div class="head">
-    <h3>Invoice #<?=$_invoice->getIncrementId();?></h3>
-    <!--<a href="#">Print Invoice</a>-->
+    <h3><?=$this->__('Invoice #')?><?=$_invoice->getIncrementId();?></h3>
+    <a href="<?=$this->getPrintInvoiceUrl($_invoice)?>" target="_blank"><?=$this->__('Print Invoice')?></a>
 </div>
 
 <h4><?=$this->__('Items Invoiced')?></h4>
@@ -63,9 +63,10 @@ function giftMessageToogle(giftMessageIdentifier)
     <thead>
         <tr>
             <th><?=$this->__('Product Name')?></th>
-            <th width="15%"><?=$this->__('Price')?></th>
+            <th width="10%"><?=$this->__('SKU')?></th>
+            <th width="10%"><?=$this->__('Price')?></th>
             <th class="a-center" width="10%"><?=$this->__('Qty Invoiced')?></th>
-            <th class="a-right" width="20%"><?=$this->__('Subtotal')?></th>
+            <th class="a-right" width="15%"><?=$this->__('Subtotal')?></th>
         </tr>
     </thead>
     <tbody>
@@ -74,7 +75,11 @@ function giftMessageToogle(giftMessageIdentifier)
         <?$_index = 0;?>
         <?foreach ($_items as $_item):?>
             <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-row-<?=$_item->getId()?>">
-                <td><?=$_item->getName()?></td>
+                <td>
+                    <?=$_item->getName()?>
+                    <?=$_item->getDescription()?>
+                </td>
+                <td><?=$_item->getSku()?></td>
                 <td class="a-right nowrap"><?=$_order->formatPrice($_item->getPrice())?> </td>
                 <td class="a-center"><?=$_item->getQty()*1?> </td>
                 <td class="last a-right nowrap"><?=$_order->formatPrice($_item->getRowTotal())?> </td>
@@ -83,29 +88,29 @@ function giftMessageToogle(giftMessageIdentifier)
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3" class="a-right"><?=$this->__('Order Subtotal')?></td>
+            <td colspan="4" class="a-right"><?=$this->__('Order Subtotal')?></td>
             <td class="last a-right"><?=$_order->formatPrice($_invoice->getSubtotal())?></td>
         </tr>
         <?if ($_invoice->getDiscountAmount() > 0):?>
             <tr>
-                <td colspan="3" class="a-right"><?=$this->__('Discount :')?></td>
+                <td colspan="4" class="a-right"><?=$this->__('Discount :')?></td>
                 <td class="last a-right"><?=$_order->formatPrice(0.00 - $_invoice->getDiscountAmount())?></td>
             </tr>
         <?endif;?>
         <?if ($_invoice->getTaxAmount() > 0):?>
             <tr>
-                <td colspan="3" class="a-right"><?=$this->__('Tax')?></td>
+                <td colspan="4" class="a-right"><?=$this->__('Tax')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_invoice->getTaxAmount())?></td>
             </tr>
         <?endif;?>
         <?if ($_invoice->getShippingAmount() || $_invoice->getShippingDescription()):?>
             <tr>
-                <td colspan="3" class="a-right"><?=$this->__('Shipping & Handling')?></td>
+                <td colspan="4" class="a-right"><?=$this->__('Shipping & Handling')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_invoice->getShippingAmount())?></td>
             </tr>
         <?endif;?>
         <tr>
-            <td colspan="3" class="a-right"><?=$this->__('Grand Total')?></td>
+            <td colspan="4" class="a-right"><?=$this->__('Grand Total')?></td>
             <td class="last a-right"><?=$_order->formatPrice($_invoice->getGrandTotal())?></td>
         </tr>
     </tfoot>

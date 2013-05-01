@@ -93,21 +93,15 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'options'    => $this->helper('tag/data')->getStatusesArray(),
         ));
 
-          // Collection for stores filters
-        if(!$collection = Mage::registry('stores_select_collection')) {
-            $collection =  Mage::app()->getStore()->getResourceCollection()
-                ->load();
-            Mage::register('stores_select_collection', $collection);
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('visible_in', array(
+                'header'    => Mage::helper('tag')->__('Visible In'),
+                'type'      => 'store',
+                'index'     => 'stores',
+                'sortable'  => false,
+                'store_view'=> true
+            ));
         }
-
-         $this->addColumn('visible_in', array(
-            'header'    => Mage::helper('tag')->__('Visible In'),
-            'type'      => 'select',
-            'index'     => 'stores',
-             'sortable'  => false,
-            'filter'      => 'adminhtml/tag_grid_all_filter_visible',
-            'renderer'      => 'adminhtml/tag_grid_all_renderer_visible'
-        ));
 
         $this->addColumn('actions', array(
             'header'    => Mage::helper('tag')->__('Actions'),

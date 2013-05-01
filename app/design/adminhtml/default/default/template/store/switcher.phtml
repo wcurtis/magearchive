@@ -18,18 +18,30 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
+<?$_websiteCollection = $this->getWebsiteCollection()?>
+<?if ($_websiteCollection->getSize()):?>
 <p class="switcher"><label for="store_switcher"><?=$this->__('Choose Store View')?>:</label>
 <select name="store_switcher" id="store_switcher" class="left-col-block" onchange="return switchStore(this);">
     <option value=""><?=$this->getDefaultStoreName()?></option>
-    <?foreach ($this->getWebsiteCollection() as $_website):?>
-    <?$_storesCollection = $this->getStores($_website)?>
-    <?if($_storesCollection->getSize()):?>
-        <optgroup label="<?=$_website->getName()?>">
-        <?foreach ($_storesCollection as $_store):?>
-            <option value="<?=$_store->getId()?>"<?if($this->getStoreId() == $_store->getId()):?> selected<?endif;?>><?=$_store->getName()?></option>
+    <?foreach ($_websiteCollection as $_website):?>
+        <?$showWebsite=false;?>
+        <?foreach ($this->getGroupCollection($_website) as $_group):?>
+            <?$showGroup=false;?>
+            <?foreach ($this->getStoreCollection($_group) as $_store):?>
+                <?if ($showWebsite == false):?>
+                    <?$showWebsite = true;?>
+                    <optgroup label="<?=$_website->getName()?>"></optgroup>
+                <?endif;?>
+                <?if ($showGroup == false):?>
+                    <?$showGroup = true;?>
+                    <optgroup label="&nbsp;&nbsp;&nbsp;<?=$_group->getName()?>">
+                <?endif;?>
+                <option value="<?=$_store->getId()?>"<?if($this->getStoreId() == $_store->getId()):?> selected<?endif;?>>&nbsp;&nbsp;&nbsp;&nbsp;<?=$_store->getName()?></option>
+            <?endforeach;?>
+            <?if ($showGroup):?>
+                </optgroup>
+            <?endif;?>
         <?endforeach;?>
-        </optgroup>
-    <?endif;?>
     <?endforeach;?>
 </select>
 </p>
@@ -53,3 +65,4 @@
     <?endif;?>
     }
 </script>
+<?endif;?>

@@ -48,13 +48,30 @@ class Mage_Checkout_Block_Onepage_Payment_Methods extends Mage_Payment_Block_For
         // Checking for min/max order total for assigned payment method
         $gt = $this->getQuote()->getGrandTotal();
         $payment = $this->getQuote()->getStore()->getConfig('payment/'.$method->getCode());
-        if ($payment
-            && isset($payment['min_order_total'])
-            && !empty($payment['max_order_total'])
-            && !($gt >= $payment['min_order_total'] && $gt < $payment['max_order_total'])) {
+
+        if( isset($payment['min_order_total']) && $payment['min_order_total'] == '' ) {
+            $payment['min_order_total'] = 0.0001;
+        }
+
+        /*if( isset($payment['max_order_total']) && $payment['max_order_total'] == '' && $gt == 0 ) {
+            $payment['max_order_total'] = 0.0001;
+        }*/
+
+        if( !$payment ) {
+            return false;
+        } elseif( isset($payment['min_order_total']) && !empty($payment['min_order_total']) && $gt < $payment['min_order_total'] ) {
+            return false;
+        } elseif( isset($payment['max_order_total']) && !empty($payment['max_order_total']) && $gt > $payment['max_order_total'] ) {
             return false;
         }
 
+/*        if ($payment
+            && isset($payment['min_order_total'])
+            && (!empty($payment['max_order_total']) )
+            && ($gt < $payment['min_order_total'] || $gt > $payment['max_order_total'])) {
+            return false;
+        }
+*/
         return true;
     }
 

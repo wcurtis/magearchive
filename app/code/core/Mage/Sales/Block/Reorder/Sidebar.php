@@ -44,7 +44,7 @@ class Mage_Sales_Block_Reorder_Sidebar extends Mage_Core_Block_Template
 
         $this->setOrders($orders);
 
-        Mage::registry('action')->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
+        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
     }
     }
 

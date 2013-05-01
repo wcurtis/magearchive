@@ -78,13 +78,14 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Adminhtml_Block_Te
     public function getStoreConfigurationUrl()
     {
         $storeId = (int) $this->getRequest()->getParam('store');
-        $params = array('section'=>'catalog');
+        $params = array();
+//        $params = array('section'=>'catalog');
         if ($storeId) {
             $store = Mage::app()->getStore($storeId);
             $params['website'] = $store->getWebsite()->getCode();
             $params['store']   = $store->getCode();
         }
-        return $this->getUrl('*/system_config/edit', $params);
+        return $this->getUrl('*/system_store', $params);
     }
 
     public function getSaveUrl()

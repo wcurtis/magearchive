@@ -296,7 +296,7 @@ class Mage_GoogleCheckout_Model_Api_Xml_Callback extends Mage_GoogleCheckout_Mod
      */
     public function getOrder()
     {
-        if (!$this->hasData('$orderorder')) {
+        if (!$this->hasData('order')) {
             $order = Mage::getModel('sales/order')
                 ->loadByAttribute('ext_order_id', $this->getGoogleOrderNumber());
             if (!$order->getId()) {

@@ -34,7 +34,7 @@ class Mage_Reports_Model_Mysql4_Review_Collection extends Mage_Review_Model_Mysq
 
     public function addProductFilter($productId)
     {
-        $this->_sqlSelect
+        $this->_select
             ->where('main_table.entity_pk_value = ?', $productId);
 
         return $this;
@@ -49,7 +49,7 @@ class Mage_Reports_Model_Mysql4_Review_Collection extends Mage_Review_Model_Mysq
 
     public function getSelectCountSql()
     {
-        $countSelect = clone $this->_sqlSelect;
+        $countSelect = clone $this->_select;
         $countSelect->reset(Zend_Db_Select::ORDER);
         $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
         $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
@@ -71,7 +71,7 @@ class Mage_Reports_Model_Mysql4_Review_Collection extends Mage_Review_Model_Mysq
         );
 
         if (in_array($attribute, $fields)) {
-                $this->_sqlSelect->order($attribute . ' ' . $dir);
+                $this->_select->order($attribute . ' ' . $dir);
         } else {
                 parent::setOrder($attribute, $dir);
         }

@@ -25,28 +25,29 @@ $_newRates = $this->getNewRates();
 $_rates = ( $_newRates ) ? $_newRates : $_oldRates;
 ?>
 <form name="rateForm" id="rateForm" method="post" action="<?=$this->getRatesFormAction();?>">
-    <table class="rate-table data-table"" cellspacing="0">
+    <div class="grid">
+        <table cellspacing="0">
         <thead>
-        <tr>
-            <td class="thead">&nbsp;</td>
-            <?$_i = 0; foreach( $this->getAllowedCurrencies() as $_currencyCode ):?>
-                <td class="<?=(( ++$_i == (sizeof($this->getAllowedCurrencies())) ) ? 'thead-last' : 'thead' )?>"><strong><?=$_currencyCode?><strong></td>
-            <?endforeach;?>
-        </tr>
+            <tr class="headings">
+                <th class="a-right">&nbsp;</th>
+                <?$_i = 0; foreach( $this->getAllowedCurrencies() as $_currencyCode ):?>
+                    <th class="<?=(( ++$_i == (sizeof($this->getAllowedCurrencies())) ) ? 'last' : '' )?> a-right"><strong><?=$_currencyCode?><strong></th>
+                <?endforeach;?>
+            </tr>
         </thead>
         <?$_j = 0; foreach( $this->getDefaultCurrencies() as $_currencyCode ):?>
         <tr>
             <?foreach( $_rates[$_currencyCode] as $_rate => $_value ):?>
                 <?if( ++$_j == 1 ):?>
-                    <td class="thead"><strong><?=$_currencyCode?></strong></td>
-                    <td>
+                    <td class="a-right"><strong><?=$_currencyCode?></strong></td>
+                    <td class="a-right">
                         <input type="text" name="rate[<?=$_currencyCode?>][<?=$_rate?>]" value="<?=( $_currencyCode == $_rate ) ? '1.0000' : $_value?>" <?=( $_currencyCode == $_rate ) ? 'class="input-text input-text-disabled" readonly="true"' : 'class="input-text"'?> />
                         <?if( isset($_newRates) && $_currencyCode != $_rate && isset($_oldRates[$_currencyCode][$_rate]) ):?>
                         <br /><span class="old-rate"><?=$this->__('Old rate:')?> <?=$_oldRates[$_currencyCode][$_rate]?></span>
                         <?endif;?>
-                    </td>
+                    </th>
                 <?else:?>
-                    <td>
+                    <td class="a-right">
                         <input type="text" name="rate[<?=$_currencyCode?>][<?=$_rate?>]" value="<?=( $_currencyCode == $_rate ) ? '1.0000' : $_value?>" <?=( $_currencyCode == $_rate ) ? 'class="input-text input-text-disabled" readonly="true"' : 'class="input-text"'?> />
                         <?if( isset($_newRates)  && $_currencyCode != $_rate && isset($_oldRates[$_currencyCode][$_rate]) ):?>
                         <br /><span class="old-rate"><?=$this->__('Old rate:')?> <?=$_oldRates[$_currencyCode][$_rate]?></span>
@@ -57,6 +58,7 @@ $_rates = ( $_newRates ) ? $_newRates : $_oldRates;
         </tr>
         <?endforeach;?>
     </table>
+    </div>
 </form>
 <script type="text/javascript">
     currencyForm = new varienForm('rateForm');

@@ -79,7 +79,7 @@ class Mage_Checkout_Multishipping_AddressController extends Mage_Core_Controller
         /**
          * if we create first address we need reset emd init checkout
          */
-        if ($this->_getCheckout()->getCustomer()->getLoadedAddressCollection()->getSize() == 1) {
+        if (count($this->_getCheckout()->getCustomer()->getAddresses()) == 1) {
             $this->_getCheckout()->reset();
         }
         $this->_redirect('*/multishipping/addresses');

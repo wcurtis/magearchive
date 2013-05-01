@@ -210,12 +210,12 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
      * Prepare request to gateway
      *
      * @link http://www.authorize.net/support/AIM_guide.pdf
-     * @param Mage_Sales_Model_Document $document
+     * @param Mage_Sales_Model_Document $order
      * @return unknown
      */
     protected function _buildRequest(Varien_Object $payment)
     {
-        $document = $payment->getDocument();
+        $order = $payment->getOrder();
 
         if (!$payment->getAnetTransMethod()) {
             $payment->setAnetTransMethod(self::REQUEST_METHOD_CC);
@@ -249,10 +249,10 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
                 break;
         }
 
-        if (!empty($document)) {
-            $request->setXInvoiceNum($document->getIncrementId());
+        if (!empty($order)) {
+            $request->setXInvoiceNum($order->getIncrementId());
 
-            $billing = $document->getBillingAddress();
+            $billing = $order->getBillingAddress();
             if (!empty($billing)) {
                 $request->setXFirstName($billing->getFirstname())
                     ->setXLastName($billing->getLastname())
@@ -265,14 +265,14 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
                     ->setXPhone($billing->getTelephone())
                     ->setXFax($billing->getFax())
                     ->setXCustId($billing->getCustomerId())
-                    ->setXCustomerIp($document->getRemoteIp())
+                    ->setXCustomerIp($order->getRemoteIp())
                     ->setXCustomerTaxId($billing->getTaxId())
                     ->setXEmail($billing->getEmail())
                     ->setXEmailCustomer($this->getConfigData('email_customer'))
                     ->setXMerchantEmail($this->getConfigData('merchant_email'));
             }
 
-            $shipping = $document->getShippingAddress();
+            $shipping = $order->getShippingAddress();
             if (!empty($shipping)) {
                 $request->setXShipToFirstName($shipping->getFirstname())
                     ->setXShipToLastName($shipping->getLastname())
@@ -363,9 +363,9 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
 
         $r = explode(self::RESPONSE_DELIM_CHAR, $responseBody);
 
-        $result->setResponseCode($r[0])
-            ->setResponseSubcode($r[1])
-            ->setResponseReasonCode($r[2])
+        $result->setResponseCode((int)str_replace('"','',$r[0]))
+            ->setResponseSubcode((int)str_replace('"','',$r[1]))
+            ->setResponseReasonCode((int)str_replace('"','',$r[2]))
             ->setResponseReasonText($r[3])
             ->setApprovalCode($r[4])
             ->setAvsResultCode($r[5])

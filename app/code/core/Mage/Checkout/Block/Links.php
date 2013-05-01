@@ -29,12 +29,12 @@ class Mage_Checkout_Block_Links extends Mage_Core_Block_Template
 {
     public function addCartLink()
     {
-        $count = $this->helper('checkout/cart')->getItemCount();
+        $count = $this->helper('checkout/cart')->getSummaryCount();
 
-        if( $count > 1 ) {
-            $text = $this->__('My Cart (%d items)', $count);
-        } elseif( $count == 1 ) {
-            $text = $this->__('My Cart (%d item)', $count);
+        if( $count == 1 ) {
+            $text = $this->__('My Cart (%s item)', $count);
+        } elseif( $count > 0 ) {
+            $text = $this->__('My Cart (%s items)', $count);
         } else {
             $text = $this->__('My Cart');
         }

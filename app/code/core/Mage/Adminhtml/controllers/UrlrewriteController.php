@@ -165,6 +165,11 @@ class Mage_Adminhtml_UrlrewriteController extends Mage_Adminhtml_Controller_Acti
         $this->getResponse()->setBody($response->toJSON());
     }
 
+    public function productGridAction()
+    {
+        $this->getResponse()->setBody($this->getLayout()->createBlock('adminhtml/urlrewrite_product_grid')->toHtml());
+    }
+    
     public function getCategoryInfoAction()
     {
         $response = new Varien_Object();

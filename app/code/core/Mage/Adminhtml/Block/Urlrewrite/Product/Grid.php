@@ -80,16 +80,17 @@ class Mage_Adminhtml_Block_Urlrewrite_Product_Grid extends Mage_Adminhtml_Block_
                 'index' => 'status',
         ));
 
-        $this->addColumn('stores',
-            array(
-                'header'=> Mage::helper('adminhtml')->__('Store Views'),
-                'width' => '100px',
-                'filter'    => 'adminhtml/catalog_product_grid_filter_store',
-                'renderer'  => 'adminhtml/catalog_product_grid_renderer_store',
+        /*
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('stores', array(
+                'header'    => Mage::helper('adminhtml')->__('Store Views'),
+                'type'      => 'store',
+                'width'     => '100px',
                 'sortable'  => false,
                 'index'     => 'stores',
-       ));
-
+           ));
+        }
+        */
     }
 
     public function getGridUrl()

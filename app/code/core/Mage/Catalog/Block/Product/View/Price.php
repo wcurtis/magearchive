@@ -30,7 +30,7 @@
     public function getPrice()
     {
         $product = Mage::registry('product');
-        if($product->isSuperConfig()) {
+        if($product->isConfigurable()) {
             $price = $product->getCalculatedPrice((array)$this->getRequest()->getParam('super_attribute', array()));
             return Mage::app()->getStore()->formatPrice($price);
         }

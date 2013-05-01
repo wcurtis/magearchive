@@ -24,31 +24,31 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Product_Visibility extends Varien_Object 
+class Mage_Catalog_Model_Product_Visibility extends Varien_Object
 {
     const VISIBILITY_NOT_VISIBLE    = 1;
     const VISIBILITY_IN_CATALOG     = 2;
     const VISIBILITY_IN_SEARCH      = 3;
     const VISIBILITY_BOTH           = 4;
-    
+
     public function __construct()
     {
         parent::__construct();
         $this->setIdFieldName('visibility_id');
     }
-    
+
     public function addVisibleInCatalogFilterToCollection(Mage_Eav_Model_Entity_Collection_Abstract $collection)
     {
         $collection->addAttributeToFilter('visibility', array('in'=>$this->getVisibleInCatalogIds()));
         return $this;
     }
-    
+
     public function addVisibleInSearchFilterToCollection(Mage_Eav_Model_Entity_Collection_Abstract $collection)
     {
         $collection->addAttributeToFilter('visibility', array('in'=>$this->getVisibleInSearchIds()));
         return $this;
     }
-    
+
     public function getVisibleInCatalogIds()
     {
         return array(self::VISIBILITY_IN_CATALOG, self::VISIBILITY_BOTH);
@@ -57,5 +57,46 @@ class Mage_Catalog_Model_Product_Visibility extends Varien_Object
     public function getVisibleInSearchIds()
     {
         return array(self::VISIBILITY_IN_SEARCH, self::VISIBILITY_BOTH);
+    }
+
+    static public function getOptionArray()
+    {
+        return array(
+            self::VISIBILITY_NOT_VISIBLE=> Mage::helper('catalog')->__('Nowhere'),
+            self::VISIBILITY_IN_CATALOG => Mage::helper('catalog')->__('Catalog'),
+            self::VISIBILITY_IN_SEARCH  => Mage::helper('catalog')->__('Search'),
+            self::VISIBILITY_BOTH       => Mage::helper('catalog')->__('Catalog, Search')
+        );
+    }
+
+    static public function getAllOption()
+    {
+        $options = self::getOptionArray();
+        array_unshift($options, array('value'=>'', 'label'=>''));
+        return $options;
+    }
+
+    static public function getAllOptions()
+    {
+        $res = array();
+        $res[] = array('value'=>'', 'label'=>'');
+        foreach (self::getOptionArray() as $index => $value) {
+        	$res[] = array(
+        	   'value' => $index,
+        	   'label' => $value
+        	);
+        }
+        return $res;
+    }
+
+    static public function getOptionText($optionId)
+    {
+        $options = self::getOptionArray();
+        return isset($options[$optionId]) ? $options[$optionId] : null;
+    }
+
+    public function getVisibleInSiteIds()
+    {
+        return array(self::VISIBILITY_IN_SEARCH, self::VISIBILITY_IN_CATALOG, self::VISIBILITY_BOTH);
     }
 }

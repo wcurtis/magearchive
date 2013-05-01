@@ -73,6 +73,101 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
             }
         }
 
+        if ($this->getBackendType() == 'gallery') {
+            if (!$this->getBackendModel()) {
+                $this->setBackendModel('eav/entity_attribute_backend_media');
+            }
+        }
+
+        if ($this->getFrontendInput() == 'price') {
+            if (!$this->getBackendModel()) {
+                $this->setBackendModel('catalog/product_attribute_backend_price');
+            }
+        }
+
         return parent::_beforeSave();
     }
+
+    protected function _afterSave()
+    {
+        $this->_getResource()->saveInSetIncluding($this);
+
+        return parent::_afterSave();
+    }
+
+    /**
+     * Detect backend storage type using frontend input type
+     *
+     * @return string backend_type field value
+     * @param string $type frontend_input field value
+     */
+    public function getBackendTypeByInput($type)
+    {
+        switch ($type) {
+            case 'text':
+            case 'gallery':
+            case 'media_image':
+            case 'multiselect':
+                return 'varchar';
+
+            case 'image':
+            case 'textarea':
+                return 'text';
+
+            case 'date':
+                return 'datetime';
+
+            case 'select':
+            case 'boolean':
+                return 'int';
+
+
+            case 'price':
+                return 'decimal';
+
+            default:
+                Mage::throwException('Unknown frontend input type');
+        }
+    }
+
+    /**
+     * Detect default value using frontend input type
+     *
+     * @return string default_value field value
+     * @param string $type frontend_input field name
+     */
+    public function getDefaultValueByInput($type)
+    {
+        switch ($type) {
+            case 'select':
+            case 'gallery':
+            case 'media_image':
+            case 'multiselect':
+                return '';
+
+            case 'text':
+            case 'price':
+            case 'image':
+                $field = 'default_value_text';
+                break;
+
+            case 'textarea':
+                $field = 'default_value_textarea';
+                break;
+
+            case 'date':
+                $field = 'default_value_date';
+                break;
+
+            case 'boolean':
+                $field = 'default_value_yesno';
+                break;
+
+            default:
+                Mage::throwException('Unknown frontend input type');
+        }
+
+        return $field;
+    }
+
 }

@@ -25,38 +25,58 @@ class Mage_Sales_Model_Quote_Address_Total_Tax extends Mage_Sales_Model_Quote_Ad
     {
         $store = $address->getQuote()->getStore();
         $address->setTaxAmount(0);
+        $address->setBaseTaxAmount(0);
+
         $tax = Mage::getModel('tax/rate_data')
-        	->setRegionId($address->getRegionId())
-        	->setPostcode($address->getPostcode())
-        	->setCustomerClassId($address->getQuote()->getCustomerTaxClassId());
+            ->setCustomerClassId($address->getQuote()->getCustomerTaxClassId());
         /* @var $tax Mage_Tax_Model_Rate_Data */
+        $taxAddress = $address;
+
+        switch (Mage::getStoreConfig('sales/tax/based_on')) {
+            case 'billing':
+                $taxAddress = $address->getQuote()->getBillingAddress();
+            case 'shipping':
+                $tax
+                    ->setCountryId($taxAddress->getCountryId())
+                	->setRegionId($taxAddress->getRegionId())
+                	->setPostcode($taxAddress->getPostcode());
+                break;
+
+            case 'origin':
+                $tax
+                    ->setCountryId(Mage::getStoreConfig('shipping/origin/country_id', $store))
+                    ->setRegionId(Mage::getStoreConfig('shipping/origin/region_id', $store))
+                    ->setPostcode(Mage::getStoreConfig('shipping/origin/postcode', $store));
+                break;
+        }
+
         foreach ($address->getAllItems() as $item) {
         	$tax->setProductClassId($item->getProduct()->getTaxClassId());
         	$rate = $tax->getRate();
             $item->setTaxPercent($rate);
             $item->calcTaxAmount();
+
             $address->setTaxAmount($address->getTaxAmount() + $item->getTaxAmount());
+            $address->setBaseTaxAmount($address->getBaseTaxAmount() + $item->getBaseTaxAmount());
         }
 
-        if ($this->_canApplyOnShipping($store)) {
-            $rateType = Mage::getStoreConfig('sales/tax/shipping_rate_type', $store);
-            $tax->setCustomerClassId(null)
-                ->setProductClassId(null)
-                ->setRateTypeId($rateType);
+        $shippingTaxClass = Mage::getStoreConfig('sales/tax/shipping_tax_class', $store);
+        if ($shippingTaxClass) {
+            $tax->setProductClassId($shippingTaxClass);
             if ($rate = $tax->getRate()) {
-                $shippingTax = $address->getShippingAmount() * $rate/100;
-                $shippingTax = $store->roundPrice($shippingTax);
+                $shippingTax    = $address->getShippingAmount() * $rate/100;
+                $shippingBaseTax= $address->getBaseShippingAmount() * $rate/100;
+                $shippingTax    = $store->roundPrice($shippingTax);
+                $shippingBaseTax= $store->roundPrice($shippingBaseTax);
+
                 $address->setTaxAmount($address->getTaxAmount() + $shippingTax);
+                $address->setBaseTaxAmount($address->getBaseTaxAmount() + $shippingBaseTax);
             }
         }
 
         $address->setGrandTotal($address->getGrandTotal() + $address->getTaxAmount());
+        $address->setBaseGrandTotal($address->getBaseGrandTotal() + $address->getBaseTaxAmount());
         return $this;
-    }
-
-    protected function _canApplyOnShipping($store)
-    {
-        return (bool) Mage::getStoreConfig('sales/tax/apply_on_shipping', $store);
     }
 
     public function fetch(Mage_Sales_Model_Quote_Address $address)

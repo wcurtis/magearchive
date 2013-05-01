@@ -18,8 +18,9 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * Adminhtml abstract block
+ * Adminhtml text list block
  *
  * @category   Mage
  * @package    Mage_Adminhtml

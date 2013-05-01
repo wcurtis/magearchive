@@ -35,10 +35,8 @@ class Mage_Adminhtml_Block_Report_Review_Product_Grid extends Mage_Adminhtml_Blo
 
     protected function _prepareCollection()
     {
-
-        $collection = Mage::getResourceModel('reports/review_product_collection');
-
-        $collection->getEntity()->setStore(0);
+        $collection = Mage::getResourceModel('reports/review_product_collection')
+            ->joinReview();
 
         $this->setCollection($collection);
 
@@ -76,13 +74,14 @@ class Mage_Adminhtml_Block_Report_Review_Product_Grid extends Mage_Adminhtml_Blo
         $this->addColumn('last_created', array(
             'header'    =>Mage::helper('reports')->__('Last Review'),
             'width'     =>'150px',
-            'index'     =>'last_created'
+            'index'     =>'last_created',
+            'type'      =>'datetime'
         ));
 
         $this->setFilterVisibility(false);
 
         $this->addExportType('*/*/exportProductCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportProductXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportProductExcel', Mage::helper('reports')->__('Excel'));
 
         return parent::_prepareColumns();
     }

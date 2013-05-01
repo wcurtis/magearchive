@@ -32,16 +32,29 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
         $this->setTemplate('sales/order/create/form/address.phtml');
     }
 
+    protected function _prepareLayout()
+    {
+        Varien_Data_Form::setElementRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_element')
+        );
+        Varien_Data_Form::setFieldsetRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_fieldset')
+        );
+        Varien_Data_Form::setFieldsetElementRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_fieldset_element')
+        );
+    }
+
     public function getAddressCollection()
     {
-        return $this->getCustomer()->getLoadedAddressCollection();
+        return $this->getCustomer()->getAddresses();
     }
 
     public function getAddressCollectionJson()
     {
         $data = array();
         foreach ($this->getAddressCollection() as $address) {
-        	$data[$address->getId()] = $address->getData();
+            $data[$address->getId()] = $address->getData();
         }
         return Zend_Json::encode($data);
     }
@@ -56,6 +69,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
     {
         if (!$this->_form) {
             $this->_form = new Varien_Data_Form();
+            $fieldset = $this->_form->addFieldset('main', array('no_container'=>true));
             $addressModel = Mage::getModel('customer/address');
 
             foreach ($addressModel->getAttributes() as $attribute) {
@@ -63,7 +77,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
                     continue;
                 }
                 if ($inputType = $attribute->getFrontend()->getInputType()) {
-                    $element = $this->_form->addField($attribute->getAttributeCode(), $inputType,
+                    $element = $fieldset->addField($attribute->getAttributeCode(), $inputType,
                         array(
                             'name'  => $attribute->getAttributeCode(),
                             'label' => $attribute->getFrontend()->getLabel(),
@@ -84,7 +98,9 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
                     $this->getLayout()->createBlock('adminhtml/customer_edit_renderer_region')
                 );
             }
-            $this->_form->getElement('region_id')->setDefaultHtml('');
+            if ($regionElement = $this->_form->getElement('region_id')) {
+                $regionElement->setNoDisplay(true);
+            }
             $this->_form->setValues($this->getFormValues());
         }
         return $this;

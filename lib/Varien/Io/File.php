@@ -109,8 +109,25 @@ class Varien_Io_File extends Varien_Io_Abstract
      */
     public function rmdir($dir, $recursive=false)
     {
-        @chdir($this->_cwd);
-        $result = @rmdir($dir);
+        if( $this->_cwd ) {
+            @chdir($this->_cwd);
+        }
+
+        if( $recursive ) {
+            if( is_dir( $dir ) ){
+                foreach( scandir( $dir ) as $item ){
+                    if( !strcmp( $item, '.' ) || !strcmp( $item, '..' ) )
+                        continue;
+                    $this->rmdir( $dir . "/" . $item, $recursive );
+                }
+                $result = @rmdir( $dir );
+            } else {
+                $result = @unlink( $dir );
+            }
+        } else {
+            $result = @rmdir($dir);
+        }
+
         @chdir($this->_iwd);
         return $result;
     }
@@ -426,4 +443,16 @@ class Varien_Io_File extends Varien_Io_Abstract
     {
         return DIRECTORY_SEPARATOR;
     }
+
+    public function getTmpDir($path=null)
+    {
+        $dir = Mage::getBaseDir('base').($path!==null ? DS.$path : '');
+        if (!file_exists($dir)) {
+            if (!@mkdir($dir, 0777, true)) {
+                return false;
+            }
+        }
+        $this->_cwd = $dir;
+        return $dir;
+    }    
 }

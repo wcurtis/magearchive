@@ -85,22 +85,6 @@ File to upload: <input type="file" name="io_file"/> <input type="submit" value="
                 $session->save();
                 $this->setData(file_get_contents($path.$newFilename));
                 Mage::register('current_dataflow_session_id', $sessionId);
-                /*
-                $read = @fopen($path.$newFilename, "r");
-                if ($read) {
-                    $i = 0;
-                    while (!feof($read)) {
-
-                        $buffer = fgets($read, 4096);
-                        $import = Mage::getModel('dataflow/import');
-                        $import->setSerialNumber($i);
-                        $import->setSessionId($sessionId);
-                        $import->setSessionId($value);
-                        $i++;
-                    }
-                    fclose($read);
-                }
-                */
             }
         }
         return $this;

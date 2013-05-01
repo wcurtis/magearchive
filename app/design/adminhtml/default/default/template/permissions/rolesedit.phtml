@@ -19,7 +19,9 @@
  */
 ?>
 <div class="entry-edit">
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__('Roles Resources')?></h4>
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__('Roles Resources')?></h4>
+    </div>
     <input type="hidden" name="resource" id="role_resources" value="">
     <fieldset id="role_resources">
 
@@ -33,7 +35,7 @@
 
         <span class="field-row" id="resources_container">
             <label><?=$this->__('Resources')?></label>
-            <div style="float: left">
+            <div class="f-left">
                 <div class="tree x-tree" id="tree-div"></div>
             </div>
         </span>

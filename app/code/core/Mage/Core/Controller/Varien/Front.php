@@ -19,7 +19,7 @@
  */
 
 
-class Mage_Core_Controller_Varien_Front
+class Mage_Core_Controller_Varien_Front extends Varien_Object
 {
     protected $_defaults = array();
 

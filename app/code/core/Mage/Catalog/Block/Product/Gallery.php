@@ -37,12 +37,12 @@ class Mage_Catalog_Block_Product_Gallery extends Mage_Core_Block_Template
     {
         return Mage::registry('product');
     }
-    
+
     public function getGalleryCollection()
     {
-        return $this->getProduct()->getGallery();
+        return $this->getProduct()->getMediaGalleryImages();
     }
-    
+
     public function getCurrentImage()
     {
         $imageId = $this->getRequest()->getParam('image');
@@ -50,21 +50,26 @@ class Mage_Catalog_Block_Product_Gallery extends Mage_Core_Block_Template
         if ($imageId) {
             $image = $this->getGalleryCollection()->getItemById($imageId);
         }
-        
+
         if (!$image) {
             $image = $this->getGalleryCollection()->getFirstItem();
         }
         return $image;
     }
-    
+
     public function getImageUrl()
     {
-        return $this->getCurrentImage()->setType(0)->getSourceUrl();
+        return $this->getCurrentImage()->getUrl();
     }
-    
+
+    public function getImageFile()
+    {
+        return $this->getCurrentImage()->getFile();
+    }
+
     public function getImageWidth()
     {
-        $file = $this->getCurrentImage()->setType(0)->getSourcePath();
+        $file = $this->getCurrentImage()->getPath();
         if (file_exists($file)) {
             $size = getimagesize($file);
             if (isset($size[0]) && $size[0]>600) {
@@ -73,7 +78,7 @@ class Mage_Catalog_Block_Product_Gallery extends Mage_Core_Block_Template
         }
         return false;
     }
-    
+
     public function getPreviusImage()
     {
         $current = $this->getCurrentImage();
@@ -89,14 +94,14 @@ class Mage_Catalog_Block_Product_Gallery extends Mage_Core_Block_Template
         }
         return $previus;
     }
-    
+
     public function getNextImage()
     {
         $current = $this->getCurrentImage();
         if (!$current) {
             return false;
         }
-        
+
         $next = false;
         $currentFind = false;
         foreach ($this->getGalleryCollection() as $image) {
@@ -109,7 +114,7 @@ class Mage_Catalog_Block_Product_Gallery extends Mage_Core_Block_Template
         }
         return $next;
     }
-    
+
     public function getPreviusImageUrl()
     {
         if ($image = $this->getPreviusImage()) {

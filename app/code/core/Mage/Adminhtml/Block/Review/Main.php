@@ -33,10 +33,12 @@ class Mage_Adminhtml_Block_Review_Main extends Mage_Adminhtml_Block_Widget_Grid_
         parent::__construct();
 
         $this->_controller = 'review';
-        $this->_headerText = Mage::helper('review')->__('Reviews');
 
         if( Mage::registry('usePendingFilter') === true ) {
+            $this->_headerText = Mage::helper('review')->__('Pending Reviews');
             $this->_removeButton('add');
+        } else {
+            $this->_headerText = Mage::helper('review')->__('All Reviews');
         }
     }
 }

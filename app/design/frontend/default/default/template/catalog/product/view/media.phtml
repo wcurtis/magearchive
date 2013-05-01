@@ -1,0 +1,58 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Product media data template
+ *
+ * @see Mage_Catalog_Block_Product_View_Media
+ */
+?>
+<?$_product = $this->getProduct()?>
+<p class="main-product-img">
+    <img id="image" src="<?=$this->helper('catalog/image')->init($_product, 'image');?>" alt="<?=$_product->getName()?>"/>
+</p>
+<?if ($_product->getImage()):?>
+<div class="image-zoom" id="track_outer">
+    <img id="zoom_out" src="<?=$this->getSkinUrl('images/slider_btn_zoom_out.gif')?>" alt="<?=$this->__('Zoom Out')?>" class="btn-zoom-out"/>
+    <div id="track">
+        <div id="handle"></div>
+    </div>
+    <img id="zoom_in" src="<?=$this->getSkinUrl('images/slider_btn_zoom_in.gif')?>" alt="<?=$this->__('Zoom In')?>" class="btn-zoom-in"/>
+</div>
+<?endif;?>
+<script type="text/javascript">
+    Event.observe(window, 'load', function() {
+        product_zoom = new Product.Zoom('image', 'track', 'handle', 'zoom_in', 'zoom_out');
+    });
+</script>
+<?if ($this->getGalleryImages()):?>
+<div class="more-views">
+    <h4><?=$this->__('More Views')?></h4>
+    <ul>
+    <?foreach ($this->getGalleryImages() as $_image):?>
+        <li>
+            <a href="#" onclick="popWin('<?=$this->getGalleryUrl($_image)?>', 'gallery', 'scrollbars=yes,width=300,height=300,resizable=yes');return false;">
+                <img src="<?=$this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(68, 68);?>" width="68" height="68" alt="<?=$this->htmlEscape($_image->getLabel())?>" title="<?=$this->htmlEscape($_image->getLabel())?>"/>
+            </a>
+        </li>
+    <?endforeach;?>
+    </ul>
+</div>
+<?endif;?>

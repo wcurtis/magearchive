@@ -39,10 +39,15 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
             ->addAttributeToSelect('increment_id')
             ->addAttributeToSelect('created_at')
             ->addAttributeToSelect('order_currency_code')
+            ->addAttributeToSelect('store_currency_code')
             ->addAttributeToSelect('state')
             ->addAttributeToSelect('grand_total')
+            ->addAttributeToSelect('base_grand_total')
             ->joinAttribute('billing_firstname', 'order_address/firstname', 'billing_address_id', null, 'left')
             ->joinAttribute('billing_lastname', 'order_address/lastname', 'billing_address_id', null, 'left')
+            ->addExpressionAttributeToSelect('billing_name',
+                'CONCAT({{billing_firstname}}, " ", {{billing_lastname}})',
+                array('billing_firstname', 'billing_lastname'))
             ->setOrderFilter($this->getOrder())
         ;
         $this->setCollection($collection);
@@ -53,10 +58,11 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
     {
         $this->addColumn('increment_id', array(
             'header' => Mage::helper('sales')->__('Credit Memo #'),
+            'width' => '120px',
             'index' => 'increment_id',
         ));
 
-        $this->addColumn('billing_firstname', array(
+        /*$this->addColumn('billing_firstname', array(
             'header' => Mage::helper('sales')->__('Bill to First name'),
             'index' => 'billing_firstname',
         ));
@@ -64,6 +70,10 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
         $this->addColumn('billing_lastname', array(
             'header' => Mage::helper('sales')->__('Bill to Last name'),
             'index' => 'billing_lastname',
+        ));*/
+        $this->addColumn('billing_name', array(
+            'header' => Mage::helper('sales')->__('Bill to Name'),
+            'index' => 'billing_name',
         ));
 
         $this->addColumn('created_at', array(
@@ -79,11 +89,11 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
             'options'   => Mage::getModel('sales/order_creditmemo')->getStates(),
         ));
 
-        $this->addColumn('grand_total', array(
+        $this->addColumn('base_grand_total', array(
             'header'    => Mage::helper('customer')->__('Refunded'),
-            'index'     => 'grand_total',
+            'index'     => 'base_grand_total',
             'type'      => 'currency',
-            'currency'  => 'order_currency_code',
+            'currency'  => 'store_currency_code',
         ));
 
         return parent::_prepareColumns();

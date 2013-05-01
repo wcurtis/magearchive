@@ -35,6 +35,12 @@ Default layout, loads most of the pages
             </block>
         </reference>
     </default>
+    
+    <cms_page>
+        <reference name="content">
+            <block type="cms/page" name="cms_page"/>
+        </reference>
+    </cms_page>
 
     <cms_index_defaultindex>
         <reference name="root">

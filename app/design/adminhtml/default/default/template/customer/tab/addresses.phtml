@@ -22,24 +22,23 @@
 <table cellspacing="0" class="form-edit">
 <tr>
 <td class="address-list">
-    <div class="box-head-left">
+    <div class="entry-edit-head">
         <h4 class="icon-head head-customer-address-list"><?=Mage::helper('customer')->__('Customer Addresses')?></h4>
-        <div class="clear"></div>
-        <?=$this->getAddNewButtonHtml()?>
     </div>
+    <div class="sub-btn-set"><?=$this->getAddNewButtonHtml()?></div>
     <ul id="address_list">
     <?$_iterator = 0;?>
-    <?if($addressCollection->getSize()):?>
+    <?if(count($addressCollection)):?>
         <?foreach ($addressCollection as $_address):?>
         <li id="address_item_<?=$_address->getId()?>">
             <a href="#" class="btn-remove-address">
-                <img src="<?=$this->getSkinUrl('images/icon_remove_address.gif')?>" alt="Remove address" id="delete_button<?=++$_iterator?>" />
+                <img src="<?=$this->getSkinUrl('images/cancel_icon.gif')?>" alt="Remove address" id="delete_button<?=++$_iterator?>" />
             </a>
             <a href="#" id="select_button" class="select_button btn-edit-address">
-                <img src="<?=$this->getSkinUrl('images/icon_edit_address.gif')?>" alt="Edit address"/>
+                <img src="<?=$this->getSkinUrl('images/edit_icon.gif')?>" alt="Edit address"/>
             </a>
             <address>
-                <?=$_address->toString("{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{region}} {{postcode}}<br/>T: {{telephone}}")?>
+                <?=$_address->explodeStreetAddress()->toString("{{firstname}} {{lastname}}<br/>{{street1}}<br />{{street2}}<br/>{{city}}, {{region}} {{postcode}}<br/>T: {{telephone}}")?>
             </address>
             <div class="address-type">
                 <span class="address-type-line">
@@ -59,7 +58,7 @@
 <td>
 <!-- Addresses forms -->
     <div class="entry-edit" id="address_form_container">
-        <?if($addressCollection->getSize()):?>
+        <?if(count($addressCollection)):?>
             <?foreach ($addressCollection as $_address):?>
             <div id="form_address_item_<?=$_address->getId()?>" style="display:none">
             <?
@@ -81,10 +80,10 @@
     <?$_templatePrefix = $this->getTemplatePrefix()?>
     <div id="address_item_template" class="no-display template">
         <a href="#" class="btn-remove-address">
-            <img src="<?=$this->getSkinUrl('images/icon_remove_address.gif')?>" alt="Remove address" id="delete_button<?=++$_iterator?>" />
+            <img src="<?=$this->getSkinUrl('images/cancel_icon.gif')?>" alt="Remove address" id="delete_button<?=++$_iterator?>" />
         </a>
-        <a href="#" id="select_button" class="btn-edit-address">
-            <img src="<?=$this->getSkinUrl('images/icon_edit_address.gif')?>" alt="Edit address"/>
+        <a href="#" id="select_button" class="select_button btn-edit-address">
+            <img src="<?=$this->getSkinUrl('images/edit_icon.gif')?>" alt="Edit address"/>
         </a>
         <address><?=Mage::helper('customer')->__('New Customer Address')?></address>
         <div class="address-type">
@@ -125,7 +124,7 @@ addressesModel.prototype = {
         this.itemContainer= $('address_list');
         this.formContainer= $('address_form_container');
         this.baseItemId   = 'new_item';
-        this.itemContentTemplate = new Template('#{firstname} #{lastname}<br/>#{street0} #{street1}<br/>#{city}, #{region} #{postcode}<br/>T: #{telephone}');
+        this.itemContentTemplate = new Template('#{firstname} #{lastname}<br/>#{street0}<br/>#{street1}<br/>#{city}, #{region} #{postcode}<br/>T: #{telephone}');
 
         this.onNewAddressClick  = this.addNewAddress.bindAsEventListener(this);
         this.onItemMouseOver    = this.itemMouseOver.bindAsEventListener(this);
@@ -193,27 +192,27 @@ addressesModel.prototype = {
             }
 
             // create new form elements
-            var newForm = document.createElement('div');
-            newForm.id = 'form_'+this.baseItemId+this.itemCount;
-            newForm.innerHTML = this.prepareTemplate(this.formTemplate.innerHTML);
-            this.formContainer.appendChild(newForm);
+            new Insertion.Bottom(
+                this.formContainer,
+                '<div id="' + 'form_' + this.baseItemId + this.itemCount + '">'
+                + this.prepareTemplate(this.formTemplate.innerHTML)
+                + '</div>') ;
+
+            var newForm = $('form_' + this.baseItemId + this.itemCount);
 
             $('_item'+this.itemCount+'firstname').value = $('_accountfirstname').value;
             $('_item'+this.itemCount+'lastname').value = $('_accountlastname').value;
 
             Element.hide(newForm);
-
-            // create new item
-            var newItem = document.createElement('li');
-            newItem.isNewAddress = true; // set is new flag
-            newItem.id = this.baseItemId+this.itemCount;
-
+            var template = '<li id="' + this.baseItemId+this.itemCount + '">';
             deleteButtonId ++;
-            var template = this.prepareTemplate(this.itemTemplate.innerHTML).replace('delete_button', 'delete_button'+ deleteButtonId);
-
-            newItem.innerHTML = template;
+            template    += this.prepareTemplate(this.itemTemplate.innerHTML).replace('delete_button', 'delete_button'+ deleteButtonId);
+            template    += '</li>';
+            new Insertion.Bottom(this.itemContainer, template);
+            var newItem = $(this.baseItemId+this.itemCount);
+            newItem.isNewAddress = true;
             newItem.formBlock = newForm;
-            this.itemContainer.appendChild(newItem);
+
 
             newForm.statusBar = newItem;
             newForm.addressItem = newItem;
@@ -230,7 +229,7 @@ addressesModel.prototype = {
     },
 
     prepareTemplate : function(template){
-        return template.replace(/<?=$_templatePrefix?>/g, '_item'+this.itemCount);
+        return template.replace(/<?=$_templatePrefix?>/g, '_item'+this.itemCount).replace(/_counted="undefined"/g, '');
     },
 
     canCreateNewAddress : function(){
@@ -254,11 +253,11 @@ addressesModel.prototype = {
         var element = Event.findElement(event, 'li'); // find top item
         var elem = Event.element(event); // exact element clicked
 
-        if ( ((elem.tagName == 'A') && elem.id.match(/^delete_button([0-9]*?)$/)) || ((elem.tagName == 'IMG') && elem.id.match(/^delete_button([0-9]*?)$/)) ) {
+        if ( ((elem.tagName.toUpperCase() == 'A') && elem.id.match(/^delete_button([0-9]*?)$/)) || ((elem.tagName.toUpperCase() == 'IMG') && elem.id.match(/^delete_button([0-9]*?)$/)) ) {
             this.deleteAddress(element);
             Event.stop(event);
         }
-        else if(elem.tagName == 'INPUT') {
+        else if(elem.tagName.toUpperCase() == 'INPUT') {
             this.setAddressAsDefault(element);
         }
         else {
@@ -313,7 +312,7 @@ addressesModel.prototype = {
     },
 
     getFormContainerFields : function(container){
-        var fields = $$('#'+container.id+' input', '#'+container.id+' select', '#'+container.id+' textarea');
+        var fields = $$( '#' + container.id + ' input','#' + container.id + ' select','#' + container.id + ' textarea');
         return fields;
     },
 
@@ -325,25 +324,27 @@ addressesModel.prototype = {
 
     },
 
-    syncFormData : function(event){
+    syncFormData : function(evt){
         var container = false;
-        if( event.isTrusted ) {
-            var elm = Event.element(event);
+
+        if(!evt.addClassName) {
+            var elm = Event.element(evt);
         } else {
-            var elm = event;
+            var elm = evt;
         }
 
-        while(elm.tagName != 'BODY') {
+        elm = $(elm);
+        while(elm.tagName.toUpperCase() != 'BODY') {
             if(elm.addressItem){
                 container = elm;
             }
-            elm = elm.parentNode;
+            elm = $(elm.parentNode);
         }
 
         if(container){
             var data = {};
             var fields = this.getFormContainerFields(container);
-            for(var i in fields){
+            for(var i=0; i < fields.size(); i++){
                 if(fields[i].id){
                     var id = fields[i].id.replace(/^(_item)?[0-9]+/, '');
                     var value = fields[i].getValue();
@@ -430,7 +431,9 @@ addressesModel.prototype = {
         if(serverResponse){
             var data = eval('(' + serverResponse + ')');
             var value = this.regionElement.value;
-            var reqLabel = this.regionElement.parentNode.previous(0).getElementsByClassName('required');
+
+            var row = Element.previous(this.regionElement.parentNode,0);
+            var reqLabel = Element.getElementsByClassName(row, 'required');
             if (data.length) {
                 var html = '<select name="'+this.regionElement.name+'" id="'+this.regionElement.id+'" class="required-entry select" title="'+this.regionElement.title+'">';
                 html+= '<option value=""></option>';

@@ -38,7 +38,7 @@ class Mage_Poll_Model_Mysql4_Poll_Collection extends Mage_Core_Model_Mysql4_Coll
      * @param mixed $condition
      * @return Varien_Data_Collection_Db
      */
-    public function addFieldToFilter($field, $condition)
+    public function addFieldToFilter($field, $condition=null)
     {
         if ($field == 'stores') {
             return $this->addStoresFilter($condition);
@@ -56,7 +56,7 @@ class Mage_Poll_Model_Mysql4_Poll_Collection extends Mage_Core_Model_Mysql4_Coll
      */
     public function addStoresFilter($storeId)
     {
-        $this->_sqlSelect->join(
+        $this->_select->join(
             array('store' => $this->getTable('poll/poll_store')),
             'main_table.poll_id=store.poll_id AND store.store_id=' . (int)$storeId,
             array()

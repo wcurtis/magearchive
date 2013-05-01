@@ -107,7 +107,7 @@ class Mage_Adminhtml_Block_System_Store_Edit_Form extends Mage_Adminhtml_Block_W
 
             if (Mage::registry('store_action') == 'edit') {
                 $groups = Mage::getModel('core/store_group')->getCollection()->addWebsiteFilter($websiteModel->getId())->toOptionArray();
-                array_unshift($groups, array('label'=>'', 'value'=>0));
+                //array_unshift($groups, array('label'=>'', 'value'=>0));
                 $fieldset->addField('website_default_group_id', 'select', array(
                     'name'      => 'website[default_group_id]',
                     'label'     => Mage::helper('core')->__('Default Store'),
@@ -142,7 +142,7 @@ class Mage_Adminhtml_Block_System_Store_Edit_Form extends Mage_Adminhtml_Block_W
                     'required'  => true
                 ));
                 if ($groupModel->getId() && $groupModel->getWebsite()->getDefaultGroupId() == $groupModel->getId()) {
-                    if ($groupModel->getGroupInWebsiteCount() > 1) {
+                    if ($groupModel->getWebsite() && $groupModel->getWebsite()->getGroupsCount() > 1) {
                         $form->getElement('group_website_id')->setDisabled(true);
 
                         $fieldset->addField('group_hidden_website_id', 'hidden', array(
@@ -180,7 +180,7 @@ class Mage_Adminhtml_Block_System_Store_Edit_Form extends Mage_Adminhtml_Block_W
 
             if (Mage::registry('store_action') == 'edit') {
                 $stores = Mage::getModel('core/store')->getCollection()->addGroupFilter($groupModel->getId())->toOptionArray();
-                array_unshift($stores, array('label'=>'', 'value'=>0));
+                //array_unshift($stores, array('label'=>'', 'value'=>0));
                 $fieldset->addField('group_default_store_id', 'select', array(
                     'name'      => 'group[default_store_id]',
                     'label'     => Mage::helper('core')->__('Default Store View'),
@@ -227,7 +227,7 @@ class Mage_Adminhtml_Block_System_Store_Edit_Form extends Mage_Adminhtml_Block_W
                     'required'  => true
                 ));
                 if ($storeModel->getId() && $storeModel->getGroup()->getDefaultStoreId() == $storeModel->getId()) {
-                    if ($storeModel->getStoreInGroupCount() > 1) {
+                    if ($storeModel->getGroup() && $storeModel->getGroup()->getStoresCount() > 1) {
                         $form->getElement('store_group_id')->setDisabled(true);
 
                         $fieldset->addField('store_hidden_group_id', 'hidden', array(

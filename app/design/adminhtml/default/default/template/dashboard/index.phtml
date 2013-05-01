@@ -18,223 +18,64 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<script language="JavaScript" type="text/javascript" src="<?=$baseJsUrl?>adminhtml/scrollbar.js"></script>
-<script language="JavaScript" type="text/javascript">
-	var db_but_top = '<?=$this->getSkinUrl('images/db-scroll-but-top.png')?>';
-	var db_but_bot = '<?=$this->getSkinUrl('images/db-scroll-but-bot.png')?>';
-	var db_but_rol = '<?=$this->getSkinUrl('images/db-scroll-roller.png')?>';
+
+<script type="text/javascript">
+function changePeriod(obj)
+{
+    var periodParam = obj.value ? 'period/'+obj.value + '/' : '';
+    setLocation('<?=$this->getSwitchUrl()?>'+periodParam);
+}
+function toggleCal(id) {
+    $('dashboard_'+id+'_cal_div').toggle();
+    $('dashboard_'+id+'_range_div').toggle();
+}
 </script>
-<div class="content-header"><table class="grid-header" cellspacing="0"><tr><td>
-    <h3 class="content-header head-dashboard"><?=$this->__('Dashboard')?></h3>
-</td></tr></table></div>
-<?
-	include('php_code.php');
-	include('js_code.php');
-?>
-<ul class="graph-container">
-	<li class="section">
-		<dl class="db-top">
-			<dt><?=$this->__('Orders')?></dt>
-			<dd>
-				<?=$this->__('View report for')?>&nbsp;&nbsp;
-				<select name="#"><option><?=$this->__('Magento store')?></option></select>
-				&nbsp;&nbsp;<?=$this->__('for')?>&nbsp;&nbsp;
-				<select name="#"><option><?=$this->__('24 hours')?></option></select>
-			</dd>
-		</dl><div class="clear"></div>
-		<div class="graph-block">
-			<div class="db-menu">
-				<ul>
-					<li><a id="orders1Tab" href="javascript:void(0);" onclick="showTab('1', 'orders', 3);"><?=$this->__('Orders vs. Time')?></a></li>
-					<li><a id="orders2Tab" href="javascript:void(0);" onclick="showTab('2', 'orders', 3);"><?=$this->__('Income vs. Time')?></a></li>
-					<li class="last"><a class="hover" id="orders3Tab" href="javascript:void(0);" onclick="showTab('3', 'orders', 3);"><?=$this->__('Summary')?></a></li>
-				</ul>
-			</div><div class="clear"></div>
-			<div class="graph-cont" id="orders-1-tab" style="display:none;">
-				<?if($data['orders']['conType'] == 'graph'){?>
-				<table cellpadding="0" cellspacing="0" border="0" id="<?=$data['orders']['tId']?>">
-					<tr>
-						<td align="center" valign="middle"><?=$data['orders']['yHeading']?></td>
-						<?foreach ( $data['orders']['gValues'] as $gKey => $gVal ) { ?>
-						<td class="g" rowspan="<?=$data['orders']['yCount']?>"><div class="bottom-bg"><div class="gr" style="height:<?=$gVal?>px;"></div></div></td>
-						<?}?>
-					</tr>
-					<?foreach ( $data['orders']['yValues'] as $yKey => $yVal ) {?>
-					<tr>
-						<td class="y"><?=$yVal?></td>
-					</tr>
-					<?}?>
-					<tr>
-						<td>&nbsp;</td>
-						<?foreach ( $data['orders']['xValues'] as $xKey => $xVal ) { ?>
-						<td class="x"><?=$xVal?></td>
-						<?}?>
-						<td valign="bottom">&nbsp;&nbsp;<?=$data['orders']['xHeading']?></td>
-					</tr>
-				</table>
-				<?}?>
-			</div>
-			<div class="graph-cont" id="orders-2-tab" style="display:none;">
-				<?if($data['income']['conType'] == 'graph'){?>
-				<table cellpadding="3" cellspacing="0" border="0" id="<?=$data['income']['tId']?>">
-					<tr>
-						<td align="center" valign="middle"><?=$data['income']['yHeading']?></td>
-						<?foreach ( $data['income']['gValues'] as $gKey => $gVal ) { ?>
-						<td class="g" rowspan="<?=$data['income']['yCount']?>"><div class="bottom-bg"><div class="gr" style="height:<?=$gVal?>px;"></div></div></td>
-						<?}?>
-					</tr>
-					<?foreach ( $data['income']['yValues'] as $yKey => $yVal ) {?>
-					<tr>
-						<td class="y"><?=($data['income']['xType'] == 'mon' ? '$' : '')?><?=$yVal?></td>
-					</tr>
-					<?}?>
-					<tr>
-						<td>&nbsp;</td>
-						<?foreach ( $data['income']['xValues'] as $xKey => $xVal ) { ?>
-						<td class="x"><?=$xVal?></td>
-						<?}?>
-						<td valign="bottom"><?=$data['income']['xHeading']?></td>
-					</tr>
-				</table>
-				<?}?>
-			</div>
-			<div class="tab-cont" id="orders-3-tab">
-				<?if($data['summary']['conType'] == 'tab'){?>
-				<div class="graph-table col3">
-					<div class="tab-right">
-					<div class="tab-head">
-						<?foreach ($data['summary']['yValues'] as $yKey => $yVal) {?>
-						<div class="header"<?=($yKey == 2 ? ' style="background:none;width:160px;"' : '')?><?=($yKey == 1 ? ' style="text-align:right;"' : '')?>><?=$yVal?>&nbsp;&nbsp;&nbsp;</div>
-						<?}?>
-					</div><div class="clear"></div>
-					<?if(count($data['summary']['gValues']) > 10){?>
-					<script type="text/javascript"> instantiateScroller(0, "scroll0", 7, 0, 490, 248, 248); </script>
-					<div class="root" id="root0">
-					<div class="scrollContainer" id="scroll0Container">
-					<div class="scrollContent" id="scroll0Content">
-					<?}?>
-						<div class="tab-body">
-						<?foreach ($data['summary']['gValues'] as $gKey => $gVal) {?>
-							<div class="row<?=( $gKey % 2 ? '2': '')?>">
-							<?foreach ($gVal as $k => $gValue) {?>
-								<div class="tab-item"<?=( $k=='1' ? ' style="text-align:right;"' : '')?>><?=$gValue?></div>
-							<?}?>
-							</div>
-						<?}?>
-						</div>
-					<?if(count($data['summary']['gValues']) > 10){?>
-					</div>
-					</div>
-					</div>
-					<?}?>
-					<div class="clear"></div>
-					<div class="tab-footer">
-						<div class="tab-foot">
-							<dl>
-								<dt><?=$data['summary']['xValues']['total']?>:</dt>
-								<dd><?=$data['summary']['xValues']['sum']?></dd>
-							</dl>
-						</div>
-					</div><div class="clear"></div>
-				</div></div>
-				<div class="tab-footer-bottom"><div class="tab-footer-right"></div><div class="tab-footer-left"></div></div>
-				<?}?>
-			</div>
-		</div>
-	</li>
-	<li class="section" style="margin-right:0;">
-		<dl class="db-top">
-			<dt><?=$this->__('Analytics')?></dt>
-			<dd>
-				<?=$this->__('View report for')?>&nbsp;&nbsp;
-				<select name="#"><option><?=$this->__('Magento store')?></option></select>
-				&nbsp;&nbsp;<?=$this->__('for')?>&nbsp;&nbsp;
-				<select name="#"><option><?=$this->__('24 hours')?></option></select>
-			</dd>
-		</dl><div class="clear"></div>
-		<div class="graph-block">
-			<div class="db-menu">
-				<ul>
-					<li><a id="analytics1Tab" href="javascript:void(0);" onclick="showTab('1', 'analytics', 2);"><?=$this->__('Site Visits')?></a></li>
-					<li class="last"><a class="hover" id="analytics2Tab" href="javascript:void(0);" onclick="showTab('2', 'analytics', 2);"><?=$this->__('Who\'s Online')?></a></li>
-				</ul>
-			</div><div class="clear"></div>
-			<div class="graph-cont" id="analytics-1-tab" style="display:none;">
-				<?if($data['analytics']['conType'] == 'graph'){?>
-				<table cellpadding="0" cellspacing="0" border="0" id="<?=$data['analytics']['tId']?>">
-					<tr>
-						<td align="center" valign="middle"><?=$data['analytics']['yHeading']?></td>
-						<?foreach ( $data['analytics']['gValues'] as $gKey => $gVal ) { ?>
-						<td class="g" rowspan="<?=$data['analytics']['yCount']?>">
-							<div class="bottom-bg" style="height:<?=($gVal[0] > $gVal[1] ? $gVal[0] : $gVal[1] )?>px;">
-								<?if( $data['analytics']['gType'] == 2 ){?>
-								<dl class="gr1">
-									<dt style="height:<?=$gVal[0]?>px;margin-top:<?=($gVal[0] > $gVal[1] ? 0 : ($gVal[1] - $gVal[0]) )?>px;">&nbsp;</dt>
-									<dd style="height:<?=$gVal[1]?>px;margin-top:<?=($gVal[1] > $gVal[0] ? 0 : ($gVal[0] - $gVal[1]) )?>px;">&nbsp;</dd>
-								</dl>
-								<?}?>
-							</div>
-						</td>
-						<?}?>
-					</tr>
-					<?foreach ( $data['analytics']['yValues'] as $yKey => $yVal ) {?>
-					<tr>
-						<td class="y"><?=$yVal?></td>
-					</tr>
-					<?}?>
-					<tr>
-						<td>&nbsp;</td>
-						<?foreach ( $data['analytics']['xValues'] as $xKey => $xVal ) { ?>
-						<td class="x"><?=$xVal?></td>
-						<?}?>
-						<td valign="bottom">&nbsp;&nbsp;<?=$data['analytics']['xHeading']?></td>
-					</tr>
-				</table>
-				<?}?>
-			</div>
-			<div class="tab-cont" id="analytics-2-tab">
-				<?if($data['online']['conType'] == 'tab'){?>
-				<div class="graph-table col2">
-					<div class="tab-right">
-					<div class="tab-head">
-						<?foreach ($data['online']['yValues'] as $yKey => $yVal) {?>
-						<div class="header"<?=($yKey == 1 ? ' style="background:none;width:160px;"' : '' )?>><?=$yVal?>&nbsp;&nbsp;&nbsp;</div>
-						<?}?>
-					</div><div class="clear"></div>
-					<?if(count($data['online']['gValues']) > 10){?>
-					<script type="text/javascript"> instantiateScroller(1, "scroll1", 7, 0, 490, 248, 248); </script>
-					<div class="root" id="root1">
-					<div class="scrollContainer" id="scroll1Container">
-					<div class="scrollContent" id="scroll1Content">
-					<?}?>
-						<div class="tab-body">
-						<?foreach ($data['online']['gValues'] as $gKey => $gVal) {?>
-							<div class="row<?=( $gKey % 2 ? '2': '')?>">
-							<?foreach ($gVal as $k => $gValue) {?>
-								<div class="tab-item"><?=$gValue?></div>
-							<?}?>
-							</div>
-						<?}?>
-						</div>
-					<?if(count($data['online']['gValues']) > 10){?>
-					</div>
-					</div>
-					</div>
-					<?}?>
-					<div class="clear"></div>
-					<div class="tab-footer">
-						<div class="tab-foot">
-							<dl>
-								<dt><?=$data['online']['xValues']['total']?>:</dt>
-								<dd><?=$data['online']['xValues']['sum']?></dd>
-							</dl>
-						</div>
-					</div><div class="clear"></div>
-				</div></div>
-				<div class="tab-footer-bottom"><div class="tab-footer-right"></div><div class="tab-footer-left"></div></div>
-				<?}?>
-			</div>
-		</div>
-	</li>
-</ul>
-<div class="clear"></div>
+<div class="content-header">
+    <table cellspacing="0">
+        <tr>
+            <td>
+                <h3 class="head-dashboard"><?=$this->__('Dashboard')?></h3>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="dashboard-container">
+    <?=$this->getStoreSwitcherHtml()?>
+    <table cellspacing="25" width="100%">
+        <tr>
+            <td>
+                <div class="entry-edit">
+                    <div class="entry-edit-head"><h4><?=$this->__('Sales Statistics')?></h4></div>
+                    <fieldset><?=$this->getChildHtml('sales')?></fieldset>
+                </div>
+                <div class="entry-edit">
+                    <div class="entry-edit-head"><h4><?=$this->__('Last 5 Orders')?></h4></div>
+                    <fieldset class="np"><?=$this->getChildHtml('lastOrders');?></fieldset>
+                </div>
+                <div class="entry-edit">
+                    <div class="entry-edit-head"><h4><?=$this->__('Last 5 Search Terms')?></h4></div>
+                    <fieldset class="np"><?=$this->getChildHtml('lastSearches');?></fieldset>
+                </div>
+                <div class="entry-edit">
+                    <div class="entry-edit-head"><h4><?=$this->__('Top 5 Search Terms')?></h4></div>
+                    <fieldset class="np"><?=$this->getChildHtml('topSearches');?></fieldset>
+                </div>
+            </td>
+            <td>
+                <div class="entry-edit" style="border:1px solid #ccc;">
+                    <?=$this->getChildHtml('diagrams')?>
+                    <center>
+                        <div id="diagram_tab_content"></div>
+                    </center>
+                    <div style="margin:20px;">
+                        <?=$this->getChildHtml('totals')?>
+                    </div>
+                    <div style="margin:20px;">
+                        <?=$this->getChildHtml('grids')?>
+                        <div id="grid_tab_content"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

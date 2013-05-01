@@ -30,9 +30,21 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Group extends Mage_Adm
     {
         parent::__construct();
         $this->setId('super_product_grid');
-        $this->setDefaultFilter(array('in_products'=>1));
         $this->setDefaultSort('id');
         $this->setUseAjax(true);
+        if ($this->_getProduct()->getId()) {
+            $this->setDefaultFilter(array('in_products'=>1));
+        }
+    }
+
+    /**
+     * Retirve currently edited product model
+     *
+     * @return Mage_Catalog_Model_Product
+     */
+    protected function _getProduct()
+    {
+        return Mage::registry('current_product');
     }
 
     protected function _addColumnFilterToCollection($column)
@@ -59,23 +71,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Group extends Mage_Adm
 
     protected function _prepareCollection()
     {
-
-        $collection = Mage::getResourceModel('catalog/product_link_collection')
-            ->setLinkType('super')
-            ->setProductId(Mage::registry('product')->getId())
-            ->setStoreId(Mage::registry('product')->getStoreId())
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('price')
-            ->addAttributeToFilter('type_id', 1) // Todo: remove harcoded value
-            ->addLinkAttributeToSelect('position')
-            ->addLinkAttributeToSelect('qty')
-            ->useProductItem();
+        $collection = Mage::getModel('catalog/product_link')->useGroupedLinks()
+            ->getProductCollection()
+            ->setProduct($this->_getProduct())
+            ->addAttributeToSelect('*')
+            ->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
 
         $this->setCollection($collection);
-
-
-
         return parent::_prepareCollection();
     }
 
@@ -143,11 +145,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Group extends Mage_Adm
     protected function _getSelectedProducts()
     {
         $products = $this->getRequest()->getPost('products', null);
-
         if (!is_array($products)) {
-            $products = Mage::registry('product')->getSuperGroupProductsLoaded()->getColumnValues('entity_id');
+            $products = $this->_getProduct()->getTypeInstance()->getAssociatedProductIds();
         }
-
         return $products;
     }
 }

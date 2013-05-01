@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * config controller
  *
@@ -26,17 +27,30 @@
  */
 class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_Action
 {
+
+    /**
+     * Enter description here...
+     *
+     */
     protected function _construct()
     {
         $this->setFlag('index', 'no-preDispatch', true);
         return parent::_construct();
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     public function indexAction()
     {
         $this->_forward('edit');
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     public function editAction()
     {
         $current = $this->getRequest()->getParam('section');
@@ -62,12 +76,16 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
             ->append($this->getLayout()->createBlock('adminhtml/system_config_tabs')->initTabs());
 
         $this->_addContent($this->getLayout()->createBlock('adminhtml/system_config_edit')->initForm());
-        $this->_addJs($this->getLayout()->createBlock('core/template')->setTemplate('system/shipping/ups.phtml'));
-        $this->_addJs($this->getLayout()->createBlock('core/template')->setTemplate('system/config/js.phtml'));
-        $this->_addJs($this->getLayout()->createBlock('core/template')->setTemplate('system/shipping/applicable_country.phtml'));
-		$this->renderLayout();
+        $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('system/shipping/ups.phtml'));
+        $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('system/config/js.phtml'));
+        $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('system/shipping/applicable_country.phtml'));
+        $this->renderLayout();
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     public function saveAction()
     {
         $session = Mage::getSingleton('adminhtml/session');
@@ -76,8 +94,21 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         $groups = $this->getRequest()->getPost('groups');
 
         if (isset($_FILES['groups']['name']) && is_array($_FILES['groups']['name'])) {
-            $groups += $_FILES['groups']['name'];
+            /**
+             * Carefully merge $_FILES and $_POST information
+             * None of '+=' or 'array_merge_recursive' can do this correct
+             */
+            foreach($_FILES['groups']['name'] as $groupName => $group) {
+                if (is_array($group)) {
+                    foreach ($group['fields'] as $fieldName => $field) {
+                        if (!empty($field['value'])) {
+                            $groups[$groupName]['fields'][$fieldName] = array('value' => $field['value']);
+                        }
+                    }
+                }
+            }
         }
+
         try {
             Mage::app()->removeCache('config_global');
             Mage::getModel('adminhtml/config_data')
@@ -101,6 +132,10 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         $this->_redirect('*/*/edit', array('_current' => array('section', 'website', 'store')));
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     public function exportTableratesAction()
     {
         $websiteModel = Mage::app()->getWebsite($this->getRequest()->getParam('website'));
@@ -153,9 +188,13 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         exit;
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('system/config');
+        return Mage::getSingleton('admin/session')->isAllowed('system/config');
     }
 
 }

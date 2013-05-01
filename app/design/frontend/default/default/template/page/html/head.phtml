@@ -1,4 +1,4 @@
-<title><?=htmlspecialchars($this->getTitle())?></title>
+<title><?=htmlspecialchars(html_entity_decode($this->getTitle()))?></title>
 <meta http-equiv="Content-Type" content="<?=$this->getContentType()?>"/>
 <meta name="description" content="<?=htmlspecialchars($this->getDescription())?>"/>
 <meta name="keywords" content="<?=htmlspecialchars($this->getKeywords())?>"/>
@@ -8,7 +8,8 @@
 <link rel="shortcut icon" href="<?=$this->getSkinUrl('favicon.ico')?>" type="image/x-icon"/>
 
 <script type="text/javascript">
-    var BLANK_URL = '<?=$this->getJsUrl()?>blank.html';
+    var BLANK_URL = '<?=$this->helper('core/js')->getJsUrl('blank.html')?>';
+    var BLANK_IMG = '<?=$this->helper('core/js')->getJsUrl('spacer.gif')?>';
 </script>
 
 <?=$this->getAdditionalCssJs()?>

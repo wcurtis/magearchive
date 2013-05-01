@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -102,7 +102,7 @@ require_once 'Zend/Gdata/Media/Extension/MediaTitle.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Media_Extension_MediaGroup extends Zend_Gdata_Extension
@@ -396,6 +396,24 @@ class Zend_Gdata_Media_Extension_MediaGroup extends Zend_Gdata_Extension
     public function setCredit($value)
     {
         $this->_credit = $value;
+        return $this;
+    }
+
+    /**
+     * @return Zend_Gdata_Media_Extension_MediaTitle
+     */ 
+    public function getTitle()
+    {
+        return $this->_title;
+    }
+
+    /**
+     * @param Zend_Gdata_Media_Extension_MediaTitle $value
+     * @return Zend_Gdata_Media_Extension_MediaGroup
+     */ 
+    public function setTitle($value)
+    {
+        $this->_title = $value;
         return $this;
     }
 

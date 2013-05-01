@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_Config
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Xml.php 7724 2008-01-31 08:19:34Z rob $
+ * @version    $Id: Xml.php 8064 2008-02-16 10:58:39Z thomas $
  */
 
 
@@ -30,7 +30,7 @@ require_once 'Zend/Config.php';
 /**
  * @category   Zend
  * @package    Zend_Config
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Config_Xml extends Zend_Config
@@ -149,7 +149,7 @@ class Zend_Config_Xml extends Zend_Config
                     $value = (string) $value;
                 }
                 if (array_key_exists($key, $config)) {
-                    if (!is_array($config[$key]) || count($config[$key]) == 1) {
+                    if (!is_array($config[$key]) || !array_key_exists(0, $config[$key])) {
                         $config[$key] = array($config[$key]);
                     }
                     $config[$key][] = $value;

@@ -40,6 +40,7 @@ class Mage_Catalog_Block_Breadcrumbs extends Mage_Core_Block_Template
                 $breadcrumbsBlock->addCrumb($name, $breadcrumb);
                 $title = $breadcrumb['label'].' '.Mage::getStoreConfig('catalog/seo/title_separator').' '.$title;
             }
+
             if ($headBlock = $this->getLayout()->getBlock('head')) {
                 $headBlock->setTitle($title);
             }

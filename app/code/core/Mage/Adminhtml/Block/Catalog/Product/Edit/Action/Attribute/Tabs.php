@@ -44,6 +44,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute_Tabs extends Ma
                                 'adminhtml/catalog_product_edit_action_attribute_tab_attributes'
                            )->toHtml(),
         ));
+
+        $this->addTab('inventory', array(
+            'label'     => Mage::helper('catalog')->__('Inventory'),
+            'content'   => $this->getLayout()->createBlock(
+                                'adminhtml/catalog_product_edit_action_attribute_tab_inventory'
+                           )->toHtml(),
+        ));
     }
 
 }

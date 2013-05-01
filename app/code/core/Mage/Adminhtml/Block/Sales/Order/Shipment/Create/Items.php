@@ -41,29 +41,14 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_Create_Items extends Mage_Adminh
      */
     protected function _prepareLayout()
     {
-        /*$onclick = "submitAndReloadArea($('invoice_item_container'),'".$this->getUpdateUrl()."')";
-        $this->setChild(
-            'update_button',
-            $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
-                'label'     => Mage::helper('sales')->__('Update Qty\'s'),
-                'onclick'   => $onclick,
-            ))
-        );
-
         $this->setChild(
             'submit_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
-                'label'     => Mage::helper('sales')->__('Submit Invoice'),
-                'class'     => 'save',
+                'label'     => Mage::helper('sales')->__('Submit Shipment'),
+                'class'     => 'save submit-button',
                 'onclick'   => '$(\'edit_form\').submit()',
             ))
         );
-
-
-        $totalsBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totals')
-            ->setSource($this->getInvoice())
-            ->setCurrency($this->getInvoice()->getOrder()->getOrderCurrency());
-        $this->setChild('totals', $totalsBlock);*/
 
         return parent::_prepareLayout();
     }

@@ -19,19 +19,42 @@
  */
 
 
+/**
+ * EAV attribute resource collection
+ *
+ * @category   Mage
+ * @package    Mage_Eav
+ */
 class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
+
+    /**
+     * Enter description here...
+     *
+     */
     public function _construct()
     {
         $this->_init('eav/entity_attribute');
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param int $typeId
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function setEntityTypeFilter($typeId)
     {
         $this->getSelect()->where('main_table.entity_type_id=?', $typeId);
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param int $setId
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function setAttributeSetFilter($setId)
     {
         if (is_array($setId)) {
@@ -48,6 +71,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param array $setIds
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function setAttributeSetsFilter(array $setIds)
     {
         $this->join('entity_attribute', 'entity_attribute.attribute_id=main_table.attribute_id', 'attribute_id');
@@ -78,6 +107,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param int $setId
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function setAttributeSetExcludeFilter($setId)
     {
         $this->join('entity_attribute', 'entity_attribute.attribute_id=main_table.attribute_id', '*');
@@ -86,6 +121,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param int $attributes
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function setAttributesExcludeFilter($attributes)
     {
         #$this->join('entity_attribute', 'entity_attribute.attribute_id=main_table.attribute_id', 'sort_order');
@@ -93,6 +134,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param int $groupId
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function setAttributeGroupFilter($groupId)
     {
         $this->join('entity_attribute', 'entity_attribute.attribute_id=main_table.attribute_id', '*');
@@ -101,42 +148,77 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addAttributeGrouping()
     {
         $this->getSelect()->group('entity_attribute.attribute_id');
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addVisibleFilter()
     {
         $this->getSelect()->where('main_table.is_visible=?', 1);
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addIsFilterableFilter()
     {
         $this->getSelect()->where('main_table.is_filterable>0');
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addIsUniqueFilter()
     {
         $this->getSelect()->where('main_table.is_unique>0');
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addIsNotUniqueFilter()
     {
         $this->getSelect()->where('main_table.is_unique=0');
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addIsSearchableFilter()
     {
         $this->getSelect()->where('main_table.is_searchable=1');
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addHasOptionsFilter()
     {
         $this->getSelect()
@@ -149,10 +231,29 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function addDisplayInAdvancedSearchFilter(){
         $this->getSelect()
             ->where('main_table.is_visible_in_advanced_search = ?', 1);
 
         return $this;
     }
+
+    /**
+     * Apply filter by attribute frontend input type
+     *
+     * @param string $frontendInputType
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
+    public function setFrontendInputTypeFilter($frontendInputType)
+    {
+        $this->getSelect()
+            ->where('main_table.frontend_input = ?', $frontendInputType);
+        return $this;
+    }
+
 }

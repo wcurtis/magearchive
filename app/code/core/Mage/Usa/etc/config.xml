@@ -52,11 +52,6 @@
             </usa>
             <usa_mysql4>
                 <class>Mage_Usa_Model_Mysql4</class>
-                <entities>
-                    <postcode>
-                        <table>usa_postcode</table>
-                    </postcode>
-                </entities>
             </usa_mysql4>
         </models>
         <sales>
@@ -172,7 +167,7 @@
                 <container>VARIABLE</container>
                 <cutoff_cost></cutoff_cost>
                 <free_method></free_method>
-                <gateway_url></gateway_url>
+                <gateway_url>http://production.shippingapis.com/ShippingAPI.dll</gateway_url>
                 <handling></handling>
                 <machinable>true</machinable>
                 <methods>First-Class,Express Mail,Express Mail PO to PO,Priority Mail,Parcel Post,Express Mail Flat-Rate Envelope,Priority Mail Flat-Rate Box,Bound Printed Matter,Media Mail,Library Mail,Priority Mail Flat-Rate Envelope,Global Express Guaranteed,Global Express Guaranteed Non-Document Rectangular,Global Express Guaranteed Non-Document Non-Rectangular,Express Mail International (EMS),Express Mail International (EMS) Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box</methods>

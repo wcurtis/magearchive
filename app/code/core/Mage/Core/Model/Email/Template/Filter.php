@@ -18,8 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
-
 class Mage_Core_Model_Email_Template_Filter extends Varien_Filter_Template
 {
     protected $_useAbsoluteLinks = false;
@@ -34,7 +32,7 @@ class Mage_Core_Model_Email_Template_Filter extends Varien_Filter_Template
 	public function blockDirective($construction)
 	{
 		$blockParameters = $this->_getIncludeParameters($construction[2]);
-		$layout = Mage::registry('action')->getLayout();
+		$layout = Mage::app()->getFrontController()->getAction()->getLayout();
 		if (isset($blockParameters['type'])) {
     		$type = $blockParameters['type'];
 

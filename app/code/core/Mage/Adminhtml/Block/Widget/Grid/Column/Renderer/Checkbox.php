@@ -51,7 +51,8 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Checkbox extends Mage_Adm
         else {
             $checked = ($value === $this->getColumn()->getValue()) ? ' checked="checked"' : '';
         }
-	if ($this->getNoObjectId()){
+	if ($this->getNoObjectId() || $this->getColumn()->getUseIndex()){
+	    //WTF: why getNoObjectId???
 	    $v = $value;
 	} else {
             $v = ($row->getId() != "") ? $row->getId():$value;

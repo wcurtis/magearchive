@@ -30,7 +30,6 @@ class Mage_Adminhtml_Block_System_Design_Edit_Tabs extends Mage_Adminhtml_Block_
 
     protected function _prepareLayout()
     {
-        $design = Mage::registry('design');
         $this->addTab('general', array(
             'label'     => Mage::helper('core')->__('General'),
             'content'   => $this->getLayout()->createBlock('adminhtml/system_design_edit_tab_general')->toHtml(),

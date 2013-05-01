@@ -33,7 +33,7 @@ class Mage_Core_Model_Mysql4_Config_Data_Collection extends Mage_Core_Model_Mysq
 
     public function addScopeFilter($scope, $scopeId, $section)
     {
-        $this->_sqlSelect
+        $this->_select
             ->where('scope=?', $scope)
             ->where('scope_id=?', $scopeId)
             ->where('path like ?', $section . '/%');
@@ -42,7 +42,7 @@ class Mage_Core_Model_Mysql4_Config_Data_Collection extends Mage_Core_Model_Mysq
 
     public function addPathFilter($section)
     {
-        $this->_sqlSelect
+        $this->_select
             ->where('path like ?', $section . '/%');
         return $this;
     }

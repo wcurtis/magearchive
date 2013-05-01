@@ -48,7 +48,13 @@ class Mage_CatalogSearch_Block_Result extends Mage_Core_Block_Template
         $title = Mage::helper('catalogsearch')->__("Search results for: '%s'", $this->helper('catalogSearch')->getEscapedQueryText());
         $this->getLayout()->getBlock('head')->setTitle($title);
 
+        return parent::_prepareLayout();
+    }
+
+    public function initList($template)
+    {
         $resultBlock = $this->getLayout()->createBlock('catalog/product_list', 'product_list')
+            ->setTemplate($template)
             ->setAvailableOrders(array(
                 'name'=>Mage::helper('catalogsearch')->__('Name'),
                 'price'=>Mage::helper('catalogsearch')->__('Price'))
@@ -60,7 +66,6 @@ class Mage_CatalogSearch_Block_Result extends Mage_Core_Block_Template
             ->setCollection($this->_getProductCollection());
 
         $this->setChild('search_result_list', $resultBlock);
-        return parent::_prepareLayout();
     }
 
     public function getProductListHtml()
@@ -80,12 +85,20 @@ class Mage_CatalogSearch_Block_Result extends Mage_Core_Block_Template
                 ->addAttributeToSelect('url_key')
                 ->addAttributeToSelect('name')
                 ->addAttributeToSelect('price')
+                ->addAttributeToSelect('special_price')
+                ->addAttributeToSelect('special_from_date')
+                ->addAttributeToSelect('special_to_date')
                 ->addAttributeToSelect('description')
                 ->addAttributeToSelect('image')
-                ->addAttributeToSelect('small_image');
+                ->addAttributeToSelect('small_image')
+                ->addAttributeToSelect('tax_class_id');
 
             Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($this->_productCollection);
             Mage::getSingleton('catalog/product_visibility')->addVisibleInSearchFilterToCollection($this->_productCollection);
+            
+            Mage::dispatchEvent('catalog_block_product_list_collection', array(
+                'collection'=>$this->_productCollection,
+            ));
         }
 
         return $this->_productCollection;

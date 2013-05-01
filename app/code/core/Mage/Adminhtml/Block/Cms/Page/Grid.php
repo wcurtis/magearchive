@@ -37,7 +37,8 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('cms/page_collection');
+        $collection = Mage::getModel('cms/page')->getCollection();
+        /* @var $collection Mage_Cms_Model_Mysql4_Page_Collection */
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -47,80 +48,86 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
         $baseUrl = $this->getUrl();
 
         $this->addColumn('title', array(
-            'header'=>Mage::helper('cms')->__('Title'),
-            'align' =>'left',
-            'index' =>'title',
+            'header'    => Mage::helper('cms')->__('Title'),
+            'align'     => 'left',
+            'index'     => 'title',
         ));
 
         $this->addColumn('identifier', array(
-            'header'=>Mage::helper('cms')->__('Identifier'),
-            'align' =>'left',
-            'index' =>'identifier'
+            'header'    => Mage::helper('cms')->__('Identifier'),
+            'align'     => 'left',
+            'index'     => 'identifier'
         ));
+
         $layouts = array();
         foreach (Mage::getConfig()->getNode('global/cms/layouts')->children() as $layoutName=>$layoutConfig) {
         	$layouts[$layoutName] = (string)$layoutConfig->label;
         }
+
         $this->addColumn('root_template', array(
-            'header'=>Mage::helper('cms')->__('Layout'),
-            'index'=>'root_template',
-            'type' => 'options',
-            'options' => $layouts,
+            'header'    => Mage::helper('cms')->__('Layout'),
+            'index'     => 'root_template',
+            'type'      => 'options',
+            'options'   => $layouts,
         ));
 
-        $stores = Mage::getResourceModel('core/store_collection')->load()->toOptionHash();
-        $stores[0] = Mage::helper('cms')->__('All stores');
-
-        $this->addColumn('store_id', array(
-            'header'=>Mage::helper('cms')->__('Store View'),
-            'index'=>'store_id',
-            'type' => 'options',
-            'options' => $stores,
-        ));
+        /**
+         * Check is single store mode
+         */
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('store_id', array(
+                'header'    => Mage::helper('cms')->__('Store View'),
+                'index'     => 'store_id',
+                'type'      => 'store',
+                'store_all' => true
+            ));
+        }
 
         $this->addColumn('is_active', array(
-            'header'=>Mage::helper('cms')->__('Status'),
-            'index'=>'is_active',
-            'type' => 'options',
-            'options' => array(
+            'header'    => Mage::helper('cms')->__('Status'),
+            'index'     => 'is_active',
+            'type'      => 'options',
+            'options'   => array(
                 0 => Mage::helper('cms')->__('Disabled'),
                 1 => Mage::helper('cms')->__('Enabled')
             ),
         ));
 
         $this->addColumn('creation_time', array(
-            'header'=>Mage::helper('cms')->__('Date Created'),
-            'index' =>'creation_time',
-            'type' => 'datetime',
+            'header'    => Mage::helper('cms')->__('Date Created'),
+            'index'     => 'creation_time',
+            'type'      => 'datetime',
         ));
 
         $this->addColumn('update_time', array(
-            'header'=>Mage::helper('cms')->__('Last Modified'),
-            'index'=>'update_time',
-            'type' => 'datetime',
+            'header'    => Mage::helper('cms')->__('Last Modified'),
+            'index'     => 'update_time',
+            'type'      => 'datetime',
         ));
 
         $this->addColumn('page_actions', array(
-            'header'    =>Mage::helper('cms')->__('Action'),
-            'width'     =>10,
-            'sortable'  =>false,
+            'header'    => Mage::helper('cms')->__('Action'),
+            'width'     => 10,
+            'sortable'  => false,
             'filter'    => false,
-            'type' => 'action',
-            'actions' => array(
-                array(
-                    'url' => $baseUrl . '$identifier',
-                    'caption' => Mage::helper('cms')->__('Preview'),
-                    'target' => '_blank',
-                ),
-            )
+            'type'      => 'action',
+            'actions'   => array(array(
+                'url'       => $baseUrl . '$identifier',
+                'caption'   => Mage::helper('cms')->__('Preview'),
+                'target'    => '_blank',
+            ))
         ));
 
         return parent::_prepareColumns();
     }
 
+    /**
+     * Row click url
+     *
+     * @return string
+     */
     public function getRowUrl($row)
     {
         return $this->getUrl('*/*/edit', array('page_id' => $row->getId()));
     }
-
 }

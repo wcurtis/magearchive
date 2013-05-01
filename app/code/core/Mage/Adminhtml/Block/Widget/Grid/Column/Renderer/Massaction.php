@@ -30,15 +30,15 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Massaction extends Mage_A
 
     public function renderHeader()
     {
-        return '&nbsp;';//'<input type="checkbox" id="' . $this->getColumn()->getGrid()->getHtmlId() . '-checkbox-all" onclick="'.$this->getColumn()->getGrid()->getMassactionBlock()->getJsObjectName().'.checkCheckboxes(this)" class="checkbox" title="'.$this->__('Select All').'"/>';
+        return '&nbsp;';
     }
 
     public function renderProperty()
     {
-        $out = 'class="a-center"';
+        $out = 'class="a-center" width="20"';
         return $out;
     }
-    
+
     public function render(Varien_Object $row)
     {
         if ($this->getColumn()->getGrid()->getMassactionIdFieldOnlyIndexValue()){
@@ -46,7 +46,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Massaction extends Mage_A
 	}
         return parent::render($row);
     }
-    // 
+    //
 
     protected function _getCheckboxHtml($value, $checked)
     {

@@ -25,6 +25,7 @@
  * @package    Mage_Dataflow
  */
 abstract class Mage_Dataflow_Model_Convert_Profile_Abstract
+    implements Mage_Dataflow_Model_Convert_Profile_Interface
 {
 
     protected $_actions;
@@ -97,6 +98,16 @@ abstract class Mage_Dataflow_Model_Convert_Profile_Abstract
     public function addException(Mage_Dataflow_Model_Convert_Exception $e)
     {
         $this->_exceptions[] = $e;
+        return $this;
+    }
+
+    public function importXml(Varien_Simplexml_Element $profileNode)
+    {
+        foreach ($profileNode->action as $actionNode) {
+            $action = $profile->addAction();
+            $action->importXml($actionNode);
+        }
+
         return $this;
     }
 

@@ -23,8 +23,9 @@
    <sections>
         <payment translate="label" module="payment">
             <label>Payment Methods</label>
+            <tab>sales</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>150</sort_order>
+            <sort_order>400</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>0</show_in_store>
@@ -223,7 +224,7 @@
                     </fields>
                 </checkmo>
                 <free translate="label">
-                    <label>Free</label>
+                    <label>Zero Subtotal Checkout</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>5</sort_order>
                     <show_in_default>1</show_in_default>
@@ -282,6 +283,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </specificcountry>
+<!--
                         <min_order_total>
                             <label>Minimum Order Total</label>
                             <frontend_type>text</frontend_type>
@@ -298,6 +300,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </max_order_total>
+-->
                         <model>
                         </model>
                     </fields>

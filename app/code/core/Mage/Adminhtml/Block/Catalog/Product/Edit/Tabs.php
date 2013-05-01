@@ -42,11 +42,12 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tabs extends Mage_Adminhtml_Bloc
             $setId = $this->getRequest()->getParam('set', null);
         }
 
-        if (!($superAttributes = $product->getSuperAttributesIds())) {
+        if ($product->isConfigurable()
+            && !($superAttributes = $product->getTypeInstance()->getUsedProductAttributeIds())) {
             $superAttributes = false;
         }
 
-        if ($setId && (!$product->isSuperConfig() || $superAttributes !== false ) ) {
+        if ($setId && (!$product->isConfigurable() || $superAttributes !== false ) ) {
             $groupCollection = Mage::getResourceModel('eav/entity_attribute_group_collection')
                 ->setAttributeSetFilter($setId)
                 ->load();
@@ -74,17 +75,21 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tabs extends Mage_Adminhtml_Bloc
                 ));
             }
 
-            //if (!$product->isSuperConfig()) {
             $this->addTab('inventory', array(
                 'label'     => Mage::helper('catalog')->__('Inventory'),
                 'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_inventory')->toHtml(),
             ));
-            //}
 
-            $this->addTab('stores', array(
-                'label'     => Mage::helper('catalog')->__('Store Views'),
-                'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_stores')->toHtml(),
-            ));
+
+            /**
+             * Don't display website tab for single mode
+             */
+            if (!Mage::app()->isSingleStoreMode()) {
+                $this->addTab('websites', array(
+                    'label'     => Mage::helper('catalog')->__('Websites'),
+                    'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_websites')->toHtml(),
+                ));
+            }
 
             $this->addTab('categories', array(
                 'label'     => Mage::helper('catalog')->__('Categories'),
@@ -105,16 +110,21 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tabs extends Mage_Adminhtml_Bloc
                 'label'     => Mage::helper('catalog')->__('Cross-sells'),
                 'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_crosssell', 'admin.crosssell.products')->toHtml(),
             ));
-            $storeCode = $this->getRequest()->getParam('store');
-            /*if($storeCode){
-                $isDisabled = Mage::getStoreConfig('advanced/modules_disable_output/Mage_CustomerAlert',$storeCode);
+
+            $storeId = 0;
+            if ($this->getRequest()->getParam('store')) {
+                $storeId = Mage::app()->getStore($this->getRequest()->getParam('store'))->getId();
             }
-            if( $this->getRequest()->getParam('store', false) > 0 && !$isDisabled) {
-                $this->addTab('alerts', array(
+
+            $alertPriceAllow = Mage::getStoreConfig('catalog/productalert/allow_price');
+            $alertStockAllow = Mage::getStoreConfig('catalog/productalert/allow_stock');
+
+            if ($alertPriceAllow || $alertStockAllow) {
+                $this->addTab('productalert', array(
                     'label'     => Mage::helper('catalog')->__('Product Alerts'),
-                    'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_alerts', 'admin.alerts.products')->toHtml(),
+                    'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_alerts', 'admin.alerts.products')->toHtml()
                 ));
-            } */
+            }
 
             if( $this->getRequest()->getParam('id', false) ) {
                 $this->addTab('reviews', array(
@@ -148,14 +158,14 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tabs extends Mage_Adminhtml_Bloc
                 ));
             }
 
-            if ($product->isSuperGroup()) {
+            if ($product->isGrouped()) {
                 $this->addTab('super', array(
                     'label' => Mage::helper('catalog')->__('Associated Products'),
                     'content' => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_super_group', 'admin.super.group.product')->toHtml()
                 ));
             }
-            elseif ($product->isSuperConfig()) {
-                $this->addTab('super', array(
+            elseif ($product->isConfigurable()) {
+                $this->addTab('configurable', array(
                     'label' => Mage::helper('catalog')->__('Associated Products'),
                     'content' => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_super_config', 'admin.super.config.product')->toHtml()
                 ));

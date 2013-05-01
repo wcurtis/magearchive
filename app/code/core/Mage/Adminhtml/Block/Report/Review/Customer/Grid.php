@@ -38,7 +38,8 @@ class Mage_Adminhtml_Block_Report_Review_Customer_Grid extends Mage_Adminhtml_Bl
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('reports/review_customer_collection');
+        $collection = Mage::getResourceModel('reports/review_customer_collection')
+            ->joinCustomers();
 
         $this->setCollection($collection);
 
@@ -47,22 +48,10 @@ class Mage_Adminhtml_Block_Report_Review_Customer_Grid extends Mage_Adminhtml_Bl
 
     protected function _prepareColumns()
     {
-
-        $this->addColumn('entity_id', array(
-            'header'    =>Mage::helper('reports')->__('ID'),
-            'width'     =>'50px',
-            'align'     =>'right',
-            'index'     =>'entity_id'
-        ));
-
-        $this->addColumn('firstname', array(
-            'header'    =>Mage::helper('reports')->__('First Name'),
-            'index'     =>'firstname'
-        ));
-
-        $this->addColumn('lastname', array(
-            'header'    =>Mage::helper('reports')->__('Last Name'),
-            'index'     =>'lastname'
+        $this->addColumn('customer_name', array(
+            'header'    =>Mage::helper('reports')->__('Customer Name'),
+            'index'     =>'customer_name',
+            'default'   =>Mage::helper('reports')->__('Guest')
         ));
 
         $this->addColumn('review_cnt', array(
@@ -75,7 +64,7 @@ class Mage_Adminhtml_Block_Report_Review_Customer_Grid extends Mage_Adminhtml_Bl
         $this->setFilterVisibility(false);
 
         $this->addExportType('*/*/exportCustomerCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportCustomerXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportCustomerExcel', Mage::helper('reports')->__('Excel'));
 
         return parent::_prepareColumns();
     }

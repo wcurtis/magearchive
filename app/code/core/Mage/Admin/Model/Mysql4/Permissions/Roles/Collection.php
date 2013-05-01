@@ -34,8 +34,8 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles_Collection extends Varien_Data_C
         $this->_roleTable         = $resources->getTableName('admin/role');
         $this->_ruleTable         = $resources->getTableName('admin/rule');
 
-        $this->_sqlSelect->from($this->_roleTable, '*');
-        $this->_sqlSelect->where("{$this->_roleTable}.role_type='G'");
+        $this->_select->from($this->_roleTable, '*');
+        $this->_select->where("{$this->_roleTable}.role_type='G'");
         $this->_setIdFieldName('role_id');
     }
 

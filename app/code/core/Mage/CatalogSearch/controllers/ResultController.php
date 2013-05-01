@@ -45,8 +45,9 @@ class Mage_CatalogSearch_ResultController extends Mage_Core_Controller_Front_Act
                 $this->getResponse()->setRedirect($query->getRedirect());
                 return;
             }
-
             $this->loadLayout();
+            $this->_initLayoutMessages('catalog/session');
+            $this->_initLayoutMessages('checkout/session');
             $this->renderLayout();
             $query->save();
         }

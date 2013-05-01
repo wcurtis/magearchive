@@ -18,32 +18,43 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * Adminhtml Sitemap add block
+ * Sitemap edit form container
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sitemap_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 {
+
+    /**
+     * Init container
+     */
     public function __construct()
     {
-        parent::__construct();
-
+        $this->_objectId = 'sitemap_id';
         $this->_controller = 'sitemap';
-        $this->_mode = 'edit';
+
+        parent::__construct();
 
         $this->_updateButton('save', 'label', Mage::helper('adminhtml')->__('Save Sitemap'));
         $this->_updateButton('delete', 'label', Mage::helper('adminhtml')->__('Delete Sitemap'));
-
-        $this->_updateButton('reset', 'id', 'reset_button');
-
-        
     }
 
+    /**
+     * Get edit form container header text
+     *
+     * @return string
+     */
     public function getHeaderText()
     {
-        return Mage::helper('adminhtml')->__('Edit Sitemap');
+        if (Mage::registry('sitemap_sitemap')->getId()) {
+            return Mage::helper('sitemap')->__('Edit Sitemap');
+        }
+        else {
+            return Mage::helper('sitemap')->__('New Sitemap');
+        }
     }
+
 }

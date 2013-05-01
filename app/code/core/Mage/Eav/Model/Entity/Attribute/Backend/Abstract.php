@@ -33,35 +33,35 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
      * @var Mage_Eav_Model_Entity_Attribute_Abstract
      */
     protected $_attribute;
-
+    
     /**
      * PK value_id for loaded entity (for faster updates)
      *
      * @var integer
      */
     protected $_valueId;
-
+    
     /**
      * Table name for this attribute
      *
      * @var string
      */
     protected $_table;
-
+    
     /**
      * Name of the entity_id field for the value table of this attribute
      *
      * @var string
      */
     protected $_entityIdField;
-
+    
     /**
      * Default value for the attribute
      *
      * @var mixed
      */
     protected $_defaultValue = null;
-
+    
     /**
      * Set attribute instance
      *
@@ -73,7 +73,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
         $this->_attribute = $attribute;
         return $this;
     }
-
+    
     /**
      * Get attribute instance
      *
@@ -83,7 +83,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
     {
         return $this->_attribute;
     }
-
+    
     /**
      * Get backend type of the attribute
      *
@@ -93,7 +93,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
     {
         return $this->getAttribute()->getBackendType();
     }
-
+    
     /**
      * Check whether the attribute is a real field in the entity table
      *
@@ -103,7 +103,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
     {
         return (string)$this->getType()==='' || $this->getType()==='static';
     }
-
+    
     /**
      * Get table name for the values of the attribute
      *
@@ -121,9 +121,10 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
                     .'_'.$this->getType();
             }
         }
+        
         return $this->_table;
     }
-
+    
     /**
      * Get entity_id field in the attribute values tables
      *
@@ -140,18 +141,18 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
         }
         return $this->_entityIdField;
     }
-
+    
     public function setValueId($valueId)
     {
         $this->_valueId = $valueId;
         return $this;
     }
-
+    
     public function getValueId()
     {
         return $this->_valueId;
     }
-
+    
     public function getDefaultValue()
     {
         if (is_null($this->_defaultValue)) {
@@ -163,7 +164,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
         }
         return $this->_defaultValue;
     }
-
+    
     public function validate($object)
     {
         $attrCode = $this->getAttribute()->getAttributeCode();
@@ -178,12 +179,12 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
         }
         return true;
     }
-
+    
     public function afterLoad($object)
     {
-
+        
     }
-
+    
     public function beforeSave($object)
     {
         $attrCode = $this->getAttribute()->getAttributeCode();
@@ -191,19 +192,19 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
             $object->setData($attrCode, $this->getDefaultValue());
         }
     }
-
+    
     public function afterSave($object)
     {
-
+        
     }
-
+    
     public function beforeDelete($object)
     {
-
+        
     }
-
+    
     public function afterDelete($object)
     {
-
+        
     }
 }

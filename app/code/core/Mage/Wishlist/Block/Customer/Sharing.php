@@ -33,7 +33,7 @@ class Mage_Wishlist_Block_Customer_Sharing extends Mage_Core_Block_Template
     public function __construct()
     {
         $this->setTemplate('wishlist/sharing.phtml');
-        Mage::registry('action')->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('wishlist')->__('Wishlist Sharing'));
+        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('wishlist')->__('Wishlist Sharing'));
     }
 
     public function getSendUrl()

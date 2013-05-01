@@ -79,13 +79,14 @@ class Mage_CatalogInventory_Model_Observer
      */
     public function copyInventoryData($observer)
     {
-        $newProduct = $observer->getEvent()->getNewProduct();
+        $newProduct = $observer->getEvent()->getProduct();
         $newProduct->unsStockItem();
         $newProduct->setStockData(array(
             'use_config_min_qty'        => 1,
             'use_config_min_sale_qty'   => 1,
             'use_config_max_sale_qty'   => 1,
-            'use_config_backorders'     => 1
+            'use_config_backorders'     => 1,
+            'use_config_notify_stock_qty'=> 1
         ));
 
         return $this;
@@ -97,17 +98,25 @@ class Mage_CatalogInventory_Model_Observer
             ->setProductId($product->getId())
             ->setStockId($item->getStockId())
             ->setProduct($product);
-        if (is_null($product->getData('stock_data/use_config_min_qty'))) {
+        if (!is_null($product->getData('stock_data/min_qty'))
+            && is_null($product->getData('stock_data/use_config_min_qty'))) {
             $item->setData('use_config_min_qty', false);
         }
-        if (is_null($product->getData('stock_data/use_config_min_sale_qty'))) {
+        if (!is_null($product->getData('stock_data/min_sale_qty'))
+            && is_null($product->getData('stock_data/use_config_min_sale_qty'))) {
             $item->setData('use_config_min_sale_qty', false);
         }
-        if (is_null($product->getData('stock_data/use_config_max_sale_qty'))) {
+        if (!is_null($product->getData('stock_data/max_sale_qty'))
+            && is_null($product->getData('stock_data/use_config_max_sale_qty'))) {
             $item->setData('use_config_max_sale_qty', false);
         }
-        if (is_null($product->getData('stock_data/use_config_backorders'))) {
+        if (!is_null($product->getData('stock_data/backorders'))
+            && is_null($product->getData('stock_data/use_config_backorders'))) {
             $item->setData('use_config_backorders', false);
+        }
+				if (!is_null($product->getData('stock_data/notify_stock_qty'))
+            && is_null($product->getData('stock_data/use_config_notify_stock_qty'))) {
+            $item->setData('use_config_notify_stock_qty', false);
         }
         return $this;
 

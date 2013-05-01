@@ -23,7 +23,7 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
     public function __construct() {
         parent::__construct();
 
-        $rid = Mage::registry('controller')->getRequest()->getParam('rid', false);
+        $rid = Mage::app()->getRequest()->getParam('rid', false);
 
         $resources = Mage::getModel('admin/permissions_roles')->getResourcesList();
 
@@ -52,7 +52,7 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
 
     public function getResTreeJson()
     {
-        $rid = Mage::registry('controller')->getRequest()->getParam('rid', false);
+        $rid = Mage::app()->getRequest()->getParam('rid', false);
         $resources = Mage::getModel('admin/permissions_roles')->getResourcesTree();
 
         $rootArray = $this->_getNodeJson($resources);

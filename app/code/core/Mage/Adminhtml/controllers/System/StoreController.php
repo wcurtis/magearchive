@@ -136,6 +136,9 @@ class Mage_Adminhtml_System_StoreController extends Mage_Adminhtml_Controller_Ac
                 switch ($postData['store_type']) {
                     case 'website':
                         $websiteModel = Mage::getModel('core/website')->setData($postData['website']);
+                        if ($postData['website']['website_id'] == '') {
+                            $websiteModel->setId(null);
+                        }
 //                        if ($postData['store_action'] == 'add') {
 //                            $groupModel = Mage::getModel('core/store_group')->setData($postData['group']);
 //                            $storeModel = Mage::getModel('core/store')->setData($postData['store']);
@@ -149,6 +152,9 @@ class Mage_Adminhtml_System_StoreController extends Mage_Adminhtml_Controller_Ac
 
                     case 'group':
                         $groupModel = Mage::getModel('core/store_group')->setData($postData['group']);
+                        if ($postData['group']['group_id'] == '') {
+                            $groupModel->setId(null);
+                        }
 //                        if ($postData['store_action'] == 'add') {
 //                            $storeModel = Mage::getModel('core/store')->setData($postData['store']);
 //                            $groupModel->addStore($storeModel);
@@ -159,6 +165,9 @@ class Mage_Adminhtml_System_StoreController extends Mage_Adminhtml_Controller_Ac
 
                     case 'store':
                         $storeModel = Mage::getModel('core/store')->setData($postData['store']);
+                        if ($postData['store']['store_id'] == '') {
+                            $storeModel->setId(null);
+                        }
                         $groupModel = Mage::getModel('core/store_group')->load($storeModel->getGroupId());
                         $storeModel->setWebsiteId($groupModel->getWebsiteId());
                         $storeModel->save();

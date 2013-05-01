@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Categories tree block
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Template
 {
+
     protected $_withProductCount;
 
     public function __construct()
@@ -39,7 +41,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
     {
         $url = $this->getUrl('*/*/add', array(
             '_current'=>true,
-            'parent'=>$this->getCategoryId(),
+            'parent'=>base64_encode($this->getCategoryPath()),
             'id'=>null,
         ));
         $this->setChild('add_button',
@@ -58,26 +60,28 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
         return parent::_prepareLayout();
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return int
+     */
     protected function _getDefaultStoreId()
     {
         return 0;
     }
 
-    public function getCategoryCollection($storeId=null)
+    public function getCategoryCollection()
     {
-        if (is_null($storeId)) {
-            $storeId = $this->_getDefaultStoreId();
-        }
-
-        $collection = $this->getData('category_collection_'.$storeId);
+        $collection = $this->getData('category_collection');
         if (is_null($collection)) {
-            $collection = Mage::getResourceModel('catalog/category_collection')
-                ->addAttributeToSelect('name')
-                ->setLoadProductCount($this->_withProductCount)
-                ->setProductStoreId($this->getRequest()->getParam('store', $this->_getDefaultStoreId()));
-            $collection->getEntity()
-                ->setStore($storeId);
-            $this->setData('category_collection_'.$storeId, $collection);
+            $collection = Mage::getModel('catalog/category')->getCollection();
+
+            /* @var $collection Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection */
+            $collection->addAttributeToSelect('name')
+                ->setProductStoreId($this->getRequest()->getParam('store', $this->_getDefaultStoreId()))
+                ->setLoadProductCount($this->_withProductCount);
+
+            $this->setData('category_collection', $collection);
         }
         return $collection;
     }
@@ -89,6 +93,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
 
     public function getStoreSwitcherHtml()
     {
+        if (Mage::app()->isSingleStoreMode()) {
+            return '';
+        }
         return $this->getChildHtml('store_switcher');
     }
 
@@ -101,6 +108,14 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
     {
         if ($this->getCategory()) {
             return $this->getCategory()->getId();
+        }
+        return 1;
+    }
+
+    public function getCategoryPath()
+    {
+        if ($this->getCategory()) {
+            return $this->getCategory()->getPath();
         }
         return 1;
     }
@@ -136,8 +151,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
 
             $tree = Mage::getResourceSingleton('catalog/category_tree')
                 ->load();
-
             $root = $tree->getNodeById($rootId);
+
             if ($root && $rootId != 1) {
                 $root->setIsVisible(true);
             }
@@ -145,7 +160,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
                 $root->setName(Mage::helper('catalog')->__('Root'));
             }
 
-            $this->_addCategoryInfo($root);
+            $tree->addCollectionData($this->getCategoryCollection());
             $this->setData('root', $root);
         }
 
@@ -158,7 +173,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
         $json = Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : array());
         return $json;
     }
-
+/*
     protected function _addCategoryInfo($node)
     {
         if ($node) {
@@ -176,7 +191,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
 
         return $this;
     }
-
+*/
     protected function _getNodeJson($node, $level=0)
     {
         $item = array();
@@ -201,4 +216,5 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
         }
         return $item;
     }
+
 }

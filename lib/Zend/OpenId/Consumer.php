@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage Zend_OpenId_Consumer
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id:$
+ * @version    $Id: Consumer.php 8064 2008-02-16 10:58:39Z thomas $
  */
 
 /**
@@ -47,7 +47,7 @@ require_once 'Zend/Http/Client.php';
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage Zend_OpenId_Consumer
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_OpenId_Consumer
@@ -146,7 +146,7 @@ class Zend_OpenId_Consumer
      *  object to perform HTTP or HTML form redirection
      * @return bool
      */
-    public function check($id, $returnTo=null, $root=null, $extensions,
+    public function check($id, $returnTo=null, $root=null, $extensions = null,
                           Zend_Controller_Response_Abstract $response = null)
 
     {
@@ -726,7 +726,10 @@ class Zend_OpenId_Consumer
         $params['openid.return_to'] = Zend_OpenId::absoluteUrl($returnTo);
 
         if (empty($root)) {
-            $root = dirname(Zend_OpenId::selfUrl());
+            $root = Zend_OpenId::selfUrl();
+            if ($root[strlen($root)-1] != '/') {
+            	$root = dirname($root);
+            }
         }
         if ($version >= 2.0) {
             $params['openid.realm'] = $root;

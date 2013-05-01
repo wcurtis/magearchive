@@ -168,12 +168,6 @@ class Mage_Newsletter_Model_Mysql4_Subscriber
                 $this->_write->update($this->_subscriberTable, $data,
                                       $this->_write->quoteInto('subscriber_id=?',$subscriber->getId()));
             } else {
-                if(!$subscriber->getCustomerId()) {
-                    $data['subscriber_confirm_code'] = $this->_generateRandomCode();
-                    $data['subscriber_status'] = Mage_Newsletter_Model_Subscriber::STATUS_NOT_ACTIVE;
-                    $subscriber->setStatus(Mage_Newsletter_Model_Subscriber::STATUS_NOT_ACTIVE);
-                    $subscriber->setCode($data['subscriber_confirm_code']);
-                }
                 $this->_write->insert($this->_subscriberTable, $data);
                 $subscriber->setId($this->_write->lastInsertId($this->_subscriberTable));
             }
@@ -213,7 +207,7 @@ class Mage_Newsletter_Model_Mysql4_Subscriber
         $data['subscriber_confirm_code'] = $subscriber->getCode();
 
         if($subscriber->getIsStatusChanged()) {
-        	$data['change_status_at'] = now();
+        	$data['change_status_at'] = Mage::getSingleton('core/date')->gmtDate();
         }
 
         $validators = array('subscriber_email' => 'EmailAddress');

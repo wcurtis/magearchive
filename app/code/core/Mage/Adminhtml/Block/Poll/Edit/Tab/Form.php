@@ -55,14 +55,22 @@ class Mage_Adminhtml_Block_Poll_Edit_Tab_Form extends Mage_Adminhtml_Block_Widge
             ),
         ));
 
-        $stores = Mage::app()->getStore()->getCollection()->toOptionArray();
-        $fieldset->addField('store_ids', 'multiselect', array(
-            'label'     => Mage::helper('poll')->__('Visible In'),
-            'required'  => true,
-            'name'      => 'store_ids[]',
-            'values'    => $stores,
-            'value'     => Mage::registry('poll_data')->getStoreIds()
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $fieldset->addField('store_ids', 'multiselect', array(
+                'label'     => Mage::helper('poll')->__('Visible In'),
+                'required'  => true,
+                'name'      => 'store_ids[]',
+                'values'    => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm(),
+                'value'     => Mage::registry('poll_data')->getStoreIds()
+            ));
+        }
+        else {
+            $fieldset->addField('store_ids', 'hidden', array(
+                'name'      => 'store_ids[]',
+                'value'     => Mage::app()->getStore(true)->getId()
+            ));
+            Mage::registry('poll_data')->setStoreIds(Mage::app()->getStore(true)->getId());
+        }
 
 
         if( Mage::getSingleton('adminhtml/session')->getPollData() ) {

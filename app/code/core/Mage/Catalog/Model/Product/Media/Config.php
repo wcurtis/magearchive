@@ -27,6 +27,7 @@
  */
 class Mage_Catalog_Model_Product_Media_Config implements Mage_Media_Model_Image_Config_Interface
 {
+
         public function getBaseMediaPath()
         {
             return Mage::getBaseDir('media') . DS . 'catalog' . DS . 'product';
@@ -37,4 +38,49 @@ class Mage_Catalog_Model_Product_Media_Config implements Mage_Media_Model_Image_
             return Mage::getBaseUrl('media') . 'catalog/product';
         }
 
+        public function getBaseTmpMediaPath()
+        {
+            return Mage::getBaseDir('media') . DS . 'tmp' . DS . 'catalog' . DS . 'product';
+        }
+
+        public function getBaseTmpMediaUrl()
+        {
+            return Mage::getBaseUrl('media') . 'tmp/catalog/product';
+        }
+
+        public function getMediaUrl($file)
+        {
+            if(in_array(substr($file, 0, 1), array('/'))) {
+                return $this->getBaseMediaUrl() . $file;
+            }
+
+            return $this->getBaseMediaUrl() . '/' . $file;
+        }
+
+        public function getMediaPath($file)
+        {
+            if(in_array(substr($file, 0, 1), array('/', DIRECTORY_SEPARATOR))) {
+                return $this->getBaseMediaPath() . DIRECTORY_SEPARATOR . substr($file, 1);
+            }
+
+            return $this->getBaseMediaPath() . DIRECTORY_SEPARATOR . $file;
+        }
+
+        public function getTmpMediaUrl($file)
+        {
+            if(in_array(substr($file, 0, 1), array('/'))) {
+                return $this->getBaseTmpMediaUrl() . $file;
+            }
+
+            return $this->getBaseTmpMediaUrl() . '/' . $file;
+        }
+
+        public function getTmpMediaPath($file)
+        {
+            if(in_array(substr($file, 0, 1), array('/', DIRECTORY_SEPARATOR))) {
+                return $this->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR . substr($file, 1);
+            }
+
+            return $this->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR . $file;
+        }
 }

@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Backend
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -30,7 +30,7 @@ require_once 'Zend/Cache/Backend/Interface.php';
 /**
  * @package    Zend_Cache
  * @subpackage Backend
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Backend_Test implements Zend_Cache_Backend_Interface
@@ -112,6 +112,9 @@ class Zend_Cache_Backend_Test implements Zend_Cache_Backend_Interface
         }
         if ($id=='serialized') {
             return serialize(array('foo'));
+        }
+        if ($id=='serialized2') {
+            return serialize(array('contentType' => null, 'data' => 'foo'));
         }
         if (($id=='71769f39054f75894288e397df04e445') or ($id=='615d222619fb20b527168340cebd0578')) {
             return serialize(array('foo', 'bar'));

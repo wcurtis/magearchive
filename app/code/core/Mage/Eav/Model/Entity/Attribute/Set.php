@@ -119,4 +119,9 @@ class Mage_Eav_Model_Entity_Attribute_Set extends Mage_Core_Model_Abstract
         $this->setAttributeSetName($data['attribute_set_name'])
             ->setEntityTypeId($this->getEntityTypeId());
     }
+
+    public function save() {
+        //var_dump($this->getData());
+        return parent::save();
+    }
 }

@@ -43,7 +43,8 @@ class Mage_Adminhtml_Block_Report_Tag_Product_Detail_Grid extends Mage_Adminhtml
             ->addStatusFilter(Mage::getModel('tag/tag')->getApprovedStatus())
             ->addStoresVisibility()
             ->setActiveFilter()
-            ->addGroupByTag();
+            ->addGroupByTag()
+            ->setRelationId();
 
         $this->setCollection($collection);
         return parent::_prepareCollection();
@@ -63,27 +64,18 @@ class Mage_Adminhtml_Block_Report_Tag_Product_Detail_Grid extends Mage_Adminhtml
             'align'     => 'right'
         ));
 
-           // Collection for stores filters
-        if(!$collection = Mage::registry('stores_select_collection')) {
-            $collection =  Mage::app()->getStore()->getResourceCollection()
-                ->load();
-            Mage::register('stores_select_collection', $collection);
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('visible', array(
+                'header'    => Mage::helper('reports')->__('Visible In'),
+                'sortable'  => false,
+                'index'     =>  'stores',
+                'type'      => 'store',
+                'store_view'=> true
+            ));
         }
-
-        $stores = array();
-        foreach ($collection as $store) {
-            $stores[$store->getId()] = $store->getName();
-        }
-
-        $this->addColumn('visible', array(
-            'header'    => Mage::helper('reports')->__('Visible In'),
-            'sortable'  => false,
-            'index'     =>'stores',
-            'renderer'      => 'adminhtml/report_tag_grid_renderer_visible'
-        ));
 
         $this->addExportType('*/*/exportProductDetailCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportProductDetailXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportProductDetailExcel', Mage::helper('reports')->__('Excel'));
 
         $this->setFilterVisibility(false);
 

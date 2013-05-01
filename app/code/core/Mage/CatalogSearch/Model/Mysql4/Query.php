@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Catalog search query resource model
  *
@@ -28,13 +28,19 @@ class Mage_CatalogSearch_Model_Mysql4_Query extends Mage_Core_Model_Mysql4_Abstr
     {
         $this->_init('catalogsearch/search_query', 'query_id');
     }
-    
-    
+
+
     public function load(Mage_Core_Model_Abstract $object, $value, $field=null)
     {
         if (is_numeric($value)) {
             return parent::load($object, $value);
         }
         return parent::load($object, $value, 'query_text');
+    }
+
+    public function _beforeSave(Mage_Core_Model_Abstract $object)
+    {
+        $object->setUpdatedAt($this->formatDate(Mage::getModel('core/date')->gmtTimestamp()));
+        return $this;
     }
 }

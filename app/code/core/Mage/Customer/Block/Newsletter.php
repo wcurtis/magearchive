@@ -32,7 +32,7 @@ class Mage_Customer_Block_Newsletter extends Mage_Core_Block_Template
     {
         parent::__construct();
         $this->setTemplate('customer/form/newsletter.phtml');
-        Mage::registry('action')->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('customer')->__('Newsletter Subscriptions'));
+        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('customer')->__('Newsletter Subscriptions'));
     }
 
     public function getSubscriptionObject()

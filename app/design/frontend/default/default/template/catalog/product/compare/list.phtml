@@ -47,7 +47,7 @@
                     <td class="label">&nbsp;</td>
                 <?endif;?>
                 <td>
-                    <a href="#" onclick="setPLocation('<?=$_item->getProductUrl()?>', true)" title="<?=$this->htmlEscape($_item->getName())?>"><img src="<?=$_item->getSmallImageUrl()?>" width="125" height="125" alt="<?=$this->htmlEscape($_item->getName())?>"/></a>
+                    <a href="#" onclick="setPLocation('<?=$_item->getProductUrl()?>', true)" title="<?=$this->htmlEscape($_item->getName())?>"><img src="<?=$this->helper('catalog/image')->init($_item, 'small_image')->resize(125, 125);?>" width="125" height="125" alt="<?=$this->htmlEscape($_item->getName())?>"/></a>
                     <h5><a href="#" onclick="setPLocation('<?=$_item->getProductUrl()?>', true)" title="<?=$this->htmlEscape($_item->getName())?>"><?=$_item->getName()?></a></h5>
                     <?=$this->helper('review/product')->getSummaryHtml($_item, 'short')?>
                     <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
@@ -75,10 +75,10 @@
                             <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
                             <?break;
                         case "small_image":?>
-                            <img src="<?=$_item->getSmallImageUrl()?>" width="125" height="125" alt="<?=$_item->getName()?>"/>
+                            <img src="<?=$this->helper('catalog/image')->init($_item, 'small_image')->resize(125, 125);?>" width="125" height="125" alt="<?=$_item->getName()?>"/>
                             <?break;
                         default:?>
-                            <?=$this->getProductAttributeValue($_item, $_attribute)?>
+                            <?=nl2br($this->getProductAttributeValue($_item, $_attribute))?>
                             <?break;
                     }?>
                 </td>
@@ -94,15 +94,13 @@
                  <td class="label">&nbsp;</td>
                 <?endif;?>
                 <td>
-                        <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
-                        <?if($_item->isSaleable()):?>
-                        <button class="form-button" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToCartUrl($_item)?>', true)"><span><?=$this->__('Add to Cart')?></span></button><br/>
-                        <?endif;?>
-                        <?if ($this->helper('wishlist')->isAllow()) :?>
-                        <a href="#" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToWishlistUrl($_item)?>', true)" class="link-cart"><small><?=$this->__('Add to Wishlist')?></small></a>
-                        <?endif;?>
-                    </div>
-                </div>
+                    <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
+                    <?if($_item->isSaleable()):?>
+                    <button class="form-button" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToCartUrl($_item)?>', true)"><span><?=$this->__('Add to Cart')?></span></button><br/>
+                    <?endif;?>
+                    <?if ($this->helper('wishlist')->isAllow()) :?>
+                    <a href="#" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToWishlistUrl($_item)?>', true)" class="link-cart"><small><?=$this->__('Add to Wishlist')?></small></a>
+                    <?endif;?>
                 </td>
                 <?endforeach;?>
             </tr>

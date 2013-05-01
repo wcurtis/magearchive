@@ -25,14 +25,23 @@
  * @see Mage_Checkout_Block_Onepage_Payment_Methods
  */
 ?>
-<dl class="payment-methods">
-<?foreach ($this->getMethods() as $_method): $_code = $_method->getCode()?>
-    <dt>
-        <input id="p_method_<?=$_code?>" value="<?=$_code?>" type="radio" name="payment[method]" title="<?=$this->htmlEscape($_method->getTitle())?>" onclick="payment.switchMethod('<?=$_code?>')"<?if($this->getSelectedMethodCode()==$_code):?> checked<?endif;?>/>
-        <label for="p_method_<?=$_code?>"><?=$_method->getTitle()?></label>
-    </dt>
-    <dd>
-        <?=$this->getChildHtml('payment.method.'.$_code)?>
-    </dd>
-<?endforeach;?>
-</dl>
+<div class="payment-methods">
+    <dl id="checkout-payment-method-load">
+    <?foreach ($this->getMethods() as $_method): $_code = $_method->getCode()?>
+        <dt>
+        <?if( sizeof($this->getMethods()) > 1 ):?>
+            <input id="p_method_<?=$_code?>" value="<?=$_code?>" type="radio" name="payment[method]" title="<?=$this->htmlEscape($_method->getTitle())?>" onclick="payment.switchMethod('<?=$_code?>')"<?if($this->getSelectedMethodCode()==$_code):?> checked<?endif;?>/>
+        <?else:?>
+            <span class="no-display"><input id="p_method_<?=$_code?>" value="<?=$_code?>" type="radio" name="payment[method]" title="<?=$this->htmlEscape($_method->getTitle())?>" checked="checked" /></span>
+        <?endif;?>
+            <label for="p_method_<?=$_code?>"><?=$_method->getTitle()?></label>
+        </dt>
+        <dd>
+            <?=$this->getChildHtml('payment.method.'.$_code)?>
+        </dd>
+    <?endforeach;?>
+    </dl>
+</div>
+<script type="text/javascript">
+payment.init();
+</script>

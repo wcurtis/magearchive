@@ -230,11 +230,11 @@ class Mage_Wishlist_IndexController extends Mage_Core_Controller_Front_Action
     {
         try{
 
-            if(!$this->getRequest()->getParam('email')) {
+            if (!$this->getRequest()->getParam('emails')) {
                 Mage::throwException(Mage::helper('wishlist')->__('E-mail Addresses required'), 'wishlist/session');
             }
 
-            $emails = explode(',', $this->getRequest()->getParam('email'));
+            $emails = explode(',', $this->getRequest()->getParam('emails'));
             $customer = Mage::getSingleton('customer/session')->getCustomer();
 
             $wishlist = Mage::getModel('wishlist/wishlist')
@@ -242,6 +242,12 @@ class Mage_Wishlist_IndexController extends Mage_Core_Controller_Front_Action
             Mage::register('wishlist', $wishlist);
 
             $message = nl2br(htmlspecialchars($this->getRequest()->getParam('message')));
+
+            /*if share rss added rss feed to email template*/
+            if ($this->getRequest()->getParam('rss_url')) {
+                $rss_url = $this->getLayout()->createBlock('wishlist/share_email_rss')->toHtml();
+                $message .=$rss_url;
+            }
 
             $wishlistBlock = $this->getLayout()->createBlock('wishlist/share_email_items')->toHtml();
 
@@ -277,6 +283,7 @@ class Mage_Wishlist_IndexController extends Mage_Core_Controller_Front_Action
             $this->_redirect('*/*');
         }
         catch (Exception $e) {
+            Mage::getSingleton('wishlist/session')->addError($e->getMessage());
             Mage::getSingleton('wishlist/session')->setData('sharing_form', $this->getRequest()->getParams());
             $this->_redirect('*/*/share');
         }

@@ -90,7 +90,7 @@ Product reviews page
     <review_customer_index>
         <update handle="customer_account"/>
         <reference name="content">
-            <block type="review/customer_list" name="review_customer_list"/>
+            <block type="review/customer_list" name="review_customer_list" template="review/customer/list.phtml"/>
         </reference>
     </review_customer_index>
 

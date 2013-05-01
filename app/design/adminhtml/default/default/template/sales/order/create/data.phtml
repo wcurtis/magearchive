@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
+<div class="page-create-order">
 <p class="switcher">
 <label for="currency_switcher"><?=Mage::helper('sales')->__('Order Currency:')?></label>
 <select id="currency_switcher" name="order[currency]" class="left-col-block" onchange="order.setCurrencyId(this.value)">
@@ -26,17 +27,14 @@
     <?endforeach;?>
 </select>
 </p>
-
-<br/>
-
-<table cellspacing="0" cellpadding="0" width="100%">
+<table cellspacing="0" width="100%">
 <tr>
     <?if($this->getCustomerId()):?>
-    <td class="order-sidebar-column">
+    <td class="side-col" style="background:none; padding:0;">
         <div id="order:sidebar"><?=$this->getChildHtml('sidebar')?></div>
     </td>
     <?endif;?>
-    <td <?if($this->getCustomerId()):?>class="order-main-column"<?endif;?>>
+    <td <?if($this->getCustomerId()):?>class="main-col"<?endif;?>>
        <div id="order:search" style="display:none" class="order-search-items"><?=$this->getChildHtml('search')?></div>
         <div id="order:items"><?=$this->getChildHtml('items')?></div>
         <div id="order:form_account"><?=$this->getChildHtml('form_account')?></div>
@@ -53,16 +51,16 @@
         <?=$this->getChildHtml('giftmessage')?>
         </div>
         <div class="clear"></div>
-        <h4><?=Mage::helper('sales')->__('Order Total')?></h4>
-        <div class="entry-edit">
-            <fieldset class="create-order-totals">
-                <div class="box-left">
-                    <div id="order:comment"><?=$this->getChildHtml('comment')?></div>
-                </div>
-                <div id="order:totals" class="box-right"><?=$this->getChildHtml('totals')?></div>
-            </fieldset>
+        <div class="box-left entry-edit">
+            <div class="entry-edit-head"><h4><?=Mage::helper('sales')->__('Order History')?></h4></div>
+            <fieldset id="order:comment"><?=$this->getChildHtml('comment')?></fieldset>
         </div>
-
+        <div class="box-right entry-edit">
+            <div class="entry-edit-head"><h4><?=Mage::helper('sales')->__('Order Totals')?></h4></div>
+            <div id="order:totals" class="order-totals"><?=$this->getChildHtml('totals')?></div>
+        </div>
+        <div class="clear"></div>
     </td>
 </tr>
 </table>
+</div>

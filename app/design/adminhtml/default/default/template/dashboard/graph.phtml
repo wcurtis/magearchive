@@ -1,0 +1,56 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+/*
+?>
+<div style="width:587px;margin:20px;position:relative;margin-left:-294px;left:50%">
+    <div style="position:absolute;right:1px;top:0px;left: expression(parentNode.offsetWidth - offsetWidth - 1 + 'px');">
+        <div style="padding:5px;height:15px;width:15px;background-color:#F4F4F4" id="dashboard_<?=$this->getHtmlId()?>_cal_div"><img src="<?=Mage::getDesign()->getSkinUrl('images/grid-cal.gif')?>" onclick="toggleCal('<?=$this->getHtmlId()?>')" /></div>
+        <div style="padding:5px;display:none;width:200px;" id="dashboard_<?=$this->getHtmlId()?>_range_div" class="switcher">
+            <?=$this->__('Select Range')?>:
+            <select name="period" id="order_<?=$this->getHtmlId()?>_period" onchange="changePeriod(this)">
+                <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
+        	        <?if(in_array($_value, array('custom'))) continue;?>
+        	        <option value="<?=$_value?>" <?if($this->getRequest()->getParam('period')==$_value):?> selected<?endif;?>><?=$_label?></option>
+        	    <?endforeach;?>
+            </select>
+            <img src="<?=Mage::getDesign()->getSkinUrl('images/dashboard-close.gif')?>" onclick="toggleCal('<?=$this->getHtmlId()?>')" />
+        </div>
+    </div>
+    <?if($this->getCount()):?>
+    <img src="<?=$this->getChartUrl()?>" />
+    <?else:?>
+    <div align="center" style="width:587px;height:300px;"><?=$this->__('No Data Found')?></div>
+    <?endif;?>
+</div>
+<?*/?>
+<div style="margin:20px;">
+    <p class="switcher a-right" style="padding:5px 10px;"><?=$this->__('Select Range')?>:
+    <select name="period" id="order_<?=$this->getHtmlId()?>_period" onchange="changePeriod(this)">
+        <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
+            <?if(in_array($_value, array('custom'))) continue;?>
+            <option value="<?=$_value?>" <?if($this->getRequest()->getParam('period')==$_value):?> selected<?endif;?>><?=$_label?></option>
+        <?endforeach;?>
+    </select></p><br/>
+    <?if($this->getCount()):?>
+    <p><img src="<?=$this->getChartUrl()?>" /></p>
+    <?else:?>
+    <p class="a-center" style="width:<?=$this->getWidth()?>px;height:<?=$this->getHeight()?>px;"><?=$this->__('No Data Found')?></p>
+    <?endif;?>
+</div>

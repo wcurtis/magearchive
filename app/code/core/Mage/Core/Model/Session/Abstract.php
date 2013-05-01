@@ -43,6 +43,7 @@ class Mage_Core_Model_Session_Abstract extends Mage_Core_Model_Session_Abstract_
 
     public function getCookieDomain()
     {
+        return Mage::getSingleton('core/cookie')->getCookieDomain();
     	$domain = Mage::getStoreConfig(self::XML_PATH_COOKIE_DOMAIN);
     	if (empty($domain) && isset($_SERVER['HTTP_HOST'])) {
     		$domainArr = explode(':', $_SERVER['HTTP_HOST']);
@@ -53,6 +54,7 @@ class Mage_Core_Model_Session_Abstract extends Mage_Core_Model_Session_Abstract_
 
     public function getCookiePath()
     {
+        return Mage::getSingleton('core/cookie')->getCookiePath();
     	$path = Mage::getStoreConfig(self::XML_PATH_COOKIE_PATH);
     	if (empty($path)) {
     		$path = '/';
@@ -99,6 +101,7 @@ class Mage_Core_Model_Session_Abstract extends Mage_Core_Model_Session_Abstract_
      */
     public function addException(Exception $exception, $alternativeText)
     {
+        Mage::loadExtension($exception);
         $this->addMessage(Mage::getSingleton('core/message')->error($alternativeText));
         return $this;
     }

@@ -150,71 +150,106 @@ function varienWindowOnload(){
 }
 Event.observe(window, 'load', varienWindowOnload);
 
-var regionUpdater = Class.create();
-regionUpdater.prototype = {
-    initialize: function (countryEl, regionTextEl, regionSelectEl, regions)
+RegionUpdater = Class.create();
+RegionUpdater.prototype = {
+    initialize: function (countryEl, regionTextEl, regionSelectEl, regions, disableAction)
     {
         this.countryEl = $(countryEl);
         this.regionTextEl = $(regionTextEl);
         this.regionSelectEl = $(regionSelectEl);
         this.regions = regions;
+        this.disableAction = (typeof disableAction=='undefined') ? 'hide' : disableAction;
 
-        this.update();
+        if (this.regionSelectEl.options.length<=1) {
+            this.update();
+        }
+        else {
+            this.lastCountryId = this.countryEl.value;
+        }
 
-        this.countryEl.changeUpdater = this.update.bind(this);
         Event.observe(this.countryEl, 'change', this.update.bind(this));
     },
 
     update: function()
     {
         if (this.regions[this.countryEl.value]) {
-            var i, option, region;
-            var def = this.regionTextEl.value.toLowerCase();
 
-            this.regionTextEl.value = '';
+            if (this.lastCountryId!=this.countryEl.value) {
+                var i, option, region, def;
 
-            this.regionSelectEl.options.length = 1;
-            for (regionId in this.regions[this.countryEl.value]) {
-                region = this.regions[this.countryEl.value][regionId];
-
-                option = document.createElement('OPTION');
-                option.value = regionId;
-                option.text = region.name;
-
-                if (this.regionSelectEl.options.add) {
-                    this.regionSelectEl.options.add(option);
-                } else {
-                    this.regionSelectEl.appendChild(option);
+                if (this.regionTextEl) {
+                    def = this.regionTextEl.value.toLowerCase();
+                    this.regionTextEl.value = '';
+                }
+                if (!def) {
+                    def = this.regionSelectEl.getAttribute('defaultValue');
                 }
 
-                if (regionId==def || region.name.toLowerCase()==def || region.code.toLowerCase()==def) {
-                    this.regionSelectEl.value = regionId;
+                this.regionSelectEl.options.length = 1;
+                for (regionId in this.regions[this.countryEl.value]) {
+                    region = this.regions[this.countryEl.value][regionId];
+
+                    option = document.createElement('OPTION');
+                    option.value = regionId;
+                    option.text = region.name;
+
+                    if (this.regionSelectEl.options.add) {
+                        this.regionSelectEl.options.add(option);
+                    } else {
+                        this.regionSelectEl.appendChild(option);
+                    }
+
+                    if (regionId==def || region.name.toLowerCase()==def || region.code.toLowerCase()==def) {
+                        this.regionSelectEl.value = regionId;
+                    }
                 }
             }
 
-            this.regionTextEl.style.display = 'none';
-            this.regionTextEl.disabled = true;
-            this.regionSelectEl.style.display = '';
-            this.regionSelectEl.disabled = false;
+            if (this.disableAction=='hide') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.style.display = 'none';
+                    this.regionTextEl.style.disabled = true;
+                }
+                this.regionSelectEl.style.display = '';
+                this.regionSelectEl.disabled = false;
+            } else if (this.disableAction=='disable') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.disabled = true;
+                }
+                this.regionSelectEl.disabled = false;
+            }
             this.setMarkDisplay(this.regionSelectEl, true);
+
+            this.lastCountryId = this.countryEl.value;
         } else {
-            this.regionTextEl.style.display = '';
-            this.regionTextEl.disabled = false;
-            this.regionSelectEl.style.display = 'none';
-            this.regionSelectEl.disabled = true;
+            if (this.disableAction=='hide') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.style.display = '';
+                    this.regionTextEl.style.disabled = false;
+                }
+                this.regionSelectEl.style.display = 'none';
+                this.regionSelectEl.disabled = true;
+            } else if (this.disableAction=='disable') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.disabled = false;
+                }
+                this.regionSelectEl.disabled = true;
+            }
             this.setMarkDisplay(this.regionSelectEl, false);
         }
     },
 
     setMarkDisplay: function(elem, display){
-        if(elem.parentNode){
-            var marks = Element.getElementsByClassName(elem.parentNode, 'required');
+        if(elem.parentNode.parentNode){
+            var marks = Element.getElementsByClassName(elem.parentNode.parentNode, 'required');
             if(marks[0]){
                 display ? marks[0].show() : marks[0].hide();
             }
         }
     }
 }
+
+regionUpdater = RegionUpdater;
 
 /**
  * Fix errorrs in IE
@@ -238,42 +273,42 @@ Event.pointerY = function(event){
 
 SelectUpdater = Class.create();
 SelectUpdater.prototype = {
-	initialize: function (firstSelect, secondSelect, selectFirstMessage, noValuesMessage, values, selected)
-	{
-		this.first = $(firstSelect);
-		this.second = $(secondSelect);
-		this.message = selectFirstMessage;
-		this.values = values;
-		this.noMessage = noValuesMessage;
-		this.selected = selected;
+    initialize: function (firstSelect, secondSelect, selectFirstMessage, noValuesMessage, values, selected)
+    {
+        this.first = $(firstSelect);
+        this.second = $(secondSelect);
+        this.message = selectFirstMessage;
+        this.values = values;
+        this.noMessage = noValuesMessage;
+        this.selected = selected;
 
-		this.update();
+        this.update();
 
-		Event.observe(this.first, 'change', this.update.bind(this));
-	},
+        Event.observe(this.first, 'change', this.update.bind(this));
+    },
 
-	update: function()
-	{
-	    this.second.length = 0;
-	    this.second.value = '';
+    update: function()
+    {
+        this.second.length = 0;
+        this.second.value = '';
 
-    	if (this.first.value && this.values[this.first.value]) {
-    		for (optionValue in this.values[this.first.value]) {
-    			optionTitle = this.values[this.first.value][optionValue];
+        if (this.first.value && this.values[this.first.value]) {
+            for (optionValue in this.values[this.first.value]) {
+                optionTitle = this.values[this.first.value][optionValue];
 
                 this.addOption(this.second, optionValue, optionTitle);
-    		}
+            }
             this.second.disabled = false;
         } else if (this.first.value && !this.values[this.first.value]) {
             this.addOption(this.second, '', this.noMessage);
         } else {
             this.addOption(this.second, '', this.message);
             this.second.disabled = true;
-    	}
-	},
+        }
+    },
 
-	addOption: function(select, value, text)
-	{
+    addOption: function(select, value, text)
+    {
         option = document.createElement('OPTION');
         option.value = value;
         option.text = text;
@@ -283,10 +318,10 @@ SelectUpdater.prototype = {
             this.selected = false;
         }
 
-		if (select.options.add) {
-			select.options.add(option);
-		} else {
-			select.appendChild(option);
-		}
-	}
+        if (select.options.add) {
+            select.options.add(option);
+        } else {
+            select.appendChild(option);
+        }
+    }
 }

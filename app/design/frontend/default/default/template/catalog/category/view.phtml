@@ -27,15 +27,33 @@
 ?>
 <?=$this->getMessagesBlock()->getGroupedHtml()?>
 <?if($this->isContentMode()):?>
-    <h2 class="category-head"><?=$this->getCurrentCategory()->getName()?></h2>
+    <div class="category-head">
+    <?if($this->IsRssCatalogEnable() && $this->IsTopCategory()):?>
+        <a href="<?=$this->getRssLink()?>" class="link-feed right"><?=$this->__('Subscribe to RSS Feed')?></a>
+    <?endif;?>
+    <h2><?=$this->getCurrentCategory()->getName()?></h2>
+    </div>
     <?=$this->getCmsBlockHtml()?>
 <?elseif($this->isMixedMode()):?>
-    <h2 class="category-head"><?=$this->getCurrentCategory()->getName()?></h2>
+    <div class="category-head">
+    <?if($this->IsRssCatalogEnable() && $this->IsTopCategory()):?>
+        <a href="<?=$this->getRssLink()?>" class="link-feed right"><?=$this->__('Subscribe to RSS Feed')?></a>
+    <?endif;?>
+    <h2><?=$this->getCurrentCategory()->getName()?></h2>
+    </div>
+    <?if($this->IsRssCatalogEnable() && $this->IsTopCategory()):?>
+        <a href="<?=$this->getRssLink()?>" class="link-feed"><?=$this->__('Subscribe to RSS Feed')?></a>
+    <?endif;?>
     <?=$this->getCmsBlockHtml()?>
     <?=$this->getProductListHtml()?>
 
 <?else:?>
-    <h2 class="category-head"><?=$this->getCurrentCategory()->getName()?></h2>
+    <div class="category-head">
+    <?if($this->IsRssCatalogEnable() && $this->IsTopCategory()):?>
+        <a href="<?=$this->getRssLink()?>" class="link-feed right"><?=$this->__('Subscribe to RSS Feed')?></a>
+    <?endif;?>
+    <h2><?=$this->getCurrentCategory()->getName()?></h2>
+    </div>
     <?if($_imageUrl=$this->getCurrentCategory()->getImageUrl()):?>
         <p><img src="<?=$_imageUrl?>" alt="<?=$this->getCurrentCategory()->getName()?>" width="475"/></p>
     <?endif;?>

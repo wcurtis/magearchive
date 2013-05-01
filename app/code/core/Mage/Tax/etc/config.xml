@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Tax>
-            <version>0.7.1</version>
+            <version>0.7.3</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Customer />
@@ -169,5 +169,17 @@
                 </Mage_Tax>
             </modules>
         </translate>
+
+        <events>
+            <catalog_block_product_list_collection>
+                <observers>
+                    <apply_tax>
+                        <type>singleton</type>
+                        <class>tax/observer</class>
+                        <method>catalog_block_product_list_collection</method>
+                    </apply_tax>
+                </observers>
+            </catalog_block_product_list_collection>
+        </events>
     </frontend>
 </config>

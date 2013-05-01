@@ -19,12 +19,12 @@
  */
 
 
-class Mage_Adminhtml_Model_Search_Customer extends Varien_Object 
+class Mage_Adminhtml_Model_Search_Customer extends Varien_Object
 {
     public function load()
     {
         $arr = array();
-        
+
         if (!$this->hasStart() || !$this->hasLimit() || !$this->hasQuery()) {
             $this->setResults($arr);
             return $this;
@@ -36,19 +36,19 @@ class Mage_Adminhtml_Model_Search_Customer extends Varien_Object
             ))
             ->setPage(1, 10)
             ->load();
-        
+
         foreach ($collection->getItems() as $customer) {
             $arr[] = array(
                 'id'            => 'customer/1/'.$customer->getId(),
                 'type'          => 'Customer',
                 'name'          => $customer->getFirstname().' '.$customer->getLastname(),
                 'description'   => Mage::helper('adminhtml')->__('No description'),
-                'url'           => $this->getUrl('*/customer/edit', array('id'=>$customer->getId())),
+                'url'           => Mage::helper('adminhtml')->getUrl('*/customer/edit', array('id'=>$customer->getId())),
             );
         }
-        
+
         $this->setResults($arr);
-        
+
         return $this;
     }
 }

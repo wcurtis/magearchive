@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Tag>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <depends>
                 <Mage_Core />
             </depends>
@@ -156,61 +156,7 @@
                     </tag>
                  </children>
             </catalog>
-            <report>
-                <children>
-                     <tags translate="title" module="tag">
-                        <title>Tags Report</title>
-                        <children>
-                            <customer translate="title" module="tag">
-                                <title>Customers</title>
-                                <action>adminhtml/report_tag/customer</action>
-                            </customer>
-                            <product translate="title" module="tag">
-                                <title>Products</title>
-                                <action>adminhtml/report_tag/product</action>
-                            </product>
-                            <!--<product_total>
-                                <title>Products (Total)</title>
-                                <action>adminhtml/report_tag/productAll</action>
-                            </product_total>-->
-                            <popular translate="title" module="tag">
-                                <title>Popular</title>
-                                <action>adminhtml/report_tag/popular</action>
-                            </popular>
-                        </children>
-                    </tags>
-                    </children>
-            </report>
         </menu>
-        <acl>
-            <resources>
-                <admin>
-                    <children>
-                        <report>
-                            <children>
-                                <tags>
-                                    <title>Tags Report</title>
-                                    <children>
-                                        <customer>
-                                            <title>Customers</title>
-                                        </customer>
-                                        <popular>
-                                            <title>Popular</title>
-                                        </popular>
-                                        <product>
-                                            <title>Products</title>
-                                        </product>
-                                        <product_total>
-                                            <title>Products (Total)</title>
-                                        </product_total>
-                                    </children>
-                                </tags>
-                            </children>
-                        </report>
-                    </children>
-                </admin>
-            </resources>
-        </acl>
         <translate>
             <modules>
                 <Mage_Tag>

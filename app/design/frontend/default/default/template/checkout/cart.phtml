@@ -70,7 +70,7 @@
         <tr>
             <td>
                 <a href="<?=$this->getItemUrl($_item)?>">
-                    <img src="<?=$this->getItemImageUrl($_item)?>" alt="<?=$this->htmlEscape($this->getItemName($_item))?>" width="75"/>
+                    <img src="<?=$this->helper('catalog/image')->init($this->getItemProduct($_item), 'thumbnail')->resize(75);?>" alt="<?=$this->htmlEscape($this->getItemName($_item))?>" width="75"/>
                 </a>
             </td>
             <td class="attributes-col">

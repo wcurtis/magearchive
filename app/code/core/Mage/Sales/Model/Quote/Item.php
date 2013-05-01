@@ -19,8 +19,15 @@
  */
 
 
+/**
+ * Quote item model
+ *
+ * @category   Mage
+ * @package    Mage_Sales
+ */
 class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
 {
+
     /**
      * Quote model object
      *
@@ -115,9 +122,10 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
      */
     public function getProduct()
     {
-    	if (!$this->hasData('product') && $this->getProductId()) {
-    		$this->setProduct(Mage::getModel('catalog/product')->load($this->getProductId()));
-    	}
-    	return $this->getData('product');
+        if (!$this->hasData('product') && $this->getProductId()) {
+            $this->setProduct(Mage::getModel('catalog/product')->load($this->getProductId()));
+        }
+        return $this->getData('product');
     }
+
 }

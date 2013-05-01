@@ -23,7 +23,7 @@ class Mage_Sales_Model_Observer
 {
     public function cleanExpiredQuotes($schedule)
     {
-        $lifetimes = Mage::getConfig()->getStoresConfigByPath('sales/cart/delete_quote_after');
+        $lifetimes = Mage::getConfig()->getStoresConfigByPath('checkout/cart/delete_quote_after');
         foreach ($lifetimes as $storeId=>$lifetime) {
             $lifetime *= 86400;
 

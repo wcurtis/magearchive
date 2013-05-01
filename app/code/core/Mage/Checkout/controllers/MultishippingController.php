@@ -208,6 +208,9 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
      */
     public function shippingAction()
     {
+        $this->_getState()->setActiveStep(
+            Mage_Checkout_Model_Type_Multishipping_State::STEP_SHIPPING
+        );
         $this->loadLayout();
         $this->_initLayoutMessages('customer/session');
         $this->_initLayoutMessages('checkout/session');
@@ -250,6 +253,10 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
         if(!$this->_validateBilling()) {
             return;
         }
+
+        $this->_getState()->setActiveStep(
+            Mage_Checkout_Model_Type_Multishipping_State::STEP_BILLING
+        );
 
         $this->loadLayout();
         $this->_initLayoutMessages('customer/session');

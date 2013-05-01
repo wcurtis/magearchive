@@ -63,10 +63,10 @@ class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute extends Mage_C
             }
 
             $this->_products = Mage::getResourceModel('catalog/product_collection')
-                ->setStore($this->getSelectedStoreId())
+                ->setStoreId($this->getSelectedStoreId())
                 ->addIdFilter($productsIds)
-                ->load()
-                ->addStoreNamesToResult();
+                ->load();
+                //->addStoreNamesToResult();
         }
 
         return $this->_products;

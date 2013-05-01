@@ -21,7 +21,7 @@
 
 /**
  * Possible data fields:
- * 
+ *
  * - subject
  * - to
  * - from
@@ -34,7 +34,7 @@ class Mage_Core_Model_Email extends Varien_Object
 {
 	protected $_tplVars = array();
     protected $_block;
-    
+
     public function __construct()
     {
         // TODO: move to config
@@ -42,7 +42,7 @@ class Mage_Core_Model_Email extends Varien_Object
         $this->setFromEmail('magento@varien.com');
         $this->setType('text');
     }
-    
+
     public function setTemplateVar($var, $value = null)
     {
         if (is_array($var)) {
@@ -55,12 +55,12 @@ class Mage_Core_Model_Email extends Varien_Object
         }
         return $this;
     }
-    
+
     public function getTemplateVars()
     {
         return $this->_tplVars;
     }
-    
+
     public function getBody()
     {
         $body = $this->getData('body');
@@ -77,7 +77,7 @@ class Mage_Core_Model_Email extends Varien_Object
         }
         return $body;
     }
-    
+
     public function getSubject()
     {
         $subject = $this->getData('subject');
@@ -87,23 +87,27 @@ class Mage_Core_Model_Email extends Varien_Object
         }
         return $subject;
     }
-    
+
     public function send()
     {
+        if (Mage::getStoreConfigFlag('system/smtp/disable')) {
+            return $this;
+        }
+
         $mail = new Zend_Mail();
-        
+
         if (strtolower($this->getType()) == 'html') {
             $mail->setBodyHtml($this->getBody());
         }
         else {
             $mail->setBodyText($this->getBody());
         }
-        
+
         $mail->setFrom($this->getFromEmail(), $this->getFromName())
             ->addTo($this->getToEmail(), $this->getToName())
             ->setSubject($this->getSubject());
         $mail->send();
-        
+
         return $this;
     }
 }

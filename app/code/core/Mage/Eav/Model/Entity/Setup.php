@@ -47,16 +47,14 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
             'entity_table'=>isset($params['table']) ? $params['table'] : 'eav/entity',
             'increment_model'=>isset($params['increment_model']) ? $params['increment_model'] : '',
             'increment_per_store'=>isset($params['increment_per_store']) ? $params['increment_per_store'] : 0,
-            'is_data_sharing'=>isset($params['is_data_sharing']) ? $params['is_data_sharing'] : 1,
         );
 
-        if ($id = $this->getEntityType($code, 'entity_type_id')) {
+        if ($this->getEntityType($code, 'entity_type_id')) {
             $this->updateEntityType($code, $data);
         } else {
             $this->_conn->insert($this->getTable('eav/entity_type'), $data);
-
-            $entityTypeId = $this->getEntityTypeId($code);
         }
+
         $this->addAttributeSet($code, 'Default');
         $this->addAttributeGroup($code, 'Default', $this->_generalGroupName);
 
@@ -282,28 +280,30 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
      */
     public function addAttribute($entityTypeId, $code, array $attr)
     {
+        $applyTo = implode(',', array_keys((array)Mage::getConfig()->getNode('global/catalog/product/type')->children()));
         $entityTypeId = $this->getEntityTypeId($entityTypeId);
         $data = array(
-            'entity_type_id'=>$entityTypeId,
-            'attribute_code'=>$code,
-            'backend_model'=>isset($attr['backend']) ? $attr['backend'] : '',
-            'backend_type'=>isset($attr['type']) ? $attr['type'] : 'varchar',
-            'backend_table'=>isset($attr['table']) ? $attr['table'] : '',
-            'frontend_model'=>isset($attr['frontend']) ? $attr['frontend'] : '',
-            'frontend_input'=>isset($attr['input']) ? $attr['input'] : 'text',
-            'frontend_label'=>isset($attr['label']) ? $attr['label'] : '',
-            'source_model'=>isset($attr['source']) ? $attr['source'] : '',
-            'is_global'=>isset($attr['global']) ? $attr['global'] : 1,
-            'is_visible'=>isset($attr['visible']) ? (int) $attr['visible'] : 1,
-            'is_required'=>isset($attr['required']) ? $attr['required'] : 1,
-            'is_user_defined'=>isset($attr['user_defined']) ? $attr['user_defined'] : 0,
-            'default_value'=>isset($attr['default']) ? $attr['default'] : '',
-            'is_searchable'=>isset($attr['searchable']) ? $attr['searchable'] : 0,
-            'is_filterable'=>isset($attr['filterable']) ? $attr['filterable'] : 0,
-            'is_comparable'=>isset($attr['comparable']) ? $attr['comparable'] : 0,
-            'is_visible_on_front'=>isset($attr['visible_on_front']) ? $attr['visible_on_front'] : 0,
-            'is_unique'=>isset($attr['unique']) ? $attr['unique'] : 0,
-            'use_in_super_product'=>isset($attr['use_in_super_product']) ? $attr['use_in_super_product'] : 1
+            'entity_type_id'    => $entityTypeId,
+            'attribute_code'    => $code,
+            'backend_model'     => isset($attr['backend']) ? $attr['backend'] : '',
+            'backend_type'      => isset($attr['type']) ? $attr['type'] : 'varchar',
+            'backend_table'     => isset($attr['table']) ? $attr['table'] : '',
+            'frontend_model'    => isset($attr['frontend']) ? $attr['frontend'] : '',
+            'frontend_input'    => isset($attr['input']) ? $attr['input'] : 'text',
+            'frontend_label'    => isset($attr['label']) ? $attr['label'] : '',
+            'source_model'      => isset($attr['source']) ? $attr['source'] : '',
+            'is_global'         => isset($attr['global']) ? $attr['global'] : 1,
+            'is_visible'        => isset($attr['visible']) ? (int) $attr['visible'] : 1,
+            'is_required'       => isset($attr['required']) ? $attr['required'] : 1,
+            'is_user_defined'   => isset($attr['user_defined']) ? $attr['user_defined'] : 0,
+            'default_value'     => isset($attr['default']) ? $attr['default'] : '',
+            'is_searchable'     => isset($attr['searchable']) ? $attr['searchable'] : 0,
+            'is_filterable'     => isset($attr['filterable']) ? $attr['filterable'] : 0,
+            'is_comparable'     => isset($attr['comparable']) ? $attr['comparable'] : 0,
+            'is_visible_on_front' => isset($attr['visible_on_front']) ? $attr['visible_on_front'] : 0,
+            'is_unique'         => isset($attr['unique']) ? $attr['unique'] : 0,
+            'apply_to'          => isset($attr['apply_to']) ? $attr['apply_to'] : $applyTo,
+            'is_configurable'   => isset($attr['is_configurable']) ? $attr['is_configurable'] : 1
         );
 
         $sortOrder = isset($attr['sort_order']) ? $attr['sort_order'] : null;
@@ -414,6 +414,7 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
             'sort_order'=>$this->getAttributeSortOrder($entityTypeId, $setId, $groupId, $sortOrder),
         ));
 
+        return $this;
     }
 
 /******************* BULK INSTALL *****************/
@@ -428,8 +429,6 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
 
         foreach ($entities as $entityName=>$entity) {
             $this->addEntityType($entityName, $entity);
-
-            $sortOrder = 1;
 
             $frontendPrefix = isset($entity['frontend_prefix']) ? $entity['frontend_prefix'] : '';
             $backendPrefix = isset($entity['backend_prefix']) ? $entity['backend_prefix'] : '';

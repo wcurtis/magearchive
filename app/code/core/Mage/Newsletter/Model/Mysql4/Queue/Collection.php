@@ -89,7 +89,7 @@ class Mage_Newsletter_Model_Mysql4_Queue_Collection extends Mage_Core_Model_Mysq
     	return $this;
     }
 
-    public function addFieldToFilter($field, $condition)
+    public function addFieldToFilter($field, $condition=null)
     {
     	if(in_array($field, array('subscribers_total', 'subscribers_sent'))) {
     		$this->addFieldToFilter('main_table.queue_id', array('in'=>$this->_getIdsFromLink($field, $condition)));
@@ -146,7 +146,7 @@ class Mage_Newsletter_Model_Mysql4_Queue_Collection extends Mage_Core_Model_Mysq
     	$this->getSelect()
     		->where('main_table.queue_status in (?)', array(Mage_Newsletter_Model_Queue::STATUS_SENDING,
     														Mage_Newsletter_Model_Queue::STATUS_NEVER))
-    		->where('main_table.queue_start_at < ?', now())
+    		->where('main_table.queue_start_at < ?', Mage::getSingleton('core/date')->gmtdate())
     		->where('main_table.queue_start_at IS NOT NULL');
 
     	return $this;

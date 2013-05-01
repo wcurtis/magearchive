@@ -45,7 +45,7 @@ class Mage_Adminhtml_Block_System_Config_Dwstree extends Mage_Adminhtml_Block_Wi
         $storesConfig = Mage::getConfig()->getNode('stores');
 
         $this->addTab('default', array(
-            'label'  => Mage::helper('adminhtml')->__('Default config'),
+            'label'  => Mage::helper('adminhtml')->__('Default Config'),
             'url'    => $this->getUrl('*/*/*', array('section'=>$section)),
             'class' => 'default',
         ));

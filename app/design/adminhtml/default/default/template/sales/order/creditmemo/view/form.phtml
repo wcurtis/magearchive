@@ -23,26 +23,33 @@
 <div class="box-left">
     <!--Billing Address-->
     <div class="entry-edit">
-        <h4 class="icon-head head-payment-method"><?=$this->helper('sales')->__('Payment Information')?></h4>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-payment-method"><?=$this->helper('sales')->__('Payment Information')?></h4>
+        </div>
         <fieldset>
             <div><?=$this->getChildHtml('payment_info')?></div>
+            <div><?=Mage::helper('sales')->__('Order was placed using %s', $_order->getOrderCurrencyCode())?></div>
         </fieldset>
     </div>
 </div>
 <div class="box-right">
     <!--Shipping Address-->
     <div class="entry-edit">
-        <h4 class="icon-head head-shipping-method"><?=$this->helper('sales')->__('Shipping Information')?></h4>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-shipping-method"><?=$this->helper('sales')->__('Shipping Information')?></h4>
+        </div>
         <fieldset>
             <strong><?=$_order->getShippingDescription()?></strong>
-            (<?=$this->helper('sales')->__('Total Shipping Charges %s', $_order->formatPrice($_order->getShippingAmount()))?>)
+            (<?=$this->helper('sales')->__('Total Shipping Charges %s', $this->displayPriceAttribute('shipping_amount', false, ' '))?>)
         </fieldset>
     </div>
 </div>
 <div class="clear"></div>
 <?$_items = $this->getCreditmemo()->getAllItems()?>
-<div class="entry-view">
-    <h4 class="icon-head head-products"><?=$this->helper('sales')->__('Items Refunded')?></h4>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-products"><?=$this->helper('sales')->__('Items Refunded')?></h4>
+    </div>
 </div>
 <?if (count($_items)):?>
 <div>
@@ -68,18 +75,23 @@
             </thead>
             <tbody>
                 <?$i=0;foreach ($_items as $_item):$i++?>
+                    <?$this->setPriceDataObject($_item)?>
                     <tr class="<?=($i%2==0)?'even':'odd'?>">
                         <td>
                             <?=$_item->getName()?>
                             <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
+                            <?=$_item->getDescription()?>
                         </td>
-                        <td class="price"><?=$this->formatPrice($_item->getPrice())?></td>
+                        <td class="price"><?=$this->displayPriceAttribute('price')?></td>
                         <td><?=$_item->getQty()*1?></td>
-                        <td class="price"><?=$this->formatPrice($_item->getRowTotal())?></td>
-                        <td class="price"><?=$this->formatPrice($_item->getTaxAmount())?></td>
-                        <td class="price"><?=$this->formatPrice(-$_item->getDiscountAmount())?></td>
+                        <td class="price"><?=$this->displayPriceAttribute('row_total')?></td>
+                        <td class="price"><?=$this->displayPriceAttribute('tax_amount')?></td>
+                        <td class="price"><?=$this->displayPriceAttribute('discount_amount')?></td>
                         <td class="price last">
-                            <?=$this->formatPrice($_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount())?>
+                            <?=$this->displayPrices(
+                                $_item->getBaseRowTotal()-$_item->getBaseDiscountAmount()+$_item->getBaseTaxAmount(),
+                                $_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount()
+                            )?>
                         </td>
                     </tr>
                 <?endforeach;?>

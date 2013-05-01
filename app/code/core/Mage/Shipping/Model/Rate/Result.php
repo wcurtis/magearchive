@@ -23,7 +23,7 @@ class Mage_Shipping_Model_Rate_Result
 {
 	protected $_rates = array();
 	protected $_error = null;
-	
+
 	/**
 	 * Reset result
 	 */
@@ -32,17 +32,17 @@ class Mage_Shipping_Model_Rate_Result
 	    $this->_rates = array();
 	    return $this;
 	}
-	
+
 	public function setError($error)
 	{
 	    $this->_error = $error;
 	}
-	
+
 	public function getError()
 	{
 	    return $this->_error;
 	}
-	
+
 	/**
 	 * Add a rate to the result
 	 *
@@ -60,7 +60,7 @@ class Mage_Shipping_Model_Rate_Result
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Return all quotes in the result
 	 */
@@ -68,7 +68,15 @@ class Mage_Shipping_Model_Rate_Result
 	{
 		return $this->_rates;
 	}
-	
+
+	/**
+	 * Return rate by id in array
+	 */
+	public function getRateById($id)
+	{
+	    return isset($this->_rates[$id]) ? $this->_rates[$id] : null;
+	}
+
 	/**
 	 * Return quotes for specified type
 	 *
@@ -84,7 +92,7 @@ class Mage_Shipping_Model_Rate_Result
 		}
 		return $result;
 	}
-	
+
 	public function asArray()
 	{
         $currencyFilter = Mage::app()->getStore()->getPriceFilter();
@@ -100,7 +108,7 @@ class Mage_Shipping_Model_Rate_Result
         }
         return $rates;
 	}
-	
+
 	public function getCheapestRate()
 	{
 	    $cheapest = null;

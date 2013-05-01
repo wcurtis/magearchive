@@ -110,7 +110,8 @@ class Mage_Eav_Model_Config
         }
         $entityType = $this->getEntityType($entityType);
         $entityTypeId = $entityType->getId();
-        $obj = Mage::getModel('eav/entity_attribute');
+        $attributeModel = $entityType->getAttributeModel() ? $entityType->getAttributeModel() : 'eav/entity_attribute';
+        $obj = Mage::getModel($attributeModel);
         if (isset($this->_data[$entityTypeId]['attribute'][$id])) {
             if (!is_numeric($id)) {
                 $id = intval($this->_data[$entityTypeId]['attribute'][$id]);

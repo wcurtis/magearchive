@@ -53,7 +53,7 @@ class Mage_Checkout_Block_Onepage extends Mage_Checkout_Block_Onepage_Abstract
     {
         if ($this->isCustomerLoggedIn()) {
             $options = array();
-            foreach ($this->getCustomer()->getLoadedAddressCollection() as $a) {
+            foreach ($this->getCustomer()->getAddresses() as $a) {
                 $options[] = array(
                     'value'=>$a->getId(),
                     'label'=>$a->getStreet(-1).', '.$a->getCity().', '.$a->getRegion().' '.$a->getPostcode(),

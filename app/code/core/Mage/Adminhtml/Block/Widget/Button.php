@@ -46,7 +46,7 @@ class Mage_Adminhtml_Block_Widget_Button extends Mage_Adminhtml_Block_Widget
 
     protected function _toHtml()
     {
-        $html = '<button '
+        $html = $this->getBeforeHtml().'<button '
             . ($this->getId()?' id="'.$this->getId() . '"':'')
             . ($this->getName()?' name="'.$this->getName() . '"':'')
             . ' type="'.$this->getType() . '"'
@@ -55,7 +55,7 @@ class Mage_Adminhtml_Block_Widget_Button extends Mage_Adminhtml_Block_Widget
             . ' style="'.$this->getStyle() .'"'
             . ($this->getValue()?' value="'.$this->getValue() . '"':'')
             . ($this->getDisabled() ? 'disabled' : '')
-            . '><span>' .$this->getLabel().'</span></button>';
+            . '><span>' .$this->getLabel().'</span></button>'.$this->getAfterHtml();
 
         return $html;
     }

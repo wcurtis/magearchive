@@ -35,6 +35,11 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Inventory extends Mage_Admin
         return Mage::getSingleton('cataloginventory/source_backorders')->toOptionArray();
     }
 
+    public function getProduct()
+    {
+        return Mage::registry('product');
+    }
+
     public function getStockItem()
     {
         return Mage::registry('product')->getStockItem();
@@ -59,5 +64,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Inventory extends Mage_Admin
             return false;
         }
         return true;
+    }
+
+    public function getFieldSuffix()
+    {
+        return 'product';
     }
 }

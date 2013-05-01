@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_CatalogRule>
-            <version>0.7.0</version>
+            <version>0.7.3</version>
         </Mage_CatalogRule>
     </modules>
     <global>
@@ -55,7 +55,6 @@
             <catalogrule_setup>
                 <setup>
                     <module>Mage_CatalogRule</module>
-                    <class>Mage_CatalogRule_Model_Entity_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>

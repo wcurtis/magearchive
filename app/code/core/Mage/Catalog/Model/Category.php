@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Category extends Varien_Object
+class Mage_Catalog_Model_Category extends Mage_Catalog_Model_Abstract
 {
     /**
      * Category display modes
@@ -36,20 +36,25 @@ class Mage_Catalog_Model_Category extends Varien_Object
     protected static $_url;
     protected static $_urlRewrite;
 
-    private $_designAttributes;
+    private $_designAttributes = array(
+        'custom_design',
+        'custom_design_apply',
+        'custom_design_from',
+        'custom_design_to',
+        'page_layout',
+        'custom_layout_update'
+    );
 
-    public function __construct()
+    /**
+     * Enter description here...
+     *
+     * @var Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree
+     */
+    protected $_treeModel = null;
+
+    protected function _construct()
     {
-        $this->_designAttributes = array(
-            'custom_design',
-            'custom_design_apply',
-            'custom_design_from',
-            'custom_design_to',
-            'page_layout',
-            'custom_layout_update');
-
-        parent::__construct();
-        $this->setIdFieldName($this->getResource()->getEntityIdField());
+        $this->_init('catalog/category');
     }
 
     public function getUrlInstance()
@@ -72,19 +77,9 @@ class Mage_Catalog_Model_Category extends Varien_Object
     }
 
     /**
-     * Retrieve category resource model
-     *
-     * @return Mage_Eav_Model_Entity_Abstract
-     */
-    public function getResource()
-    {
-        return Mage::getResourceSingleton('catalog/category');
-    }
-
-    /**
      * Retrieve category tree model
      *
-     * @return unknown
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree
      */
     public function getTreeModel()
     {
@@ -92,60 +87,16 @@ class Mage_Catalog_Model_Category extends Varien_Object
     }
 
     /**
-     * Set category and resource model store id
+     * Enter description here...
      *
-     * @param unknown_type $storeId
-     * @return unknown
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree
      */
-    public function setStoreId($storeId)
+    public function getTreeModelInstance()
     {
-        $this->getResource()->setStore($storeId);
-        $this->setData('store_id', $storeId);
-        return $this;
-    }
-
-    /**
-     * Retrieve category store id
-     *
-     * @return int
-     */
-    public function getStoreId()
-    {
-        return $this->getResource()->getStoreId();
-    }
-
-    /**
-     * Load category data
-     *
-     * @param   int $categoryId
-     * @return  Mage_Catalog_Model_Category
-     */
-    public function load($categoryId)
-    {
-        $this->getResource()->load($this, $categoryId);
-        return $this;
-    }
-
-    /**
-     * Save category
-     *
-     * @return Mage_Catalog_Model_Category
-     */
-    public function save()
-    {
-        $this->getResource()->save($this);
-        return $this;
-    }
-
-    /**
-     * Delete category
-     *
-     * @return Mage_Catalog_Model_Category
-     */
-    public function delete()
-    {
-        $this->getResource()->delete($this);
-        return $this;
+        if (is_null($this->_treeModel)) {
+            $this->_treeModel = $this->getTreeModel()->load();
+        }
+        return $this->_treeModel;
     }
 
     /**
@@ -153,16 +104,13 @@ class Mage_Catalog_Model_Category extends Varien_Object
      *
      * @return Mage_Catalog_Model_Category
      */
+    /*
     public function move($parentId)
     {
         $this->getResource()->move($this, $parentId);
         return $this;
     }
-
-    public function getCollection()
-    {
-        return Mage::getResourceModel('catalog/category_collection');
-    }
+    */
 
     /**
      * Retrieve default attribute set id
@@ -304,11 +252,10 @@ class Mage_Catalog_Model_Category extends Varien_Object
     public function formatUrlKey($str)
     {
         $str = Mage::helper('core')->removeAccents($str);
-    	$urlKey = preg_replace('#[^0-9a-z]+#i', '-', $str);
-    	$urlKey = strtolower($urlKey);
-    	$urlKey = trim($urlKey, '-');
-
-    	return $urlKey;
+        $urlKey = preg_replace('#[^0-9a-z]+#i', '-', $str);
+        $urlKey = strtolower($urlKey);
+        $urlKey = trim($urlKey, '-');
+        return $urlKey;
     }
 
     public function getImageUrl()
@@ -365,5 +312,34 @@ class Mage_Catalog_Model_Category extends Varien_Object
     {
         return $this->getResource()
             ->getAttribute($attributeCode);
+    }
+
+    public function getAllChildren()
+    {
+        $children = $this->getTreeModelInstance()->getChildren($this->getId());
+        $myId = array($this->getId());
+        if (is_array($children)) {
+            $children = array_merge($myId, $children);
+        } else {
+            $children = $myId;
+        }
+        return implode(',', $children);
+    }
+
+    public function getChildren()
+    {
+        return implode(',', $this->getTreeModelInstance()->getChildren($this->getId(), false));
+    }
+
+    public function getPathInStore()
+    {
+        $result = array();
+        $path = $this->getTreeModelInstance()->getPath($this->getId());
+        foreach ($path as $item) {
+            if ($item->getId() == Mage::app()->getStore()->getRootCategoryId())
+                break;
+            $result[] = $item->getId();
+        }
+        return implode(',', $result);
     }
 }

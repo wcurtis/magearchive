@@ -25,6 +25,12 @@
  */
 class Mage_Core_Model_Resource
 {
+
+    const AUTO_UPDATE_CACHE_KEY = 'DB_AUTOUPDATE';
+    const AUTO_UPDATE_ONCE      = 0;
+    const AUTO_UPDATE_NEVER     = -1;
+    const AUTO_UPDATE_ALWAYS    = 1;
+
     /**
      * Instances of classes for connection types
      *
@@ -116,13 +122,22 @@ class Mage_Core_Model_Resource
      */
     public function getTableName($modelEntity)
     {
-        list($model, $entity) = explode('/', $modelEntity);
-        $resourceModel = (string)Mage::getConfig()->getNode('global/models/'.$model.'/resourceModel');
-        $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
-        if ($entityConfig = $this->getEntity($resourceModel, $entity)) {
-            return $tablePrefix . (string)$entityConfig->table;
+        $arr = explode('/', $modelEntity);
+        if (isset($arr[1])) {
+            list($model, $entity) = $arr;
+            $resourceModel = (string)Mage::getConfig()->getNode('global/models/'.$model.'/resourceModel');
+            $entityConfig = $this->getEntity($resourceModel, $entity);
+            if ($entityConfig) {
+                $tableName = (string)$entityConfig->table;
+            } else {
+                Mage::throwException(Mage::helper('core')->__('Can\'t retrieve entity config: %s', $modelEntity));
+            }
+        } else {
+            $tableName = $modelEntity;
         }
-        Mage::throwException(Mage::helper('core')->__('Can\'t retrieve entity config for entity: %s of model: %s', $entity, $model));
+
+        $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
+        return $tablePrefix . $tableName;
     }
 
     public function cleanDbRow(&$row) {
@@ -150,7 +165,20 @@ class Mage_Core_Model_Resource
     public function checkDbConnection()
     {
     	if (!$this->getConnection('core_read')) {
-    		//Mage::registry('controller')->getResponse()->setRedirect(Mage::getUrl('install'));
+    		//Mage::app()->getResponse()->setRedirect(Mage::getUrl('install'));
     	}
     }
+
+    public function getAutoUpdate()
+    {
+        return self::AUTO_UPDATE_ALWAYS;
+        #return Mage::app()->loadCache(self::AUTO_UPDATE_CACHE_KEY);
+    }
+
+    public function setAutoUpdate($value)
+    {
+        #Mage::app()->saveCache($value, self::AUTO_UPDATE_CACHE_KEY);
+        return $this;
+    }
+
 }

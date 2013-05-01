@@ -25,7 +25,7 @@
  * @category   Mage
  * @package    Mage_Wishlist
  */
-class Mage_Wishlist_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Entity_Product_Collection
+class Mage_Wishlist_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
 {
 
     public function addWishlistFilter(Mage_Wishlist_Model_Wishlist    $wishlist)
@@ -45,6 +45,12 @@ class Mage_Wishlist_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_E
             array('wishlist_id'=>$wishlist->getId())
         );
         return $this;
+    }
+    
+    public function addWishListSortOrder($att='added_at', $dir='desc')
+    {
+    	$this->setOrder($att, $dir);
+    	return $this;    	
     }
 
     public function addStoreData()

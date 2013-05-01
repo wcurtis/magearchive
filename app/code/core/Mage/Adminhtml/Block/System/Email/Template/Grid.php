@@ -100,7 +100,6 @@ class Mage_Adminhtml_Block_System_Email_Template_Grid extends Mage_Adminhtml_Blo
                 'width'		=> '100px',
                 'renderer'  => 'adminhtml/system_email_template_grid_renderer_action'
         ));
-
         return $this;
     }
 

@@ -13,19 +13,31 @@
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
  * @category   Mage
- * @package    Mage_Adminhtml
+ * @package    Mage_Sitemap
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
+/**
+ * Sitemap grid link column renderer
+ *
+ * @category   Mage
+ * @package    Mage_Sitemap
+ */
 class Mage_Adminhtml_Block_Sitemap_Grid_Renderer_Link extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
+
+    /**
+     * Prepare link to display in grid
+     *
+     * @param Varien_Object $row
+     * @return string
+     */
     public function render(Varien_Object $row)
     {
-        $link =  $row->getSitemapPath() . $row->getSitemapFilename();
+        $link = Mage::getBaseUrl('web') . $row->getSitemapPath() . $row->getSitemapFilename();
         $link = str_replace('//', '/', $link);
-        $link = Mage::getBaseUrl('web') . str_replace('//', '/', $link);
         return $link;
     }
+
 }

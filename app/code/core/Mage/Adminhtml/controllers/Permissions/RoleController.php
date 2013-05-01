@@ -81,7 +81,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
                 ->setRoleInfo(Mage::getModel('admin/permissions_roles')->load($roleId))
                 ->setTemplate('permissions/roleinfo.phtml')
         );
-        $this->_addJs($this->getLayout()->createBlock('core/template')->setTemplate('permissions/role_users_grid_js.phtml'));
+        $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('permissions/role_users_grid_js.phtml'));
         $this->renderLayout();
     }
 

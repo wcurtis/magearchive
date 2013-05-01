@@ -18,19 +18,45 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if ($this->getProduct()->getFinalPrice() == $this->getProduct()->getPrice()):?>
-    <div class="price-box">
-        <span class="regular-price" id="product-price-<?=$this->getProduct()->getId()?>"><?=Mage::helper('core')->currency($this->getProduct()->getPrice())?></span><br/>
-    </div>
+<div class="price-box">
+<?$_product = $this->getProduct()?>
+<?$_id = $_product->getId()?>
+<?$_showTax = $_product->getShowTaxInCatalog()?>
+<?$_priceAfterTax = $_product->getPriceAfterTax()?>
+<?$_finalPriceAfterTax = $_product->getFinalPriceAfterTax()?>
+<?$_price = $_showTax==1 ? $_priceAfterTax : $_product->getPrice()?>
+<?$_finalPrice = $_showTax==1 ? $_finalPriceAfterTax : $_product->getFinalPrice()?>
+
+<?if ($_finalPrice == $_price):?>
+    <span class="regular-price" id="product-price-<?=$_id?>">
+        <?=Mage::helper('core')->currency($_price)?>
+    </span>
+    <br/>
 <?else:?>
-    <div class="price-box">
-        <span class="old-price">
-            <span class="label"><?=$this->__('Regular Price:')?></span>
-            <span class="price"><?=Mage::helper('core')->currency($this->getProduct()->getPrice())?></span>
-        </span><br/>
-        <span class="special-price">
-            <span class="label"><?=$this->__('Special Price:')?></span>
-            <span class="price" id="product-price-<?=$this->getProduct()->getId()?>"><?=Mage::helper('core')->currency($this->getProduct()->getFinalPrice())?></span>
+    <span class="old-price">
+        <span class="label"><?=$this->__('Regular Price:')?></span>
+        <span class="price" id="old-price-<?=$_id?>">
+            <?=Mage::helper('core')->currency($_price)?>
         </span>
-    </div>
+    </span>
+    <br/>
+    <span class="special-price">
+        <span class="label"><?=$this->__('Special Price:')?></span>
+        <span class="price" id="product-price-<?=$_id?>">
+            <?=Mage::helper('core')->currency($_finalPrice)?>
+        </span>
+    </span>
+    <br/>
 <?endif?>
+
+<?if ($_showTax==2):?>
+    <span class="price-after-tax">
+        <span class="label"><?=$this->__('Including Tax:')?></span>
+        <span class="regular-price" id="price-after-tax-<?=$_id?>">
+            <?=Mage::helper('core')->currency($_finalPriceAfterTax)?>
+        </span>
+    </span>
+    <br/>
+<?endif?>
+
+</div>

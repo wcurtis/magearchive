@@ -49,7 +49,16 @@ class Mage_Cms_Model_Mysql4_Page extends Mage_Core_Model_Mysql4_Abstract
         if (! $object->getId()) {
             $object->setCreationTime(now());
         }
+
         $object->setUpdateTime(now());
+
+        if (!$object->getCustomThemeFrom()) {
+            $object->setCustomThemeFrom(new Zend_Db_Expr('NULL'));
+        }
+
+        if (!$object->getCustomThemeTo()) {
+            $object->setCustomThemeTo(new Zend_Db_Expr('NULL'));
+        }
         return $this;
     }
 

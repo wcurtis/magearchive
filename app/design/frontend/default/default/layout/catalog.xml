@@ -54,7 +54,7 @@ Default layout, loads most of the pages
             <block type="core/template" name="right.permanent.callout" template="callouts/right_col.phtml"/>
         </reference>
         <reference name="footer_links">
-            <action method="addLink" translate="label title" module="catalog" ifconfig="catalog/seo/site_map"><label>Site Map</label><url helper="catalog/map/getCategoryUrl" /><title>Site Map</title><prepare>true</prepare></action>
+            <action method="addLink" translate="label title" module="catalog" ifconfig="catalog/seo/site_map"><label>Site Map</label><url helper="catalog/map/getCategoryUrl" /><title>Site Map</title></action>
         </reference>
 
     </default>
@@ -70,7 +70,7 @@ Category default layout
         </reference>
         <reference name="content">
             <block type="catalog/category_view" name="category.products" template="catalog/category/view.phtml">
-                <block type="catalog/product_list" name="product_list"></block>
+                <block type="catalog/product_list" name="product_list" template="catalog/product/list.phtml" />
             </block>
         </reference>
     </catalog_category_default>
@@ -85,7 +85,7 @@ Category layered navigation layout
         </reference>
         <reference name="content">
             <block type="catalog/category_view" name="category.products" template="catalog/category/view.phtml">
-                <block type="catalog/product_list" name="product_list"></block>
+                <block type="catalog/product_list" name="product_list" template="catalog/product/list.phtml" />
             </block>
         </reference>
     </catalog_category_layered>
@@ -129,8 +129,11 @@ Product view
         </reference>
         <reference name="content">
             <block type="catalog/product_view" name="product.info" template="catalog/product/view.phtml">
-                <block type="catalog/product_view_super_config" name="product.info.config" as="super_config" template="catalog/product/view/super/config.phtml"/>
-                <block type="catalog/product_view_super_group" name="product.info.group" as="super_group" template="catalog/product/view/super/group.phtml"/>
+                <block type="catalog/product_view_media" name="product.info.media" as="media" template="catalog/product/view/media.phtml"/>
+                <block type="core/text_list" name="alert.urls" as="alert_urls" />
+                <block type="catalog/product_view_type_simple" name="product.info.simple" as="simple_data" template="catalog/product/view/type/simple.phtml"/>
+                <block type="catalog/product_view_type_configurable" name="product.info.configurable" as="configurable_data" template="catalog/product/view/type/configurable.phtml"/>
+                <block type="catalog/product_view_type_grouped" name="product.info.grouped" as="grouped_data" template="catalog/product/view/type/grouped.phtml"/>
                 <block type="catalog/product_list_upsell" name="product.info.upsell" as="upsell_products" template="catalog/product/list/upsell.phtml"/>
                 <block type="catalog/product_view_additional" name="product.info.additional" as="product_additional_data" />
             </block>
@@ -138,12 +141,13 @@ Product view
         <reference name="right">
             <block type="catalog/product_list_related" name="catalog.product.related" before="-" template="catalog/product/list/related.phtml"/>
         </reference>
-
     </catalog_product_view>
+
 <!--
 Product send to friend
 -->
- <catalog_product_send>
+
+    <catalog_product_send>
         <!-- Mage_Catalog -->
         <reference name="root">
             <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
@@ -172,27 +176,57 @@ Product additional images gallery popup
     </catalog_product_gallery>
 
 <!--
-Site Map block
+SEO Site Map
 -->
-    <catalog_seo_sitemap_category>
+
+    <catalog_seo_sitemap>
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
         <reference name="content">
-              <block type="catalog/seo_sitemap_container" name="seo.container" template="catalog/seo/sitemap/container.phtml"/>
+            <block type="page/template_container" name="seo.sitemap.container" template="catalog/seo/sitemap/container.phtml">
+                <block type="page/template_links" name="seo.sitemap.links" as="links" template="page/template/links.phtml"/>
+                <block type="page/html_pager" name="seo.sitemap.pager.top" as="pager_top" template="page/html/pager.phtml"/>
+                <block type="page/html_pager" name="seo.sitemap.pager.bottom" as="pager_bottom" template="page/html/pager.phtml"/>
+            </block>
+        </reference>
+    </catalog_seo_sitemap>
+
+    <catalog_seo_sitemap_category>
+        <update handle="catalog_seo_sitemap" />
+        <reference name="seo.sitemap.container">
+            <action method="setTitle" translate="title" module="catalog"><title>Categories</title></action>
+            <block type="catalog/seo_sitemap_category" name="seo.sitemap.sitemap" as="sitemap" after="pager_top" template="catalog/seo/sitemap.phtml">
+                <action method="bindPager"><pager>seo.sitemap.pager.top</pager></action>
+                <action method="bindPager"><pager>seo.sitemap.pager.bottom</pager></action>
+                <action method="setItemsTitle" translate="title" module="catalog"><title>categories</title></action>
+            </block>
+        </reference>
+        <reference name="seo.sitemap.links">
+            <action method="addLink" translate="label title" module="catalog"><label>Products Sitemap</label><url helper="catalog/map/getProductUrl"/><title>Products Sitemap</title></action>
         </reference>
     </catalog_seo_sitemap_category>
+
     <catalog_seo_sitemap_product>
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        <update handle="catalog_seo_sitemap" />
+        <reference name="seo.sitemap.container">
+            <action method="setTitle" translate="title" module="catalog"><title>Products</title></action>
+            <block type="catalog/seo_sitemap_product" name="seo.sitemap.sitemap" as="sitemap" after="pager_top" template="catalog/seo/sitemap.phtml">
+                <action method="bindPager"><pager>seo.sitemap.pager.top</pager></action>
+                <action method="bindPager"><pager>seo.sitemap.pager.bottom</pager></action>
+                <action method="setItemsTitle" translate="title" module="catalog"><title>products</title></action>
+            </block>
         </reference>
-        <reference name="content">
-              <block type="catalog/seo_sitemap_container" name="seo.container" template="catalog/seo/sitemap/container.phtml"/>
+        <reference name="seo.sitemap.links">
+            <action method="addLink" translate="label title" module="catalog"><label>Categories Sitemap</label><url helper="catalog/map/getCategoryUrl"/><title>Categories Sitemap</title></action>
         </reference>
     </catalog_seo_sitemap_product>
+
+
 <!--
 Catalog search terms block
 -->
+
     <catalog_seo_searchterm_popular>
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>

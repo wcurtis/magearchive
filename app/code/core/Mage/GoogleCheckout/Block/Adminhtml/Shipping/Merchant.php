@@ -118,7 +118,7 @@ class Mage_GoogleCheckout_Block_Adminhtml_Shipping_Merchant
     protected function _getAddRowButtonHtml($container, $template, $title='Add')
     {
         if (!isset($this->_addRowButtonHtml[$container])) {
-            $this->_addRowButtonHtml[$container] = Mage::getHelper('adminhtml/widget_button')
+            $this->_addRowButtonHtml[$container] = $this->getLayout()->createBlock('adminhtml/widget_button')
                     ->setType('button')
                     ->setClass('add '.$this->_getDisabled())
                     ->setLabel($this->__($title))
@@ -132,7 +132,7 @@ class Mage_GoogleCheckout_Block_Adminhtml_Shipping_Merchant
     protected function _getRemoveRowButtonHtml($selector='span', $title='Remove')
     {
         if (!$this->_removeRowButtonHtml) {
-            $this->_removeRowButtonHtml = Mage::getHelper('adminhtml/widget_button')
+            $this->_removeRowButtonHtml = $this->getLayout()->createBlock('adminhtml/widget_button')
                     ->setType('button')
                     ->setClass('delete '.$this->_getDisabled())
                     ->setLabel($this->__($title))

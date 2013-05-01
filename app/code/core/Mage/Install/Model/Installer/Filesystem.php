@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Install
  */
-class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Installer
+class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Installer_Abstract
 {
     const MODE_WRITE = 'write';
     const MODE_READ  = 'read';
@@ -93,7 +93,7 @@ class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Install
             }
 
             if ($setError) {
-                Mage::getSingleton('install/session')->addError(
+                $this->_getInstaller()->getDataModel()->addError(
                     Mage::helper('install')->__('Path "%s" must be writable', $fullPath)
                 );
                 $res = false;

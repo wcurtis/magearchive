@@ -12,34 +12,47 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
+ * @category   Mage
+ * @package    Mage_Catalog
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
 /**
- * Site Map category block
+ * SEO Categories Sitemap block
  *
  * @category   Mage
- * @package    Mage_Catalog 
+ * @package    Mage_Catalog
  */
 class Mage_Catalog_Block_Seo_Sitemap_Category extends Mage_Catalog_Block_Seo_Sitemap_Abstract
-{		 
-	public function __construct()
-	{
-		parent::__construct();		
-		$collection = Mage::getResourceModel('catalog/category_collection') //Mage_Catalog_Model_Entity_Category_Collection
-				 	->addAttributeToSelect('name')
-				 	->addAttributeToSort('name')
-				 	->addAttributeToFilter('parent_id', array('neq'=>1));
-	 	
-		$collection->getEntity()->setStore(Mage::app()->getStore());
+{
 
-        $this->setMapItemCollection($collection);
-	}  	
+    /**
+     * Initialize categories collection
+     *
+     * @return Mage_Catalog_Block_Seo_Sitemap_Category
+     */
+    protected function _prepareLayout()
+    {
+        $helper = Mage::helper('catalog/category');
+        /* @var $helper Mage_Catalog_Helper_Category */
+        $collection = $helper->getStoreCategories('name', true);
+        $this->setCollection($collection);
+        return $this;
+    }
 
-	public function getSitemapUrl($obj)
-	{
-		return $obj->getCategoryUrl();
-	}	
+    /**
+     * Get item URL
+     *
+     * @param Mage_Catalog_Model_Category $category
+     * @return string
+     */
+    public function getItemUrl($product)
+    {
+        $helper = Mage::helper('catalog/product');
+        /* @var $product Mage_Catalog_Helper_Category */
+        return $product->getCategoryUrl($product);
+    }
+
 }

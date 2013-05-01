@@ -12,36 +12,55 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
+ * @category   Mage
+ * @package    Mage_Catalog
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
 /**
- * Site Map category block
+ * SEO Products Sitemap block
  *
  * @category   Mage
- * @package    Mage_Catalog 
+ * @package    Mage_Catalog
  */
 class Mage_Catalog_Block_Seo_Sitemap_Product extends Mage_Catalog_Block_Seo_Sitemap_Abstract
-{		 
-	public function __construct()
-	{
-		parent::__construct();
-		$collection = Mage::getResourceModel('catalog/product_collection') //Mage_Catalog_Model_Entity_Product_Collection
-				 	->addAttributeToSelect('name')
-				 	->addAttributeToSort('name');
-				 	
-        Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);
-        Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
-        	 	
-		$collection->getEntity()->setStore(Mage::app()->getStore());
+{
 
-        $this->setMapItemCollection($collection);
-	}
-	
-	public function getSitemapUrl($obj)
-	{
-		return $obj->getProductUrl();
-	}	
+    /**
+     * Initialize products collection
+     *
+     * @return Mage_Catalog_Block_Seo_Sitemap_Category
+     */
+    protected function _prepareLayout()
+    {
+        $collection = Mage::getModel('catalog/product')->getCollection();
+        /* @var $collection Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection */
+
+        $collection->addAttributeToSelect('name');
+        $collection->addAttributeToSelect('url_key');
+        $collection->addStoreFilter();
+
+        Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);
+        Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
+
+        $this->setCollection($collection);
+
+        return $this;
+    }
+
+    /**
+     * Get item URL
+     *
+     * @param Mage_Catalog_Model_Product $category
+     * @return string
+     */
+    public function getItemUrl($product)
+    {
+        $helper = Mage::helper('catalog/product');
+        /* @var $product Mage_Catalog_Helper_Product */
+        return $product->getProductUrl($product);
+    }
+
 }

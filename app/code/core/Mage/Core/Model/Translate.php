@@ -77,9 +77,10 @@ class Mage_Core_Model_Translate
      */
     protected $_dataScope;
 
+    protected $_translateInline;
+
     public function __construct()
     {
-
     }
 
     /**
@@ -108,6 +109,10 @@ class Mage_Core_Model_Translate
         $this->_loadThemeTranslation();
         $this->_loadDbTranslation();
         $this->_saveCache();
+
+        $this->_translateInline = Mage::getSingleton('core/translate_inline')
+            ->isAllowed($area=='adminhtml' ? 'admin' : null);
+
         return $this;
     }
 
@@ -241,7 +246,8 @@ class Mage_Core_Model_Translate
      */
     protected function _loadDbTranslation()
     {
-        $this->_addData($this->getResource()->getTranslationArray(), $this->getConfig(self::CONFIG_KEY_STORE));
+        $arr = $this->getResource()->getTranslationArray();
+        $this->_addData($arr, $this->getConfig(self::CONFIG_KEY_STORE));
         return $this;
     }
 
@@ -336,8 +342,15 @@ class Mage_Core_Model_Translate
     {
         $text = array_shift($args);
 
+        if (is_string($text) && ''==$text
+            || is_null($text)
+            || is_bool($text) && false===$text
+            || is_object($text) && ''==$text->getText()) {
+            return '';
+        }
         if ($text instanceof Mage_Core_Model_Translate_Expr) {
             $code = $text->getCode(self::SCOPE_SEPARATOR);
+            $module = $text->getModule();
             $text = $text->getText();
             if (array_key_exists($code, $this->getData())) {
                 $translated = $this->_data[$code];
@@ -350,6 +363,7 @@ class Mage_Core_Model_Translate
             }
         }
         else {
+            $module = '';
             if (array_key_exists($text, $this->getData())) {
             	$translated = $this->_data[$text];
             }
@@ -358,14 +372,51 @@ class Mage_Core_Model_Translate
             }
         }
 
-        array_unshift($args, $translated);
+        //array_unshift($args, $translated);
+        //$result = @call_user_func_array('sprintf', $args);
 
-        $result = @call_user_func_array('sprintf', $args);
+        $result = vsprintf($translated, $args);
+
         if ($result === false){
             $result = $translated;
         }
 
+        if ($this->_translateInline) {
+            if (strpos($result, '{{{')===false || strpos($result, '}}}')===false || strpos($result, '}}{{')===false) {
+                $result = '{{{'.$result.'}}{{'.$translated.'}}{{'.$text.'}}{{'.$module.'}}}';
+            }
+        }
+
         return $result;
+    }
+
+    /**
+     * Retrive translated template file
+     *
+     * @param string $file
+     * @param string $type
+     * @param string $localeCode
+     * @return string
+     */
+    public function getTemplateFile($file, $type, $localeCode=null)
+    {
+        if (is_null($localeCode) || preg_match('/[^a-zA-Z_]/', $localeCode)) {
+            $localeCode = $this->getLocale();
+        }
+
+        $filePath = Mage::getBaseDir('locale')  . DS
+                  . $localeCode . DS . 'template' . DS . $type . DS . $file;
+
+        if (!file_exists($filePath)) { // If no template specified for this locale, use default
+            $filePath = Mage::getBaseDir('locale') . DS
+                      . Mage::app()->getLocale()->getDefaultLocale()
+                      . DS . 'template' . DS . $type . DS . $file;
+        }
+
+        $ioAdapter = new Varien_Io_File();
+        $ioAdapter->open(array('path' => Mage::getBaseDir('locale')));
+
+        return (string) $ioAdapter->read($filePath);
     }
 
     /**

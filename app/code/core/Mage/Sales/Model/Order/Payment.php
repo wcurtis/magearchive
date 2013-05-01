@@ -93,7 +93,10 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     public function place()
     {
         $this->setAmountOrdered($this->getOrder()->getTotalDue());
+        $this->setBaseAmountOrdered($this->getOrder()->getBaseTotalDue());
+
         $this->setShippingAmount($this->getOrder()->getShippingAmount());
+        $this->setBaseShippingAmount($this->getOrder()->getBaseShippingAmount());
 
         $methodInstance = $this->getMethodInstance();
 
@@ -110,14 +113,20 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
             switch ($action) {
                 case Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE:
                 case Mage_Paypal_Model_Api_Abstract::PAYMENT_TYPE_AUTH:
-                    $methodInstance->authorize($this, $this->getOrder()->getTotalDue());
+                    $methodInstance->authorize($this, $this->getOrder()->getBaseTotalDue());
+
                     $this->setAmountAuthorized($this->getOrder()->getTotalDue());
+                    $this->setBaseAmountAuthorized($this->getOrder()->getBaseTotalDue());
+
                     $orderState = Mage_Sales_Model_Order::STATE_PROCESSING;
                     break;
                 case Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE:
                 case Mage_Paypal_Model_Api_Abstract::PAYMENT_TYPE_SALE:
                     $invoice = $this->_invoice();
+
                     $this->setAmountAuthorized($this->getOrder()->getTotalDue());
+                    $this->setBaseAmountAuthorized($this->getOrder()->getBaseTotalDue());
+
                     $orderState = Mage_Sales_Model_Order::STATE_PROCESSING;
                     break;
                 default:
@@ -153,7 +162,8 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
             $invoice = $this->_invoice();
         }
 
-        $this->getMethodInstance()->capture($this, $invoice->getGrandTotal());
+        $this->getMethodInstance()->capture($this, $invoice->getBaseGrandTotal());
+
         $invoice->setTransactionId($this->getLastTransId());
         return $this;
     }
@@ -167,7 +177,10 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     public function pay($invoice)
     {
         $this->setAmountPaid($this->getAmountPaid()+$invoice->getGrandTotal());
+        $this->setBaseAmountPaid($this->getBaseAmountPaid()+$invoice->getBaseGrandTotal());
+
         $this->setShippingCaptured($this->getShippingCaptured()+$invoice->getShippingAmount());
+        $this->setBaseShippingCaptured($this->getBaseShippingCaptured()+$invoice->getBaseShippingAmount());
         return $this;
     }
 
@@ -180,7 +193,10 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     public function cancelInvoice($invoice)
     {
         $this->setAmountPaid($this->getAmountPaid()-$invoice->getGrandTotal());
+        $this->setBaseAmountPaid($this->getBaseAmountPaid()-$invoice->getBaseGrandTotal());
+
         $this->setShippingCaptured($this->getShippingCaptured()-$invoice->getShippingAmount());
+        $this->setBaseShippingCaptured($this->getBaseShippingCaptured()-$invoice->getBaseShippingAmount());
         return $this;
     }
 
@@ -227,18 +243,25 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
     {
         if ($this->getMethodInstance()->canRefund() && $creditmemo->getDoTransaction()) {
             $this->setCreditmemo($creditmemo);
-            $this->getMethodInstance()->refund($this, $creditmemo->getGrandTotal());
+            $this->getMethodInstance()->refund($this, $creditmemo->getBaseGrandTotal());
             $creditmemo->setTransactionId($this->getLastTransId());
         }
+
         $this->setAmountRefunded($this->getAmountRefunded()+$creditmemo->getGrandTotal());
+        $this->setBaseAmountRefunded($this->getBaseAmountRefunded()+$creditmemo->getBaseGrandTotal());
+
         $this->setShippingRefunded($this->getShippingRefunded()+$creditmemo->getShippingAmount());
+        $this->setBaseShippingRefunded($this->getBaseShippingRefunded()+$creditmemo->getBaseShippingAmount());
         return $this;
     }
 
     public function cancelCreditmemo($creditmemo)
     {
         $this->setAmountRefunded($this->getAmountRefunded()-$creditmemo->getGrandTotal());
+        $this->setBaseAmountRefunded($this->getBaseAmountRefunded()-$creditmemo->getBaseGrandTotal());
+
         $this->setShippingRefunded($this->getShippingRefunded()-$creditmemo->getShippingAmount());
+        $this->setBaseShippingRefunded($this->getBaseShippingRefunded()-$creditmemo->getBaseShippingAmount());
         return $this;
     }
 

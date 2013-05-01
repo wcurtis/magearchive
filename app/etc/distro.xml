@@ -21,7 +21,7 @@
 -->
 <config>
     <stores>
-        <base>
+        <default>
             <system>
                 <store>
                     <id>1</id>
@@ -64,6 +64,6 @@
                     <base_media_url>{{secure_base_url}}media/</base_media_url>
                 </secure>
             </web>
-        </base>
+        </default>
     </stores>
 </config>

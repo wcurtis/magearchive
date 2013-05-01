@@ -20,142 +20,104 @@
  */
 -->
 <config>
-   <modules>
-      <Mage_Catalog>
-         <version>0.7.3</version>
-         <depends>
-            <Mage_Customer />
-         </depends>
-      </Mage_Catalog>
-   </modules>
-   <global>
-      <models>
-         <catalog>
-            <class>Mage_Catalog_Model</class>
-            <resourceModel>catalog_entity</resourceModel>
-         </catalog>
-         <catalog_entity>
-            <class>Mage_Catalog_Model_Entity</class>
-            <resourceModel>catalog_mysql4</resourceModel>
-            <entities>
-              <product>
-                <table>catalog_product_entity</table>
-              </product>
+    <modules>
+        <Mage_Catalog>
+            <version>0.7.21</version>
+            <depends>
+                <Mage_Customer />
+            </depends>
+        </Mage_Catalog>
+    </modules>
+    <global>
+        <models>
+            <catalog>
+                <class>Mage_Catalog_Model</class>
+                <resourceModel>catalog_resource_eav_mysql4</resourceModel>
+            </catalog>
 
-              <category>
-                <table>catalog_category_entity</table>
-              </category>
+            <catalog_resource_eav_mysql4>
+                <class>Mage_Catalog_Model_Resource_Eav_Mysql4</class>
+                <entities>
+                    <product>
+                        <table>catalog_product_entity</table>
+                    </product>
+                    <category>
+                        <table>catalog_category_entity</table>
+                    </category>
+                    <category_product>
+                        <table>catalog_category_product</table>
+                    </category_product>
+                    <compare_item>
+                        <table>catalog_compare_item</table>
+                    </compare_item>
 
-              <category_tree>
-                <table>catalog_category_tree</table>
-              </category_tree>
+                    <!--product_entity_gallery>
+                        <table>catalog_category_entity_gallery</table>
+                    </product_entity_gallery-->
 
-              <category_product>
-                <table>catalog_category_product</table>
-              </category_product>
+                    <product_website>
+                        <table>catalog_product_website</table>
+                    </product_website>
 
-              <compare_item>
-                <table>catalog_compare_item</table>
-              </compare_item>
+                    <product_link>
+                        <table>catalog_product_link</table>
+                    </product_link>
+                    <product_link_type>
+                        <table>catalog_product_link_type</table>
+                    </product_link_type>
+                    <product_link_attribute>
+                        <table>catalog_product_link_attribute</table>
+                    </product_link_attribute>
+                    <product_link_attribute_decimal>
+                        <table>catalog_product_link_attribute_decimal</table>
+                    </product_link_attribute_decimal>
+                    <product_link_attribute_int>
+                        <table>catalog_product_link_attribute_int</table>
+                    </product_link_attribute_int>
+                    <product_link_attribute_varchar>
+                        <table>catalog_product_link_attribute_varchar</table>
+                    </product_link_attribute_varchar>
 
-              <product_entity_gallery>
-                  <table>catalog_category_entity_gallery</table>
-              </product_entity_gallery>
+                    <product_super_attribute>
+                        <table>catalog_product_super_attribute</table>
+                    </product_super_attribute>
+                    <product_super_attribute_label>
+                        <table>catalog_product_super_attribute_label</table>
+                    </product_super_attribute_label>
+                    <product_super_attribute_pricing>
+                        <table>catalog_product_super_attribute_pricing</table>
+                    </product_super_attribute_pricing>
+                    <product_super_link>
+                        <table>catalog_product_super_link</table>
+                    </product_super_link>
 
-              <product_store>
-                <table>catalog_product_store</table>
-              </product_store>
+                    <product_attribute_tier_price>
+                        <table>catalog_product_entity_tier_price</table>
+                    </product_attribute_tier_price>
 
-              <product_type>
-                <table>catalog_product_type</table>
-              </product_type>
+                    <product_attribute_media_gallery>
+                        <table>catalog_product_entity_media_gallery</table>
+                    </product_attribute_media_gallery>
 
-              <product_status>
-                <table>catalog_product_status</table>
-              </product_status>
+                    <product_attribute_media_gallery_value>
+                        <table>catalog_product_entity_media_gallery_value</table>
+                    </product_attribute_media_gallery_value>
 
-              <product_visibility>
-                <table>catalog_product_visibility</table>
-              </product_visibility>
+                    <product_attribute_media_gallery_image>
+                        <table>catalog_product_entity_media_gallery_image</table>
+                    </product_attribute_media_gallery_image>
+                </entities>
+            </catalog_resource_eav_mysql4>
 
-              <product_link>
-                <table>catalog_product_link</table>
-              </product_link>
-
-              <product_link_type>
-                <table>catalog_product_link_type</table>
-              </product_link_type>
-
-              <product_bundle_option>
-                <table>catalog_product_bundle_option</table>
-              </product_bundle_option>
-
-              <product_bundle_option_value>
-                <table>catalog_product_bundle_option_value</table>
-              </product_bundle_option_value>
-
-              <product_bundle_option_link>
-                <table>catalog_product_bundle_option_link</table>
-              </product_bundle_option_link>
-
-              <product_super_attribute>
-                <table>catalog_product_super_attribute</table>
-              </product_super_attribute>
-
-              <product_super_attribute_label>
-                <table>catalog_product_super_attribute_label</table>
-              </product_super_attribute_label>
-
-              <product_super_attribute_pricing>
-                <table>catalog_product_super_attribute_pricing</table>
-              </product_super_attribute_pricing>
-
-              <product_super_link>
-                <table>catalog_product_super_link</table>
-              </product_super_link>
-
-              <product_bundle_option_value>
-                <table>catalog_product_bundle_option_value</table>
-              </product_bundle_option_value>
-
-              <product_bundle_option_link>
-                <table>catalog_product_bundle_option_link</table>
-              </product_bundle_option_link>
-
-
-
-              <product_link_attribute>
-                <table>catalog_product_link_attribute</table>
-              </product_link_attribute>
-
-              <product_link_attribute_decimal>
-                <table>catalog_product_link_attribute_decimal</table>
-              </product_link_attribute_decimal>
-
-
-              <product_link_attribute_int>
-                <table>catalog_product_link_attribute_int</table>
-              </product_link_attribute_int>
-
-              <product_link_attribute_varchar>
-                <table>catalog_product_link_attribute_varchar</table>
-              </product_link_attribute_varchar>
-
-              <product_attribute_tier_price>
-                  <table>catalog_product_entity_tier_price</table>
-              </product_attribute_tier_price>
-
-            </entities>
-         </catalog_entity>
-         <catalog_mysql4>
-            <class>Mage_Catalog_Model_Mysql4</class>
-         </catalog_mysql4>
+            <catalog_mysql4>
+                <class>Mage_Catalog_Model_Mysql4</class>
+            </catalog_mysql4>
       </models>
       <resources>
          <catalog_setup>
             <setup>
                <module>Mage_Catalog</module>
-               <class>Mage_Catalog_Model_Entity_Setup</class>
+               <class>Mage_Catalog_Model_Resource_Eav_Mysql4_Setup</class>
             </setup>
             <connection>
                <use>core_setup</use>
@@ -175,6 +137,24 @@
       <blocks>
          <catalog><class>Mage_Catalog_Block</class></catalog>
       </blocks>
+      <catalog>
+          <product>
+             <type>
+                <simple translate="label" module="catalog">
+                    <label>Simple Product</label>
+                    <model>catalog/product_type_simple</model>
+                </simple>
+                <grouped translate="label" module="catalog">
+                    <label>Grouped Product</label>
+                    <model>catalog/product_type_grouped</model>
+                </grouped>
+                <configurable translate="label" module="catalog">
+                    <label>Configurable Product</label>
+                    <model>catalog/product_type_configurable</model>
+                </configurable>
+             </type>
+          </product>
+       </catalog>
    </global>
    <adminhtml>
        <menu>
@@ -206,8 +186,8 @@
                         </children>
                     </attributes>
                     <urlrewrite translate="title" module="catalog">
-                    	<title>Url Rewrite Management</title>
-						<action>adminhtml/urlrewrite/index</action>
+                        <title>Url Rewrite Management</title>
+                        <action>adminhtml/urlrewrite/index</action>
                     </urlrewrite>
                 </children>
              </catalog>
@@ -281,7 +261,7 @@
                                         </pending>
                                     </children>
                                 </tag>
-								<urlrewrite>
+                                <urlrewrite>
                                     <title>Url Rewrite Management</title>
                                 </urlrewrite>
                             </children>

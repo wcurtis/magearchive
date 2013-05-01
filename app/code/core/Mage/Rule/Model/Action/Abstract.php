@@ -179,7 +179,7 @@ abstract class Mage_Rule_Model_Action_Abstract extends Varien_Object implements 
     		'values'=>$this->getAttributeSelectOptions(),
     		'value'=>$this->getAttribute(),
     		'value_name'=>$this->getAttributeName(),
-    	))->setRenderer(Mage::getHelper('rule/editable'));
+    	))->setRenderer(Mage::getBlockSingleton('rule/editable'));
     }
 
     public function getOperatorElement()
@@ -189,7 +189,7 @@ abstract class Mage_Rule_Model_Action_Abstract extends Varien_Object implements 
     		'values'=>$this->getOperatorSelectOptions(),
     		'value'=>$this->getOperator(),
     		'value_name'=>$this->getOperatorName(),
-    	))->setRenderer(Mage::getHelper('rule/editable'));
+    	))->setRenderer(Mage::getBlockSingleton('rule/editable'));
     }
 
     public function getValueElement()
@@ -198,7 +198,7 @@ abstract class Mage_Rule_Model_Action_Abstract extends Varien_Object implements 
     		'name'=>'rule[actions]['.$this->getId().'][value]',
     		'value'=>$this->getValue(),
     		'value_name'=>$this->getValueName(),
-    	))->setRenderer(Mage::getHelper('rule/editable'));
+    	))->setRenderer(Mage::getBlockSingleton('rule/editable'));
     }
 
     public function getAddLinkHtml()

@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Core>
-             <version>0.7.5</version>
+             <version>0.8.0</version>
         </Mage_Core>
     </modules>
 
@@ -71,8 +71,13 @@
         </models>
 
         <blocks>
-            <core><class>Mage_Core_Block</class></core>
+            <core>
+                <class>Mage_Core_Block</class>
+            </core>
         </blocks>
+        <template>
+            <email />
+        </template>
     </global>
     <frontend>
         <routers>
@@ -145,13 +150,27 @@
         </design>
 
         <dev>
+            <restrict>
+                <allow_ips>127.0.0.1</allow_ips>
+            </restrict>
             <debug>
                 <profiler>0</profiler>
             </debug>
+            <translate_inline>
+                <active>0</active>
+                <active_admin>0</active_admin>
+            </translate_inline>
+            <log>
+                <active>0</active>
+                <file>system.log</file>
+                <exception_file>exception.log</exception_file>
+            </log>
         </dev>
+
 
         <system>
             <smtp>
+                <disable>0</disable>
                 <host>localhost</host>
                 <port>25</port>
             </smtp>

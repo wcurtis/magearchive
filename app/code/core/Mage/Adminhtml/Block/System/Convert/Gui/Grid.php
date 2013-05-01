@@ -36,7 +36,7 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Grid extends Mage_Adminhtml_Block_
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('core/convert_profile_collection')
+        $collection = Mage::getResourceModel('dataflow/profile_collection')
             ->addFieldToFilter('entity_type', array('neq'=>''));
 
         $this->setCollection($collection);
@@ -69,16 +69,16 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Grid extends Mage_Adminhtml_Block_
             'options'   =>array('product'=>'Products', 'customer'=>'Customers'),
             'width'     =>'120px',
         ));
-        $stores = Mage::getResourceModel('core/store_collection')->setLoadDefault(true)->load()->toOptionHash();
-        $stores[0] = $this->__('Default Values');
+
         $this->addColumn('store_id', array(
             'header'    =>Mage::helper('adminhtml')->__('Store'),
             'type'      => 'options',
             'align'     => 'center',
             'index'     => 'store_id',
-            'options'   => $stores,
-            'width'     => '120px',
+            'type'      => 'store',
+            'width'     => '200px',
         ));
+
         $this->addColumn('created_at', array(
             'header'    =>Mage::helper('adminhtml')->__('Created At'),
             'type'      => 'date',

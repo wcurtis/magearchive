@@ -41,6 +41,9 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Shipments extends Mage_Adminhtml
             ->addAttributeToSelect('total_qty')
             ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id', null, 'left')
             ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left')
+            ->addExpressionAttributeToSelect('shipping_name',
+                'CONCAT({{shipping_firstname}}, " ", {{shipping_lastname}})',
+                array('shipping_firstname', 'shipping_lastname'))
             ->setOrderFilter($this->getOrder())
         ;
         $this->setCollection($collection);
@@ -54,14 +57,9 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Shipments extends Mage_Adminhtml
             'index' => 'increment_id',
         ));
 
-        $this->addColumn('shipping_firstname', array(
+        $this->addColumn('shipping_name', array(
             'header' => Mage::helper('sales')->__('Ship to First Name'),
-            'index' => 'shipping_firstname',
-        ));
-
-        $this->addColumn('shipping_lastname', array(
-            'header' => Mage::helper('sales')->__('Ship to Last Name'),
-            'index' => 'shipping_lastname',
+            'index' => 'shipping_name',
         ));
 
         $this->addColumn('created_at', array(

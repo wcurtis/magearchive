@@ -83,7 +83,7 @@ class Mage_Core_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
 
         // initialize stores config
         $stores = array();
-        $rows = $read->fetchAssoc("select store_id, code, name, website_id from ".$this->getTable('store').' order by sort_order asc');
+        $rows = $read->fetchAssoc("select store_id, code, name, website_id from ".$this->getTable('store')." order by sort_order asc");
         foreach ($rows as $s) {
             $xmlConfig->setNode('stores/'.$s['code'].'/system/store/id', $s['store_id']);
             $xmlConfig->setNode('stores/'.$s['code'].'/system/store/name', $s['name']);
@@ -119,7 +119,8 @@ class Mage_Core_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
         // inherit default config values to all websites
         $extendSource = $xmlConfig->getNode('default');
         foreach ($websites as $id=>$w) {
-            $xmlConfig->getNode('websites/'.$w['code'])->extend($extendSource);
+            $websiteNode = $xmlConfig->getNode('websites/'.$w['code']);
+            $websiteNode->extend($extendSource);
         }
 
         // set websites config values from database
@@ -136,7 +137,8 @@ class Mage_Core_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
             $extendSource = $xmlConfig->getNode('websites/'.$website['code']);
             if (isset($website['stores'])) {
                 foreach ($website['stores'] as $sId=>$sCode) {
-                    $xmlConfig->getNode('stores/'.$sCode)->extend($extendSource);
+                    $storeNode = $xmlConfig->getNode('stores/'.$sCode);
+                    $storeNode->extend($extendSource);
                 }
             }
         }

@@ -23,24 +23,12 @@
  *
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Create_Store_Select extends Mage_Adminhtml_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Create_Store_Select extends Mage_Adminhtml_Block_Store_Switcher
 {
-
-    protected $_websiteCollection = null;
-
     public function __construct()
     {
         parent::__construct();
         $this->setId('sc_store_select');
         $this->setTemplate('sales/order/create/store/select.phtml');
     }
-
-    public function getWebsiteCollection()
-    {
-        if (is_null($this->_websiteCollection)) {
-            $this->_websiteCollection = Mage::getModel('core/website')->getResourceCollection()->load();
-        }
-        return $this->_websiteCollection;
-    }
-
 }

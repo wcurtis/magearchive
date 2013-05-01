@@ -1,0 +1,177 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Template for Mage_Block_Adminhtml_Report_Grid
+ *
+ *  getId()
+ *  getCollection()
+ *  getColumns()
+ *  getPagerVisibility()
+ *  getVarNamePage()
+ */
+$numColumns = sizeof($this->getColumns());
+?>
+<?if($this->getCollection()):?>
+    <?if($this->canDisplayContainer()):?>
+        <?if($this->getGridHeader()):?>
+        <div class="content-header">
+            <table cellspacing="0">
+                <tr>
+                    <td style="width:50%;"><h2><?=$this->getGridHeader();?></h2></td>
+                </tr>
+            </table>
+        </div>
+        <?endif?>
+        <div id="<?=$this->getId()?>">
+    <?else:?>
+        <?=$this->getMessagesBlock()->getGroupedHtml()?>
+    <?endif;?>
+    <?if($this->getStoreSwitcherVisibility() || $this->getDateFilterVisibility()):?>
+        <?if($this->getStoreSwitcherVisibility()):?>
+            <?=$this->getStoreSwitcherHtml()?>
+        <?endif?>
+        <table cellspacing="0" class="actions">
+            <tr>
+        <?if($this->getDateFilterVisibility()):?>
+            <td class="a-left filter">
+                <?=$this->__('From')?>:&nbsp;<input class="input-text no-changes" type="text" id="period_date_from" name="report_from" value="<?=$this->getFilter('report_from')?>" style="width:5em" /> <img title="<?=$this->__('Select Date')?>" id="period_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>" class="v-middle"/>
+                &nbsp;<?=$this->__('To')?>:&nbsp;<input  class="input-text no-changes" type="text" id="period_date_to" name="report_to"  value="<?=$this->getFilter('report_to')?>" style="width:5em" /> <img class="v-middle" title="<?=$this->__('Select Date')?>"id="period_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                &nbsp;<?=$this->__('Show by')?>:
+                <select name="report_period" id="report_period" style="width:6em;">
+				    <?foreach ($this->getPeriods() as $_value=>$_label):?>
+				        <option value="<?=$_value?>" <?if($this->getFilter('report_period')==$_value):?> selected<?endif;?>><?=$_label?></option>
+				    <?endforeach;?>
+				</select>
+				<?=$this->getRefreshButtonHtml()?>
+	            <script type="text/javascript">
+                <!--
+                Calendar.setup({
+                    inputField : 'period_date_from',
+                    ifFormat : '<?=$this->getDateFormat()?>',
+                    button : 'period_date_from_trig',
+                    align : 'Bl',
+                    singleClick : true
+                });
+                Calendar.setup({
+                    inputField : 'period_date_to',
+                    ifFormat : '<?=$this->getDateFormat()?>',
+                    button : 'period_date_to_trig',
+                    align : 'Bl',
+                    singleClick : true
+                });
+                //-->
+                </script>
+            </td>
+        <?endif;?>
+        <?if($this->getExportVisibility()):?>
+            <td class="a-right">
+                <img src="<?=$this->getSkinUrl('images/icon_export.gif')?>" alt="" class="v-middle"/>&nbsp; <?=$this->__('Export to:')?>
+                <select name="<?=$this->getId()?>_export" id="<?=$this->getId()?>_export" style="width:8em;">
+                <?foreach ($this->getExportTypes() as $_type):?>
+                    <option value="<?=$_type->getUrl()?>"><?=$_type->getLabel()?></option>
+                <?endforeach;?>
+                </select>
+                <?=$this->getExportButtonHtml()?>
+            </td>
+        <?endif;?>
+            </tr>
+        </table>
+    <?endif;?>
+
+    <div class="grid">
+    <table cellspacing="0" class="data" id="<?=$this->getId()?>_table">
+        <col/>
+        <?foreach ($this->getColumns() as $_column):?>
+        <col <?=$_column->getHtmlProperty()?>/>
+        <?endforeach;?>
+        <?if ($this->getHeadersVisibility() || $this->getFilterVisibility()):?>
+            <thead>
+                <?if ($this->getHeadersVisibility()):?>
+                    <tr class="headings">
+                    <th class="no-link" style="width:100px"><span class="no-br"><?=$this->getPeriodText()?></span></th>
+                    <?foreach ($this->getColumns() as $_column):?>
+                        <th <?=$_column->getHeaderHtmlProperty()?>><span class="no-br"><?=$_column->getHeaderHtml()?></span></th>
+                    <?endforeach;?>
+                    </tr>
+                <?endif;?>
+            </thead>
+        <?endif;?>
+        <tbody>
+        <?if ($this->getCollection()->getSize()):?>
+        <?foreach ($this->getCollection()->getIntervals() as $_index => $_item):?>
+            <tr>
+            <?$report=$this->getReport($_item['start'], $_item['end'])?>
+            <?$rows=count($report)?>
+            <?if ($rows > 0 ):?>
+            <td rowspan="<?=$rows + ($this->getCountTotals() && $this->getSubtotalVisibility()?1:0)?>"><?=$_index?></td>
+                <?$i=0;foreach ($report as $_subIndex=>$_subItem):?>
+                    <?if($i>0):?>
+                    <tr>
+                    <?endif;?>
+                    <?$i++;?>
+                    <?$j=0;foreach ($this->getColumns() as $_column):?>
+                        <td class="<?=$_column->getCssProperty()?> <?=++$j==$numColumns?'last':''?>">
+                            <?=(($_html = $_column->getRowField($_subItem)) != '' ? $_html : '&nbsp;')?>
+                        </td>
+                    <?endforeach;?>
+                    </tr>
+                <?endforeach;?>
+                <?if($this->getCountTotals() && $rows > 0 && $this->getSubtotalVisibility()):?>
+                <tr>
+                    <?$j=0;foreach ($this->getColumns() as $_column):?>
+                        <td class="<?=$_column->getCssProperty()?> <?=++$j==$numColumns?'last':''?> subtotal">
+                            <?=($j==1)?$this->getSubtotalText():$_column->getRowField($this->getTotals())?>
+                        </td>
+                    <?endforeach;?>
+                </tr>
+                <?endif;?>
+            <?else:?>
+                <td><?=$_index?></td>
+                <td colspan="<?=$numColumns?>" class="empty-text <?=$this->getEmptyTextClass()?> last"><?=$this->getEmptyText()?></td>
+            <?endif;?>
+            </tr>
+        <?endforeach;?>
+        <?elseif ($this->getEmptyText()):?>
+        	<tr>
+        		<td class="empty-text <?=$this->getEmptyTextClass()?>" colspan="100"><?=$this->getEmptyText()?></td>
+        	</tr>
+        <?endif;?>
+        </tbody>
+        <?if ($this->getCountTotals() && $this->getCollection()->getSize()):?>
+        <tfoot>
+            <tr><th><?=$this->getTotalText()?></th>
+            <?$j=0;foreach ($this->getColumns() as $_column):?>
+                <th class="<?=$_column->getCssProperty()?> <?=++$j==$numColumns?'last':''?>"><?=$_column->getRowField($this->getGrandTotals())?></th>
+            <?endforeach;?>
+            </tr>
+         </tfoot>
+        <?endif;?>
+    </table>
+    </div>
+<?if($this->canDisplayContainer()):?>
+</div>
+<script type="text/javascript" language="javascript">
+    <?=$this->getJsObjectName()?> = new varienGrid('<?=$this->getId()?>', '<?=$this->getGridUrl()?>', '<?=$this->getVarNamePage()?>', '<?=$this->getVarNameSort()?>', '<?=$this->getVarNameDir()?>', '<?=$this->getVarNameFilter()?>');
+    <?=$this->getJsObjectName()?>.useAjax = '<?=$this->getUseAjax()?>';
+</script>
+<?endif;?>
+<?endif;?>

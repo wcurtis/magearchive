@@ -26,7 +26,7 @@ function install(type)
 }
 </script>
 <div class="content-header">
-	<table cellspacing="0" class="grid-header">
+	<table cellspacing="0">
 		<tr>
 			<td><h3><?=$this->getTitle()?></h3></td><td class="form-buttons"><?=$this->getBackButtonHtml()?></td>
 		 </tr>
@@ -34,7 +34,10 @@ function install(type)
 </div>
 <div class="entry-edit">
     <form action="<?=$this->getUploadInstallUrl()?>" method="post" id="local_form" enctype="multipart/form-data" target="run_iframe">
+        
+    <div class="entry-edit-head">
         <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Upload Local File")?></h4>
+    </div>
         <fieldset>
             <legend><?=$this->__("Upload Local File")?></legend>
 
@@ -49,7 +52,9 @@ function install(type)
     </form>
 
     <form action="<?=$this->getRemoteInstallUrl()?>" method="post" id="remote_form" enctype="multipart/form-data" target="run_iframe">
+    <div class="entry-edit-head">
         <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Download Remote File")?></h4>
+    </div>
         <fieldset>
             <legend><?=$this->__("Download Remote File")?></legend>
 

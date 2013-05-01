@@ -73,10 +73,10 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if (is_null($date)) {
-            $date = Mage::app()->getLocale()->date(time());
+            $date = Mage::app()->getLocale()->date(time(), null, null, $showTime);
         }
         else {
-            $date = Mage::app()->getLocale()->date(strtotime($date));
+            $date = Mage::app()->getLocale()->date(strtotime($date), null, null, $showTime);
         }
 
         if ($showTime) {
@@ -225,5 +225,20 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
     public function urlDecode($url)
     {
         return base64_decode(str_replace('_', '/', $url));
+    }
+
+    public function isDevAllowed($storeId=null)
+    {
+        $allow = true;
+
+        $allowedIps = Mage::getStoreConfig('dev/restrict/allow_ips', $storeId);
+        if (!empty($allowedIps) && isset($_SERVER['REMOTE_ADDR'])) {
+            $allowedIps = preg_split('#\s*,\s*#', $allowedIps, null, PREG_SPLIT_NO_EMPTY);
+            if (array_search($_SERVER['REMOTE_ADDR'], $allowedIps)===false) {
+                $allow = false;
+            }
+        }
+
+        return $allow;
     }
 }

@@ -105,10 +105,17 @@
         </translate>
     </adminhtml>
     <default>
-        <sales>
-            <guest_checkout>
-                <enabled>1</enabled>
-            </guest_checkout>
-        </sales>
+        <checkout>
+            <options>
+                <guest_checkout>1</guest_checkout>
+            </options>
+            <cart>
+                <delete_quote_after>30</delete_quote_after>
+                <redirect_to_cart>1</redirect_to_cart>
+            </cart>
+            <cart_link>
+                <use_qty>1</use_qty>
+            </cart_link>
+        </checkout>
     </default>
 </config>

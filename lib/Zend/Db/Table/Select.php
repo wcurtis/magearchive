@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Select
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Select.php 5308 2007-06-14 17:18:45Z bkarwin $
  */
@@ -40,7 +40,7 @@ require_once 'Zend/Db/Table/Abstract.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Table_Select extends Zend_Db_Select
@@ -122,7 +122,7 @@ class Zend_Db_Table_Select extends Zend_Db_Select
             }
             
             switch (true) {
-                case ($column == '*'):
+                case ($column == self::SQL_WILDCARD):
                     break;
 
                 case ($column instanceof Zend_Db_Expr):
@@ -148,11 +148,14 @@ class Zend_Db_Table_Select extends Zend_Db_Select
      * @param  string $schema The schema name to specify, if any.
      * @return Zend_Db_Table_Select This Zend_Db_Table_Select object.
      */
-    public function from($name, $cols = '*', $schema = null)
+    public function from($name, $cols = self::SQL_WILDCARD, $schema = null)
     {
         if ($name instanceof Zend_Db_Table_Abstract) {
             $info = $name->info();
             $name = $info[Zend_Db_Table_Abstract::NAME];
+            if (isset($info[Zend_Db_Table_Abstract::SCHEMA])) {
+                $schema = $info[Zend_Db_Table_Abstract::SCHEMA];
+            }
         }
 
         return $this->joinInner($name, null, $cols, $schema);
@@ -172,7 +175,7 @@ class Zend_Db_Table_Select extends Zend_Db_Select
 
         // If no fields are specified we assume all fields from primary table
         if (!count($fields)) {
-            $this->from($primary, '*', $schema);
+            $this->from($primary, self::SQL_WILDCARD, $schema);
             $fields = $this->getPart(Zend_Db_Table_Select::COLUMNS);
         }
 
@@ -185,8 +188,8 @@ class Zend_Db_Table_Select extends Zend_Db_Select
                 // Check each column to ensure it only references the primary table
                 if ($column) {
                     if (!isset($from[$table]) || $from[$table]['tableName'] != $primary) {
-                        require_once 'Zend/Db/Table/Select/Exception.php';
-                        throw new Zend_Db_Table_Select_Exception("Select query cannot join with another table");
+                        trigger_error("Select query cannot join with another table", E_USER_WARNING);
+                        return '';
                     }
                 }
             }

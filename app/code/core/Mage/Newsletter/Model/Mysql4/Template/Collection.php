@@ -37,7 +37,7 @@ class Mage_Newsletter_Model_Mysql4_Template_Collection extends Varien_Data_Colle
     {
         parent::__construct(Mage::getSingleton('core/resource')->getConnection('newsletter_read'));
         $this->_templateTable = Mage::getSingleton('core/resource')->getTableName('newsletter/template');
-        $this->_sqlSelect->from($this->_templateTable, array('template_id','template_code',
+        $this->_select->from($this->_templateTable, array('template_id','template_code',
                                                              'template_type',
                                                              'template_subject','template_sender_name',
                                                              'template_sender_email',
@@ -54,14 +54,14 @@ class Mage_Newsletter_Model_Mysql4_Template_Collection extends Varien_Data_Colle
      */
     public function useOnlyActual()
     {
-        $this->_sqlSelect->where('template_actual=?', 1);
+        $this->_select->where('template_actual=?', 1);
         
         return $this;
     }
         
     public function toOptionArray()
     {
-    	return $this->_toOptionArray('template_id', 'template_code');
+        return $this->_toOptionArray('template_id', 'template_code');
     }
     
 }

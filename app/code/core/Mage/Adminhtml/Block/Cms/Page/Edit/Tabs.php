@@ -44,6 +44,12 @@ class Mage_Adminhtml_Block_Cms_Page_Edit_Tabs extends Mage_Adminhtml_Block_Widge
             'active'    => true
         ));
 
+        $this->addTab('design_section', array(
+            'label'     => Mage::helper('cms')->__('Custom Design'),
+            'title'     => Mage::helper('cms')->__('Custom Design'),
+            'content'   => $this->getLayout()->createBlock('adminhtml/cms_page_edit_tab_design')->toHtml(),
+        ));
+
         $this->addTab('meta_section', array(
             'label'     => Mage::helper('cms')->__('Meta Data'),
             'title'     => Mage::helper('cms')->__('Meta Data'),

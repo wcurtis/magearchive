@@ -25,7 +25,8 @@
 class Mage_Customer_Model_Group extends Mage_Core_Model_Abstract
 {
     const XML_PATH_DEFAULT_ID = 'customer/create_account/default_group';
-    const NOT_LOGGED_IN_ID = 0;
+    const NOT_LOGGED_IN_ID  = 0;
+    const CUST_GROUP_ALL    = 32000;
 
     protected function _construct()
     {

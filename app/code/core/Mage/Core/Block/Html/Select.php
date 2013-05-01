@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * HTML select element block
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Core_Block_Html_Select extends Mage_Core_Block_Abstract
 {
+
     protected $_options = array();
 
     public function getOptions()
@@ -80,9 +82,9 @@ class Mage_Core_Block_Html_Select extends Mage_Core_Block_Abstract
 
     protected function _toHtml()
     {
-		if (!$this->_beforeToHtml()) {
-			return '';
-		}
+        if (!$this->_beforeToHtml()) {
+            return '';
+        }
 
         $html = '<select name="'.$this->getName().'" id="'.$this->getId().'" class="'
             .$this->getClass().'" title="'.$this->getTitle().'" '.$this->getExtraParams().'>';
@@ -108,7 +110,7 @@ class Mage_Core_Block_Html_Select extends Mage_Core_Block_Abstract
                 $isArrayOption = false;
             }
             $selected = in_array($value, $values) ? ' selected' : '';
-        	$html.= '<option value="'.$value.'"'.$selected.'>'.$label.'</option>';
+            $html.= '<option value="'.$value.'"'.$selected.'>'.$label.'</option>';
         }
         $html.= '</select>';
         return $html;
@@ -118,4 +120,5 @@ class Mage_Core_Block_Html_Select extends Mage_Core_Block_Abstract
     {
         return $this->toHtml();
     }
+
 }

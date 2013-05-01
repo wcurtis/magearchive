@@ -18,13 +18,28 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Installer model
  *
+ * @category   Mage
+ * @package    Mage_Install
  */
 class Mage_Install_Model_Installer extends Varien_Object
 {
+
+    /**
+     * Installer host response used to check urls
+     *
+     */
     const INSTALLER_HOST_RESPONSE   = 'MAGENTO';
+
+    /**
+     * Installer data model used to store data between installation steps
+     *
+     * @var Varien_Object
+     */
+    protected $_dataModel;
 
     /**
      * Checking install status of application
@@ -36,6 +51,36 @@ class Mage_Install_Model_Installer extends Varien_Object
         return Mage::app()->isInstalled();
     }
 
+    /**
+     * Get data model
+     *
+     * @return Varien_Object
+     */
+    public function getDataModel()
+    {
+        if (is_null($this->_dataModel)) {
+            $this->setDataModel(Mage::getSingleton('install/session'));
+        }
+        return $this->_dataModel;
+    }
+
+    /**
+     * Set data model to store data between installation steps
+     *
+     * @param Varien_Object $model
+     * @return Mage_Install_Model_Installer
+     */
+    public function setDataModel(Varien_Object $model)
+    {
+        $this->_dataModel = $model;
+        return $this;
+    }
+
+    /**
+     * Check packages (pear) downloads
+     *
+     * @return boolean
+     */
     public function checkDownloads()
     {
         try {
@@ -57,6 +102,7 @@ class Mage_Install_Model_Installer extends Varien_Object
     {
         try {
             Mage::getModel('install/installer_filesystem')->install();
+
             Mage::getModel('install/installer_env')->install();
             $result = true;
         } catch (Exception $e) {
@@ -104,7 +150,7 @@ class Mage_Install_Model_Installer extends Varien_Object
     public function installDb()
     {
         Mage_Core_Model_Resource_Setup::applyAllUpdates();
-        $data = Mage::getSingleton('install/session')->getConfigData();
+        $data = $this->getDataModel()->getConfigData();
 
         /**
          * Saving host information into DB
@@ -115,9 +161,15 @@ class Mage_Install_Model_Installer extends Varien_Object
             $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_USE_REWRITES, 1);
         }
 
+        $unsecureBaseUrl = Mage::getBaseUrl('web');
+        if (!empty($data['unsecure_base_url'])) {
+            $unsecureBaseUrl = $data['unsecure_base_url'];
+            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_BASE_URL, $unsecureBaseUrl);
+        }
+
         if (!empty($data['use_secure'])) {
             $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_IN_FRONTEND, 1);
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_BASE_URL, Mage::getBaseUrl('web'));
+            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_BASE_URL, $unsecureBaseUrl);
             $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_BASE_URL, $data['secure_base_url']);
             if (!empty($data['use_secure_admin'])) {
                 $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_IN_ADMINHTML, 1);
@@ -143,6 +195,12 @@ class Mage_Install_Model_Installer extends Varien_Object
         return $this;
     }
 
+    /**
+     * Create admin user
+     *
+     * @param array $data
+     * @return Mage_Install_Model_Installer
+     */
     public function createAdministrator($data)
     {
         $user = Mage::getModel('admin/user')->load(1)->addData($data);
@@ -156,6 +214,12 @@ class Mage_Install_Model_Installer extends Varien_Object
         return $this;
     }
 
+    /**
+     * Set encryption key
+     *
+     * @param string $key
+     * @return Mage_Install_Model_Installer
+     */
     public function installEnryptionKey($key)
     {
         if ($key) {
@@ -183,4 +247,5 @@ class Mage_Install_Model_Installer extends Varien_Object
 
         return $this;
     }
+
 }

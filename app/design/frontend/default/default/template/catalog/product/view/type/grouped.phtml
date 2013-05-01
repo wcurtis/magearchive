@@ -1,0 +1,105 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Grouped product data template
+ *
+ * @see Mage_Catalog_Block_Product_View_Media
+ */
+?>
+<?$_product = $this->getProduct()?>
+<?$_associatedProducts = $this->getAssociatedProducts()?>
+<table cellspacing="0" class="data-table" id="super-product-table">
+    <thead>
+        <tr>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-right"><?=$this->__('Price')?></th>
+            <?if ($_product->isSaleable()):?>
+            <th class="a-center"><?=$this->__('Qty')?></th>
+            <?endif;?>
+        </tr>
+    </thead>
+    <tbody>
+    <?if (count($_associatedProducts)):?>
+    <?foreach ($_associatedProducts as $_item):?>
+        <tr>
+            <td><?=$_item->getName()?></td>
+            <td class="a-right">
+                <?$_showTax = $_item->getShowTaxInCatalog()?>
+                <?$_priceAfterTax = $_item->getPriceAfterTax()?>
+                <?$_finalPriceAfterTax = $_item->getFinalPriceAfterTax()?>
+                <?$_price = $_showTax==1 ? $_priceAfterTax : $_item->getPrice()?>
+                <?$_finalPrice = $_showTax==1 ? $_finalPriceAfterTax : $_item->getFinalPrice()?>
+                <?if ($_finalPrice == $_price):?>
+                    <span class="nobr"><?=$this->__('Price')?>&nbsp;<?=Mage::helper('core')->currency($_price)?></span><br />
+                <?else:?>
+                    <span class="nobr old-price"><?=$this->__('Price')?>&nbsp;<?=Mage::helper('core')->currency($_price)?></span><br />
+                    <span class="nobr special-price" style="font-size:12px;"><?=$this->__('Special Price')?>&nbsp;<?=Mage::helper('core')->currency($_finalPrice)?></span>
+                <?endif;?>
+                <?if($_item->getTierPriceCount()):?>
+                    <?foreach ($_item->getFormatedTierPrice() as $_tierPrice):?>
+                        <?if($_tierPrice['price'] <= $_finalPrice):?>
+                            <span class="nobr"><?=$this->__('Buy %s for %s', $_tierPrice['price_qty'], $_tierPrice['formated_price'])?></span>
+                        <?endif;?>
+                    <?endforeach;?>
+                <?endif?>
+            </td>
+            <?if ($_product->isSaleable()):?>
+            <td class="a-center">
+            <?if ($_item->isSaleable()) :?>
+                <input name="super_group[<?=$_item->getId()?>]" value="<?=$_item->getQty()*1?>" type="text" class="input-text qty"/>
+            <?else :?>
+                <?=$this->__('Out of stock.')?>
+            <?endif;?>
+            </td>
+            <?endif;?>
+        </tr>
+    <?endforeach;?>
+    <?else:?>
+       <tr>
+           <td colspan="<?if ($_product->isSaleable()):?>4<?else :?>3<?endif;?>"><?=$this->__('No options of this product are available.')?></td>
+       </tr>
+    <?endif;?>
+    </tbody>
+</table>
+
+<script type="text/javascript">decorateTable('super-product-table')</script>
+
+<?if($_product->isSaleable() && count($_associatedProducts)):?>
+    <p><small><?=$this->__('Availability: In stock.')?></small></p>
+    <?if($_product->isSaleable()):?>
+        <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button>
+        <?if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
+            <strong><?=$this->__('OR')?></strong>
+        <?endif;?>
+        &nbsp;&nbsp;
+    <?endif;?>
+<?else:?>
+    <p><small><?=$this->__('Availability: Out of stock.')?></small></p>
+<?endif;?>
+
+<?if ($this->helper('wishlist')->isAllow()) :?>
+    <a href="<?=$this->helper('wishlist')->getAddUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a>
+<?endif;?>
+
+<?if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
+    <span class="pipe">|</span>
+    <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
+<?endif;?>

@@ -74,7 +74,7 @@ final class Mage {
 
     public static function getVersion()
     {
-        return '0.8.16100';
+        return '0.8.17240';
     }
 
     /**
@@ -89,6 +89,16 @@ final class Mage {
             Mage::throwException('Mage registry key "'.$key.'" already exists');
         }
         self::$_registry[$key] = $value;
+    }
+
+    public static function unregister($key)
+    {
+        if (isset(self::$_registry[$key])) {
+            if (is_object(self::$_registry[$key]) && (method_exists(self::$_registry[$key],'__destruct'))) {
+                self::$_registry[$key]->__destruct();
+            }
+            unset(self::$_registry[$key]);
+        }
     }
 
     /**
@@ -308,10 +318,10 @@ final class Mage {
      * @param string $type
      * @return object
      */
-    public static function getHelper($type)
+    public static function getBlockSingleton($type)
     {
-        $action = Mage::registry('action');
-        return $action ? $action->getLayout()->getHelper($type) : false;
+        $action = Mage::app()->getFrontController()->getAction();
+        return $action ? $action->getLayout()->getBlockSingleton($type) : false;
     }
 
     /**
@@ -349,11 +359,12 @@ final class Mage {
     /**
      * Initialize and retrieve application
      *
-     * @param   string $store
+     * @param   string $code
+     * @param   string $type
      * @param   string $etcDir
      * @return  Mage_Core_Model_App
      */
-    public static function app($store='', $etcDir=null)
+    public static function app($code = '', $type = 'store', $etcDir=null)
     {
         if (is_null(self::$_app)) {
             Varien_Profiler::start('app/init');
@@ -364,7 +375,7 @@ final class Mage {
             Mage::register('events', new Varien_Event_Collection());
             Mage::register('config', new Mage_Core_Model_Config());
 
-            self::$_app->init($store, $etcDir);
+            self::$_app->init($code, $type, $etcDir);
             self::$_app->loadAreaPart(Mage_Core_Model_App_Area::AREA_GLOBAL, Mage_Core_Model_App_Area::PART_EVENTS);
         }
         return self::$_app;
@@ -373,18 +384,19 @@ final class Mage {
     /**
      * Front end main entry point
      *
-     * @param string $storeCode
+     * @param string $code
+     * @param string $type
+     * @param string $etcDir
      */
-    public static function run($storeCode='', $etcDir=null)
+    public static function run($code='', $type = 'store', $etcDir=null)
     {
-        self::log('===================== START ==========================');
-
         try {
             Varien_Profiler::start('app');
 
             self::loadRequiredExtensions();
 
-            self::app($storeCode, $etcDir);
+            self::app($code, $type, $etcDir);
+            //print self::app()->getStore();
             self::app()->getFrontController()->dispatch();
 
             Varien_Profiler::stop('app');
@@ -397,8 +409,8 @@ final class Mage {
             try {
                 self::dispatchEvent('mage_run_exception', array('exception'=>$e));
                 if (!headers_sent()) {
-                	//header('Location:'.Mage::getBaseUrl().'install/');
-                	header('Location:'.self::getUrl('install'));
+                    //header('Location:'.Mage::getBaseUrl().'install/');
+                    header('Location:'.self::getUrl('install'));
                 }
                 else {
                     self::printException($e);
@@ -409,8 +421,6 @@ final class Mage {
                 self::printException($ne);
             }
         }
-
-        self::log('===================== FINISH ==========================');
     }
 
     /**
@@ -422,15 +432,23 @@ final class Mage {
      */
     public static function log($message, $level=null, $file = '')
     {
-		return;
+        if (!self::getConfig()) {
+            return;
+        }
+        if (!Mage::getStoreConfig('dev/log/active')) {
+            return;
+        }
 
         static $loggers = array();
 
         $level  = is_null($level) ? Zend_Log::DEBUG : $level;
-        $file   = empty($file) ? 'system.log' : $file;
+        if (empty($file)) {
+            $file = Mage::getStoreConfig('dev/log/file');
+            $file   = empty($file) ? 'system.log' : $file;
+        }
 
         try {
-            if (empty($loggers[$file])) {
+            if (!isset($loggers[$file])) {
                 $logFile = Mage::getBaseDir('var').DS.'log'.DS.$file;
                 $logDir = Mage::getBaseDir('var').DS.'log';
 
@@ -459,6 +477,15 @@ final class Mage {
         catch (Exception $e){
 
         }
+    }
+
+    public static function logException(Exception $e)
+    {
+        if (!self::getConfig()) {
+            return;
+        }
+        $file = Mage::getStoreConfig('dev/log/exception_file');
+        self::log("\n".$e->getTraceAsString(), Zend_Log::ERR, $file);
     }
 
     /**
@@ -499,7 +526,7 @@ final class Mage {
     public static function loadRequiredExtensions()
     {
         $result = true;
-        foreach (array('mcrypt', 'simplexml', 'mysqli', 'pdo_mysql', 'curl', 'iconv') as $ext) {
+        foreach (array('mcrypt', 'simplexml', 'pdo_mysql', 'curl', 'iconv') as $ext) {
             if (!self::loadExtension($ext)) {
                 $result = false;
             }

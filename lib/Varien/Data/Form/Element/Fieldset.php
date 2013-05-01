@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Form fieldset
  *
@@ -26,6 +27,12 @@
  */
 class Varien_Data_Form_Element_Fieldset extends Varien_Data_Form_Element_Abstract
 {
+
+    /**
+     * Enter description here...
+     *
+     * @param array $attributes
+     */
     public function __construct($attributes=array())
     {
         parent::__construct($attributes);
@@ -33,6 +40,11 @@ class Varien_Data_Form_Element_Fieldset extends Varien_Data_Form_Element_Abstrac
         $this->setType('fieldset');
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getElementHtml()
     {
         $html = '<fieldset id="'.$this->getHtmlId().'"'.$this->serialize(array('class')).'>'."\n";
@@ -45,15 +57,25 @@ class Varien_Data_Form_Element_Fieldset extends Varien_Data_Form_Element_Abstrac
         return $html;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getChildrenHtml()
     {
         $html = '';
         foreach ($this->getElements() as $element) {
-        	$html.= $element->toHtml();
+            $html.= $element->toHtml();
         }
         return $html;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getDefaultHtml()
     {
         $html = '<div><h4 class="icon-head head-edit-form fieldset-legend">'.$this->getLegend().'</h4>'."\n";
@@ -61,6 +83,15 @@ class Varien_Data_Form_Element_Fieldset extends Varien_Data_Form_Element_Abstrac
         return $html;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $elementId
+     * @param string $type
+     * @param array $config
+     * @param boolean $after
+     * @return Varien_Data_Form_Element_Abstract
+     */
     public function addField($elementId, $type, $config, $after=false)
     {
         $element = parent::addField($elementId, $type, $config, $after);
@@ -69,4 +100,5 @@ class Varien_Data_Form_Element_Fieldset extends Varien_Data_Form_Element_Abstrac
         }
         return $element;
     }
+
 }

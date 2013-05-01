@@ -34,26 +34,6 @@ class Mage_Core_Model_Mysql4_Store_Group extends Mage_Core_Model_Mysql4_Abstract
 
     protected function _afterSave(Mage_Core_Model_Abstract $model)
     {
-        if ($model->getStores()) {
-            $defaultUpdate = false;
-            $defaultId = 0;
-            if (!$model->getDefaultStoreId()) {
-                $defaultUpdate = true;
-            }
-            foreach ($model->getStores() as $store) {
-                if ($store instanceof Mage_Core_Model_Store) {
-                    $store->setWebsiteId($model->getWebsiteId());
-                    $store->setGroupId($model->getId());
-                    $store->save();
-                    if ($defaultUpdate && !$defaultId) {
-                        $defaultId = $store->getId();
-                    }
-                }
-            }
-            if ($defaultUpdate && $defaultId) {
-                $this->_saveDefaultStore($model->getId(), $defaultId);
-            }
-        }
         $this->_updateStoreWebsite($model->getId(), $model->getWebsiteId());
         $this->_updateWebsiteDefaultGroup($model->getWebsiteId(), $model->getId());
         $this->_changeWebsite($model);

@@ -33,20 +33,20 @@ class Mage_Admin_Model_Mysql4_Permissions_Rules_Collection extends Varien_Data_C
         $this->_roleTable         = $resources->getTableName('admin/role');
         $this->_ruleTable         = $resources->getTableName('admin/rule');
         /*
-        $this->_sqlSelect->from($this->_tagTable, array('total' => "COUNT(*)", $this->_tagTable.'.*'))
+        $this->_select->from($this->_tagTable, array('total' => "COUNT(*)", $this->_tagTable.'.*'))
             ->join($this->_tagRelTable, $this->_tagTable.'.tag_id='.$this->_tagRelTable.'.tag_id')
             ->group($this->_tagRelTable.'.tag_id');
 
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('tag/tag'));
         */
 
-        $this->_sqlSelect->from($this->_ruleTable);
+        $this->_select->from($this->_ruleTable);
         $this->_setIdFieldName('rule_id');
     }
 
     public function getByRoles($id) {
         $id = $id ? $id : 0;
-        $row = $this->_sqlSelect->where("role_id = {$id}");
+        $row = $this->_select->where("role_id = {$id}");
         return $this;
     }
 }

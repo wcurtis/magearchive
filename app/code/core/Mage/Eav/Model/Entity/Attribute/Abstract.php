@@ -25,7 +25,9 @@
  * @category   Mage
  * @package    Mage_Eav
  */
-abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_Abstract implements Mage_Eav_Model_Entity_Attribute_Interface
+abstract class Mage_Eav_Model_Entity_Attribute_Abstract
+    extends Mage_Core_Model_Abstract
+    implements Mage_Eav_Model_Entity_Attribute_Interface
 {
     /**
      * Attribute name
@@ -62,11 +64,22 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
      */
     protected $_source;
 
+    /**
+     * Enter description here...
+     *
+     */
     protected function _construct()
     {
         $this->_init('eav/entity_attribute');
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $entityType
+     * @param unknown_type $code
+     * @return unknown
+     */
     public function loadByCode($entityType, $code)
     {
         if (is_numeric($entityType)) {
@@ -101,17 +114,18 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
      */
     public function getName()
     {
-        return $this->getData('attribute_code');
+        return (isset($this->_data['attribute_code'])) ? $this->_data['attribute_code'] : null;
     }
 
     public function setAttributeId($data)
     {
-        return $this->setData('attribute_id', $data);
+        $this->_data['attribute_id'] = $data;
+        return $this;
     }
 
     public function getAttributeId()
     {
-        return $this->getData('attribute_id');
+        return (isset($this->_data['attribute_id'])) ? $this->_data['attribute_id'] : null;
     }
 
     public function setAttributeCode($data)
@@ -119,9 +133,14 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
         return $this->setData('attribute_code', $data);
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getAttributeCode()
     {
-        return $this->getData('attribute_code');
+        return (isset($this->_data['attribute_code'])) ? $this->_data['attribute_code'] : null;
     }
 
     public function setAttributeModel($data)
@@ -131,7 +150,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
 
     public function getAttributeModel()
     {
-        return $this->getData('attribute_model');
+        return (isset($this->_data['attribute_model'])) ? $this->_data['attribute_model'] : null;
     }
 
     public function setBackendType($data)
@@ -141,7 +160,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
 
     public function getBackendType()
     {
-        return $this->getData('backend_type');
+        return (isset($this->_data['backend_type'])) ? $this->_data['backend_type'] : null;
     }
 
     public function setBackendModel($data)
@@ -151,7 +170,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
 
     public function getBackendModel()
     {
-        return $this->getData('backend_model');
+        return (isset($this->_data['backend_model'])) ? $this->_data['backend_model'] : null;
     }
 
     public function setBackendTable($data)
@@ -161,20 +180,17 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
 
     public function getBackendTable()
     {
-        $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
-        if( $this->getData('backend_table') ) {
-            return $tablePrefix . $this->getData('backend_table');
-        }
+        return (isset($this->_data['backend_table'])) ? $this->_data['backend_table'] : null;
     }
 
     public function getIsVisibleOnFront()
     {
-        return $this->getData('is_visible_on_front');
+        return (isset($this->_data['is_visible_on_front'])) ? $this->_data['is_visible_on_front'] : null;
     }
 
     public function getDefaultValue()
     {
-        return $this->getData('default_value');
+        return (isset($this->_data['default_value'])) ? $this->_data['default_value'] : null;
     }
 
     /**
@@ -303,5 +319,15 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
     protected function _getDefaultSourceModel()
     {
         return $this->getEntity()->getDefaultAttributeSourceModel();
+    }
+
+    public function isValueEmpty($value)
+    {
+        $attrType = $this->getBackend()->getType();
+        $isEmpty = is_array($value)
+            || is_null($value)
+            || $value===false && $attrType!='int'
+            || $value==='' && ($attrType=='int' || $attrType=='decimal' || $attrType=='datetime');
+        return $isEmpty;
     }
 }

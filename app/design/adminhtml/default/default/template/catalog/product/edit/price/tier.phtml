@@ -18,13 +18,15 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
+<tr>
+<td colspan="10">
 <?=$this->getAddButtonHtml()?> <?=$this->getAfterElementHtml()?>
 <div>&nbsp;</div>
 <span id="<?=$this->getElement()->getHtmlId()?>_container"></span>
 <span id="<?=$this->getElement()->getHtmlId()?>_delete_button" style="display:none"></span>
 <div id="<?=$this->getElement()->getHtmlId()?>_add_template" style="display:none">
 <div class="tier-price-input" id="<?=$this->getElement()->getHtmlId()?>_row___index__">
-    <div class="tier-container">
+    <div class="tier-container nowrap" style="width:700px">
         <div class="custgroup-div">
             <strong><?=('Customer Group')?></strong>&nbsp;
             <span>
@@ -86,3 +88,5 @@
     <?endforeach;?>
 //-->
 </script>
+</td>
+</tr>

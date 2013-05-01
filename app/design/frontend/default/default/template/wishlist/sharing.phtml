@@ -25,12 +25,18 @@
         <ul class="form-list">
             <li>
                 <label for="email_address"><?=$this->__('Email addresses, separated by commas')?> <span class="required">*</span></label><br/>
-                <textarea name="email" cols="60" rows="5" class="validate-emails required-entry"><?=$this->getEnteredData('email')?></textarea>
+                <textarea name="emails" cols="60" rows="5" class="validate-emails required-entry"><?=$this->getEnteredData('emails')?></textarea>
             </li>
             <li>
                 <label for="email_address"><?=$this->__('Message')?></label><br/>
                 <textarea name="message" cols="60" rows="5"><?=$this->getEnteredData('message')?></textarea>
             </li>
+            <?if($this->helper('wishlist')->isRssAllow()):?>
+            <li>
+                <input type="checkbox" name="rss_url" id="rss_url" value="1"/>
+                <label for="rss_url"><?=$this->__('Check this checkbox if you want to add a link to an rss feed to your wishlist.')?></label>
+            </li>
+            <?endif;?>
         </ul>
     <div class="button-set">
             <p class="required"><?=$this->__('* Required Fields')?></p>

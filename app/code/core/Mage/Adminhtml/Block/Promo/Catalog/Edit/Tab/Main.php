@@ -74,17 +74,22 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Main extends Mage_Adminhtml_Bl
             ),
         ));
 
-        $stores = Mage::getResourceModel('core/store_collection')
-            ->addFieldToFilter('store_id', array('neq'=>0))
-            ->load()->toOptionArray();
-
-    	$fieldset->addField('store_ids', 'multiselect', array(
-            'name'      => 'store_ids[]',
-            'label'     => Mage::helper('catalogrule')->__('Store Views'),
-            'title'     => Mage::helper('catalogrule')->__('Store Views'),
-            'required'  => true,
-            'values'    => $stores,
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $fieldset->addField('website_ids', 'multiselect', array(
+                'name'      => 'website_ids[]',
+                'label'     => Mage::helper('catalogrule')->__('Websites'),
+                'title'     => Mage::helper('catalogrule')->__('Websites'),
+                'required'  => true,
+                'values'    => Mage::getSingleton('adminhtml/system_config_source_website')->toOptionArray(),
+            ));
+        }
+        else {
+            $fieldset->addField('website_ids', 'hidden', array(
+                'name'      => 'website_ids[]',
+                'value'     => Mage::app()->getStore(true)->getWebsiteId()
+            ));
+            $model->setWebsiteIds(Mage::app()->getStore(true)->getWebsiteId());
+        }
 
         $customerGroups = Mage::getResourceModel('customer/group_collection')
             ->load()->toOptionArray();

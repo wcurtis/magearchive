@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage Zend_OpenId_Consumer
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id:$
+ * @version    $Id: File.php 8064 2008-02-16 10:58:39Z thomas $
  */
 
 /**
@@ -32,7 +32,7 @@ require_once "Zend/OpenId/Consumer/Storage.php";
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage Zend_OpenId_Consumer
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
@@ -61,13 +61,17 @@ class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
                     $tmp = "/tmp";
                 }
             }
+            $user = get_current_user();
+            if (is_string($user) && !empty($user)) {
+            	$tmp .= '/' . $user;
+			}
             $dir = $tmp . '/openid/consumer';
         }
         $this->_dir = $dir;
         if (!is_dir($this->_dir)) {
             if (!@mkdir($this->_dir, 0700, 1)) {
                 throw new Zend_OpenId_Exception(
-                    'Cannot access storage directory',
+                    'Cannot access storage directory ' . $dir,
                     Zend_OpenId_Exception::ERROR_STORAGE);
             }
         }

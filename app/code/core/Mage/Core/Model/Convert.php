@@ -25,7 +25,8 @@
  * @category   Mage
  * @package    Mage_Core
  */
-class Mage_Core_Model_Convert extends Varien_Convert_Profile_Collection
+//class Mage_Core_Model_Convert extends Varien_Convert_Profile_Collection
+class Mage_Core_Model_Convert extends Mage_Dataflow_Model_Convert_Profile_Collection
 {
     public function __construct()
     {

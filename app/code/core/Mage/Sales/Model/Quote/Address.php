@@ -23,14 +23,14 @@
  */
 class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstract
 {
-	const RATES_FETCH = 1;
-	const RATES_RECALCULATE = 2;
+    const RATES_FETCH = 1;
+    const RATES_RECALCULATE = 2;
 
-	/**
-	 * Quote object
-	 *
-	 * @var Mage_Sales_Model_Quote
-	 */
+    /**
+     * Quote object
+     *
+     * @var Mage_Sales_Model_Quote
+     */
     protected $_quote;
     protected $_rates;
     protected $_totalModels;
@@ -104,10 +104,10 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
      */
     public function exportCustomerAddress()
     {
-    	$address = Mage::getModel('customer/address')
-    		->setEmail($this->getEmail())
-    		->setFirstname($this->getFirstname())
-			->setLastname($this->getLastname())
+        $address = Mage::getModel('customer/address')
+            ->setEmail($this->getEmail())
+            ->setFirstname($this->getFirstname())
+            ->setLastname($this->getLastname())
             ->setCompany($this->getCompany())
             ->setStreet($this->getStreet())
             ->setCity($this->getCity())
@@ -175,13 +175,11 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
     public function getItemsCollection()
     {
         if (is_null($this->_items)) {
-            $this->_items = Mage::getResourceModel('sales/quote_address_item_collection');
+            $this->_items = Mage::getResourceModel('sales/quote_address_item_collection')
+                ->addAttributeToSelect('*')
+                ->setAddressFilter($this->getId());
 
             if ($this->getId()) {
-                $this->_items
-                    ->addAttributeToSelect('*')
-                    ->setAddressFilter($this->getId())
-                    ->load();
                 foreach ($this->_items as $item) {
                     $item->setAddress($this);
                 }
@@ -288,12 +286,10 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
     public function getShippingRatesCollection()
     {
         if (is_null($this->_rates)) {
-            $this->_rates = Mage::getResourceModel('sales/quote_address_rate_collection');
+            $this->_rates = Mage::getResourceModel('sales/quote_address_rate_collection')
+                ->addAttributeToSelect('*')
+                ->setAddressFilter($this->getId());
             if ($this->getId()) {
-                $this->_rates
-                    ->addAttributeToSelect('*')
-                    ->setAddressFilter($this->getId())
-                    ->load();
                 foreach ($this->_rates as $rate) {
                     $rate->setAddress($this);
                 }
@@ -342,7 +338,7 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
 
     protected function _sortRates($a, $b)
     {
-        	return (int)$a[0]->carrier_sort_order < (int)$b[0]->carrier_sort_order ? -1 : ((int)$a[0]->carrier_sort_order > (int)$b[0]->carrier_sort_order ? 1 : 0);
+        return (int)$a[0]->carrier_sort_order < (int)$b[0]->carrier_sort_order ? -1 : ((int)$a[0]->carrier_sort_order > (int)$b[0]->carrier_sort_order ? 1 : 0);
     }
 
     /**
@@ -400,21 +396,22 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
      */
     public function collectShippingRates()
     {
-    	if (!$this->getCollectShippingRates()) {
-    		return $this;
-    	}
+        if (!$this->getCollectShippingRates()) {
+            return $this;
+        }
 
-    	$this->setCollectShippingRates(false);
+        $this->setCollectShippingRates(false);
 
         $this->removeAllShippingRates();
 
         if (!$this->getCountryId() && !$this->getPostcode()) {
-        	return $this;
+            return $this;
         }
 
         $request = Mage::getModel('shipping/rate_request');
         $request->setDestCountryId($this->getCountryId());
         $request->setDestRegionId($this->getRegionId());
+		$request->setDestRegionCode($this->getRegionCode());
         /**
          * need to call getStreet with -1
          * to get data in string instead of array
@@ -425,6 +422,8 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         $request->setPackageValue($this->getSubtotal());
         $request->setPackageWeight($this->getWeight());
         $request->setPackageQty($this->getItemQty());
+
+        $request->setFreeMethodWeight($this->getFreeMethodWeight());
 
         /**
          * Store and website identifiers need specify from quote
@@ -446,52 +445,52 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
             ->collectRates($request)
                 ->getResult();
 
-		$found = false;
-		if ($result) {
-	        $shippingRates = $result->getAllRates();
+        $found = false;
+        if ($result) {
+            $shippingRates = $result->getAllRates();
 
-	        foreach ($shippingRates as $shippingRate) {
-	            $rate = Mage::getModel('sales/quote_address_rate')
-	                ->importShippingRate($shippingRate);
-	            $this->addShippingRate($rate);
+            foreach ($shippingRates as $shippingRate) {
+                $rate = Mage::getModel('sales/quote_address_rate')
+                    ->importShippingRate($shippingRate);
+                $this->addShippingRate($rate);
 
-	            if ($this->getShippingMethod()==$rate->getCode()) {
-	                $this->setShippingAmount($rate->getPrice());
-	                $found = true;
-	            }
-	        }
-		}
+                if ($this->getShippingMethod()==$rate->getCode()) {
+                    $this->setShippingAmount($rate->getPrice());
+                    $found = true;
+                }
+            }
+        }
 
         if (!$found) {
-	        $this->setShippingAmount(0)
-	        	->setShippingMethod('')
-	        	->setShippingDescription('');
+            $this->setShippingAmount(0)
+                ->setShippingMethod('')
+                ->setShippingDescription('');
         }
 
         return $this;
     }
 
 /*********************** TOTALS ***************************/
-	public function getTotalModels()
-	{
-		if (!$this->_totalModels) {
-	    	$totalsConfig = Mage::getConfig()->getNode('global/sales/quote/totals');
-	    	$models = array();
-	    	foreach ($totalsConfig->children() as $totalCode=>$totalConfig) {
-	    		$sort = Mage::getStoreConfig('sales/totals_sort/'.$totalCode);
-	    		while (isset($models[$sort])) {
-	    			$sort++;
-	    		}
-	    		$class = $totalConfig->getClassName();
-	    		if ($class && ($model = Mage::getModel($class))) {
-	    			$models[$sort] = $model->setCode($totalCode);
-	    		}
-	    	}
-	    	ksort($models);
-	    	$this->_totalModels = $models;
-		}
-		return $this->_totalModels;
-	}
+    public function getTotalModels()
+    {
+        if (!$this->_totalModels) {
+            $totalsConfig = Mage::getConfig()->getNode('global/sales/quote/totals');
+            $models = array();
+            foreach ($totalsConfig->children() as $totalCode=>$totalConfig) {
+                $sort = Mage::getStoreConfig('sales/totals_sort/'.$totalCode);
+                while (isset($models[$sort])) {
+                    $sort++;
+                }
+                $class = $totalConfig->getClassName();
+                if ($class && ($model = Mage::getModel($class))) {
+                    $models[$sort] = $model->setCode($totalCode);
+                }
+            }
+            ksort($models);
+            $this->_totalModels = $models;
+        }
+        return $this->_totalModels;
+    }
 
     public function collectTotals()
     {
@@ -505,7 +504,7 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
 
     public function getTotals()
     {
-    	foreach ($this->getTotalModels() as $model) {
+        foreach ($this->getTotalModels() as $model) {
             if (is_callable(array($model, 'fetch'))) {
                 $model->fetch($this);
             }

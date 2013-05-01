@@ -18,24 +18,21 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Customer Reviews list block
  *
  * @category   Mage
  * @package    Mage_Review
  */
-
 class Mage_Review_Block_Customer_List extends Mage_Core_Block_Template
 {
+
     protected $_collection;
 
-    public function __construct()
+    protected function _construct()
     {
-        parent::__construct();
-        $this->setTemplate('review/customer/list.phtml');
-
         $this->_collection = Mage::getModel('review/review')->getProductCollection();
-
         $this->_collection
             ->addStoreFilter(Mage::app()->getStore()->getId())
             ->addCustomerFilter(Mage::getSingleton('customer/session')->getCustomerId())
@@ -93,4 +90,5 @@ class Mage_Review_Block_Customer_List extends Mage_Core_Block_Template
             ->addReviewSummary();
         return parent::_beforeToHtml();
     }
+
 }

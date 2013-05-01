@@ -29,23 +29,23 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles_User_Collection extends Varien_D
         $this->_roleTable = Mage::getSingleton('core/resource')->getTableName('admin/role');
         $this->_userTable = Mage::getSingleton('core/resource')->getTableName('admin/user');
 
-        $this->_sqlSelect->from($this->_userTable, array('*'))->where("user_id > 0");
+        $this->_select->from($this->_userTable, array('*'))->where("user_id > 0");
         $this->_setIdFieldName('user_id');
 
-        /*$this->_sqlSelect->from($this->_roleTable, array('role_id', 'role_name', 'tree_level', 'sort_order', 'role_type'))
+        /*$this->_select->from($this->_roleTable, array('role_id', 'role_name', 'tree_level', 'sort_order', 'role_type'))
                             ->joinLeft(array('usr' => $this->_userTable), "(usr.user_id = `{$this->_roleTable}`.user_id)", array('*'));
-        $this->_sqlSelect->where("{$this->_roleTable}.role_type='U'");*/
+        $this->_select->where("{$this->_roleTable}.role_type='U'");*/
     }
 
     public function setRoleFilter($roleId)
     {
-        $this->_sqlSelect->where("{$this->_roleTable}.parent_id = ?", $roleId);
+        $this->_select->where("{$this->_roleTable}.parent_id = ?", $roleId);
         return $this;
     }
 
     public function setUserFilter($userId)
     {
-        $this->_sqlSelect->where("{$this->_roleTable}.user_id = ?", $userId);
+        $this->_select->where("{$this->_roleTable}.user_id = ?", $userId);
         return $this;
     }
 }

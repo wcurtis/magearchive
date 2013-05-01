@@ -70,6 +70,7 @@ Layout for pop up windows
 -->
     <popup>
         <block type="adminhtml/page" name="root" output="toHtml" template="popup.phtml">
+            <block type="adminhtml/widget_breadcrumbs" name="breadcrumbs" as="breadcrumbs"></block>
             <block type="page/js_translate" name="js_translate" as="js_translate" template="page/js/translate.phtml"/>
             <block type="core/text_list" name="left" as="left"/>
             <block type="core/text_list" name="content" as="content"/>
@@ -77,6 +78,7 @@ Layout for pop up windows
             <block type="core/text_list" name="js" as="js"/>
             <block type="adminhtml/page_footer" name="footer" as="footer"/>
             <block type="core/profiler" name="profiler" as="profiler"/>
+            <block type="core/text_list" name="before_body_end" as="before_body_end"/>
         </block>
     </popup>
 

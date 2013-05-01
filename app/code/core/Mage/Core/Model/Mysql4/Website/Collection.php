@@ -26,22 +26,38 @@
  */
 class Mage_Core_Model_Mysql4_Website_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
-	protected $_loadDefault = false;
+    protected $_loadDefault = false;
 
     protected function _construct()
     {
         $this->_init('core/website');
     }
 
+    public function addIdFilter($ids)
+    {
+        if (is_array($ids)) {
+            if (empty($ids)) {
+                $this->addFieldToFilter('website_id', null);
+            }
+            else {
+                $this->addFieldToFilter('website_id', array('in'=>$ids));
+            }
+        }
+        else {
+            $this->addFieldToFilter('website_id', $ids);
+        }
+        return $this;
+    }
+
     public function setLoadDefault($loadDefault)
     {
-    	$this->_loadDefault = $loadDefault;
-    	return $this;
+        $this->_loadDefault = $loadDefault;
+        return $this;
     }
 
     public function getLoadDefault()
     {
-    	return $this->_loadDefault;
+        return $this->_loadDefault;
     }
 
     public function toOptionArray()
@@ -49,19 +65,24 @@ class Mage_Core_Model_Mysql4_Website_Collection extends Mage_Core_Model_Mysql4_C
         return $this->_toOptionArray('website_id', 'name');
     }
 
+    public function toOptionHash()
+    {
+        return $this->_toOptionHash('website_id', 'name');
+    }
+
     public function load($printQuery = false, $logQuery = false)
     {
-    	if (!$this->getLoadDefault()) {
-    		$this->getSelect()->where($this->getConnection()->quoteInto('main_table.website_id>?', 0));
-    	}
-    	parent::load($printQuery, $logQuery);
-    	return $this;
+        if (!$this->getLoadDefault()) {
+            $this->getSelect()->where($this->getConnection()->quoteInto('main_table.website_id>?', 0));
+        }
+        parent::load($printQuery, $logQuery);
+        return $this;
     }
 
     public function joinGroupAndStore()
     {
         $this->_idFieldName = 'website_group_store';
-        $this->_sqlSelect->joinLeft(
+        $this->getSelect()->joinLeft(
             array('group_table' => $this->getTable('core/store_group')),
             'main_table.website_id=group_table.website_id',
             array('group_id'=>'group_id', 'group_title'=>'name')

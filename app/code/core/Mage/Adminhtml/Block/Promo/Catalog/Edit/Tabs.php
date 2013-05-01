@@ -45,18 +45,18 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tabs extends Mage_Adminhtml_Block_
             'active'    => true
         ));
 
-        $this->addTab('condact_section', array(
-            'label'     => Mage::helper('catalogrule')->__('Conditions and Actions'),
-            'title'     => Mage::helper('catalogrule')->__('Conditions and Actions'),
-            'content'   => $this->getLayout()->createBlock('adminhtml/promo_catalog_edit_tab_condact')->toHtml(),
+        $this->addTab('conditions_section', array(
+            'label'     => Mage::helper('catalogrule')->__('Conditions'),
+            'title'     => Mage::helper('catalogrule')->__('Conditions'),
+            'content'   => $this->getLayout()->createBlock('adminhtml/promo_catalog_edit_tab_conditions')->toHtml(),
         ));
-        /*
+
         $this->addTab('actions_section', array(
             'label'     => Mage::helper('catalogrule')->__('Actions'),
             'title'     => Mage::helper('catalogrule')->__('Actions'),
             'content'   => $this->getLayout()->createBlock('adminhtml/promo_catalog_edit_tab_actions')->toHtml(),
         ));
-        */
+
         return parent::_beforeToHtml();
     }
 

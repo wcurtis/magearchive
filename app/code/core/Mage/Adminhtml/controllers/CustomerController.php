@@ -93,14 +93,11 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
             $customer->addData($data['account']);
         }
         if (isset($data['address']) && is_array($data['address'])) {
-            $collection = $customer->getAddressCollection();
             foreach ($data['address'] as $addressId => $address) {
                 $addressModel = Mage::getModel('customer/address')->setData($address)
                     ->setId($addressId);
-            	$collection->addItem($addressModel);
+                $customer->addAddress($addressModel);
             }
-
-            $customer->setLoadedAddressCollection($collection);
         }
 
         /**
@@ -164,10 +161,6 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                 $customer->addData($data['account']);
             }
 
-            if (!$customer->getId()) {
-                $customer->setCreatedIn(0); // Created from admin
-            }
-
             if (isset($data['address'])) {
                 // unset template data
                 if (isset($data['address']['_template_'])) {
@@ -210,7 +203,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                     if ($newPassword == 'auto') {
                         $newPassword = $customer->generatePassword();
                     }
-                    $customer->changePassword($newPassword, false);
+                    $customer->changePassword($newPassword);
                     $customer->sendPasswordReminderEmail();
                 }
 
@@ -293,13 +286,13 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
         $customer = Mage::registry('current_customer');
         if ($customer->getId()) {
             if($itemId = (int) $this->getRequest()->getParam('delete')) {
-            	try {
-	            	Mage::getModel('wishlist/item')->load($itemId)
-	            		->delete();
-            	}
-            	catch (Exception $e) {
-            		//
-            	}
+                try {
+                    Mage::getModel('wishlist/item')->load($itemId)
+                        ->delete();
+                }
+                catch (Exception $e) {
+                    //
+                }
             }
         }
         $this->getResponse()->setBody($this->getLayout()->createBlock('adminhtml/customer_edit_tab_wishlist')->toHtml());
@@ -309,8 +302,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
     {
         $this->_initCustomer();
         if ($deleteItemId = $this->getRequest()->getPost('delete')) {
-            $quote = Mage::getResourceModel('sales/quote_collection')
-                ->loadByCustomerId(Mage::registry('current_customer')->getId());
+            $quote = Mage::getModel('sales/quote')->loadByCustomer(Mage::registry('current_customer'));
             $quote->removeItem($deleteItemId);
             $quote->save();
         }
@@ -331,12 +323,17 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
     {
         $response = new Varien_Object();
         $response->setError(0);
-
+        $websiteId = Mage::app()->getStore()->getWebsiteId();
         $accountData = $this->getRequest()->getPost('account');
+
 
         $customer = Mage::getModel('customer/customer');
         if ($id = $this->getRequest()->getParam('id')) {
             $customer->load($id);
+            $websiteId = $customer->getWebsiteId();
+        }
+        if (isset($accountData['website_id'])) {
+            $websiteId = $accountData['website_id'];
         }
 
         # Checking if we received email. If not - ERROR
@@ -348,7 +345,8 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
         } else {
             # Trying to load customer with the same email and return error message
             # if customer with the same email address exisits
-            $checkCustomer = Mage::getModel('customer/customer');
+            $checkCustomer = Mage::getModel('customer/customer')
+                ->setWebsiteId($websiteId);
             $checkCustomer->loadByEmail($accountData['email']);
             if( $checkCustomer->getId() && ($checkCustomer->getId() != $customer->getId()) ) {
                 $response->setError(1);
@@ -461,7 +459,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
 
     protected function _isAllowed()
     {
-    	//print $this->getRequest()->getActionName();
-	    return Mage::getSingleton('admin/session')->isAllowed('customer/manage');
+        //print $this->getRequest()->getActionName();
+        return Mage::getSingleton('admin/session')->isAllowed('customer/manage');
     }
 }

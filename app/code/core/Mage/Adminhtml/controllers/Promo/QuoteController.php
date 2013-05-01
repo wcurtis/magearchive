@@ -71,21 +71,25 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
         if (!empty($data)) {
             $model->addData($data);
         }
+        $model->getConditions()->setJsFormObject('rule_conditions_fieldset');
+        $model->getActions()->setJsFormObject('rule_actions_fieldset');
 
         Mage::register('current_promo_quote_rule', $model);
 
         $block = $this->getLayout()->createBlock('adminhtml/promo_quote_edit')
-            ->setData('action', Mage::helper('adminhtml')->getUrl('*/*/save'));
+            ->setData('action', $this->getUrl('*/*/save'));
 
         $this->_initAction();
 
-        $this->getLayout()->getBlock('root')->setCanLoadRulesJs(true);
+        $this->getLayout()->getBlock('root')
+            ->setCanLoadExtJs(true)
+            ->setCanLoadRulesJs(true);
 
         $this
             ->_addBreadcrumb($id ? Mage::helper('salesrule')->__('Edit Rule') : Mage::helper('salesrule')->__('New Rule'), $id ? Mage::helper('salesrule')->__('Edit Rule') : Mage::helper('salesrule')->__('New Rule'))
             ->_addContent($block)
             ->_addLeft($this->getLayout()->createBlock('adminhtml/promo_quote_edit_tabs'))
-            ->_addJs($this->getLayout()->createBlock('core/template')->setTemplate('promo/quote/js.phtml'))
+            ->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('promo/quote/js.phtml'))
             ->renderLayout();
 
     }
@@ -113,6 +117,7 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
             unset($data['rule']);
 
             $model->loadPost($data);
+
             Mage::getSingleton('adminhtml/session')->setPageData($model->getData());
             try {
                 $model->save();
@@ -154,12 +159,20 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
     public function newConditionHtmlAction()
     {
         $id = $this->getRequest()->getParam('id');
-        $type = str_replace('-', '/', $this->getRequest()->getParam('type'));
+        $typeArr = explode('|', str_replace('-', '/', $this->getRequest()->getParam('type')));
+        $type = $typeArr[0];
 
-        $model = Mage::getModel($type)->setId($id)->setType($type)
-            ->setRule(Mage::getModel('salesrule/rule'));
+        $model = Mage::getModel($type)
+            ->setId($id)
+            ->setType($type)
+            ->setRule(Mage::getModel('salesrule/rule'))
+            ->setPrefix('conditions');
+        if (!empty($typeArr[1])) {
+            $model->setAttribute($typeArr[1]);
+        }
 
         if ($model instanceof Mage_Rule_Model_Condition_Abstract) {
+            $model->setJsFormObject($this->getRequest()->getParam('form'));
             $html = $model->asHtmlRecursive();
         } else {
             $html = '';
@@ -170,12 +183,20 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
     public function newActionHtmlAction()
     {
         $id = $this->getRequest()->getParam('id');
-        $type = str_replace('-', '/', $this->getRequest()->getParam('type'));
+        $typeArr = explode('|', str_replace('-', '/', $this->getRequest()->getParam('type')));
+        $type = $typeArr[0];
 
-        $model = Mage::getModel($type)->setId($id)->setType($type)
-            ->setRule(Mage::getModel('salesrule/rule'));
+        $model = Mage::getModel($type)
+            ->setId($id)
+            ->setType($type)
+            ->setRule(Mage::getModel('salesrule/rule'))
+            ->setPrefix('actions');
+        if (!empty($typeArr[1])) {
+            $model->setAttribute($typeArr[1]);
+        }
 
-        if ($model instanceof Mage_Rule_Model_Action_Abstract) {
+        if ($model instanceof Mage_Rule_Model_Condition_Abstract) {
+            $model->setJsFormObject($this->getRequest()->getParam('form'));
             $html = $model->asHtmlRecursive();
         } else {
             $html = '';

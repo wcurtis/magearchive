@@ -80,6 +80,10 @@ class Mage_Payment_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
         $ccNumber = $info->getCcNumber();
         $ccType = '';
 
+        if (!$this->_validateExpDate($info->getCcExpYear(), $info->getCcExpMonth())) {
+            $errorMsg = $this->_getHelper()->__('Incorrect credit card expiration date');
+        }
+
         if (in_array($info->getCcType(), $availableTypes)){
             if ($this->validateCcNum($ccNumber)
                 // Other credit card type number validation
@@ -118,6 +122,15 @@ class Mage_Payment_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
         }
 
         return $this;
+    }
+
+    protected function _validateExpDate($expYear, $expMonth)
+    {
+        $date = Mage::app()->getLocale()->date();
+        if (($date->compareYear($expYear)>0) || ($date->compareYear($expYear) == 0 && $date->compareMonth($expMonth)>0)) {
+            return false;
+        }
+        return true;
     }
 
     public function OtherCcType($type)

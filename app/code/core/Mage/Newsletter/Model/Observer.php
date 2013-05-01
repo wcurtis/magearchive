@@ -27,7 +27,7 @@ class Mage_Newsletter_Model_Observer
     public function subscribeCustomer($observer)
     {
         $customer = $observer->getEvent()->getCustomer();
-        if (($customer instanceof Mage_Customer_Model_Customer) && !is_null($customer->getIsSubscribed())) {
+        if (($customer instanceof Mage_Customer_Model_Customer)) {
             Mage::getModel('newsletter/subscriber')->subscribeCustomer($customer);
         }
         return $this;

@@ -60,23 +60,64 @@ class Mage_Adminhtml_Model_Config_Data extends Varien_Object
         /* @var $saveTransaction Mage_Core_Model_Resource_Transaction */
 
         foreach ($groups as $group => $groupData) {
+
+            /**
+             * Map field names if they were cloned
+             */
+            $groupConfig = $sections->descend($section.'/groups/'.$group);
+
+            if ($clonedFields = !empty($groupConfig->clone_fields)) {
+                if ($groupConfig->clone_model) {
+                    $cloneModel = Mage::getModel((string)$groupConfig->clone_model);
+                } else {
+                    Mage::throwException('Config form fieldset clone model required to be able to clone fields');
+                }
+                $mappedFields = array();
+                $fieldsConfig = $sections->descend($section.'/groups/'.$group.'/fields');
+
+                if ($fieldsConfig->hasChildren()) {
+                    foreach ($fieldsConfig->children() as $field => $node) {
+                        foreach ($cloneModel->getPrefixes() as $prefix) {
+                            $mappedFields[$prefix['field'].(string)$field] = (string)$field;
+                        }
+                    }
+                }
+            }
+
             foreach ($groupData['fields'] as $field => $fieldData) {
+
+                /**
+                 * Get field backend model
+                 */
                 $backendClass = $sections->descend($section.'/groups/'.$group.'/fields/'.$field.'/backend_model');
+                if (!$backendClass && $clonedFields && isset($mappedFields[$field])) {
+                    $backendClass = $sections->descend($section.'/groups/'.$group.'/fields/'.$mappedFields[$field].'/backend_model');
+                }
                 if (!$backendClass) {
                     $backendClass = 'core/config_data';
                 }
+
                 $dataObject = Mage::getModel($backendClass);
                 if (!$dataObject instanceof Mage_Core_Model_Config_Data) {
                     Mage::throwException('Invalid config field backend model: '.$backendClass);
                 }
                 /* @var $dataObject Mage_Core_Model_Config_Data */
 
+                $fieldConfig = $sections->descend($section.'/groups/'.$group.'/fields/'.$field);
+                if (!$fieldConfig && $clonedFields && isset($mappedFields[$field])) {
+                    $fieldConfig = $sections->descend($section.'/groups/'.$group.'/fields/'.$mappedFields[$field]);
+                }
+
                 $dataObject
                     ->setField($field)
-                    ->setGroupId($group)
-                    ->setScope($scope)
                     ->setGroups($groups)
-                    ->setScopeId($scopeId);
+                    ->setGroupId($group)
+                    ->setStoreCode($store)
+                    ->setWebsiteCode($website)
+                    ->setScope($scope)
+                    ->setScopeId($scopeId)
+                    ->setFieldConfig($fieldConfig)
+                ;
 
                 if (!isset($fieldData['value'])) {
                     $fieldData['value'] = null;
@@ -110,6 +151,7 @@ class Mage_Adminhtml_Model_Config_Data extends Varien_Object
                     $saveTransaction->addObject($dataObject);
                 }
             }
+
         }
 
         $deleteTransaction->delete();
@@ -138,13 +180,16 @@ class Mage_Adminhtml_Model_Config_Data extends Varien_Object
     protected function _validate()
     {
         if (is_null($this->getSection())) {
-            Mage::throwException(Mage::helper('adminhtml')->__('Invalid section value'));
+            $this->setSection('');
+//            Mage::throwException(Mage::helper('adminhtml')->__('Invalid section value'));
         }
         if (is_null($this->getWebsite())) {
-            Mage::throwException(Mage::helper('adminhtml')->__('Invalid website value'));
+            $this->setWebsite('');
+//            Mage::throwException(Mage::helper('adminhtml')->__('Invalid website value'));
         }
         if (is_null($this->getStore())) {
-            Mage::throwException(Mage::helper('adminhtml')->__('Invalid store value'));
+            $this->setStore('');
+//            Mage::throwException(Mage::helper('adminhtml')->__('Invalid store value'));
         }
     }
 
@@ -157,12 +202,10 @@ class Mage_Adminhtml_Model_Config_Data extends Varien_Object
         if ($this->getStore()) {
             $scope   = 'stores';
             $scopeId = (int)Mage::getConfig()->getNode('stores/' . $this->getStore() . '/system/store/id');
-        }
-        elseif ($this->getWebsite()) {
+        } elseif ($this->getWebsite()) {
             $scope   = 'websites';
             $scopeId = (int)Mage::getConfig()->getNode('websites/' . $this->getWebsite() . '/system/website/id');
-        }
-        else {
+        } else {
             $scope   = 'default';
             $scopeId = 0;
         }

@@ -113,10 +113,6 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_GoogleCheckout>
-        <Mage_Reports>
-            <active>true</active>
-            <codePool>core</codePool>
-        </Mage_Reports>
         <Mage_Log>
             <active>true</active>
             <codePool>core</codePool>
@@ -153,6 +149,10 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Cms>
+        <Mage_Reports>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_Reports>
         <Mage_Newsletter>
             <active>true</active>
             <codePool>core</codePool>
@@ -197,5 +197,13 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Dataflow>
+        <Mage_Rss>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_Rss>
+        <Mage_ProductAlert>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_ProductAlert>
     </modules>
 </config>

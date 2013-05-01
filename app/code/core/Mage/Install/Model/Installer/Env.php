@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Install
  */
-class Mage_Install_Model_Installer_Env
+class Mage_Install_Model_Installer_Env extends Mage_Install_Model_Installer_Abstract
 {
     public function __construct() {}
 

@@ -24,7 +24,7 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesusers extends Mage_Adminhtml_Blo
     {
         parent::__construct();
 
-        $roleId = $this->_request->getParam('rid', false);
+        $roleId = $this->getRequest()->getParam('rid', false);
 
         $users = Mage::getModel("admin/permissions_user")->getCollection()->load();
         $this->setTemplate('permissions/rolesusers.phtml')
@@ -47,5 +47,5 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesusers extends Mage_Adminhtml_Blo
     {
         return $this->getChild('userGrid')->getJsObjectName();
     }
-    
+
 }

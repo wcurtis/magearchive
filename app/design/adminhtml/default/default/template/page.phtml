@@ -31,15 +31,12 @@
     },
     "vars":{}
 }*/?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$this->getLang()?>" lang="<?=$this->getLang()?>">
 <head>
     <title><?=Mage::helper('adminhtml')->__('Magento Admin')?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-    <link rel="icon" href="<?=$this->getSkinUrl('favicon.ico')?>" type="image/x-icon"/>
     <link rel="shortcut icon" href="<?=$this->getSkinUrl('favicon.ico')?>" type="image/x-icon"/>
-
     <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/prototype.js"></script>
     <script type="text/javascript" src="<?=$this->getJsUrl()?>scriptaculous/scriptaculous.js"></script>
     <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/validation.js"></script>
@@ -55,6 +52,7 @@
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/tools.js')?>"></script>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/bundle.js')?>"></script>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/uploader.js')?>"></script>
+    <?=Mage::helper('adminhtml/js')->includeSkinScript('js/product.js')?>
 
     <script type="text/javascript">
         var BLANK_URL = '<?=$this->getJsUrl()?>blank.html';
@@ -62,10 +60,9 @@
         var BASE_URL = '<?=$this->getUrl('*')?>';
         var SKIN_URL = '<?=$this->getSkinUrl()?>';
     </script>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('reset.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('boxes.css')?>" media="all"/>
 
-    <style type="text/css" media="all">
-        /*<![CDATA[*/ @import "<?=$this->getSkinUrl('styles.css')?>"; /*]]>*/
-    </style>
     <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('iestyles.css')?>" type="text/css" media="all" /> <![endif]-->
     <!--[if lt IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('below_ie7.css')?>" type="text/css" media="all" /> <![endif]-->
     <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('ie7.css')?>" type="text/css" media="all" /> <![endif]-->
@@ -73,7 +70,6 @@
         <script defer type="text/javascript" src="<?=$this->getJsUrl()?>lib/ds-sleight.js"></script>
         <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/iehover-fix.js"></script>
     <![endif]-->
-
     <link rel="stylesheet" type="text/css" media="screen, projection" href="<?=$this->getSkinUrl('menu.css')?>"/>
 <?//if($this->getCanLoadCalendarJs()):?>
     <link rel="stylesheet" type="text/css" media="all" href="<?=$this->getJsUrl()?>calendar/calendar-win2k-1.css" title="win2k-1" />
@@ -81,7 +77,6 @@
     <script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/lang/calendar-en.js"></script>
     <script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/calendar-setup.js"></script>
 <?//endif;?>
-
 <?if($this->getCanLoadExtJs()):?>
     <script type="text/javascript" src="<?=$this->getJsUrl()?>extjs/ext-tree.js"></script>
     <script type="text/javascript" src="<?=$this->getJsUrl()?>extjs/ext-tree-checkbox.js"></script>
@@ -93,12 +88,17 @@
         Ext.UpdateManager.defaults.disableCaching = true;
     </script>
 <?endif;?>
+    <script type="text/javascript">
+        Fieldset.addToPrefix(<?=Mage::helper('adminhtml')->getCurrentUserId()?>);
+    </script>
     <?//=$this->getChildHtml('js_translate')?>
     	<?=$this->helper('core/js')->getTranslatorScript()?>
 <?if($this->getCanLoadRulesJs()):?>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/rules.js')?>"></script>
 <?endif?>
 </head>
+
+
 <body id="html-body">
 <![if !IE]><table cellspacing="0" width="100%"><tr><td><![endif]>
 <div class="wrapper">
@@ -107,32 +107,30 @@
         <div class="clear"></div>
             <?=$this->getChildHtml('menu')?>
         </div>
-        <div class="middle">
-            <?=$this->getChildHtml('breadcrumbs')?>
-                <?if($this->getChildHtml('left')):?>
-                <div class="simple-container-left" id="page:main-container">
-                    <div class="container <?=$this->getContainerCssClass()?>" id="page:container">
-                        <div class="main">
-                            <div class="content-container">
-                                <div class="content" id="content">
-                                    <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-                                    <?=$this->getChildHtml('content')?>
-                                </div>
-                            </div>
-                            <div class="section-menu" id="page:left">
+        <div class="middle" id="anchor-content">
+            <div id="page:main-container">
+            <?if($this->getChildHtml('left')):?>
+                <div class="<?=$this->getContainerCssClass()?>" id="page:container">
+                    <table cellspacing="0" width="100%">
+                        <tr>
+                            <td class="side-col" id="page:left">
                                 <?=$this->getChildHtml('left')?>
-                                <div class="bottom"></div>
-                            </div>
-                        </div>
-                    </div>
+                            </td>
+                            <td class="main-col" id="content">
+                                <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
+                                <?=$this->getChildHtml('content')?>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <?else:?>
-                <div class="simple-container" id="page:main-container">
-                    <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-                    <?=$this->getChildHtml('content')?>
-                </div>
-                <?endif;?>
+            <?else:?>
+                <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
+                <?=$this->getChildHtml('content')?>
+            <?endif;?>
+            </div>
         </div>
+
+
         <div class="footer">
             <?=$this->getChildHtml('footer')?>
         </div>
@@ -146,7 +144,6 @@
 <div id="loading-mask" style="display:none">
     <p class="loader" id="loading_mask_loader"><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=Mage::helper('adminhtml')->__('Loading...')?>"/><br/><?=Mage::helper('adminhtml')->__('Please wait...')?></p>
 </div>
-</td></tr></table>
 
 <?=$this->getChildHtml('before_body_end')?>
 

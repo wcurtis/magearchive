@@ -47,7 +47,7 @@ class Mage_Tax_Model_Mysql4_Rate_Collection extends Mage_Core_Model_Mysql4_Colle
                 continue;
             }
             $alias = 'trd_'.$typeId;
-            $this->_sqlSelect->joinLeft(
+            $this->_select->joinLeft(
                 array($alias => $this->getTable('tax/tax_rate_data')),
                 "main_table.tax_rate_id={$alias}.tax_rate_id AND {$alias}.rate_type_id={$typeId}",
                 array('rate_value_'.$type->getId() => 'rate_value')
@@ -57,6 +57,15 @@ class Mage_Tax_Model_Mysql4_Rate_Collection extends Mage_Core_Model_Mysql4_Colle
         return $this;
     }
 
+    public function joinCountryTable()
+    {
+        $this->_select->join(
+            array('country_table' => $this->getTable('directory/country')),
+            'main_table.tax_country_id=country_table.country_id',
+            array('country_name' => 'code')
+        );
+    }
+
     /**
      * Join Region Table
      *
@@ -64,7 +73,7 @@ class Mage_Tax_Model_Mysql4_Rate_Collection extends Mage_Core_Model_Mysql4_Colle
      */
     public function joinRegionTable()
     {
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('region_table' => $this->getTable('directory/country_region')),
             'main_table.tax_region_id=region_table.region_id',
             array('region_name' => 'code')
@@ -75,7 +84,7 @@ class Mage_Tax_Model_Mysql4_Rate_Collection extends Mage_Core_Model_Mysql4_Colle
     public function addRateFilter($rateId)
     {
         if (is_int($rateId) && $rateId > 0) {
-            return $this->_sqlSelect->where('main_table.tax_rate_id=?', $rateId);
+            return $this->_select->where('main_table.tax_rate_id=?', $rateId);
         }
         else {
             return $this;

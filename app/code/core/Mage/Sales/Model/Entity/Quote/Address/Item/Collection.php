@@ -28,10 +28,9 @@
 
 class Mage_Sales_Model_Entity_Quote_Address_Item_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getSingleton('sales_entity/quote_address_item'));
-        $this->setObject('sales/quote_address_item');
+        $this->_init('sales/quote_address_item');
     }
     
     public function setAddressFilter($addressId)

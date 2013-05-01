@@ -35,24 +35,10 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
         $this->setUseAjax(true);
     }
 
-    /*protected function _prepareLayout()
+    public function getCategory()
     {
-        parent::_prepareLayout();
-        $this->setChild('switch_button',
-            $this->getLayout()->createBlock('adminhtml/widget_button')
-                ->setData(array(
-                    'label'     => Mage::helper('catalog')->__('Edit Sorting'),
-                    'onclick'   => ''
-                ))
-        );
+        return Mage::registry('category');
     }
-
-    public function getMainButtonsHtml()
-    {
-        $html = $this->getChildHtml('switch_button');
-        $html.= parent::getMainButtonsHtml();
-        return $html;
-    }*/
 
     protected function _addColumnFilterToCollection($column)
     {
@@ -77,23 +63,20 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
 
     protected function _prepareCollection()
     {
-        $this->setDefaultFilter(array('in_category'=>1));
-        $collection = Mage::getResourceModel('catalog/product_collection')
+        if ($this->getCategory()->getId()) {
+            $this->setDefaultFilter(array('in_category'=>1));
+        }
+        $collection = Mage::getModel('catalog/product')->getCollection()
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('price')
-            ->joinField('store_id',
-                'catalog/product_store',
-                'store_id',
-                'product_id=entity_id',
-                '{{table}}.store_id='.(int) $this->getRequest()->getParam('store', 0))
+            ->addStoreFilter($this->getRequest()->getParam('store'))
             ->joinField('position',
                 'catalog/category_product',
                 'position',
                 'product_id=entity_id',
                 'category_id='.(int) $this->getRequest()->getParam('id', 0),
                 'left');
-        $collection->getEntity()->setStore(0);
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -151,12 +134,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
     {
         $products = $this->getRequest()->getPost('selected_products');
         if (is_null($products)) {
-            $products = Mage::registry('category')->getProductsPosition();
+            $products = $this->getCategory()->getProductsPosition();
             return array_keys($products);
         }
-        /*else {
-            $products = explode(',', $products);
-        }*/
         return $products;
     }
 

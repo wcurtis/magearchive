@@ -19,12 +19,13 @@
  */
 ?>
 <?if($this->canDisplayContainer()):?>
-<div id="<?=$this->getHtmlId()?>" class="item-container left">
+<div id="<?=$this->getHtmlId()?>" class="item-container f-left">
 <?endif;?>
 <?if($this->canDisplayGiftmessage()):?>
 <div class="item-text">
     <div><?=$this->htmlEscape($this->getEntity()->getName())?></div>
     <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$this->getEntity()->getSku()?></div>
+    <?=$this->getEntity()->getDescription()?>
     <div>
         <a class="action-link" href="#" onclick="return giftMessagesController.toogleGiftMessage('<?=$this->getHtmlId()?>')">
         <span class="default-text">
@@ -45,11 +46,11 @@
     <div class="entry-edit">
         <fieldset>
             <input type="hidden" id="<?=$this->getFieldId('type')?>" name="<?=$this->getFieldName('type')?>" value="order_item"/>
-            <span class="field-row left">
+            <span class="field-row f-left">
                 <label><?=$this->helper('sales')->__('From Name')?></label><br />
                 <input class="input-text" type="text" id="<?=$this->getFieldId('sender')?>" name="<?=$this->getFieldName('sender')?>" value="<?=$this->htmlEscape($this->getMessage()->getSender())?>"/>
             </span>
-            <span class="field-row left last">
+            <span class="field-row f-left last">
                 <label><?=$this->helper('sales')->__('To Name')?></label><br />
                 <input class="input-text" type="text" id="<?=$this->getFieldId('recipient')?>" name="<?=$this->getFieldName('recipient')?>"  value="<?=$this->htmlEscape($this->getMessage()->getRecipient())?>"/>
             </span>
@@ -63,7 +64,11 @@
 </form>
 </div>
 <?else:?>
-<div class="item-text"><?=$this->htmlEscape($this->getEntity()->getName())?></div>
+<div class="item-text">
+    <?=$this->htmlEscape($this->getEntity()->getName())?>
+    <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$this->getEntity()->getSku()?></div>
+        <?=$this->getEntity()->getDescription()?>
+    </div>
 <?endif;?>
 <?if($this->canDisplayContainer()):?>
 </div>

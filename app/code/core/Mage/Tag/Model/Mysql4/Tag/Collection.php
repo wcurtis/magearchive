@@ -86,7 +86,11 @@ class Mage_Tag_Model_Mysql4_Tag_Collection extends Mage_Core_Model_Mysql4_Collec
     public function addPopularity($limit=null)
     {
         $this->getSelect()
-            ->joinLeft(array('prelation'=>$this->getTable('tag/relation')), 'main_table.tag_id=prelation.tag_id', array('popularity' => 'COUNT(DISTINCT relation.tag_relation_id)'))
+            ->joinLeft(
+                array('prelation'=>$this->getTable('tag/relation')),
+                'main_table.tag_id=prelation.tag_id',
+                array('popularity' => 'COUNT(DISTINCT relation.tag_relation_id)'
+            ))
             ->group('main_table.tag_id');
             $this->joinRel();
         if (! is_null($limit)) {
@@ -98,9 +102,19 @@ class Mage_Tag_Model_Mysql4_Tag_Collection extends Mage_Core_Model_Mysql4_Collec
 
     public function addSummary($storeId)
     {
-        $joinCondition = $this->getConnection()->quoteInto('summary.store_id = ?', $storeId);
+        $joinCondition = '';
+        if (is_array($storeId)) {
+            $joinCondition = ' AND summary.store_id IN (' . implode(',', $storeId) . ')';
+        } else {
+            $joinCondition = $this->getConnection()->quoteInto(' AND summary.store_id = ?', (int)$storeId);
+        }
+
         $this->getSelect()
-            ->joinLeft(array('summary'=>$this->getTable('tag/summary')), 'main_table.tag_id=summary.tag_id AND ' . $joinCondition, array('store_id','popularity', 'customers', 'products', 'uses', 'historical_uses'));
+            ->joinLeft(
+                array('summary'=>$this->getTable('tag/summary')),
+                'main_table.tag_id=summary.tag_id' . $joinCondition,
+                array('store_id','popularity', 'customers', 'products', 'uses', 'historical_uses'
+            ));
 
         $this->setJoinFlag('summary');
         return $this;
@@ -142,7 +156,7 @@ class Mage_Tag_Model_Mysql4_Tag_Collection extends Mage_Core_Model_Mysql4_Collec
         return $this;
     }
 
-    public function addFieldToFilter($field, $condition)
+    public function addFieldToFilter($field, $condition=null)
     {
         if ($this->getJoinFlag('relation') && 'popularity' == $field) {
             // TOFIX
@@ -164,7 +178,7 @@ class Mage_Tag_Model_Mysql4_Tag_Collection extends Mage_Core_Model_Mysql4_Collec
     public function getSelectCountSql()
     {
         $this->_renderFilters();
-        $countSelect = clone $this->_sqlSelect;
+        $countSelect = clone $this->_select;
         $countSelect->reset(Zend_Db_Select::ORDER);
         $countSelect->reset(Zend_Db_Select::GROUP);
         $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
@@ -179,14 +193,34 @@ class Mage_Tag_Model_Mysql4_Tag_Collection extends Mage_Core_Model_Mysql4_Collec
     public function addStoreFilter($storeId, $allFilter = true)
     {
         //$this->addFieldToFilter('main_table.store_id', $storeId);
+        if (is_array($storeId)) {
+            $this->getSelect()->join(array(
+                'summary_store'=>$this->getTable('summary')),
+                'main_table.tag_id = summary_store.tag_id
+                AND summary_store.store_id IN (' . implode(',', $storeId) . ')',
+                array());
 
-        $this->getSelect()->join(array('summary_store'=>$this->getTable('summary')), 'main_table.tag_id = summary_store.tag_id AND summary_store.store_id = ' . (int) $storeId, array());
-        if($this->getJoinFlag('relation') && $allFilter) {
-            $this->getSelect()->where('relation.store_id = ?', $storeId);
-        }
+            if($this->getJoinFlag('relation') && $allFilter) {
+                $this->getSelect()->where('relation.store_id IN (' . implode(',', $storeId) . ')');
+            }
 
-        if($this->getJoinFlag('prelation') && $allFilter) {
-            $this->getSelect()->where('prelation.store_id = ?', $storeId);
+            if($this->getJoinFlag('prelation') && $allFilter) {
+                $this->getSelect()->where('prelation.store_id IN (' . implode(',', $storeId) . ')');
+            }
+        } else {
+            $this->getSelect()->join(array(
+                'summary_store'=>$this->getTable('summary')),
+                'main_table.tag_id = summary_store.tag_id
+                AND summary_store.store_id = ' . (int) $storeId,
+                array());
+
+            if($this->getJoinFlag('relation') && $allFilter) {
+                $this->getSelect()->where('relation.store_id = ?', $storeId);
+            }
+
+            if($this->getJoinFlag('prelation') && $allFilter) {
+                $this->getSelect()->where('prelation.store_id = ?', $storeId);
+            }
         }
 
         return $this;

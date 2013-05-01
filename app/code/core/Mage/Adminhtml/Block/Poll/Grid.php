@@ -41,7 +41,11 @@ class Mage_Adminhtml_Block_Poll_Grid extends Mage_Adminhtml_Block_Widget_Grid
         $collection = Mage::getModel('poll/poll')->getCollection();
         $this->setCollection($collection);
         parent::_prepareCollection();
-        $this->getCollection()->addStoreData();
+
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->getCollection()->addStoreData();
+        }
+
         return $this;
     }
 
@@ -84,13 +88,14 @@ class Mage_Adminhtml_Block_Poll_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'index'     => 'date_closed',
         ));
 
-        $this->addColumn('visible_in', array(
-            'header'    => Mage::helper('review')->__('Visible In'),
-            'type'      => 'select',
-            'index'     => 'stores',
-            'filter'    => 'adminhtml/poll_grid_filter_store',
-            'renderer'  => 'adminhtml/poll_grid_renderer_store'
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('visible_in', array(
+                'header'    => Mage::helper('review')->__('Visible In'),
+                'type'      => 'select',
+                'index'     => 'stores',
+                'type'      => 'store'
+            ));
+        }
 
         /*
         $this->addColumn('active', array(

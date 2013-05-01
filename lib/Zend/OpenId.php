@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_OpenId
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id:$
+ * @version    $Id: OpenId.php 8243 2008-02-21 12:39:56Z dmitry $
  */
 
 /**
@@ -40,7 +40,7 @@ require_once "Zend/Controller/Response/Abstract.php";
  *
  * @category   Zend
  * @package    Zend_OpenId
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_OpenId
@@ -107,7 +107,16 @@ class Zend_OpenId
         }
 
         $url .= $port;
-        if (isset($_SERVER['SCRIPT_URL'])) {
+        if (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
+            $url .= $_SERVER['HTTP_X_REWRITE_URL'];
+        } elseif (isset($_SERVER['REQUEST_URI'])) {
+            $query = strpos($_SERVER['REQUEST_URI'], '?');
+            if ($query === false) {
+                $url .= $_SERVER['REQUEST_URI'];
+            } else {
+                $url .= substr($_SERVER['REQUEST_URI'], 0, $query);
+            }
+        } else if (isset($_SERVER['SCRIPT_URL'])) {
             $url .= $_SERVER['SCRIPT_URL'];
         } else if (isset($_SERVER['REDIRECT_URL'])) {
             $url .= $_SERVER['REDIRECT_URL'];

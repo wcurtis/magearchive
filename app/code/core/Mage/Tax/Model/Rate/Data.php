@@ -40,10 +40,11 @@ class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
 
     public function getRate()
     {
-        if (!$this->getPostcode()
-            || !$this->getRegionId()
-            //|| !$this->getCustomerClassId()
-            //|| !$this->getProductClassId()
+        if (!$this->getCountryId()
+            //|| !$this->getPostcode()
+            //|| !$this->getRegionId()
+            || !$this->getCustomerClassId()
+            || !$this->getProductClassId()
             ) {
             return 0;
             #throw Mage::exception('Mage_Tax', Mage::helper('tax')->__('Invalid data for tax rate calculation'));
@@ -53,7 +54,8 @@ class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
             .'|'.$this->getProductClassId()
             .'|'.$this->getRegionId()
             .'|'.$this->getPostcode()
-            .'|'.$this->getCountyId();
+            .'|'.$this->getCountyId()
+            .'|'.$this->getCountryId();
 
         if (!isset($this->_cache[$cacheKey])) {
             $this->_cache[$cacheKey] = $this->_getResource()->fetchRate($this);
@@ -62,16 +64,19 @@ class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
         return $this->_cache[$cacheKey];
     }
 
-    public function getRegionId()
+    /**
+     * Remove USA post code
+     */
+    /*public function getRegionId()
     {
-        if ($this->getPostcode()) {
+        if (!$this->getData('region_id') && $this->getPostcode()) {
             $regionId = Mage::getModel('usa/postcode')->load($this->getPostcode())->getRegionId();
             if ($regionId) {
                 $this->setRegionId($regionId);
             }
         }
         return $this->getData('region_id');
-    }
+    }*/
 
     public function getCustomerClassId()
     {

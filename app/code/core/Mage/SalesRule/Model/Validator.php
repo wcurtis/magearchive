@@ -21,86 +21,136 @@
 
 class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 {
+    protected $_rules;
+
 	protected function _construct()
 	{
         parent::_construct();
 		$this->_init('salesrule/validator');
-		$this->setIsCouponCodeConfirmed(false);
 	}
 
-	public function getConfirmedCouponCode()
+	public function init($websiteId, $customerGroupId, $couponCode)
 	{
-		if ($this->getIsCouponCodeConfirmed()) {
-			return $this->getCouponCode();
-		}
-		return false;
+	    $this->setWebsiteId($websiteId)
+	       ->setCustomerGroupId($customerGroupId)
+	       ->setCouponCode($couponCode);
+
+	    $this->_rules = Mage::getResourceModel('salesrule/rule_collection')
+	        ->setValidationFilter($websiteId, $customerGroupId, $couponCode)
+	        ->load();
+
+	    return $this;
 	}
 
 	public function process(Mage_Sales_Model_Quote_Item_Abstract $item)
 	{
 		$item->setFreeShipping(false);
 		$item->setDiscountAmount(0);
+		$item->setBaseDiscountAmount(0);
 		$item->setDiscountPercent(0);
 
-		$quote= $item->getQuote();
-		$rule = Mage::getModel('salesrule/rule');
+		$quote = $item->getQuote();
+
+		$address = $item->getAddress();
+		if (!$address) {
+			$address = $item->getQuote()->getShippingAddress();
+		}
+
 		$customerId = $quote->getCustomerId();
         $ruleCustomer = Mage::getModel('salesrule/rule_customer');
 		$appliedRuleIds = array();
 
-		$actions = $this->getActionsCollection($item);
-
-		foreach ($actions as $action) {
-			if (!$rule->load($action->getRuleId())->validate($quote)) {
-				continue;
+		foreach ($this->_rules as $rule) {
+            /**
+             * already tried to validate and failed
+             */
+			if ($rule->getIsValid()===false) {
+			    continue;
 			}
-
-            if ($rule->getUsesPerCoupon()
-                && ($rule->getTimesUsed() >= $rule->getUsesPerCoupon())) {
-                break;
-            }
-
-            if ($ruleId = $rule->getId()) {
-                $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
-                if ($ruleCustomer->getId()) {
-                    if ($ruleCustomer->getTimesUsed() >= $rule->getUsesPerCustomer()) {
-                        break;
+			if ($rule->getIsValid()!==true) {
+    			/**
+    			 * too many times used in general
+    			 */
+    			if ($rule->getUsesPerCoupon() && ($rule->getTimesUsed() >= $rule->getUsesPerCoupon())) {
+                    $rule->setIsValid(false);
+                    continue;
+                }
+                /**
+                 * too many times used for this customer
+                 */
+                if ($ruleId = $rule->getId()) {
+                    $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
+                    if ($ruleCustomer->getId()) {
+                        if ($ruleCustomer->getTimesUsed() >= $rule->getUsesPerCustomer()) {
+                            continue;
+                        }
                     }
                 }
-            }
-
+                $rule->afterLoad();
+                /**
+                 * quote does not meet rule's conditions
+                 */
+    			if (!$rule->validate($address)) {
+    			    $rule->setIsValid(false);
+    				continue;
+    			}
+                /**
+                 * passed all validations, remember to be valid
+                 */
+    			$rule->setIsValid(true);
+			}
+			/**
+			 * although the rule is valid, this item is not marked for action
+			 */
+			if (!$rule->getActions()->validate($item)) {
+			    continue;
+			}
 			$qty = $rule->getDiscountQty() ? min($item->getQty(), $rule->getDiscountQty()) : $item->getQty();
-
+			$rulePercent = $rule->getDiscountAmount();
 			switch ($rule->getSimpleAction()) {
+				case 'to_percent':
+				    $rulePercent = max(0, 100-$rule->getDiscountAmount());
+				    //no break;
+
 				case 'by_percent':
-					$discountAmount = $qty*$item->getCalculationPrice()*$rule->getDiscountAmount()/100;
+					$discountAmount    = $qty*$item->getCalculationPrice()*$rulePercent/100;
+					$baseDiscountAmount= $qty*$item->getBaseCalculationPrice()*$rulePercent/100;
+
 					if (!$rule->getDiscountQty()) {
-						$discountPercent = min(100, $item->getDiscountPercent()+$rule->getDiscountAmount());
+						$discountPercent = min(100, $item->getDiscountPercent()+$rulePercent);
 						$item->setDiscountPercent($discountPercent);
 					}
 					break;
 
+				case 'to_fixed':
+				    $quoteAmount = $quote->getStore()->convertPrice($rule->getDiscountAmount());
+                    $discountAmount    = $qty*($item->getCalculationPrice()-$quoteAmount);
+                    $baseDiscountAmount= $qty*($item->getBaseCalculationPrice()-$rule->getDiscountAmount());
+				    break;
+
 				case 'by_fixed':
-					$discountAmount = $qty*$rule->getDiscountAmount();
+				    $quoteAmount = $quote->getStore()->convertPrice($rule->getDiscountAmount());
+					$discountAmount    = $qty*$quoteAmount;
+					$baseDiscountAmount= $qty*$rule->getDiscountAmount();
 					break;
 			}
-            $discountAmount = $quote->getStore()->roundPrice($discountAmount);
-			$discountAmount = min($discountAmount, $item->getRowTotal());
-			$item->setDiscountAmount($item->getDiscountAmount()+$discountAmount);
+
+            $discountAmount     = $quote->getStore()->roundPrice($discountAmount);
+            $baseDiscountAmount = $quote->getStore()->roundPrice($baseDiscountAmount);
+
+            $discountAmount     = min($discountAmount, $item->getRowTotal());
+            $baseDiscountAmount = min($baseDiscountAmount, $item->getBaseRowTotal());
+
+            $item->setDiscountAmount($discountAmount);
+            $item->setBaseDiscountAmount($baseDiscountAmount);
 
 			switch ($rule->getSimpleFreeShipping()) {
 				case Mage_SalesRule_Model_Rule::FREE_SHIPPING_ITEM:
-					$item->setFreeShipping(true);
+					$item->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
 					break;
 
 				case Mage_SalesRule_Model_Rule::FREE_SHIPPING_ADDRESS:
-					$address = $item->getAddress();
-					if (!$address) {
-						$address = $item->getQuote()->getShippingAddress();
-					}
-					if ($address) {
-						$address->setFreeShipping(true);
-					}
+					$address->setFreeShipping(true);
 					break;
 			}
 
@@ -110,28 +160,30 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 				break;
 			}
 
-			if ($action->getCouponCode() && ($action->getCouponCode() == $this->getCouponCode())) {
-                $this->setIsCouponCodeConfirmed(true);
+			if ($rule->getCouponCode() && ($rule->getCouponCode() == $this->getCouponCode())) {
+                $address->setCouponCode($this->getCouponCode());
 			}
 		}
 
 		$item->setAppliedRuleIds(join(',',$appliedRuleIds));
-		$quote->setAppliedRuleIds(join(',',$appliedRuleIds));
+		$address->setAppliedRuleIds($this->mergeIds($address->getAppliedRuleIds(), $appliedRuleIds));
+		$quote->setAppliedRuleIds($this->mergeIds($quote->getAppliedRuleIds(), $appliedRuleIds));
 
 		return $this;
 	}
 
-	public function getActionsCollection($item)
+	public function mergeIds($a1, $a2, $asString=true)
 	{
-		$actions = Mage::getResourceModel('salesrule/rule_product_collection')
-			->addFieldToFilter('coupon_code', array(array('null'=>true), $this->getCouponCode()))
-			->addFieldToFilter('from_time', array(0, array('lteq'=>time())))
-			->addFieldToFilter('to_time', array(0, array('gteq'=>time())))
-			->addFieldToFilter('customer_group_id', $this->getCustomerGroupId())
-			->addFieldToFilter('store_id', $this->getStoreId())
-			->addFieldToFilter('product_id', $item->getProductId())
-			->setOrder('sort_order')
-			->load();
-		return $actions;
+	    if (!is_array($a1)) {
+	        $a1 = explode(',', $a1);
+	    }
+	    if (!is_array($a2)) {
+	        $a2 = explode(',', $a2);
+	    }
+	    $a = array_unique(array_merge($a1, $a1));
+	    if ($asString) {
+	       $a = implode(',', $a);
+	    }
+	    return $a;
 	}
 }

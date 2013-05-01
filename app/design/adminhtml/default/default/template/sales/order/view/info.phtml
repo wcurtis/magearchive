@@ -23,25 +23,32 @@
 <div class="box-left">
     <!--Order Information-->
     <div class="entry-edit">
-        <h4 class="icon-head head-order-date"><?=Mage::helper('sales')->__('Order # %s', $_order->getRealOrderId())?></h4>
+        <?if ($_order->getEmailSent()):
+            $_email=$this->__('Order confirmation email sent');
+        else:
+            $_email=$this->__('Order confirmation email not sent');
+        endif;?>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-order-date"><?=Mage::helper('sales')->__('Order # %s (%s)', $_order->getRealOrderId(), $_email)?></h4>
+        </div>
         <fieldset>
             <table cellspacing="0" class="form-list">
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Order Date')?></label></td>
-                <td class="input-ele"><strong><?=$this->formatDate($_order->getCreatedAt(), 'medium', true)?></strong></td>
+                <td class="value"><strong><?=$this->formatDate($_order->getCreatedAt(), 'medium', true)?></strong></td>
             </tr>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Order Status')?></label></td>
-                <td class="input-ele"><strong><span id="order_status"><?=$_order->getStatusLabel()?></span></strong></td>
+                <td class="value"><strong><span id="order_status"><?=$_order->getStatusLabel()?></span></strong></td>
             </tr>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Purchased From')?></label></td>
-                <td class="input-ele"><strong><?=$this->getOrderStoreName()?></strong></td>
+                <td class="value"><strong><?=$this->getOrderStoreName()?></strong></td>
             </tr>
             <?if($_order->getRelationChildId()):?>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Link to the new order')?></label></td>
-                <td class="input-ele"><a href="<?=$this->getViewUrl($_order->getRelationChildId())?>">
+                <td class="value"><a href="<?=$this->getViewUrl($_order->getRelationChildId())?>">
                     <?=$_order->getRelationChildRealId()?>
                 </a></td>
             </tr>
@@ -49,7 +56,7 @@
             <?if($_order->getRelationParentId()):?>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Link to the previous order')?></label></td>
-                <td class="input-ele"><a href="<?=$this->getViewUrl($_order->getRelationParentId())?>">
+                <td class="value"><a href="<?=$this->getViewUrl($_order->getRelationParentId())?>">
                     <?=$_order->getRelationParentRealId()?>
                 </a></td>
             </tr>
@@ -61,21 +68,23 @@
 <div class="box-right">
     <!--Account Information-->
     <div class="entry-edit">
-        <h4 class="icon-head head-account"><?=Mage::helper('sales')->__('Account Information')?></h4>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-account"><?=Mage::helper('sales')->__('Account Information')?></h4>
+        </div>
         <fieldset>
             <table cellspacing="0" class="form-list">
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Customer Name')?></label></td>
-                <td class="input-ele"><strong><?=$_order->getCustomerName()?></strong></td>
+                <td class="value"><strong><?=$_order->getCustomerName()?></strong></td>
             </tr>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Email')?></label></td>
-                <td class="input-ele"><a href="mailto:<?=$_order->getCustomerEmail()?>"><strong><?=$_order->getCustomerEmail()?></strong></a></td>
+                <td class="value"><a href="mailto:<?=$_order->getCustomerEmail()?>"><strong><?=$_order->getCustomerEmail()?></strong></a></td>
             </tr>
             <?if ($_groupName=$this->getCustomerGroupName()) :?>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Customer Group')?></label></td>
-                <td class="input-ele"><strong><?=$_groupName?></strong></td>
+                <td class="value"><strong><?=$_groupName?></strong></td>
             </tr>
             <?endif;?>
             </table>
@@ -87,7 +96,9 @@
 <div class="box-left">
     <!--Billing Address-->
     <div class="entry-edit">
-        <h4 class="icon-head head-billing-address"><?=Mage::helper('sales')->__('Billing Address')?></h4>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-billing-address"><?=Mage::helper('sales')->__('Billing Address')?></h4>
+        </div>
         <fieldset>
             <address><?=$_order->getBillingAddress()->getFormated(true)?></address>
         </fieldset>
@@ -96,7 +107,9 @@
 <div class="box-right">
     <!--Shipping Address-->
     <div class="entry-edit">
-        <h4 class="icon-head head-shipping-address"><?=Mage::helper('sales')->__('Shipping Address')?></h4>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-shipping-address"><?=Mage::helper('sales')->__('Shipping Address')?></h4>
+        </div>
         <fieldset>
             <address><?=$_order->getShippingAddress()->getFormated(true)?></address>
         </fieldset>

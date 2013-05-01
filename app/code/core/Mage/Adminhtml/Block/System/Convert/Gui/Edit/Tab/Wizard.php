@@ -27,7 +27,7 @@
 class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Adminhtml_Block_Widget_Container
 {
 
-    protected $_stores;
+    protected $_storeModel;
     protected $_attributes;
     protected $_addMapButtonHtml;
     protected $_removeMapButtonHtml;
@@ -112,10 +112,7 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Admin
 
     public function getProductTypeFilterOptions()
     {
-        $options = Mage::getResourceModel('catalog/product_type_collection')
-            ->load()
-            ->toOptionHash();
-
+        $options = Mage::getSingleton('catalog/product_type')->getOptionArray();
         array_splice($options, 0, 0, array(''=>$this->__('Any Type')));
         return $options;
     }
@@ -133,9 +130,7 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Admin
 
     public function getProductVisibilityFilterOptions()
     {
-        $options = Mage::getResourceModel('catalog/product_visibility_collection')
-            ->load()
-            ->toOptionHash();
+        $options = Mage::getSingleton('catalog/product_visibility')->getOptionArray();
 
         array_splice($options, 0, 0, array(''=>$this->__('Any Visibility')));
         return $options;
@@ -143,9 +138,7 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Admin
 
     public function getProductStatusFilterOptions()
     {
-        $options = Mage::getResourceModel('catalog/product_status_collection')
-            ->load()
-            ->toOptionHash();
+        $options = Mage::getSingleton('catalog/product_status')->getOptionArray();
 
         array_splice($options, 0, 0, array(''=>$this->__('Any Status')));
         return $options;
@@ -185,19 +178,31 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Admin
         return $options;
     }
 
-    public function getStores()
-    {
-        if (!$this->_stores) {
-            foreach (Mage::getConfig()->getNode('stores')->children() as $storeNode) {
-                $storeId = (int)$storeNode->system->store->id;
-                if ($storeId==0) {
-                    $this->_stores[$storeId] = $this->__('Default Values');
-                } else {
-                    $this->_stores[$storeId] = (string)$storeNode->system->store->name;
-                }
-            }
+    /**
+     * Retrieve system store model
+     *
+     * @return Mage_Adminhtml_Model_System_Store
+     */
+    protected function _getStoreModel() {
+        if (is_null($this->_storeModel)) {
+            $this->_storeModel = Mage::getSingleton('adminhtml/system_store');
         }
-        return $this->_stores;
+        return $this->_storeModel;
+    }
+
+    public function getWebsiteCollection()
+    {
+        return $this->_getStoreModel()->getWebsiteCollection();
+    }
+
+    public function getGroupCollection()
+    {
+        return $this->_getStoreModel()->getGroupCollection();
+    }
+
+    public function getStoreCollection()
+    {
+        return $this->_getStoreModel()->getStoreCollection();
     }
 
     public function getShortDateFormat()

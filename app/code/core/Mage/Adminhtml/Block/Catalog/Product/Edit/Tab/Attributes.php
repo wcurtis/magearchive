@@ -24,22 +24,25 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Attributes extends Mage_Adminhtml_Block_Widget_Form
+class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Attributes extends Mage_Adminhtml_Block_Catalog_Form
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->setShowGlobalIcon(true);
-    }
-
     protected function _prepareForm()
     {
         if ($group = $this->getGroup()) {
             $form = new Varien_Data_Form();
-            $fieldset = $form->addFieldset('group_fields'.$group->getId(), array('legend'=>Mage::helper('catalog')->__($group->getAttributeGroupName())));
+            /**
+             * Initialize product object as form property
+             * for using it in elements generation
+             */
+            $form->setDataObject(Mage::registry('product'));
+
+            $fieldset = $form->addFieldset('group_fields'.$group->getId(),
+                array('legend'=>Mage::helper('catalog')->__($group->getAttributeGroupName()))
+            );
+
             $attributes = $this->getGroupAttributes();
 
-            $this->_setFieldset($attributes, $fieldset);
+            $this->_setFieldset($attributes, $fieldset, array('gallery'));
 
             if ($tierPrice = $form->getElement('tier_price')) {
                 $tierPrice->setRenderer(
@@ -47,13 +50,40 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Attributes extends Mage_Admi
                 );
             }
 
-            if ($gallery = $form->getElement('gallery')) {
-                $gallery->setRenderer(
-                    $this->getLayout()->createBlock('adminhtml/widget_form_element_gallery')
+            /**
+             * Add new attribute button if not image tab
+             */
+            if (!$form->getElement('media_gallery')) {
+                $headerBar = $this->getLayout()->createBlock(
+                    'adminhtml/catalog_product_edit_tab_attributes_create'
+                );
+
+                $headerBar->getConfig()
+                    ->setTabId('group_' . $group->getId())
+                    ->setGroupId($group->getId())
+                    ->setStoreId($form->getDataObject()->getStoreId())
+                    ->setAttributeSetId($form->getDataObject()->getAttributeSetId())
+                    ->setTypeId($form->getDataObject()->getTypeId())
+                    ->setProductId($form->getDataObject()->getId());
+
+                $fieldset->setHeaderBar(
+                    $headerBar->toHtml()
                 );
             }
 
-            $form->addValues(Mage::registry('product')->getData());
+            $values = Mage::registry('product')->getData();
+            /**
+             * Set attribute default values for new product
+             */
+            if (!Mage::registry('product')->getId()) {
+                foreach ($attributes as $attribute) {
+                	if (!isset($values[$attribute->getAttributeCode()])) {
+                	    $values[$attribute->getAttributeCode()] = $attribute->getDefaultValue();
+                	}
+                }
+            }
+
+            $form->addValues($values);
             $form->setFieldNameSuffix('product');
             $this->setForm($form);
         }
@@ -62,8 +92,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Attributes extends Mage_Admi
     protected function _getAdditionalElementTypes()
     {
         return array(
-            'price' => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_price'),
-            'image' => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_image'),
+            'price'   => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_price'),
+            'gallery' => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_gallery'),
+            'image'   => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_image'),
             'boolean' => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_boolean')
         );
     }

@@ -26,6 +26,11 @@ class Mage_Checkout_Model_Mysql4_Cart extends Mage_Core_Model_Mysql4_Abstract
         $this->_init('sales/quote', 'entity_id');
     }
 
+    public function getItemsQty($cart)
+    {
+        return $this->fetchItemsSummaryQty($cart->getQuote()->getId());
+    }
+
     public function fetchItemsSummaryQty($quoteId)
     {
         $entityType = Mage::getSingleton('eav/config')->getEntityType('quote_item');

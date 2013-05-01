@@ -34,7 +34,7 @@ class Mage_Directory_Model_Mysql4_Country_Collection extends Varien_Data_Collect
         
         $this->_countryTable = Mage::getSingleton('core/resource')->getTableName('directory/country');
         
-        $this->_sqlSelect->from(array('country'=>$this->_countryTable));
+        $this->_select->from(array('country'=>$this->_countryTable));
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('directory/country'));
     }
     
@@ -64,9 +64,9 @@ class Mage_Directory_Model_Mysql4_Country_Collection extends Varien_Data_Collect
     {
         if (!empty($countryCode)) {
             if (is_array($countryCode)) {
-                $this->_sqlSelect->where("country.{$iso}_code IN ('".implode("','", $countryCode)."')");
+                $this->_select->where("country.{$iso}_code IN ('".implode("','", $countryCode)."')");
             } else {
-                $this->_sqlSelect->where("country.{$iso}_code = '{$countryCode}'");
+                $this->_select->where("country.{$iso}_code = '{$countryCode}'");
             }
         }
         return $this;
@@ -76,9 +76,9 @@ class Mage_Directory_Model_Mysql4_Country_Collection extends Varien_Data_Collect
     {
         if (!empty($countryId)) {
             if (is_array($countryId)) {
-                $this->_sqlSelect->where("country.country_id IN ('".implode("','", $countryId)."')");
+                $this->_select->where("country.country_id IN ('".implode("','", $countryId)."')");
             } else {
-                $this->_sqlSelect->where("country.country_id = '{$countryId}'");
+                $this->_select->where("country.country_id = '{$countryId}'");
             }
         }
         return $this;
@@ -99,10 +99,10 @@ class Mage_Directory_Model_Mysql4_Country_Collection extends Varien_Data_Collect
         ksort($sort);
         $options = array();
         foreach ($sort as $label=>$value) {
-        	$options[] = array(
-        	   'value' => $value,
-        	   'label' => $label
-        	);
+            $options[] = array(
+               'value' => $value,
+               'label' => $label
+            );
         }
         
         if (count($options)>0 && $emptyLabel !== false) {

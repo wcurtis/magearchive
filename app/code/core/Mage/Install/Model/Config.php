@@ -18,27 +18,31 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Install config
  *
+ * @category   Mage
+ * @package    Mage_Install
  */
 class Mage_Install_Model_Config extends Varien_Simplexml_Config
 {
+
     const XML_PATH_WIZARD_STEPS     = 'wizard/steps';
     const XML_PATH_CHECK_WRITEABLE  = 'check/filesystem/writeable';
     const XML_PATH_CHECK_EXTENSIONS = 'check/php/extensions';
-    
-    public function __construct() 
+
+    public function __construct()
     {
         parent::__construct();
         $this->loadFile(Mage::getConfig()->getModuleDir('etc','Mage_Install').DS.'install.xml');
     }
-    
+
     /**
      * Get array of wizard steps
-     * 
+     *
      * array($inndex => Varien_Object )
-     * 
+     *
      * @return array
      */
     public function getWizardSteps()
@@ -51,10 +55,10 @@ class Mage_Install_Model_Config extends Varien_Simplexml_Config
         }
         return $steps;
     }
-    
+
     /**
      * Retrieve writable path for checking
-     * 
+     *
      * array(
      *      ['writeable'] => array(
      *          [$index] => array(
@@ -63,22 +67,22 @@ class Mage_Install_Model_Config extends Varien_Simplexml_Config
      *          )
      *      )
      * )
-     * 
+     *
      * @return array
      */
     public function getPathForCheck()
     {
         $res = array();
-        
+
         $items = (array) $this->getNode(self::XML_PATH_CHECK_WRITEABLE);
-        
+
         foreach ($items['items'] as $item) {
             $res['writeable'][] = (array) $item;
         }
-        
+
         return $res;
     }
-    
+
     /**
      * Retrieve required PHP extensions
      *
@@ -88,7 +92,7 @@ class Mage_Install_Model_Config extends Varien_Simplexml_Config
     {
         $res = array();
         $items = (array) $this->getNode(self::XML_PATH_CHECK_EXTENSIONS);
-        
+
         foreach ($items as $name=>$value) {
             if (!empty($value)) {
                 $res[$name] = array();
@@ -100,12 +104,8 @@ class Mage_Install_Model_Config extends Varien_Simplexml_Config
                 $res[$name] = (array) $value;
             }
         }
-        
+
         return $res;
     }
-    
-    public function getLanguages()
-    {
-        return $this->getNode('languages')->asArray();
-    }
+
 }

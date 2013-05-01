@@ -87,14 +87,7 @@ class Mage_Page_Block_Html_Toplinks extends Mage_Core_Block_Template
         $toplinkInfo['afterText'] = $afterText;
         $this->_prepareArray($toplinkInfo, array('liParams', 'aParams', 'innerText', 'beforeText', 'afterText', 'first', 'last'));
         if (is_numeric($position)) {
-            $toplinks = array();
-            foreach ($this->_toplinks as $i=>$link) {
-            if ($position==$i) {
-                    $toplinks[] = $toplinkInfo;
-                }
-                $toplinks[] = $link;
-            }
-            $this->_toplinks = $toplinks;
+            array_splice($this->_toplinks, $position, 0, array($toplinkInfo));
         } else {
             $this->_toplinks[] = $toplinkInfo;
         }

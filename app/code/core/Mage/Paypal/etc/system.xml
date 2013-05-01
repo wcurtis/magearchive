@@ -24,7 +24,7 @@
         <payment>
             <groups>
                 <paypal_direct translate="label" module="paypal">
-                    <label>PayPal Direct</label>
+                    <label>PayPal Direct (Website Payments Pro)</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>101</sort_order>
                     <show_in_default>1</show_in_default>
@@ -104,7 +104,7 @@
                     </fields>
                 </paypal_direct>
                 <paypal_express translate="label" module="paypal">
-                    <label>Paypal Express</label>
+                    <label>Paypal Express (Website Payments Pro)</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>101</sort_order>
                     <show_in_default>1</show_in_default>
@@ -175,7 +175,7 @@
                     </fields>
                 </paypal_express>
                 <paypal_standard translate="label" module="paypal">
-                     <label>PayPal Standard</label>
+                     <label>PayPal Standard (Website Payments Standard)</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>102</sort_order>
                     <show_in_default>1</show_in_default>
@@ -266,15 +266,16 @@
             </groups>
         </payment>
         <paypal translate="label" module="paypal">
-            <label>PayPal</label>
+            <label>PayPal Accounts</label>
+            <tab>sales</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>160</sort_order>
+            <sort_order>350</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>0</show_in_store>
             <groups>
                 <wpp translate="label">
-                    <label>Website Payments Pro</label>
+                    <label>Website Payments Pro (Express, Direct)</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>

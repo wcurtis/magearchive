@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml cms pages content block
  *
@@ -27,6 +28,9 @@
 class Mage_Adminhtml_Block_Cms_Page extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
 
+    /**
+     * Block constructor
+     */
     public function __construct()
     {
         $this->_controller = 'cms_page';

@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -46,7 +46,7 @@ require_once 'Zend/Gdata/App/MediaSource.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_App
@@ -100,10 +100,11 @@ class Zend_Gdata_App
      * Create Gdata object
      *
      * @param Zend_Http_Client $client
+     * @param string $applicationId
      */
-    public function __construct($client = null)
+    public function __construct($client = null, $applicationId = 'MyCompany-MyApp-1.0')
     {
-        $this->setHttpClient($client);
+        $this->setHttpClient($client, $applicationId);
     }
 
     /**
@@ -160,7 +161,7 @@ class Zend_Gdata_App
      * @throws Zend_Gdata_App_HttpException
      * @return Zend_Gdata_App Provides a fluent interface
      */
-    public function setHttpClient($client)
+    public function setHttpClient($client, $applicationId = 'MyCompany-MyApp-1.0')
     {
         if ($client === null) {
             $client = new Zend_Http_Client();
@@ -169,7 +170,7 @@ class Zend_Gdata_App
             require_once 'Zend/Gdata/App/HttpException.php';
             throw new Zend_Gdata_App_HttpException('Argument is not an instance of Zend_Http_Client.');
         }
-        $useragent = 'Zend_Framework_Gdata/' . Zend_Version::VERSION;
+        $useragent = $applicationId . ' Zend_Framework_Gdata/' . Zend_Version::VERSION;
         $client->setConfig(array(
             'strictredirects' => true,
             'useragent' => $useragent
@@ -715,7 +716,7 @@ class Zend_Gdata_App
             $foundClassName = null;
             foreach ($this->_registeredPackages as $name) {
                  try {
-                     Zend_Loader::loadClass("${name}_${class}");
+                     @Zend_Loader::loadClass("${name}_${class}");
                      $foundClassName = "${name}_${class}";
                      break;
                  } catch (Zend_Exception $e) {
@@ -746,7 +747,7 @@ class Zend_Gdata_App
      * @return mixed A new feed of the same type as the one originally 
      *          passed in, containing all relevent entries.
      */
-    public function retrieveAllEntriesForFeed ($feed) {
+    public function retrieveAllEntriesForFeed($feed) {
         $feedClass = get_class($feed);
         $reflectionObj = new ReflectionClass($feedClass);
         $result = $reflectionObj->newInstance();
@@ -764,5 +765,21 @@ class Zend_Gdata_App
         }
         while ($feed != null);
         return $result;
+    }
+
+    /**
+     * This method enables logging of requests by changing the 
+     * Zend_Http_Client_Adapter used for performing the requests.  
+     * NOTE: This will not work if you have customized the adapter
+     * already to use a proxy server or other interface.
+     * 
+     * @param $logfile The logfile to use when logging the requests
+     */
+    public function enableRequestDebugLogging($logfile) 
+    {
+        $this->_httpClient->setConfig(array(
+            'adapter' => 'Zend_Gdata_App_LoggingHttpClientAdapterSocket',
+            'logfile' => $logfile
+            ));
     }
 }

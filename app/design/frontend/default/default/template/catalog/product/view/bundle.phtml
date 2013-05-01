@@ -36,7 +36,7 @@
     <div class="product-essential">
         <div class="product-img-box">
             <p class="main-product-img">
-                <img id="image" src="<?=$_product->getImageUrl()?>" alt="<?=$_product->getName()?>"/>
+                <img id="image" src="<?=$this->helper('catalog/image')->init($_product, 'image');?>" alt="<?=$_product->getName()?>"/>
             </p>
             <div class="image-zoom" id="track_outer">
                 <img id="zoom_out" src="<?=$this->getSkinUrl('images/slider_btn_zoom_out.gif')?>" alt="<?=$this->__('Zoom Out')?>" class="btn-zoom-out"/>
@@ -71,7 +71,7 @@
             <form action="<?=$this->getUrl('checkout/cart/add')?>" method="post" id="product_addtocart_form">
             <input type="hidden" name="product" value="<?=$_product->getId()?>">
             <input type="hidden" name="related_product" id="related-products-field" value="">
-            
+
             <?if($_product->isBundle()):?>
                 <div class="product-attributes">
                 <?if($_product->isAvailableBundle()):?>
@@ -101,7 +101,7 @@
                     <p><?=$this->__('This bundle is out of stock.')?></p>
                 <?endif;?>
                 </div>
-                
+
             <?elseif($_product->isSuperConfig()):?>
                 <?=$this->getChildHtml('super_config')?>
             <?endif;?>
@@ -115,18 +115,18 @@
                     </ul>
                 </div>
             <?endif;?>
-            
+
             <?if($_product->isSuperGroup()):?>
                 <?=$this->getChildHtml('super_group')?>
             <?endif;?>
-            
+
             <?if(!$_product->isSuperGroup()):?>
                 <?if(!$_product->isBundle() || $_product->isAvailableBundle()):?>
                     <p><small><?=$this->__('Availability: In stock. Ships within 24 hours.')?></small></p>
                     <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
                     <fieldset class="add-to-cart-box">
                         <legend><?=$this->__('Add Items to Cart')?> </legend>
-                        <span class="qty-box"><label for="qty"><?=$this->__('Qty')?>:</label> 
+                        <span class="qty-box"><label for="qty"><?=$this->__('Qty')?>:</label>
                         <input name="qty" type="text" class="input-text qty" id="qty"/></span>
                         <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button>
                         <strong><?=$this->__('OR')?></strong>

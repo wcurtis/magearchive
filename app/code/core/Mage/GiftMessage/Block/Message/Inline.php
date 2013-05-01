@@ -32,9 +32,9 @@ class Mage_GiftMessage_Block_Message_Inline extends Mage_Core_Block_Template
     protected $_type   = null;
     protected $_giftMessage = null;
 
-    public function __construct()
+    protected function _construct()
     {
-        parent::__construct();
+        parent::_construct();
         $this->setTemplate('giftmessage/inline.phtml');
     }
 

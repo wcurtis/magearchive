@@ -69,6 +69,15 @@ All tags page
         </reference>
     </tag_list_index>
 
+    <tag_product_list>
+        <!-- Mage_Tag -->
+        <reference name="content">
+            <block type="tag/product_result" name="tag_products" template="catalogsearch/result.phtml">
+                <action method="initList"><template>catalog/product/list.phtml</template></action>
+            </block>
+        </reference>
+    </tag_product_list>
+
     <tag_customer_index>
         <update handle="customer_account"/>
         <reference name="root">

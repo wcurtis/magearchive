@@ -1,0 +1,59 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   default_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if (($_products = $this->getProductCollection()) && $_products->getSize()):?>
+<div class="box recently">
+<h3><?=$this->__('New Products')?></h3>
+<table cellspacing="0" class="recently-list" id="recently-compared-list-table">
+<tr>
+<?$i=0; foreach ($_products->getItems() as $_product):?>
+    <?if ($i>5): continue; endif;?>
+
+    <td>
+        <div>
+            <a href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>">
+                <img class="product-image" src="<?=$_product->getSmallImageUrl()?>" width="80" height="77" alt="<?=$this->htmlEscape($_product->getName())?>"/>
+            </a>
+        </div>
+            <p><a class="product-name" href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>)"><?=$_product->getName()?></a></p>
+            <?=$this->helper('review/product')->getSummaryHtml($_product, 'short')?>
+            <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
+            <?if($_product->isSaleable()):?>
+            <button class="form-button" onclick="setLocation('<?=$this->getAddToCartUrl($_product)?>')"><span><?=$this->__('Add to Cart')?></span></button>
+            <?else:?>
+            <div class="out-of-stock"><?=$this->__('Out of stock')?></div>
+            <?endif;?>
+            <div class="clear"></div>
+            <p class="add-to">
+                <?if ($this->helper('wishlist')->isAllow()) :?>
+                <a href="<?=$this->getAddToWishlistUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
+                <?endif;?>
+                <?if($_compareUrl=$this->getAddToCompareUrl($_product)):?><br/>
+                <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
+                <?endif;?>
+            </p>
+        </td>
+<?$i++; endforeach;?>
+<?for($i;$i%5!=0;$i++):?>
+        <td>&nbsp;</td>
+    <?endfor?>
+    </tr>
+</table></div>
+<?endif;?>

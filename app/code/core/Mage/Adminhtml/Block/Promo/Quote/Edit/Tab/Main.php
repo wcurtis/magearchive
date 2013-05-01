@@ -74,17 +74,23 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Main extends Mage_Adminhtml_Bloc
             ),
         ));
 
-        $stores = Mage::getResourceModel('core/store_collection')
-            ->addFieldToFilter('store_id', array('neq'=>0))
-            ->load()->toOptionArray();
 
-    	$fieldset->addField('store_ids', 'multiselect', array(
-            'name'      => 'store_ids[]',
-            'label'     => Mage::helper('salesrule')->__('Store Views'),
-            'title'     => Mage::helper('salesrule')->__('Store Views'),
-            'required'  => true,
-            'values'    => $stores,
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $fieldset->addField('website_ids', 'multiselect', array(
+                'name'      => 'website_ids[]',
+                'label'     => Mage::helper('catalogrule')->__('Websites'),
+                'title'     => Mage::helper('catalogrule')->__('Websites'),
+                'required'  => true,
+                'values'    => Mage::getSingleton('adminhtml/system_config_source_website')->toOptionArray(),
+            ));
+        }
+        else {
+            $fieldset->addField('website_ids', 'hidden', array(
+                'name'      => 'website_ids[]',
+                'value'     => Mage::app()->getStore(true)->getWebsiteId()
+            ));
+            $model->setWebsiteIds(Mage::app()->getStore(true)->getWebsiteId());
+        }
 
         $customerGroups = Mage::getResourceModel('customer/group_collection')
             ->load()->toOptionArray();
@@ -141,6 +147,20 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Main extends Mage_Adminhtml_Bloc
             'label' => Mage::helper('salesrule')->__('Priority'),
         ));
 
+		$fieldset->addField('is_rss', 'select', array(
+            'label'     => Mage::helper('salesrule')->__('Public In RSS Feed'),
+            'title'     => Mage::helper('salesrule')->__('Public In RSS Feed'),
+            'name'      => 'is_rss',
+            'options'   => array(
+                '1' => Mage::helper('salesrule')->__('Yes'),
+                '0' => Mage::helper('salesrule')->__('No'),
+            ),
+        ));
+
+        if(!$model->getId()){
+            //set the default value for is_rss feed to yes for new promotion
+            $model->setIsRss(1);
+        }
 
         $form->setValues($model->getData());
 

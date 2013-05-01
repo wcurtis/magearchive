@@ -51,7 +51,7 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset_Order_Statuses
     protected function _getFieldRenderer()
     {
     	if (empty($this->_fieldRenderer)) {
-    		$this->_fieldRenderer = Mage::getHelper('adminhtml/system_config_form_field');
+    		$this->_fieldRenderer = Mage::getBlockSingleton('adminhtml/system_config_form_field');
     	}
     	return $this->_fieldRenderer;
     }

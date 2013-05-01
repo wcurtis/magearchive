@@ -34,7 +34,7 @@ class Mage_Tax_Model_Mysql4_Class_Collection extends Mage_Core_Model_Mysql4_Coll
 
     public function setClassTypeFilter($classTypeId)
     {
-        $this->_sqlSelect->where('main_table.class_type = ?', $classTypeId);
+        $this->_select->where('main_table.class_type = ?', $classTypeId);
         return $this;
     }
 

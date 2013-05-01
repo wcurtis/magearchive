@@ -24,11 +24,14 @@ class Mage_Sales_Model_Order_Invoice_Total_Discount extends Mage_Sales_Model_Ord
     public function collect(Mage_Sales_Model_Order_Invoice $invoice)
     {
         $invoice->setDiscountAmount(0);
+        $invoice->setBaseDiscountAmount(0);
 
         $totalDiscountAmount = 0;
+        $baseTotalDiscountAmount = 0;
         foreach ($invoice->getAllItems() as $item) {
             $orderItem = $item->getOrderItem();
-            $orderItemDiscount  = (float) $orderItem->getDiscountAmount();
+            $orderItemDiscount      = (float) $orderItem->getDiscountAmount();
+            $baseOrderItemDiscount  = (float) $orderItem->getBaseDiscountAmount();
             $orderItemQty       = $orderItem->getQtyOrdered();
 
             if ($orderItemDiscount && $orderItemQty) {
@@ -37,19 +40,29 @@ class Mage_Sales_Model_Order_Invoice_Total_Discount extends Mage_Sales_Model_Ord
                  */
                 if ($item->isLast()) {
                     $discount = $orderItemDiscount - $orderItem->getDiscountInvoiced();
+                    $baseDiscount = $baseOrderItemDiscount - $orderItem->getBaseDiscountInvoiced();
                 }
                 else {
                     $discount = $orderItemDiscount*$item->getQty()/$orderItemQty;
+                    $baseDiscount = $baseOrderItemDiscount*$item->getQty()/$orderItemQty;
+
                     $discount = $invoice->getStore()->roundPrice($discount);
+                    $baseDiscount = $invoice->getStore()->roundPrice($baseDiscount);
                 }
 
                 $item->setDiscountAmount($discount);
+                $item->setBaseDiscountAmount($baseDiscount);
+
                 $totalDiscountAmount += $discount;
+                $baseTotalDiscountAmount += $baseDiscount;
             }
         }
 
         $invoice->setDiscountAmount($totalDiscountAmount);
+        $invoice->setBaseDiscountAmount($baseTotalDiscountAmount);
+
         $invoice->setGrandTotal($invoice->getGrandTotal() - $totalDiscountAmount);
+        $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() - $baseTotalDiscountAmount);
         return $this;
     }
 }

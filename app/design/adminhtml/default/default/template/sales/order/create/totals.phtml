@@ -28,15 +28,19 @@
             <?foreach ($_totals as $_total):?>
                 <?$_i++;?>
                 <tr class="<?=$_total->getCode()?> <?=($_i >= $_count ? ' last' : '' )?>">
-                    <td class="a-right" style="<?=$_total->getStyle()?>"><?=$_total->getTitle()?></td>
-                    <td class="last a-right" style="<?=$_total->getStyle()?>"><span class="nobr"><?=$this->formatPrice($_total->getValue())?></span></td>
+                    <td style="<?=$_total->getStyle()?>" class="label"><?=$_total->getTitle()?></td>
+                    <td class="last" style="<?=$_total->getStyle()?>"><span class="nobr"><?=$this->formatPrice($_total->getValue())?></span></td>
                 </tr>
             <?endforeach;?>
         </tbody>
     </table>
 	<div class="divider"></div>
-    <p class="a-right">
-        <input type="checkbox" id="send_confirmation" name="order[send_confirmation]" value="1" checked="true"/>
-        <label for="send_confirmation" class="normal"><?=Mage::helper('sales')->__('Send Order Confirmation Email')?></label>
+	<p>
+        <label for="notify_customer" class="normal"><?=Mage::helper('sales')->__('Append Comments')?></label>
+        <input type="checkbox" id="notify_customer" name="order[comment][customer_note_notify]" value="1" <?if($this->getNoteNotify()):?>checked="true"<?endif;?>/>
     </p>
-    <p class="a-right"><?=$this->getButtonHtml(Mage::helper('sales')->__('Submit Order'),'order.submit()');?></p>
+    <p>
+        <label for="send_confirmation" class="normal"><?=Mage::helper('sales')->__('Email Order Confirmation')?></label>
+        <input type="checkbox" id="send_confirmation" name="order[send_confirmation]" value="1" checked="true"/>
+    </p>
+    <p><?=$this->getButtonHtml(Mage::helper('sales')->__('Submit Order'),'order.submit()');?></p>

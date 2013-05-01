@@ -72,30 +72,20 @@ class Mage_Adminhtml_Block_Report_Tag_Popular_Detail_Grid extends Mage_Adminhtml
             'index'     =>'product'
         ));
 
-          // Collection for stores filters
-        if(!$collection = Mage::registry('stores_select_collection')) {
-            $collection =  Mage::app()->getStore()->getResourceCollection()
-                ->load();
-            Mage::register('stores_select_collection', $collection);
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('added_in', array(
+                'header'    => Mage::helper('reports')->__('Submitted In'),
+                'sortable'  => false,
+                'index'     => 'store_id',
+                'type'      => 'store',
+                'store_view'=> true
+            ));
         }
-
-        $stores = array();
-        foreach ($collection as $store) {
-            $stores[$store->getId()] = $store->getName();
-        }
-
-        $this->addColumn('added_in', array(
-            'header'    =>Mage::helper('reports')->__('Submitted In'),
-            'sortable'  => false,
-            'index'     =>'store_id',
-            'type'      => 'options',
-            'options'    => $stores
-        ));
 
         $this->setFilterVisibility(false);
 
         $this->addExportType('*/*/exportTagDetailCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportTagDetailXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportTagDetailExcel', Mage::helper('reports')->__('Excel'));
 
         return parent::_prepareColumns();
     }

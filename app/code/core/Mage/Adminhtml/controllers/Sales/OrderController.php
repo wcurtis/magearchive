@@ -137,14 +137,14 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
                 $order->hold()
                     ->save();
                 $this->_getSession()->addSuccess(
-                    $this->__('Order was successfully holded.')
+                    $this->__('Order was successfully put on hold.')
                 );
             }
             catch (Mage_Core_Exception $e) {
                 $this->_getSession()->addError($e->getMessage());
             }
             catch (Exception $e) {
-                $this->_getSession()->addError($this->__('Order was not holded.'));
+                $this->_getSession()->addError($this->__('Order was not put on hold.'));
             }
             $this->_redirect('*/sales_order/view', array('order_id' => $order->getId()));
         }
@@ -286,7 +286,7 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
             }
         }
         if ($holdAnyOrder) {
-            $this->_getSession()->addSuccess($this->__('Orders was holded'));
+            $this->_getSession()->addSuccess($this->__('Orders was successfully put on hold'));
         }
         else {
             // selected orders is not available for hold
@@ -338,6 +338,134 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
     protected function _isAllowed()
     {
         return Mage::getSingleton('admin/session')->isAllowed('sales/order');
+    }
+
+    public function pdfinvoicesAction(){
+        $orderIds = $this->getRequest()->getPost('order_ids');
+        if (!empty($orderIds)) {
+            foreach ($orderIds as $orderId) {
+                $order = Mage::getModel('sales/order')->load($orderId);
+
+                $invoices = Mage::getResourceModel('sales/order_invoice_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($orderId)
+                    ->load();
+                if (!isset($pdf)){
+                    $pdf = Mage::getModel('sales/order_pdf_invoice')->getPdf($invoices);
+                } else {
+                    $pages = Mage::getModel('sales/order_pdf_invoice')->getPdf($invoices);
+                    $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+                }
+            }
+            header("Cache-Control: public");
+            header('Content-Disposition: attachment; filename="invoice'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf"');
+            header('Content-Type: application/pdf');
+            echo $pdf->render();
+        }
+        $this->_redirect('*/*/');
+
+    }
+
+    public function pdfshipmentsAction(){
+        $orderIds = $this->getRequest()->getPost('order_ids');
+        if (!empty($orderIds)) {
+            foreach ($orderIds as $orderId) {
+                $order = Mage::getModel('sales/order')->load($orderId);
+                $shipments = Mage::getResourceModel('sales/order_shipment_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($orderId)
+                    ->load();
+                if (!isset($pdf)){
+                    $pdf = Mage::getModel('sales/order_pdf_shipment')->getPdf($shipments);
+                } else {
+                    $pages = Mage::getModel('sales/order_pdf_shipment')->getPdf($shipments);
+                    $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+                }
+            }
+            header("Cache-Control: public");
+            header('Content-Disposition: attachment; filename="packingslip'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf"');
+            header('Content-Type: application/pdf');
+            echo $pdf->render();
+        }
+        $this->_redirect('*/*/');
+    }
+
+    public function pdfcreditmemosAction(){
+        $orderIds = $this->getRequest()->getPost('order_ids');
+        if (!empty($orderIds)) {
+            foreach ($orderIds as $orderId) {
+                $order = Mage::getModel('sales/order')->load($orderId);
+
+                $creditmemos = Mage::getResourceModel('sales/order_creditmemo_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($orderId)
+                    ->load();
+                if (!isset($pdf)){
+                    $pdf = Mage::getModel('sales/order_pdf_creditmemo')->getPdf($creditmemos);
+                } else {
+                    $pages = Mage::getModel('sales/order_pdf_creditmemo')->getPdf($creditmemos);
+                    $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+                }
+            }
+            header("Cache-Control: public");
+            header('Content-Disposition: attachment; filename="creditmemo'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf"');
+            header('Content-Type: application/pdf');
+            echo $pdf->render();
+        }
+        $this->_redirect('*/*/');
+    }
+
+    public function pdfdocsAction(){
+        $orderIds = $this->getRequest()->getPost('order_ids');
+        if (!empty($orderIds)) {
+            foreach ($orderIds as $orderId) {
+                $order = Mage::getModel('sales/order')->load($orderId);
+
+                $invoices = Mage::getResourceModel('sales/order_invoice_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($orderId)
+                    ->load();
+                if ($invoices->getSize()){
+                    if (!isset($pdf)){
+                        $pdf = Mage::getModel('sales/order_pdf_invoice')->getPdf($invoices);
+                    } else {
+                        $pages = Mage::getModel('sales/order_pdf_invoice')->getPdf($invoices);
+                        $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+                    }
+                }
+
+                $shipments = Mage::getResourceModel('sales/order_shipment_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($orderId)
+                    ->load();
+                if ($shipments->getSize()){
+                    if (!isset($pdf)){
+                        $pdf = Mage::getModel('sales/order_pdf_shipment')->getPdf($shipments);
+                    } else {
+                        $pages = Mage::getModel('sales/order_pdf_shipment')->getPdf($shipments);
+                        $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+                    }
+                }
+
+                $creditmemos = Mage::getResourceModel('sales/order_creditmemo_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($orderId)
+                    ->load();
+                if (!isset($pdf)){
+                    $pdf = Mage::getModel('sales/order_pdf_creditmemo')->getPdf($creditmemos);
+                } else {
+                    $pages = Mage::getModel('sales/order_pdf_creditmemo')->getPdf($creditmemos);
+                    $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+                }
+            }
+
+            header("Cache-Control: public");
+            header('Content-Disposition: attachment; filename="docs'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf"');
+            header('Content-Type: application/pdf');
+
+            echo $pdf->render();
+        }
+        $this->_redirect('*/*/');
     }
 
 }

@@ -25,17 +25,17 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('cataloginventory_stock')};
-CREATE TABLE {$this->getTable('cataloginventory_stock')} (
+DROP TABLE IF EXISTS `{$this->getTable('cataloginventory_stock')}`;
+CREATE TABLE `{$this->getTable('cataloginventory_stock')}` (
   `stock_id` smallint(4) unsigned NOT NULL auto_increment,
   `stock_name` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`stock_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Catalog inventory Stocks list';
 
-insert  into {$this->getTable('cataloginventory_stock')}(`stock_id`,`stock_name`) values (1, 'Default');
+insert into `{$this->getTable('cataloginventory_stock')}`(`stock_id`,`stock_name`) values (1, 'Default');
 
-DROP TABLE IF EXISTS {$this->getTable('cataloginventory_stock_item')};
-CREATE TABLE {$this->getTable('cataloginventory_stock_item')} (
+DROP TABLE IF EXISTS `{$this->getTable('cataloginventory_stock_item')}`;
+CREATE TABLE `{$this->getTable('cataloginventory_stock_item')}` (
     `item_id` int(10) unsigned NOT NULL auto_increment,
     `product_id` int(10) unsigned NOT NULL default '0',
     `stock_id` smallint(4) unsigned NOT NULL default '0',
@@ -54,8 +54,8 @@ CREATE TABLE {$this->getTable('cataloginventory_stock_item')} (
     UNIQUE KEY `IDX_STOCK_PRODUCT` (`product_id`,`stock_id`),
     KEY `FK_CATALOGINVENTORY_STOCK_ITEM_PRODUCT` (`product_id`),
     KEY `FK_CATALOGINVENTORY_STOCK_ITEM_STOCK` (`stock_id`),
-    CONSTRAINT `FK_CATALOGINVENTORY_STOCK_ITEM_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_CATALOGINVENTORY_STOCK_ITEM_STOCK` FOREIGN KEY (`stock_id`) REFERENCES {$this->getTable('cataloginventory_stock')} (`stock_id`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `FK_CATALOGINVENTORY_STOCK_ITEM_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `{$this->getTable('catalog_product_entity')}` (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `FK_CATALOGINVENTORY_STOCK_ITEM_STOCK` FOREIGN KEY (`stock_id`) REFERENCES `{$this->getTable('cataloginventory_stock')}` (`stock_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Inventory Stock Item Data';
 
     ");

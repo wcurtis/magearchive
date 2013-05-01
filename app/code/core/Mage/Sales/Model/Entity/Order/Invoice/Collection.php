@@ -27,10 +27,9 @@
 
 class Mage_Sales_Model_Entity_Order_Invoice_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getResourceSingleton('sales/order_invoice'));
-        $this->setObject('sales/order_invoice');
+        $this->_init('sales/order_invoice');
     }
 
     public function setOrderFilter($order)

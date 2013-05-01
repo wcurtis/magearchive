@@ -28,10 +28,9 @@
 class Mage_Sales_Model_Entity_Order_Address_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
 
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getResourceSingleton('sales/order_address'));
-        $this->setObject('sales/order_address');
+        $this->_init('sales/order_address');
     }
 
     public function setOrderFilter($orderId)

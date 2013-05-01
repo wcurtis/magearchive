@@ -31,15 +31,15 @@ class Mage_Adminhtml_Block_Customer_Edit_Renderer_Newpass extends Mage_Adminhtml
     {
         $html = '<tr>';
         $html.= '<td class="label">'.$element->getLabelHtml().'</td>';
-        $html.= '<td class="input-ele">'.$element->getElementHtml().'</td>';
+        $html.= '<td class="value">'.$element->getElementHtml().'</td>';
         $html.= '</tr>'."\n";
         $html.= '<tr>';
         $html.= '<td class="label"><label>&nbsp;</label></td>';
-        $html.= '<td class="input-ele">'.Mage::helper('customer')->__('or').'</td>';
+        $html.= '<td class="value">'.Mage::helper('customer')->__('or').'</td>';
         $html.= '</tr>'."\n";
         $html.= '<tr>';
         $html.= '<td class="label"><label>&nbsp;</label></td>';
-        $html.= '<td class="input-ele"><input type="checkbox" name="'.$element->getName().'" value="auto" onclick="setElementDisable(\''.$element->getHtmlId().'\', this.checked)"/>&nbsp;';
+        $html.= '<td class="value"><input type="checkbox" name="'.$element->getName().'" value="auto" onclick="setElementDisable(\''.$element->getHtmlId().'\', this.checked)"/>&nbsp;';
         $html.= '<label class="normal">'.Mage::helper('customer')->__('Send auto-generated password').'</label></td>';
         $html.= '</tr>'."\n";
 

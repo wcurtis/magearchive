@@ -27,7 +27,7 @@
 
 class Mage_Tag_Model_Entity_Customer_Collection extends Mage_Customer_Model_Entity_Customer_Collection
 {
-	protected $_tagTable;
+    protected $_tagTable;
     protected $_tagRelTable;
 
     public function __construct()
@@ -41,7 +41,7 @@ class Mage_Tag_Model_Entity_Customer_Collection extends Mage_Customer_Model_Enti
 //        $this->getSelect()->group('tag_tag_id');
 //        echo $this->getSelect();
 //        $this->_productTable = $resource->getTableName('catalog/product');
-//        $this->_sqlSelect->from(array('p' => $this->_productTable))
+//        $this->_select->from(array('p' => $this->_productTable))
 //            ->join(array('tr' => $this->_tagRelTable), 'tr.entity_val_id=p.product_id and tr.entity_id=1', array('total_used' => 'count(tr.tag_relations_id)'))
 //            ->group('p.product_id', 'tr.tag_id')
 //        ;

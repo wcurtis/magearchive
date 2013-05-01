@@ -27,12 +27,6 @@
  */
 class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Actions extends Mage_Adminhtml_Block_Widget_Form
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->setTemplate('promo/form.phtml');
-        $this->setRuleNewChildUrl($this->getUrl('*/promo_catalog/newActionHtml'));
-    }
 
     protected function _prepareForm()
     {
@@ -43,15 +37,34 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Actions extends Mage_Adminhtml
 
         $form->setHtmlIdPrefix('rule_');
 
-        $fieldset = $form->addFieldset('actions_fieldset', array('legend'=>Mage::helper('catalogrule')->__('Actions')));
+        $fieldset = $form->addFieldset('action_fieldset', array('legend'=>Mage::helper('salesrule')->__('Update prices using the following information')));
 
-    	$fieldset->addField('actions', 'text', array(
-            'name' => 'actions',
-            'label' => Mage::helper('catalogrule')->__('Actions'),
-            'title' => Mage::helper('catalogrule')->__('Actions'),
+        $fieldset->addField('simple_action', 'select', array(
+            'label'     => Mage::helper('salesrule')->__('Apply'),
+            'name'      => 'simple_action',
+            'options'    => array(
+                'by_percent' => Mage::helper('salesrule')->__('By Percentage of the original price'),
+                'by_fixed' => Mage::helper('salesrule')->__('By Fixed Amount'),
+                'to_percent' => Mage::helper('salesrule')->__('To Percentage of the original price'),
+                'to_fixed' => Mage::helper('salesrule')->__('To Fixed Amount'),
+            ),
+        ));
+
+        $fieldset->addField('discount_amount', 'text', array(
+            'name' => 'discount_amount',
             'required' => true,
-        ))->setRule($model)->setRenderer(Mage::getHelper('rule/actions'));
+            'label' => Mage::helper('salesrule')->__('Discount amount'),
+        ));
 
+        $fieldset->addField('stop_rules_processing', 'select', array(
+            'label'     => Mage::helper('salesrule')->__('Stop further rules processing'),
+            'title'     => Mage::helper('salesrule')->__('Stop further rules processing'),
+            'name'      => 'stop_rules_processing',
+            'options'    => array(
+                '1' => Mage::helper('salesrule')->__('Yes'),
+                '0' => Mage::helper('salesrule')->__('No'),
+            ),
+        ));
 
         $form->setValues($model->getData());
 

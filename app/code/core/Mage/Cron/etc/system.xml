@@ -21,9 +21,9 @@
 -->
 <config>
     <sections>
-        <system translate="label" module="core">
+        <system>
             <groups>
-                <cron translate="label">
+                <cron translate="label" module="core">
                     <label>Cron (Scheduled Tasks) - all the times are in minutes</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>15</sort_order>

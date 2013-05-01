@@ -25,9 +25,11 @@ class Mage_Sales_Model_Quote_Address_Total_Custbalance
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         $address->setCustbalanceAmount(0);
-        
+        $address->setBaseCustbalanceAmount(0);
+
         $address->setGrandTotal($address->getGrandTotal() - $address->getCustbalanceAmount());
-        
+        $address->setBaseGrandTotal($address->getBaseGrandTotal() - $address->getBaseCustbalanceAmount());
+
         return $this;
     }
 }

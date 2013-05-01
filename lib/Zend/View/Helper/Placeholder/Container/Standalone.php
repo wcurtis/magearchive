@@ -14,24 +14,29 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Standalone.php 7199 2007-12-19 02:35:57Z matthew $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Standalone.php 8184 2008-02-19 22:27:45Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/** Zend_View_Helper_Placeholder_Container_Abstract */
-require_once 'Zend/View/Helper/Placeholder/Container/Abstract.php';
+/** Zend_View_Helper_Placeholder_Registry */
+require_once 'Zend/View/Helper/Placeholder/Registry.php';
 
 /**
  * Base class for targetted placeholder helpers
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */ 
-abstract class Zend_View_Helper_Placeholder_Container_Standalone extends Zend_View_Helper_Placeholder_Container_Abstract
+abstract class Zend_View_Helper_Placeholder_Container_Standalone implements IteratorAggregate, Countable, ArrayAccess
 {  
+    /**
+     * @var Zend_View_Helper_Placeholder_Container_Abstract
+     */
+    protected $_container;
+
     /**
      * @var Zend_View_Helper_Placeholder_Registry
      */
@@ -55,9 +60,9 @@ abstract class Zend_View_Helper_Placeholder_Container_Standalone extends Zend_Vi
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setRegistry(Zend_View_Helper_Placeholder_Registry::getRegistry());
-        $this->getRegistry()->setContainer($this->_regKey, $this);
+        $registry = $this->getRegistry();
+        $this->setContainer($this->getRegistry()->getContainer($this->_regKey));
     }
 
     /**
@@ -107,5 +112,193 @@ abstract class Zend_View_Helper_Placeholder_Container_Standalone extends Zend_Vi
         }
 
         return htmlentities((string) $string, null, 'UTF-8');
+    }
+
+    /**
+     * Set container on which to operate
+     * 
+     * @param  Zend_View_Helper_Placeholder_Container_Abstract $container 
+     * @return Zend_View_Helper_Placeholder_Container_Standalone
+     */
+    public function setContainer(Zend_View_Helper_Placeholder_Container_Abstract $container)
+    {
+        $this->_container = $container;
+        return $this;
+    }
+
+    /**
+     * Retrieve placeholder container
+     * 
+     * @return Zend_View_Helper_Placeholder_Container_Abstract
+     */
+    public function getContainer()
+    {
+        return $this->_container;
+    }
+
+    /**
+     * Overloading: set property value
+     * 
+     * @param  string $key 
+     * @param  mixed $value 
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $container = $this->getContainer();
+        $container[$key] = $value;
+    }
+
+    /**
+     * Overloading: retrieve property
+     * 
+     * @param  string $key 
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        $container = $this->getContainer();
+        if (isset($container[$key])) {
+            return $container[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * Overloading: check if property is set
+     * 
+     * @param  string $key 
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        $container = $this->getContainer();
+        return isset($container[$key]);
+    }
+
+    /**
+     * Overloading: unset property
+     * 
+     * @param  string $key 
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $container = $this->getContainer();
+        if (isset($container[$key])) {
+            unset($container[$key]);
+        }
+    }
+
+    /**
+     * Overload
+     *
+     * Proxy to container methods
+     * 
+     * @param  string $method 
+     * @param  array $args 
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        $container = $this->getContainer();
+        if (method_exists($container, $method)) {
+            $return = call_user_func_array(array($container, $method), $args);
+            if ($return === $container) {
+                // If the container is returned, we really want the current object
+                return $this;
+            }
+            return $return;
+        }
+
+        require_once 'Zend/View/Exception.php';
+        throw new Zend_View_Exception('Method "' . $method . '" does not exist');
+    }
+
+    /**
+     * String representation
+     * 
+     * @return string
+     */
+    public function toString()
+    {
+        return $this->getContainer()->toString();
+    }
+
+    /**
+     * Cast to string representation
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
+    }
+
+    /**
+     * Countable
+     * 
+     * @return int
+     */
+    public function count()
+    {
+        $container = $this->getContainer();
+        return count($container);
+    }
+
+    /**
+     * ArrayAccess: offsetExists
+     * 
+     * @param  string|int $offset 
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return $this->getContainer()->offsetExists($offset);
+    }
+
+    /**
+     * ArrayAccess: offsetGet
+     * 
+     * @param  string|int $offset 
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->getContainer()->offsetGet($offset);
+    }
+
+    /**
+     * ArrayAccess: offsetSet
+     * 
+     * @param  string|int $offset 
+     * @param  mixed $value 
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        return $this->getContainer()->offsetSet($offset, $value);
+    }
+
+    /**
+     * ArrayAccess: offsetUnset
+     * 
+     * @param  string|int $offset 
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        return $this->getContainer()->offsetUnset($offset);
+    }
+
+    /**
+     * IteratorAggregate: get Iterator
+     * 
+     * @return Iterator
+     */
+    public function getIterator()
+    {
+        return $this->getContainer()->getIterator();
     }
 }

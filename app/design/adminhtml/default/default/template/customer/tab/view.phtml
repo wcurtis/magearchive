@@ -23,17 +23,31 @@
  * Template for block Mage_Adminhtml_Block_Customer_Edit_Tab_View
  */
 ?>
-<div class="box-left">
-	<h4 class="icon-head head-customer-view"><?=Mage::helper('customer')->__('Personal Information')?></h4>
-	<div class="box customer-personal-brief">
-		<p><?=Mage::helper('customer')->__('Last Log In: %s (%s)', $this->getLastLoginDate(), $this->getCurrentStatus())?><br/>
-		<?=Mage::helper('customer')->__('Account Created on: %s', $this->getCreateDate())?><br/>
-		<?=Mage::helper('customer')->__('Account Created in: %s', $this->getCreatedInStore())?><br/>
-		<?=Mage::helper('customer')->__('Customer Group: %s', $this->getGroupName())?></p>
-		<address>
-		<strong><?=Mage::helper('customer')->__('Primary Billing Address')?></strong><br/>
+<div class="entry-edit">
+	<div class="entry-edit-head"><h4 class="icon-head head-customer-view"><?=Mage::helper('customer')->__('Personal Information')?></h4></div>
+	<fieldset>
+        <table cellspacing="2" class="box-left">
+            <tr>
+                <td><strong><?=$this->__('Last Logged In:')?></strong></td>
+                <td><?=$this->getLastLoginDate()?> (<?=$this->getCurrentStatus()?>)</td>
+            </tr>
+            <tr>
+                <td><strong><?=$this->__('Account Created on:')?></strong></td>
+                <td><?=$this->getCreateDate()?></td>
+            </tr>
+            <tr>
+                <td><strong><?=$this->__('Account Created in:')?></strong></td>
+                <td><?=$this->getCreatedInStore()?></td>
+            </tr>
+            <tr>
+                <td><strong><?=$this->__('Customer Group:')?></strong></td>
+                <td><?=$this->getGroupName()?></td>
+            </tr>
+        </table>
+		<address class="box-right">
+		<strong><?=$this->__('Primary Billing Address')?></strong><br/>
 		<?=$this->getBillingAddressHtml()?>
-	</div>
+	</fieldset>
 </div>
 <?=$this->getSalesHtml();?>
 <div class="clear"></div>

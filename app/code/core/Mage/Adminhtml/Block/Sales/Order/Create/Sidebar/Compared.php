@@ -34,12 +34,12 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Compared extends Mage_Admi
         $this->setId('sales_order_create_sidebar_compared');
         $this->setDataId('compared');
     }
-    
+
     public function getHeaderText()
     {
-        return Mage::helper('sales')->__('Compared Products');
+        return Mage::helper('sales')->__('Products in Compare List');
     }
-    
+
     /**
      * Retrieve item collection
      *
@@ -69,5 +69,5 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Compared extends Mage_Admi
     {
         return $item->getCatalogCompareItemId();
     }
-    
+
 }

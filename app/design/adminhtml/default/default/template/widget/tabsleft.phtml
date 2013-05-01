@@ -21,9 +21,6 @@
 <dl id="dl-<?=$id?>" class="accordion">
 <?foreach ($sections as $sectionId=>$section):?>
     <dt id="dt-<?=$id?>-<?=$sectionId?>">
-        <a href="javascript:void(0)" onclick="$('dd-<?=$id?>-<?=$sectionId?>')?>">
-            <img src="<?=$this->getSkinUrl('images/accordion_'.(!empty($section['active'])?'open':'closed').'.png')?>" alt="" class="v-mid"/>
-        </a>
         <strong><?=$section['title']?></strong>
     </dt>
     <dd id="dd-<?=$id?>-<?=$section['id']?>" class="section-menu <?=!empty($section['active'])?'open':''?>">

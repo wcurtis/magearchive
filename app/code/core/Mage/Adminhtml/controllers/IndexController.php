@@ -24,9 +24,9 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
     protected function _outTemplate($tplName, $data=array())
     {
         $this->_initLayoutMessages('adminhtml/session');
-        $block = $this->getLayout()->createBlock('core/template')->setTemplate("$tplName.phtml");
+        $block = $this->getLayout()->createBlock('adminhtml/template')->setTemplate("$tplName.phtml");
         foreach ($data as $index=>$value) {
-        	$block->assign($index, $value);
+            $block->assign($index, $value);
         }
         $this->getResponse()->setBody($block->toHtml());
     }
@@ -37,7 +37,7 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         return;
 
         $this->loadLayout();
-        $block = $this->getLayout()->createBlock('core/template', 'system.info')
+        $block = $this->getLayout()->createBlock('adminhtml/template', 'system.info')
             ->setTemplate('system/info.phtml');
 
         $this->_addContent($block);
@@ -59,6 +59,7 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         } else {
             $data['username'] = null;
         }
+        #print_r($data);
         $this->_outTemplate('login', $data);
     }
 
@@ -103,7 +104,7 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
             }
         }
 
-        $block = $this->getLayout()->createBlock('core/template')
+        $block = $this->getLayout()->createBlock('adminhtml/template')
             ->setTemplate('system/autocomplete.phtml')
             ->assign('items', $items);
 
@@ -147,14 +148,14 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
 
     protected function _isAllowed()
     {
-    	/*if ( $this->getRequest()->getActionName() == 'login' && ! Mage::getSingleton('admin/session')->isAllowed('admin') ) {
-    		Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('You have not enought permissions to login.'));
-    		$request = Mage::registry('controller')->getRequest();
+        /*if ( $this->getRequest()->getActionName() == 'login' && ! Mage::getSingleton('admin/session')->isAllowed('admin') ) {
+            Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('You have not enought permissions to login.'));
+            $request = Mage::app()->getRequest();
 
-    	} else {
-    		return Mage::getSingleton('admin/session')->isAllowed('admin');
-    	}
-    	*/
-    	return true;
+        } else {
+            return Mage::getSingleton('admin/session')->isAllowed('admin');
+        }
+        */
+        return true;
     }
 }

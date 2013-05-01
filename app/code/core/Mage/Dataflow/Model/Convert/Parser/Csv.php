@@ -27,96 +27,75 @@
  */
 class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert_Parser_Abstract
 {
+    protected $_fields;
 
     public function parse()
     {
+        // fixed for multibyte characters
+        setlocale(LC_ALL, Mage::app()->getLocale()->getLocaleCode().'.UTF-8');
+
         $fDel = $this->getVar('delimiter', ',');
         $fEnc = $this->getVar('enclose', '"');
-
         if ($fDel=='\\t') {
             $fDel = "\t";
         }
 
-        // fixed for multibyte characters
-        setlocale(LC_ALL, Mage::app()->getLocale()->getLocaleCode().'.UTF-8');
 
-        $fp = tmpfile();
-        fputs($fp, $this->getData());
-        fseek($fp, 0);
-
-        $data = array();
-        for ($i=0; $line = fgetcsv($fp, 4096, $fDel, $fEnc); $i++) {
-            if (0==$i) {
-                if ($this->getVar('fieldnames')) {
-                    $fields = $line;
-                    continue;
-                } else {
-                    foreach ($line as $j=>$f) {
-                        $fields[$j] = 'column'.($j+1);
-                    }
-                }
+        if (Mage::app()->getRequest()->getParam('files')) {
+            $path = Mage::app()->getConfig()->getTempVarDir().'/import/';
+            $file = $path.Mage::app()->getRequest()->getParam('files');
+            if (file_exists($file)) {
+                $fh = fopen($file, "r");
             }
-            $row = array();
-            foreach ($fields as $j=>$f) {
-                $row[$f] = $line[$j];
+            else {
+                return $this;
             }
-            $data[] = $row;
         }
-        fclose($fp);
-        $this->setData($data);
+        else {
+            $data = $this->getData();
+            $fh = tmpfile();
+            fwrite($fh, $data);
+            fseek($fh, 0);
+        }
+
+        if ($this->getVar('adapter') && $this->getVar('method')) {
+            $adapter = Mage::getModel($this->getVar('adapter'));
+        }
+
+        $i = 0;
+        while (($line = fgetcsv($fh, null, $fDel, $fEnc)) !== FALSE) {
+            $row = $this->parseRow($i, $line);
+            if ($row) {
+                $loadMethod = $this->getVar('method');
+                $adapter->$loadMethod(compact('i', 'row'));
+            }
+            $i++;
+        }
+
         return $this;
     }
 
-    // experimental code
-    public function parseTest()
+    public function parseRow($i, $line)
     {
-        $fDel = $this->getVar('delimiter', ',');
-        $fEnc = $this->getVar('enclose', '"');
+        if (sizeof($line) == 1) return false;
 
-        if ($fDel=='\\t') {
-            $fDel = "\t";
-        }
-
-        // fixed for multibyte characters
-        setlocale(LC_ALL, Mage::app()->getLocale()->getLocaleCode().'.UTF-8');
-
-        $fp = tmpfile();
-        fputs($fp, $this->getData());
-        fseek($fp, 0);
-
-        $data = array();
-        $sessionId = Mage::registry('current_dataflow_session_id');
-        for ($i=0; $line = fgetcsv($fp, 4096, $fDel, $fEnc); $i++) {
-            if (0==$i) {
-                if ($this->getVar('fieldnames')) {
-                    $fields = $line;
-                    continue;
-                } else {
-                    foreach ($line as $j=>$f) {
-                        $fields[$j] = 'column'.($j+1);
-                    }
+        if (0==$i) {
+            if ($this->getVar('fieldnames')) {
+                $this->_fields = $line;
+                return;
+            } else {
+                foreach ($line as $j=>$f) {
+                    $this->_fields[$j] = 'column'.($j+1);
                 }
             }
-            $row = array();
-            foreach ($fields as $j=>$f) {
-                $row[$f] = $line[$j];
-            }
-            if ($i <= 100)
-            {
-                $data[] = $row;
-            }
-            $import = Mage::getModel('dataflow/import');
-            $import->setSessionId($sessionId);
-            $import->setSerialNumber($i);
-            $import->setValue(serialize($row));
-            $import->save();
-            unset($import);
         }
-        fclose($fp);
-        unset($sessionId);
-        $this->setData($data);
-        return $this;
-    } // end
+        $resultRow = array();
+
+        foreach ($this->_fields as $j=>$f) {
+            $resultRow[$f] = isset($line[$j]) ? $line[$j] : '';
+        }
+        return $resultRow;
+    }
 
     public function unparse()
     {
@@ -132,28 +111,49 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
         }
 
         $data = $this->getData();
-        $fields = $this->getGridFields($data);
+        $this->_fields = $this->getGridFields($data);
         $lines = array();
 
         if ($this->getVar('fieldnames')) {
             $line = array();
-            foreach ($fields as $f) {
-                $line[] = $fEnc.str_replace(array('"', '\\'), array($fEsc.'"', $fEsc.'\\'), $f).$fEnc;
+            foreach ($this->_fields as $f) {
+                $v = isset($f) ? str_replace('\\', $fEsc.'\\', $f) : '';
+                $line[] = str_replace('"', '\"', $v);
+                //$line[] = $fEnc.str_replace(array('"', '\\'), array('\"', $fEsc.'\\'), $f).$fEnc;
             }
             $lines[] = join($fDel, $line);
         }
         foreach ($data as $i=>$row) {
-            $line = array();
-            foreach ($fields as $f) {
-                $v = isset($row[$f]) ? str_replace(array('"', '\\'), array($fEsc.'"', $fEsc.'\\'), $row[$f]) : '';
-                $line[] = $fEnc.$v.$fEnc;
-            }
-            $lines[] = join($fDel, $line);
+//            $lines[] = $this->unparseRow(compact($i, $row));
+            $lines[] = $this->unparseRow(compact('i', 'row'));
         }
         $result = join($lDel, $lines);
         $this->setData($result);
 
         return $this;
+    }
+
+    public function unparseRow($args)
+    {
+        $i = $args['i'];
+        $row = $args['row'];
+
+        $fDel = $this->getVar('delimiter', ',');
+        $fEnc = $this->getVar('enclose', '"');
+        $fEsc = $this->getVar('escape', '\\');
+        $lDel = "\r\n";
+
+        if ($fDel=='\\t') {
+            $fDel = "\t";
+        }
+
+        $line = array();
+        foreach ($this->_fields as $f) {
+            $v = isset($row[$f]) ? str_replace(array('"', '\\'), array($fEnc.'"', $fEsc.'\\'), $row[$f]) : '';
+            $line[] = $fEnc.$v.$fEnc;
+        }
+
+        return join($fDel, $line);
     }
 
 }

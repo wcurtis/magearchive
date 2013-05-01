@@ -20,11 +20,14 @@
 
 
 /**
- * Layout configuration class
+ * Layout model
  *
+ * @category   Mage
+ * @package    Mage_Core
  */
 class Mage_Core_Model_Layout extends Varien_Simplexml_Config
 {
+
     /**
      * Layout Update module
      *
@@ -67,6 +70,11 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
      */
     protected $_directOutput = false;
 
+    /**
+     * Enter description here...
+     *
+     * @param array $data
+     */
     public function __construct($data=array())
     {
         $this->_elementClass = Mage::getConfig()->getModelClassName('core/layout_element');
@@ -95,8 +103,8 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
      */
     public function setArea($area)
     {
-    	$this->_area = $area;
-    	return $this;
+        $this->_area = $area;
+        return $this;
     }
 
     /**
@@ -106,7 +114,7 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
      */
     public function getArea()
     {
-    	return $this->_area;
+        return $this->_area;
     }
 
     /**
@@ -167,13 +175,17 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
                     $this->_generateAction($node, $parent);
                     break;
 
-                case 'template':
-                    $this->_generateTemplate($node);
-                    break;
             }
         }
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Simplexml_Element $node
+     * @param Varien_Simplexml_Element $parent
+     * @return Mage_Core_Model_Layout
+     */
     protected function _generateBlock($node, $parent)
     {
 
@@ -187,6 +199,9 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
         $_profilerKey = 'BLOCK: '.$blockName;
         Varien_Profiler::start($_profilerKey);
         $block = $this->addBlock($className, $blockName);
+        if (!$block) {
+            return $this;
+        }
 
         if (!empty($node['parent'])) {
             $parentBlock = $this->getBlock((string)$node['parent']);
@@ -227,6 +242,13 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Simplexml_Element $node
+     * @param Varien_Simplexml_Element $parent
+     * @return Mage_Core_Model_Layout
+     */
     protected function _generateAction($node, $parent)
     {
         if (isset($node['ifconfig']) && ($configPath = (string)$node['ifconfig'])) {
@@ -284,9 +306,9 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
     }
 
     /**
-     * translate layout node
+     * Translate layout node
      *
-     * @param object $node
+     * @param Varien_Simplexml_Element $node
      * @param array $args
     **/
     protected function _translateLayoutNode($node, &$args)
@@ -338,11 +360,12 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
      */
     public function createBlock($type, $name='', array $attributes = array())
     {
-        if (!$className = Mage::getConfig()->getBlockClassName($type)) {
-            Mage::throwException(Mage::helper('core')->__('Invalid block type: %s', $type));
+        try {
+            $block = $this->_getBlockInstance($type, $attributes);
+        } catch (Exception $e) {
+            return false;
         }
 
-        $block = new $className();
         if (empty($name) || '.'===$name{0}) {
             $block->setIsAnonymous(true);
             if (!empty($name)) {
@@ -373,18 +396,37 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
      */
     public function addBlock($block, $blockName)
     {
-
-        if (is_string($block)) {
-            $blockObj = new $block();
-        } else {
-            $blockObj = $block;
+        try {
+            $block = $this->_getBlockInstance($block);
+        } catch (Exception $e) {
+            return false;
         }
 
-        $blockObj->setNameInLayout($blockName);
-        $blockObj->setLayout($this);
-        $this->_blocks[$blockName] = $blockObj;
+        $block->setNameInLayout($blockName);
+        $block->setLayout($this);
+        $this->_blocks[$blockName] = $block;
 
-        return $blockObj;
+        return $block;
+    }
+
+    protected function _getBlockInstance($block, array $attributes=array())
+    {
+        if (is_string($block)) {
+            if (strpos($block, '/')!==false) {
+                if (!$block = Mage::getConfig()->getBlockClassName($block)) {
+                    Mage::throwException(Mage::helper('core')->__('Invalid block type: %s', $block));
+                }
+            }
+            $fileName = mageFindClassFile($block);
+            if ($fileName!==false) {
+                include_once ($fileName);
+                $block = new $block($attributes);
+            }
+        }
+        if (!$block instanceof Mage_Core_Block_Abstract) {
+            Mage::throwException(Mage::helper('core')->__('Invalid block type: %s', $block));
+        }
+        return $block;
     }
 
     /**
@@ -422,6 +464,13 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
     {
         //$this->_output[] = array($blockName, $method);
         $this->_output[$blockName] = array($blockName, $method);
+        return $this;
+    }
+
+    public function removeOutputBlock($blockName)
+    {
+        unset($this->_output[$blockName]);
+        return $this;
     }
 
     /**
@@ -454,7 +503,13 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
         return $this->createBlock('core/messages', 'messages');
     }
 
-    public function getHelper($type)
+    /**
+     * Enter description here...
+     *
+     * @param string $type
+     * @return Mage_Core_Helper_Abstract
+     */
+    public function getBlockSingleton($type)
     {
         if (!isset($this->_helpers[$type])) {
             if (!$className = Mage::getConfig()->getBlockClassName($type)) {
@@ -475,7 +530,7 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
     /**
      * Retrieve helper object
      *
-     * @param   helper name $name
+     * @param   string $name
      * @return  Mage_Core_Helper_Abstract
      */
     public function helper($name)
@@ -488,7 +543,7 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
     }
 
     /*public function setBlockCache($frontend='Core', $backend='File',
-    	array $frontendOptions=array(), array $backendOptions=array())
+        array $frontendOptions=array(), array $backendOptions=array())
     {
         if (empty($frontendOptions['lifetime'])) {
             $frontendOptions['lifetime'] = 7200;

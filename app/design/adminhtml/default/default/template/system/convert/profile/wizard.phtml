@@ -117,12 +117,14 @@ function changeDirection()
 </script>
 
 <div id="profile-generator" class="entry-edit profile-generator">
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Profile Information")?></h4>
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Profile Information")?></h4>
+    </div>
     <fieldset>
         <legend><?=$this->__("Profile Information")?></legend>
         <span class="field-row">
-            <label for="profile_name"><?=$this->__("Name:")?></label>
-            <input class="input-text" id="profile_name" name="name" value="<?=$this->getValue('name')?>"/>
+            <label for="profile_name"><?=$this->__("Name:")?> <span class="required">*</span></label>
+            <input class="required-entry required-entry input-text" id="profile_name" name="name" value="<?=$this->getValue('name')?>"/>
         </span>
         <span class="field-row">
             <label for="profile_entity_type"><?=$this->__("Entity type:")?></label>
@@ -141,9 +143,29 @@ function changeDirection()
         <span class="field-row">
             <label for="profile_store_id"><?=$this->__("Store:")?></label>
             <select id="profile_store_id" name="store_id">
-                <?foreach ($this->getStores() as $_value=>$_label):?>
-                    <option value="<?=$_value?>" <?=$this->getSelected('store_id', $_value)?>><?=htmlspecialchars($_label)?></option>
-                <?endforeach?>
+            <option value="0"><?=$this->__('Default Values')?></option>
+                <?foreach ($this->getWebsiteCollection() as $_website):?>
+                    <?$_websiteShow=false;?>
+                    <?foreach ($this->getGroupCollection() as $_group):?>
+                        <?if ($_website->getId() != $_group->getWebsiteId()) continue;?>
+                        <?$_groupShow=false;?>
+                        <?foreach ($this->getStoreCollection() as $_store):?>
+                            <?if ($_group->getId() != $_store->getGroupId()) continue;?>
+                            <?if (!$_websiteShow):?>
+                                <?$_websiteShow=true;?>
+                                <optgroup label="<?=$_website->getName()?>"></optgroup>
+                            <?endif;?>
+                            <?if (!$_groupShow):?>
+                                <?$_groupShow=true;?>
+                                <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;<?=$_group->getName()?>">
+                            <?endif;?>
+                            <option value="<?=$_store->getId()?>" <?=$this->getSelected('store_id', $_store->getId())?>>&nbsp;&nbsp;&nbsp;&nbsp;<?=$_store->getName()?></option>
+                        <?endforeach;?>
+                        <?if ($_groupShow):?>
+                            </optgroup>
+                        <?endif;?>
+                    <?endforeach;?>
+                <?endforeach;?>
             </select>
             <span class="profile_direction_import profile_entity_type_product">
                     <?=$this->__("(Products will be added/updated to this store if 'store' column is blank or missing in the import file.)")?>
@@ -151,7 +173,9 @@ function changeDirection()
         </span>
     </fieldset>
 
+    <div class="entry-edit-head">
     <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("File Information")?></h4>
+    </div>
     <fieldset>
         <legend><?=$this->__("File Information")?></legend>
         <span class="field-row">
@@ -213,7 +237,9 @@ function changeDirection()
         </div>
     </fieldset>
 
+    <div class="entry-edit-head">
     <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Data Format")?></h4>
+    </div>
     <fieldset>
         <legend><?=$this->__("Data Format")?></legend>
         <span class="field-row">
@@ -262,7 +288,9 @@ function changeDirection()
         </div>
     </fieldset>
 
+    <div class="entry-edit-head">
     <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Field Mapping")?></h4>
+    </div>
     <fieldset>
         <legend><?=$this->__("Field Mapping")?></legend>
         <?foreach (array('product', 'customer') as $_entityType):?>
@@ -299,7 +327,9 @@ function changeDirection()
     </fieldset>
 
     <div class="profile_direction_export">
-        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Export Filters")?></h4>
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Export Filters")?></h4>
+        </div>
         <fieldset>
             <div class="profile_entity_type_product">
                 <span class="field-row">

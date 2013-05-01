@@ -27,15 +27,15 @@
 
 class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Block_Widget
 {
-    protected $_template;
+
 
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('system/email/template/edit.phtml');
-        $this->_template = Mage::getModel('core/email_template');
-        if ($templateId = (int) $this->_request->getParam('id')) {
-            $this->_template->load($templateId);
+        Mage::register('email_template', Mage::getModel('core/email_template'));
+        if ($templateId = (int) $this->getRequest()->getParam('id')) {
+            $this->getEmailTemplate()->load($templateId);
         }
     }
 
@@ -131,6 +131,23 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
                     )
                 )
         );
+
+        $this->setChild('load_button',
+            $this->getLayout()->createBlock('adminhtml/widget_button')
+                ->setData(
+                    array(
+                        'label'   => Mage::helper('adminhtml')->__('Load Template'),
+                        'onclick' => 'templateControl.load();',
+                        'type'    => 'button',
+                        'class'   => 'save'
+                    )
+                )
+        );
+
+
+        $this->setChild('form',
+            $this->getLayout()->createBlock('adminhtml/system_email_template_edit_form')
+        );
         return parent::_prepareLayout();
     }
 
@@ -175,16 +192,9 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
         return $this->getChildHtml('delete_button');
     }
 
-    /**
-     * Set edit flag for block
-     *
-     * @param boolean $value
-     * @return Mage_Adminhtml_Block_Newsletter_Template_Edit
-     */
-    public function setEditMode($value=true)
+    public function getLoadButtonHtml()
     {
-        $this->_editMode = $value;
-        return $this;
+        return $this->getChildHtml('load_button');
     }
 
     /**
@@ -194,7 +204,7 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
      */
     public function getEditMode()
     {
-        return $this->_editMode;
+        return $this->getEmailTemplate()->getId();
     }
 
     /**
@@ -217,11 +227,9 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
      *
      * @return string
      */
-    public function getForm()
+    public function getFormHtml()
     {
-        return $this->getLayout()->createBlock('adminhtml/system_email_template_edit_form')
-            ->renderPrepare($this->_template)
-            ->toHtml();
+        return $this->getChildHtml('form');
     }
 
     /**
@@ -231,7 +239,7 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
      */
     public function getSaveUrl()
     {
-        return $this->getUrl('*/*/save');
+        return $this->getUrl('*/*/save', array('_current' => true));
     }
 
     /**
@@ -246,7 +254,7 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
 
     public function isTextType()
     {
-        return $this->_template->isPlain();
+        return $this->getEmailTemplate()->isPlain();
     }
 
     /**
@@ -256,8 +264,41 @@ class Mage_Adminhtml_Block_System_Email_Template_Edit extends Mage_Adminhtml_Blo
      */
     public function getDeleteUrl()
     {
-        return $this->getUrl('*/*/delete', array('id' => $this->_request->getParam('id')));
+        return $this->getUrl('*/*/delete', array('_current' => true));
     }
 
+    /**
+     * Retrive email template model
+     *
+     * @return Mage_Core_Model_Email_Template
+     */
+    public function getEmailTemplate()
+    {
+        return Mage::registry('email_template');
+    }
 
+    public function getLocaleOptions()
+    {
+        return Mage::app()->getLocale()->getOptionLocales();
+    }
+
+    public function getTemplateOptions()
+    {
+        return Mage_Core_Model_Email_Template::getDefaultTemplatesAsOptionsArray();
+    }
+
+    public function getCurrentLocale()
+    {
+        return Mage::app()->getLocale()->getLocaleCode();
+    }
+
+    /**
+     * Load template url
+     *
+     * @return string
+     */
+    public function getLoadUrl()
+    {
+        return $this->getUrl('*/*/defaultTemplate');
+    }
 }

@@ -27,11 +27,9 @@
         <?=$this->getChildHtml('topSearch')?>
 
         <div class="quick-access">
+            <strong><?=$this->getWelcome()?></strong><br/>
             <div class="shop-access">
-                <?=$this->getChildHtml('topRightLinks')?>
-            </div>
-            <div class="account-access">
-               <strong><?=$this->getWelcome()?></strong><?=$this->getChildHtml('topLeftLinks')?>
+                <?=$this->getChildHtml('topLinks')?>
             </div>
             <?=$this->getChildHtml('store_language')?>
         </div>

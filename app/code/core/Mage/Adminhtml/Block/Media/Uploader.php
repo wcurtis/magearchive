@@ -32,6 +32,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
     public function __construct()
     {
         parent::__construct();
+        $this->setId($this->getId() . '_Uploader');
         $this->setTemplate('media/uploader.phtml');
         $this->getConfig()->setUrl(Mage::getModel('adminhtml/url')->addSessionParam()->getUrl('*/*/upload'));
         $this->getConfig()->setParams();
@@ -40,7 +41,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
             'images' => array(
                 'label' => Mage::helper('adminhtml')->__('Images (.gif, .jpg, .png)'),
                 'files' => array('*.gif', '*.jpg', '*.png')
-            )/*,
+            ),
             'media' => array(
                 'label' => Mage::helper('adminhtml')->__('Media (.avi, .flv, .swf)'),
                 'files' => array('*.avi', '*.flv', '*.swf')
@@ -48,7 +49,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
             'all'    => array(
                 'label' => Mage::helper('adminhtml')->__('All Files'),
                 'files' => array('*.*')
-            )*/
+            )
         ));
     }
 
@@ -60,6 +61,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
                 ->addData(array(
                     'id'      => $this->_getButtonId('browse'),
                     'label'   => Mage::helper('adminhtml')->__('Browse Files...'),
+                    'type'    => 'button',
                     'onclick' => $this->getJsObjectName() . '.browse()'
                 ))
         );
@@ -70,6 +72,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
                 ->addData(array(
                     'id'      => $this->_getButtonId('upload'),
                     'label'   => Mage::helper('adminhtml')->__('Upload Files'),
+                    'type'    => 'button',
                     'onclick' => $this->getJsObjectName() . '.upload()'
                 ))
         );
@@ -80,6 +83,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
                 ->addData(array(
                     'id'      => '{{id}}-delete',
                     'class'   => 'delete',
+                    'type'    => 'button',
                     'label'   => Mage::helper('adminhtml')->__('Remove'),
                     'onclick' => $this->getJsObjectName() . '.removeFile(\'{{fileId}}\')'
                 ))

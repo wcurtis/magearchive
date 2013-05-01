@@ -115,7 +115,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
         if (is_null($minutes)) {
             $minutes = Mage_Log_Model_Visitor::ONLINE_MINUTES_INTERVAL;
         }
-        $this->_sqlSelect->from(array('visitor_table'=>$this->_visitorTable))
+        $this->_select->from(array('visitor_table'=>$this->_visitorTable))
             //->joinLeft(array('url_table'=>$this->_urlTable), 'visitor_table.last_url_id=url_table.url_id')
             ->joinLeft(array('info_table'=>$this->_visitorInfoTable), 'info_table.visitor_id=visitor_table.visitor_id')
             ->joinLeft(array('customer_table'=>$this->_customerTable),
@@ -130,7 +130,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
 
     public function showCustomersOnly()
     {
-        $this->_sqlSelect->where('customer_table.customer_id > 0')
+        $this->_select->where('customer_table.customer_id > 0')
             ->group('customer_table.customer_id');
         return $this;
     }
@@ -145,40 +145,40 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
         $this->_setIdFieldName('summary_id');
 
 /*
-    	$this->_sqlSelect->from(array('summary'=>$this->_summaryTable), array('summary_id','customer_count','visitor_count','add_date'=>"DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND)"))
-    	   ->join(array('type'=>$this->_summaryTypeTable), 'type.type_id=summary.type_id', array());
+        $this->_select->from(array('summary'=>$this->_summaryTable), array('summary_id','customer_count','visitor_count','add_date'=>"DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND)"))
+           ->join(array('type'=>$this->_summaryTypeTable), 'type.type_id=summary.type_id', array());
 
-    	if (is_null($customFrom) && is_null($customTo)) {
-    	   $this->_sqlSelect->where( "DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ( DATE_SUB(?, INTERVAL $timeZoneOffset SECOND) - INTERVAL {$period} {$this->_getRangeByType($type_code)} )", now() );
-    	} else {
-    	    if($customFrom) {
-     	        $this->_sqlSelect->where( "DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ", $this->_read->convertDate($customFrom));
-     	    }
-     	    if($customTo) {
-     	        $this->_sqlSelect->where( "DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) <= ", $this->_read->convertDate($customTo));
-     	    }
-    	}
+        if (is_null($customFrom) && is_null($customTo)) {
+           $this->_select->where( "DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ( DATE_SUB(?, INTERVAL $timeZoneOffset SECOND) - INTERVAL {$period} {$this->_getRangeByType($type_code)} )", now() );
+        } else {
+            if($customFrom) {
+                $this->_select->where( "DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ", $this->_read->convertDate($customFrom));
+            }
+            if($customTo) {
+                $this->_select->where( "DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) <= ", $this->_read->convertDate($customTo));
+            }
+        }
 
 
-    	if( is_null($type_code) ) {
-    		$this->_sqlSelect->where("summary.type_id IS NULL");
-    	} else {
-		    $this->_sqlSelect->where("type.type_code = ? ", $type_code);
-    	}
+        if( is_null($type_code) ) {
+            $this->_select->where("summary.type_id IS NULL");
+        } else {
+            $this->_select->where("type.type_code = ? ", $type_code);
+        }
 */
 
-    	$this->_sqlSelect->from(array('summary'=>$this->_summaryTable),
+        $this->_select->from(array('summary'=>$this->_summaryTable),
             array('summary_id',
                 'customer_count'=>'SUM(customer_count)',
                 'visitor_count'=>'SUM(visitor_count)',
                 'add_date'=>"DATE_ADD(summary.add_date, INTERVAL $timeZoneOffset SECOND)"
         ));
 
-        $this->_sqlSelect->where("DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ( DATE_SUB(?, INTERVAL $timeZoneOffset SECOND) - INTERVAL {$period} {$this->_getRangeByType($type_code)} )", now() );
-    	$this->_sqlSelect->group('DATE_FORMAT(add_date, \''.$this->_getGroupByDateFormat($type_code).'\')');
-    	$this->_sqlSelect->order('add_date ASC');
+        $this->_select->where("DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ( DATE_SUB(?, INTERVAL $timeZoneOffset SECOND) - INTERVAL {$period} {$this->_getRangeByType($type_code)} )", now() );
+        $this->_select->group('DATE_FORMAT(add_date, \''.$this->_getGroupByDateFormat($type_code).'\')');
+        $this->_select->order('add_date ASC');
 
-    	return $this;
+        return $this;
     }
 
     protected function _getGroupByDateFormat($type)
@@ -215,7 +215,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
         return $range;
     }
 
-    public function addFieldToFilter($fieldName, $fieldValue)
+    public function addFieldToFilter($fieldName, $fieldValue=null)
     {
         if( $fieldName == 'type' ) {
             if ($fieldValue == 'v') {

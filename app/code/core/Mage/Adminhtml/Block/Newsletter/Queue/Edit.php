@@ -41,7 +41,7 @@ class Mage_Adminhtml_Block_Newsletter_Queue_Edit extends Mage_Adminhtml_Block_Te
 
     public function getSaveUrl()
     {
-        return $this->getUrl('*/*/save',array('id'=>$this->_request->getParam('id')));
+        return $this->getUrl('*/*/save',array('id'=>$this->getRequest()->getParam('id')));
     }
 
     protected function _prepareLayout()

@@ -19,6 +19,7 @@
  */
 ?>
 <?if($this->getResultCount()):?>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
 <div class="page-head">
 	<h3><?=($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $this->helper('catalogSearch')->getQueryText())?></h3>
 </div>

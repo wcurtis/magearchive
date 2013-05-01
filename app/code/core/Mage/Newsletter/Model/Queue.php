@@ -99,6 +99,7 @@ class Mage_Newsletter_Model_Queue extends Mage_Core_Model_Abstract
 
         $collection = $this->getSubscribersCollection()
             ->useOnlyUnsent()
+            ->showCustomerInfo()
             ->setPageSize($count)
             ->setCurPage(1)
             ->load();

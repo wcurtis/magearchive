@@ -66,6 +66,7 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
         $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
 
         $this->_addContent($this->getLayout()->createBlock('adminhtml/review_add'));
+        $this->_addContent($this->getLayout()->createBlock('adminhtml/review_product_grid'));
 
         $this->renderLayout();
     }

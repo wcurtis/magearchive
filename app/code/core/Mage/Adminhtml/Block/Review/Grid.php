@@ -74,79 +74,76 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
         $this->addColumn('review_id', array(
             'header'        => Mage::helper('review')->__('ID'),
-            'align'         =>'right',
+            'align'         => 'right',
             'width'         => '50px',
             'filter_index'  => 'rt.review_id',
             'index'         => 'review_id',
         ));
 
         $this->addColumn('created_at', array(
-            'header'    => Mage::helper('review')->__('Created On'),
-            'align'     =>'left',
-            'type'      => 'datetime',
-            'width'     => '100px',
+            'header'        => Mage::helper('review')->__('Created On'),
+            'align'         => 'left',
+            'type'          => 'datetime',
+            'width'         => '100px',
             'filter_index'  => 'rt.created_at',
-            'index'     => 'created_at',
+            'index'         => 'created_at',
         ));
 
         if( !Mage::registry('usePendingFilter') ) {
             $this->addColumn('status', array(
-                'header'    => Mage::helper('review')->__('Status'),
-                'align'     =>'left',
-                'type'      => 'options',
-                'options'   => $statuses,
-                'width'     => '100px',
+                'header'        => Mage::helper('review')->__('Status'),
+                'align'         => 'left',
+                'type'          => 'options',
+                'options'       => $statuses,
+                'width'         => '100px',
                 'filter_index'  => 'rt.status_id',
-                'index'     => 'status_id',
+                'index'         => 'status_id',
             ));
         }
 
         $this->addColumn('title', array(
-            'header'    => Mage::helper('review')->__('Title'),
-            'align'     =>'left',
-            'width'     => '100px',
+            'header'        => Mage::helper('review')->__('Title'),
+            'align'         => 'left',
+            'width'         => '100px',
             'filter_index'  => 'rdt.title',
-            'index'     => 'title',
+            'index'         => 'title',
         ));
 
         $this->addColumn('nickname', array(
-            'header'    => Mage::helper('review')->__('Nickname'),
-            'align'     =>'left',
-            'width'     => '100px',
+            'header'        => Mage::helper('review')->__('Nickname'),
+            'align'         => 'left',
+            'width'         => '100px',
             'filter_index'  => 'rdt.nickname',
-            'index'     => 'nickname',
+            'index'         => 'nickname',
         ));
 
         $this->addColumn('detail', array(
-            'header'    => Mage::helper('review')->__('Review'),
-            'align'     =>'left',
-            'type'      => 'text',
-            'index'     => 'detail',
+            'header'        => Mage::helper('review')->__('Review'),
+            'align'         => 'left',
+            'type'          => 'text',
+            'index'         => 'detail',
             'filter_index'  => 'rdt.detail',
             'renderer'      => 'adminhtml/review_grid_renderer_detail'
         ));
 
-        // Collection for stores filters
-        if(!$collection = Mage::registry('stores_select_collection')) {
-            $collection =  Mage::getResourceModel('core/store_collection')
-                ->load();
-            Mage::register('stores_select_collection', $collection);
+        /**
+         * Check is single store mode
+         */
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('visible_in', array(
+                'header'    => Mage::helper('review')->__('Visible In'),
+                'type'      => 'select',
+                'index'     => 'stores',
+                'type'      => 'store'
+            ));
         }
-
-        $this->addColumn('visible_in', array(
-            'header'    => Mage::helper('review')->__('Visible In'),
-            'type'      => 'select',
-            'index'     => 'stores',
-            'filter'      => 'adminhtml/review_grid_filter_visible',
-            'renderer'      => 'adminhtml/review_grid_renderer_visible'
-        ));
 
         $this->addColumn('type', array(
             'header'    => Mage::helper('review')->__('Type'),
             'type'      => 'select',
             'index'     => 'type',
-            'filter'      => 'adminhtml/review_grid_filter_type',
-            'renderer'      => 'adminhtml/review_grid_renderer_type'
+            'filter'    => 'adminhtml/review_grid_filter_type',
+            'renderer'  => 'adminhtml/review_grid_renderer_type'
         ));
 
         $this->addColumn('name', array(
@@ -163,6 +160,25 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'width'     => '50px',
             'index'     => 'sku',
         ));
+
+        $this->addColumn('action',
+            array(
+                'header'    => Mage::helper('adminhtml')->__('Action'),
+                'width'     => '50px',
+                'type'      => 'action',
+                'getter'     => 'getId',
+                'actions'   => array(
+                    array(
+                        'caption' => Mage::helper('adminhtml')->__('Edit'),
+                        'url'     => Mage::getUrl('*/*/edit', array('id' => '$review_id')),
+                    )
+                ),
+                'filter'    => false,
+                'sortable'  => false,
+                'index'     => 'stores',
+        ));
+
+        $this->addRssList('rss/catalog/review', Mage::helper('catalog')->__('Pending Reviews RSS'));
 
         return parent::_prepareColumns();
     }
@@ -199,24 +215,24 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
                 )
             ));
 
-            $stores = Mage::app()
-                ->getStore()
-                ->getResourceCollection()
-                ->load()
-                ->toOptionArray();
-            $this->getMassactionBlock()->addItem('visible_in', array(
-                'label'         => Mage::helper('review')->__('Set visible in'),
-                'url'           => $this->getUrl('*/*/massVisibleIn'),
-                'additional'    => array(
-                    'status'    => array(
-                        'name'      => 'stores',
-                        'type'      => 'multiselect',
-                        'class'     => 'required-entry',
-                        'label'     => Mage::helper('review')->__('Store(s)'),
-                        'values'    => $stores
+            /**
+             * Check is single store mode
+             */
+            if (!Mage::app()->isSingleStoreMode()) {
+                $this->getMassactionBlock()->addItem('visible_in', array(
+                    'label'         => Mage::helper('review')->__('Set visible in'),
+                    'url'           => $this->getUrl('*/*/massVisibleIn'),
+                    'additional'    => array(
+                        'status'    => array(
+                            'name'      => 'stores',
+                            'type'      => 'multiselect',
+                            'class'     => 'required-entry',
+                            'label'     => Mage::helper('review')->__('Store(s)'),
+                            'values'    => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm()
+                        )
                     )
-                )
-            ));
+                ));
+            }
         }
     }
 

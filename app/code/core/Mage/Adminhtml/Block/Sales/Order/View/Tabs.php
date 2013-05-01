@@ -43,12 +43,6 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tabs extends Mage_Adminhtml_Block_Wi
             'active'    => true
         ));
 
-        /*$this->addTab('order_history', array(
-            'label'     => Mage::helper('catalogrule')->__('History'),
-            'title'     => Mage::helper('catalogrule')->__('Order History'),
-            'content'   => 'Order History',
-        ));*/
-
         $this->addTab('order_invoices', array(
             'label'     => Mage::helper('catalogrule')->__('Invoices'),
             'title'     => Mage::helper('catalogrule')->__('Order Invoices'),
@@ -72,6 +66,12 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tabs extends Mage_Adminhtml_Block_Wi
             'title'     => Mage::helper('catalogrule')->__('Order Gift Messages'),
             'content'   => 'Gift Messages',
         ));*/
+
+        $this->addTab('order_history', array(
+            'label'     => Mage::helper('catalogrule')->__('Comments History'),
+            'title'     => Mage::helper('catalogrule')->__('Order History'),
+            'content'   => $this->getLayout()->createBlock('adminhtml/sales_order_view_tab_history')->toHtml(),
+        ));
         return parent::_beforeToHtml();
     }
 }

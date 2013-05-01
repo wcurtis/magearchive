@@ -42,7 +42,7 @@
         <?// Product Image?>
         <div class="product-image">
             <a href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>">
-                <img src="<?=$_product->getCustomSmallImageUrl('135x135')?>" alt="<?=$this->htmlEscape($_product->getName())?>"/>
+                <img src="<?=$this->helper('catalog/image')->init($_product, 'small_image')->resize(135, 135);?>" width="135" height="135" alt="<?=$this->htmlEscape($_product->getName())?>"/>
             </a>
         </div>
 
@@ -53,6 +53,8 @@
             <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
             <?if($_product->isSaleable()):?>
             <button class="form-button" onclick="setLocation('<?=$this->getAddToCartUrl($_product)?>')"><span><?=$this->__('Add to Cart')?></span></button>
+            <?else:?>
+            <div class="out-of-stock"><?=$this->__('Out of stock')?></div>
             <?endif;?>
             <div class="clear"></div>
             <div class="description">
@@ -61,7 +63,7 @@
             </div>
             <p class="add-to">
                 <?if ($this->helper('wishlist')->isAllow()) :?>
-                <a href="<?=$this->getAddToWishlistUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
+                <a href="<?=$this->helper('wishlist')->getAddUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
                 <?endif;?>
                 <?if($_compareUrl=$this->getAddToCompareUrl($_product)):?>
                 <span class="pipe">|</span>
@@ -72,7 +74,6 @@
     </div>
 <?endforeach;?>
 </div>
-
 
 <?else:?>
 
@@ -87,7 +88,7 @@
         <td>
             <p class="product-image">
                 <a href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>">
-                    <img src="<?=$_product->getSmallImageUrl()?>" width="135" height="135" alt="<?=$this->htmlEscape($_product->getName())?>"/>
+                    <img src="<?=$this->helper('catalog/image')->init($_product, 'small_image')->resize(135, 135);?>" width="135" height="135" alt="<?=$this->htmlEscape($_product->getName())?>"/>
                 </a>
             </p>
             <h5><a href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>)"><?=$_product->getName()?></a></h5>
@@ -95,11 +96,13 @@
             <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
             <?if($_product->isSaleable()):?>
             <button class="form-button" onclick="setLocation('<?=$this->getAddToCartUrl($_product)?>')"><span><?=$this->__('Add to Cart')?></span></button>
+            <?else:?>
+            <div class="out-of-stock"><?=$this->__('Out of stock')?></div>
             <?endif;?>
             <div class="clear"></div>
             <p class="add-to">
                 <?if ($this->helper('wishlist')->isAllow()) :?>
-                <a href="<?=$this->getAddToWishlistUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
+                <a href="<?=$this->helper('wishlist')->getAddUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
                 <?endif;?>
                 <?if($_compareUrl=$this->getAddToCompareUrl($_product)):?><br/>
                 <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>

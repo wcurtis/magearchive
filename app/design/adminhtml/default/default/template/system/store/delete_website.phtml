@@ -19,25 +19,19 @@
  */
 ?>
 <div class="content-header">
-    <table cellspacing="0" class="grid-header">
+    <table cellspacing="0">
         <tr>
             <td><h3><?=$this->helper('core')->__('Delete Website "%s"', $this->getModel()->getName());?></h3></td>
-            <td class="a-right">
+            <td class="form-buttons">
                 <?=$this->getChildHtml('back_button')?>
             </td>
         </tr>
     </table>
 </div>
 <form action="<?=$this->getData('action')?>" method="post" id="delete_form">
-    <p>
-        Are you sure, lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
-    </p>
-    <p>
-        <input type="checkbox" name="create_backup" checked="checked" id="input_create_backup" />&nbsp;<label for="input_create_backup"><?=$this->helper('adminhtml')->__('Create DB Backup');?></label>
-    </p>
-    <p>
-        <?=$this->getChildHtml('confirm_deletion_button')?> <?=$this->getChildHtml('cancel_button')?>
-    </p>
+    <p>Deleting a website will not delete the information associated with the website (e.g. stores, categories, products, etc.), but the website will not be able to be restored. It is suggested that you create a database backup before deleting the website.</p>
+    <p><input type="checkbox" name="create_backup" checked="checked" id="input_create_backup" />&nbsp;<label for="input_create_backup"><?=$this->helper('adminhtml')->__('Create DB Backup');?></label></p>
+    <p><?=$this->getChildHtml('confirm_deletion_button')?> <?=$this->getChildHtml('cancel_button')?></p>
 </form>
 <script type="text/javascript" language="javascript">
     var deleteForm = new varienForm('delete_form');

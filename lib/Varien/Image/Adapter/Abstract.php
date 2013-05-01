@@ -19,32 +19,33 @@
  */
 
 /**
- * 
- *
  * @file        Abstract.php
  */
 
 abstract class Varien_Image_Adapter_Abstract
 {
     public $fileName = null;
-
     public $imageBackgroundColor = 0;
 
+    const POSITION_TOP_LEFT = 'top-left';
+    const POSITION_TOP_RIGHT = 'top-right';
+    const POSITION_BOTTOM_LEFT = 'bottom-left';
+    const POSITION_BOTTOM_RIGHT = 'bottom-right';
+    const POSITION_STRETCH = 'stretch';
+    const POSITION_TILE = 'tile';
+
     protected $_fileType = null;
-
     protected $_fileMimeType = null;
-
     protected $_fileSrcName = null;
-
     protected $_fileSrcPath = null;
-
     protected $_imageHandler = null;
-
     protected $_imageSrcWidth = null;
-
     protected $_imageSrcHeight = null;
-
     protected $_requiredExtensions = null;
+    protected $_watermarkPosition = null;
+    protected $_watermarkWidth = null;
+    protected $_watermarkHeigth = null;
+    protected $_keepProportion = false;
 
     abstract public function open($fileName);
 
@@ -73,6 +74,50 @@ abstract class Varien_Image_Adapter_Abstract
         }
     }
 
+    public function setWatermarkPosition($position)
+    {
+        $this->_watermarkPosition = $position;
+        return $this;
+    }
+
+    public function getWatermarkPosition()
+    {
+        return $this->_watermarkPosition;
+    }
+
+    public function setWatermarkWidth($width)
+    {
+        $this->_watermarkWidth = $width;
+        return $this;
+    }
+
+    public function getWatermarkWidth()
+    {
+        return $this->_watermarkWidth;
+    }
+
+    public function setWatermarkHeigth($heigth)
+    {
+        $this->_watermarkHeigth = $heigth;
+        return $this;
+    }
+
+    public function getWatermarkHeigth()
+    {
+        return $this->_watermarkHeigth;
+    }
+
+    public function setKeepProportion($flag)
+    {
+        $this->_keepProportion = $flag;
+        return $this;
+    }
+
+    public function keepProportion()
+    {
+        return $this->_keepProportion;
+    }
+
     protected function _getFileAttributes()
     {
         $pathinfo = pathinfo($this->_fileName);
@@ -81,8 +126,4 @@ abstract class Varien_Image_Adapter_Abstract
         $this->_fileSrcName = $pathinfo['basename'];
     }
 
-} 
- 
-// ft:php
-// fileformat:unix
-// tabstop:4
+}

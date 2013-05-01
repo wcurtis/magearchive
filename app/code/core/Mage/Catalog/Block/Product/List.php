@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Product list
  *
@@ -26,13 +27,8 @@
  */
 class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstract
 {
-    protected $_productCollection;
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->setTemplate('catalog/product/list.phtml');
-    }
+    protected $_productCollection;
 
     /**
      * Retrieve loaded category collection
@@ -42,11 +38,11 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
     protected function _getProductCollection()
     {
         if (is_null($this->_productCollection)) {
-            $collection = Mage::getSingleton('catalog/layer');
+            $layer = Mage::getSingleton('catalog/layer');
             if ($this->getShowRootCategory()) {
                 $this->setCategoryId(Mage::app()->getStore()->getRootCategoryId());
             }
-// START ADD
+
 // if this is a product view page
             if (Mage::registry('product')) {
 // get collection of categories this product is associated with
@@ -61,12 +57,15 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
                     $this->setCategoryId(current($categories->getIterator()));
                 }
             }
-// END ADD
+
             if ($this->getCategoryId()) {
                 $category = Mage::getModel('catalog/category')->load($this->getCategoryId());
-                $collection->setCurrentCategory($category);
+                $layer->setCurrentCategory($category);
             }
-            $this->_productCollection = $collection->getProductCollection();
+            $this->_productCollection = $layer->getProductCollection();
+            Mage::dispatchEvent('catalog_block_product_list_collection', array(
+                'collection'=>$this->_productCollection,
+            ));
         }
         return $this->_productCollection;
     }
@@ -133,4 +132,5 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
         $this->_getProductCollection()->addAttributeToSelect($code);
         return $this;
     }
+
 }

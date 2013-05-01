@@ -37,6 +37,22 @@ class Mage_Sales_Model_Entity_Quote extends Mage_Eav_Model_Entity_Abstract
     }
 
     /**
+     * Retrieve select object for loading base entity row
+     *
+     * @param   Varien_Object $object
+     * @param   mixed $rowId
+     * @return  Zend_Db_Select
+     */
+    protected function _getLoadRowSelect($object, $rowId)
+    {
+        $select = parent::_getLoadRowSelect($object, $rowId);
+        if ($object->getSharedStoreIds()) {
+            $select->where('store_id IN (?)', $object->getSharedStoreIds());
+        }
+        return $select;
+    }
+
+    /**
      * Loading quote by customer identifier
      *
      * @param Mage_Sales_Model_Quote $quote
@@ -54,7 +70,7 @@ class Mage_Sales_Model_Entity_Quote extends Mage_Eav_Model_Entity_Abstract
         }
 
         $collection->setOrder('updated_at', 'desc')
-            ->setPage(1,1)
+            ->setPageSize(1)
             ->load();
 
         if ($collection->getSize()) {

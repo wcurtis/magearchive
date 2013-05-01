@@ -18,64 +18,54 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Report Customers Review collection
  *
  * @category   Mage
  * @package    Mage_Reports
  */
-
-class Mage_Reports_Model_Mysql4_Review_Customer_Collection extends Mage_Customer_Model_Entity_Customer_Collection
+class Mage_Reports_Model_Mysql4_Review_Customer_Collection extends Mage_Review_Model_Mysql4_Review_Collection
 {
-    protected function _construct()
+    public function joinCustomers()
     {
-        parent::__construct();
-    }
+        $customer = Mage::getResourceSingleton('customer/customer');
 
-    protected function _joinFields()
-    {
-        $this->addAttributeToSelect('entity_id')
-            ->addAttributeToSelect('firstname')
-            ->addAttributeToSelect('lastname');
+        $firstnameAttr = $customer->getAttribute('firstname');
+        $firstnameAttrId = $firstnameAttr->getAttributeId();
+        $firstnameTable = $firstnameAttr->getBackend()->getTable();
 
-        $this->getSelect()
-            ->join('review_detail', 'review_detail.customer_id = e.entity_id', array('review_cnt' => 'count(review_detail.review_id)'))
-            ->group('e.entity_id');
-
-    }
-
-    public function resetSelect()
-    {
-        parent::resetSelect();
-        $this->_joinFields();
-        return $this;
-    }
-
-    public function getSelectCountSql()
-    {
-        $countSelect = clone $this->getSelect();
-        $countSelect->reset(Zend_Db_Select::ORDER);
-        $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
-        $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
-        $countSelect->reset(Zend_Db_Select::GROUP);
-
-        $sql = $countSelect->__toString();
-
-        $sql = preg_replace('/^select\s+.+?\s+from\s+/is', 'select count(DISTINCT(e.entity_id)) from ', $sql);
-
-        return $sql;
-    }
-
-    public function setOrder($attribute, $dir='desc')
-    {
-
-        if ($attribute == 'review_cnt') {
-                $this->getSelect()->order($attribute . ' ' . $dir);
+        if ($firstnameAttr->getBackend()->isStatic()) {
+            $firstnameField = 'firstname';
+            $attrCondition = '';
         } else {
-                parent::setOrder($attribute, $dir);
+            $firstnameField = 'value';
+            $attrCondition = ' AND _table_customer_firstname.attribute_id = '.$firstnameAttrId;
         }
 
+        $this->getSelect()->joinLeft(array('_table_customer_firstname' => $firstnameTable),
+            '_table_customer_firstname.entity_id=detail.customer_id'.$attrCondition, array());
+
+        $lastnameAttr = $customer->getAttribute('lastname');
+        $lastnameAttrId = $lastnameAttr->getAttributeId();
+        $lastnameTable = $lastnameAttr->getBackend()->getTable();
+
+        if ($lastnameAttr->getBackend()->isStatic()) {
+            $lastnameField = 'lastname';
+            $attrCondition = '';
+        } else {
+            $lastnameField = 'value';
+            $attrCondition = ' AND _table_customer_lastname.attribute_id = '.$lastnameAttrId;
+        }
+
+        $this->getSelect()->joinLeft(array('_table_customer_lastname' => $lastnameTable),
+            '_table_customer_lastname.entity_id=detail.customer_id'.$attrCondition, array())
+            ->from("", array(
+                        'customer_name' => "CONCAT(_table_customer_firstname.{$firstnameField}, ' ', _table_customer_lastname.{$lastnameField})",
+                        'review_cnt' => "COUNT(main_table.review_id)"))
+            ->group('detail.customer_id')
+            ->order('review_cnt desc');
+
         return $this;
     }
-
 }

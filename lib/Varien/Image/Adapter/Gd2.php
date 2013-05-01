@@ -21,12 +21,7 @@
 
 class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
 {
-
     protected $_requiredExtensions = Array("gd");
-
-    function __construct()
-    {
-    }
 
     public function open($filename)
     {
@@ -67,7 +62,9 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
         if( isset($destination) && isset($newName) ) {
             $fileName = $destination . "/" . $fileName;
         } elseif( isset($destination) && !isset($newName) ) {
-            $fileName = $destination . "/" . $this->_fileSrcName;
+            $info = pathinfo($destination);
+            $fileName = $destination;
+            $destination = $info['dirname'];
         } elseif( !isset($destination) && isset($newName) ) {
             $fileName = $this->_fileSrcPath . "/" . $newName;
         } else {
@@ -77,7 +74,12 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
         $destinationDir = ( isset($destination) ) ? $destination : $this->_fileSrcPath;
 
         if( !is_writable($destinationDir) ) {
-            throw new Exception("Unable to write file into directory '{$destinationDir}'. Access forbidden.");
+            try {
+                $io = new Varien_Io_File();
+                $io->mkdir($destination);
+            } catch (Exception $e) {
+                throw new Exception("Unable to write file into directory '{$destinationDir}'. Access forbidden.");
+            }
         }
 
         switch( $this->_fileType ) {
@@ -152,28 +154,34 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
             $dstHeight = round($dstWidth * $height2width);
         }
 
-        if ($this->_imageSrcWidth / $this->_imageSrcHeight >= $dstWidth / $dstHeight) {
-            $width = $dstWidth;
-            $xOffset = 0;
+        if( $this->keepProportion() ) {
+            if ($this->_imageSrcWidth / $this->_imageSrcHeight >= $dstWidth / $dstHeight) {
+                $width = $dstWidth;
+                $xOffset = 0;
 
-            $height = round(($width / $this->_imageSrcWidth) * $this->_imageSrcHeight);
-            $yOffset = round(($dstHeight - $height) / 2);
+                $height = round(($width / $this->_imageSrcWidth) * $this->_imageSrcHeight);
+                $yOffset = round(($dstHeight - $height) / 2);
+            } else {
+                $height = $dstHeight;
+                $yOffset = 0;
+
+                $width = round(($height / $this->_imageSrcHeight) * $this->_imageSrcWidth);
+                $xOffset = round(($dstWidth - $width) / 2);
+            }
         } else {
-            $height = $dstHeight;
+            $xOffset = 0;
             $yOffset = 0;
-
-            $width = round(($height / $this->_imageSrcHeight) * $this->_imageSrcWidth);
-            $xOffset = round(($dstWidth - $width) / 2);
+            $width = $dstWidth;
+            $height = $dstHeight;
         }
 
         $imageNewHandler = imagecreatetruecolor($dstWidth, $dstHeight);
 
         imagecopyresampled($imageNewHandler, $this->_imageHandler, $xOffset, $yOffset, 0, 0, $width, $height, $this->_imageSrcWidth, $this->_imageSrcHeight);
 
-        $this->refreshImageDimensions();
-
         $this->_imageHandler = $imageNewHandler;
 
+        $this->refreshImageDimensions();
     }
 
     public function rotate($angle)
@@ -211,19 +219,53 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
                 throw new Exception("Unsupported watermark image format.");
                 break;
         }
-        
+
+        if( $this->getWatermarkWidth() && $this->getWatermarkHeigth() && ($this->getWatermarkPosition() != self::POSITION_STRETCH) ) {
+            $newWatermark = imagecreatetruecolor($this->getWatermarkWidth(), $this->getWatermarkHeigth());
+            imagealphablending($newWatermark, false);
+            $col = imagecolorallocate($newWatermark, 255, 255, 255);
+            imagefilledrectangle($newWatermark, 0, 0, $this->getWatermarkWidth(), $this->getWatermarkHeigth(), $col);
+            imagealphablending($newWatermark, true);
+
+            imagecopyresampled($newWatermark, $watermark, 0, 0, 0, 0, $this->getWatermarkWidth(), $this->getWatermarkHeigth(), imagesx($watermark), imagesy($watermark));
+            $watermark = $newWatermark;
+        }
+
+        if( $this->getWatermarkPosition() == self::POSITION_TILE ) {
+            $repeat = true;
+        } elseif( $this->getWatermarkPosition() == self::POSITION_STRETCH ) {
+            $newWatermark = imagecreatetruecolor($this->_imageSrcWidth, $this->_imageSrcHeight);
+            imagealphablending($newWatermark, false);
+            $col = imagecolorallocate($newWatermark, 255, 255, 255);
+            imagefilledrectangle($newWatermark, 0, 0, $this->_imageSrcWidth, $this->_imageSrcHeight, $col);
+            imagealphablending($newWatermark, true);
+
+            imagecopyresampled($newWatermark, $watermark, 0, 0, 0, 0, $this->_imageSrcWidth, $this->_imageSrcHeight, imagesx($watermark), imagesy($watermark));
+            $watermark = $newWatermark;
+        } elseif( $this->getWatermarkPosition() == self::POSITION_TOP_RIGHT ) {
+            $positionX = ($this->_imageSrcWidth - imagesx($watermark));
+            imagecopymerge($this->_imageHandler, $watermark, $positionX, $positionY, 0, 0, imagesx($watermark), imagesy($watermark), $watermarkImageOpacity);
+        } elseif( $this->getWatermarkPosition() == self::POSITION_BOTTOM_RIGHT ) {
+            $positionX = ($this->_imageSrcWidth - imagesx($watermark));
+            $positionY = ($this->_imageSrcHeight - imagesy($watermark));
+            imagecopymerge($this->_imageHandler, $watermark, $positionX, $positionY, 0, 0, imagesx($watermark), imagesy($watermark), $watermarkImageOpacity);
+        } elseif( $this->getWatermarkPosition() == self::POSITION_BOTTOM_LEFT ) {
+            $positionY = ($this->_imageSrcHeight - imagesy($watermark));
+            imagecopymerge($this->_imageHandler, $watermark, $positionX, $positionY, 0, 0, imagesx($watermark), imagesy($watermark), $watermarkImageOpacity);
+        }
+
         if( $repeat === false ) {
-            imagecopymerge($this->_imageHandler, $watermark, $positionX, $positionY, 0, 0, $this->_imageSrcWidth, $this->_imageSrcHeight, $watermarkImageOpacity);
+            imagecopymerge($this->_imageHandler, $watermark, $positionX, $positionY, 0, 0, imagesx($watermark), imagesy($watermark), $watermarkImageOpacity);
         } else {
             $offsetX = $positionX;
             $offsetY = $positionY;
-            while( $offsetY <= ($this->_imageSrcHeight+$watermarkSrcHeight) ) {
-                while( $offsetX <= ($this->_imageSrcWidth+$watermarkSrcWidth) ) {
-                    imagecopymerge($this->_imageHandler, $watermark, $offsetX, $offsetY, 0, 0, $this->_imageSrcWidth, $this->_imageSrcHeight, $watermarkImageOpacity);
-                    $offsetX += $watermarkSrcWidth;
+            while( $offsetY <= ($this->_imageSrcHeight+imagesy($watermark)) ) {
+                while( $offsetX <= ($this->_imageSrcWidth+imagesx($watermark)) ) {
+                    imagecopymerge($this->_imageHandler, $watermark, $offsetX, $offsetY, 0, 0, imagesx($watermark), imagesy($watermark), $watermarkImageOpacity);
+                    $offsetX += imagesx($watermark);
                 }
                 $offsetX = $positionX;
-                $offsetY += $watermarkSrcHeight;
+                $offsetY += imagesy($watermark);
             }
         }
         imagedestroy($watermark);
@@ -266,5 +308,4 @@ class Varien_Image_Adapter_Gd2 extends Varien_Image_Adapter_Abstract
     {
         imagedestroy($this->_imageHandler);
     }
-
 }

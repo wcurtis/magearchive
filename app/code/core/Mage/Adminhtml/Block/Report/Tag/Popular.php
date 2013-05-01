@@ -41,6 +41,7 @@ class Mage_Adminhtml_Block_Report_Tag_Popular extends Mage_Adminhtml_Block_Widge
             $this->getLayout()->createBlock('adminhtml/store_switcher')
                 ->setUseConfirm(false)
                 ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
+                ->setTemplate('report/store/switcher.phtml')
         );
 
         return parent::_prepareLayout();
@@ -48,6 +49,9 @@ class Mage_Adminhtml_Block_Report_Tag_Popular extends Mage_Adminhtml_Block_Widge
 
     public function getStoreSwitcherHtml()
     {
+        if (Mage::app()->isSingleStoreMode()) {
+            return '';
+        }
         return $this->getChildHtml('store_switcher');
     }
 

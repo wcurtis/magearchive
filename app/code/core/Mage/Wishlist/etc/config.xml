@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Wishlist>
-            <version>0.7.1</version>
+            <version>0.7.3</version>
             <depends>
                 <Mage_Customer />
                 <Mage_Catalog />
@@ -72,6 +72,15 @@
                 </connection>
             </wishlist_read>
         </resources>
+        <template>
+            <email>
+                <wishlist_email_email_template translate="label" module="wishlist">
+                    <label>Share Wishlist</label>
+                    <file>wishlist_share.html</file>
+                    <type>html</type>
+                </wishlist_email_email_template>
+            </email>
+        </template>
     </global>
     <frontend>
         <routers>
@@ -145,7 +154,7 @@
             </general>
             <email>
                 <email_identity>general</email_identity>
-                <email_template>7</email_template>
+                <email_template>wishlist_email_email_template</email_template>
             </email>
         </wishlist>
     </default>

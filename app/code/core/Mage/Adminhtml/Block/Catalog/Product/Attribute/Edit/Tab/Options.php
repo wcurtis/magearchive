@@ -77,6 +77,26 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
 
     public function getOptionValues()
     {
+        $attributeType = $this->getAttributeObject()->getFrontendInput();
+        $defaultValues = $this->getAttributeObject()->getDefaultValue();
+        if ($attributeType == 'select' || $attributeType == 'multiselect') {
+            $defaultValues = explode(',', $defaultValues);
+        } else {
+            $defaultValues = array();
+        }
+
+        switch ($attributeType) {
+            case 'select':
+                $inputType = 'radio';
+                break;
+            case 'multiselect':
+                $inputType = 'checkbox';
+                break;
+            default:
+                $inputType = '';
+                break;
+        }
+
         $values = $this->getData('option_values');
         if (is_null($values)) {
             $values = array();
@@ -87,6 +107,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
 
             foreach ($optionCollection as $option) {
                 $value = array();
+                if (in_array($option->getId(), $defaultValues)) {
+                    $value['checked'] = 'checked';
+                } else {
+                    $value['checked'] = '';
+                }
+
+                $value['intype'] = $inputType;
                 $value['id'] = $option->getId();
                 $value['sort_order'] = $option->getSortOrder();
                 foreach ($this->getStores() as $store) {

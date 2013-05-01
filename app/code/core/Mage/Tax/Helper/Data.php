@@ -23,5 +23,44 @@
  */
 class Mage_Tax_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    protected $_taxData;
+    protected $_showInCatalog;
+    
+    public function showInCatalog($store=null)
+    {
+        if (is_null($this->_showInCatalog)) {
+            $showInCatalog = (int)Mage::getStoreConfig('sales/tax/show_in_catalog', $store);
+    
+            $this->_showInCatalog = $showInCatalog && Mage::getStoreConfig('sales/tax/based_on', $store)==='origin';
+        }
+        return $this->_showInCatalog;
+    }
+    
+    public function getTaxData($store=null)
+    {
+        if (!$this->_taxData) {
+            $this->_taxData = Mage::getModel('tax/rate_data')
+                ->setCustomerClassId(Mage::getSingleton('customer/session')->getCustomer()->getTaxClassId())
+                ->setCountryId(Mage::getStoreConfig('shipping/origin/country_id', $store))
+                ->setRegionId(Mage::getStoreConfig('shipping/origin/region_id', $store))
+                ->setPostcode(Mage::getStoreConfig('shipping/origin/postcode', $store));
+        }
+        return $this->_taxData;
+    }
+        
+    public function updateProductTax($product)
+    {
+        $store = Mage::app()->getStore($product->getStoreId());
+        if (!$this->showInCatalog($store)) {
+            return false;
+        }
+        $this->getTaxData()->setProductClassId($product->getTaxClassId());
+        $taxRatio = $this->getTaxData($store)->getRate()/100;
 
+        $product->setPriceAfterTax($store->roundPrice($product->getPrice()*(1+$taxRatio)));
+        $product->setFinalPriceAfterTax($store->roundPrice($product->getFinalPrice()*(1+$taxRatio)));
+        $product->setShowTaxInCatalog(Mage::getStoreConfig('sales/tax/show_in_catalog', $store));
+        
+        return $taxRatio;
+    }
 }

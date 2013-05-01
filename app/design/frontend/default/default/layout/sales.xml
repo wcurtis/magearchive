@@ -131,17 +131,41 @@ Customer account home dashboard layout
         </reference>
     </sales_order_reorder>
 
-    <sales_order_details>
+<!--    <sales_order_details>
         <update handle="customer_account"/>
-        <reference name="content">
-            <block type="sales/order_details" name="sales.order.details"/>
+        <reference name="root">
+            <action method="setHeaderTitle" translate="title" module="sales"><title>Order Details</title></action>
         </reference>
-    </sales_order_details>
+        <reference name="content">
+            <block type="sales/order_details" name="sales.order.details" template="sales/order/details.phtml"/>
+        </reference>
+    </sales_order_details>-->
 
-    <sales_order_print>
-        <reference name="content">
-            <block type="sales/order_details" name="sales.order.details"/>
+    <sales_order_printinvoice>
+        <reference name="root">
+            <action method="setHeaderTitle" translate="title" module="sales"><title>Order Details</title></action>
         </reference>
-    </sales_order_print>
+        <reference name="content">
+            <block type="sales/order_print_invoice" name="sales.order.print.invoice" template="sales/order/print/invoice.phtml"/>
+        </reference>
+    </sales_order_printinvoice>
+
+    <sales_order_printshipment>
+        <reference name="root">
+            <action method="setHeaderTitle" translate="title" module="sales"><title>Order Details</title></action>
+        </reference>
+        <reference name="content">
+            <block type="sales/order_print_shipment" name="sales.order.print.shipment" template="sales/order/print/shipment.phtml"/>
+        </reference>
+    </sales_order_printshipment>
+
+    <sales_order_printcreditmemo>
+        <reference name="root">
+            <action method="setHeaderTitle" translate="title" module="sales"><title>Order Details</title></action>
+        </reference>
+        <reference name="content">
+            <block type="sales/order_print_creditmemo" name="sales.order.print.creditmemo" template="sales/order/print/creditmemo.phtml"/>
+        </reference>
+    </sales_order_printcreditmemo>
 
 </layout>

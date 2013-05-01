@@ -43,9 +43,19 @@ class Mage_Core_Model_Email_Template extends Varien_Object
     const TYPE_TEXT = 1;
     const TYPE_HTML = 2;
 
+    /**
+     * Configuration path for default email templates
+     *
+     */
+    const XML_PATH_TEMPLATE_EMAIL = 'global/template/email';
+
     protected $_templateFilter;
     protected $_preprocessFlag = false;
     protected $_mail;
+
+    static protected $_defaultTemplates;
+
+
 
     /**
      * Configuration of desing package for template
@@ -111,6 +121,71 @@ class Mage_Core_Model_Email_Template extends Varien_Object
     }
 
     /**
+     * Load default email template from locale translate
+     *
+     * @param string $templateId
+     * @param string $locale
+     */
+    public function loadDefault($templateId, $locale=null)
+    {
+        $defaultTemplates = self::getDefaultTemplates();
+        if (!isset($defaultTemplates[$templateId])) {
+            return $this;
+        }
+
+        $data = &$defaultTemplates[$templateId];
+        $this->setTemplateType($data['type']=='html' ? self::TYPE_HTML : self::TYPE_TEXT);
+
+        $templateText = Mage::app()->getTranslator()->getTemplateFile(
+            $data['file'],
+            'email',
+            $locale
+        );
+
+        if (preg_match('/<!--@subject\s*(.*?)\s*@-->/', $templateText, $matches)) {
+           $this->setTemplateSubject($matches[1]);
+           $templateText = str_replace($matches[0], '', $templateText);
+        }
+
+        $this->setTemplateText($templateText);
+        $this->setId($templateId);
+
+        return $this;
+    }
+
+    /**
+     * Retrive default templates from config
+     *
+     * @return array
+     */
+    static public function getDefaultTemplates()
+    {
+        if(is_null(self::$_defaultTemplates)) {
+            self::$_defaultTemplates = Mage::getConfig()->getNode(self::XML_PATH_TEMPLATE_EMAIL)->asArray();
+        }
+
+        return self::$_defaultTemplates;
+    }
+
+    /**
+     * Retrive default templates as options array
+     *
+     * @return array
+     */
+    static public function getDefaultTemplatesAsOptionsArray()
+    {
+        $options = array(
+            array('value'=>'', 'label'=> '')
+        );
+
+        foreach (self::getDefaultTemplates() as $templateId=>$value) {
+            $options[] = array('value'=>$templateId, 'label'=>$value['label']);
+        }
+
+        return $options;
+    }
+
+    /**
      * Return template id
      * return int|null
      */
@@ -135,7 +210,10 @@ class Mage_Core_Model_Email_Template extends Varien_Object
      */
     public function isValidForSend()
     {
-        return $this->getSenderName() && $this->getSenderEmail() && $this->getTemplateSubject();
+        return !Mage::getStoreConfigFlag('system/smtp/disable')
+            && $this->getSenderName()
+            && $this->getSenderEmail()
+            && $this->getTemplateSubject();
     }
 
     /**
@@ -214,7 +292,14 @@ class Mage_Core_Model_Email_Template extends Varien_Object
         ini_set('smtp_port', Mage::getStoreConfig('system/smtp/port'));
 
         $mail = $this->getMail();
-        $mail->addTo($email, $name);
+        if (is_array($email)) {
+            foreach ($email as $emailOne) {
+            	$mail->addTo($emailOne, $name);
+            }
+        }
+        else {
+            $mail->addTo($email, $name);
+        }
 
         $this->setUseAbsoluteLinks(true);
         $text = $this->getProcessedTemplate($variables, true);
@@ -245,10 +330,17 @@ class Mage_Core_Model_Email_Template extends Varien_Object
     	}
     	/*$templateId = Mage::getStoreConfig("trans_email/trans_{$transCode}/template", $storeId);
     	$identity = Mage::getStoreConfig("trans_email/trans_{$transCode}/identity", $storeId);*/
+        if (is_numeric($templateId)) {
+    	   $this->load($templateId);
+        } else {
+           $this->loadDefault($templateId);
+        }
 
-    	$this->load($templateId);
     	if (!$this->getId()) {
-    		throw Mage::exception('Mage_Core', Mage::helper('core')->__('Invalid transactional email code'));
+//foreach (debug_backtrace() as $i=>$step) {
+//    echo "[$i] {$step['file']}:{$step['line']}\n";
+//}
+    		throw Mage::exception('Mage_Core', Mage::helper('core')->__('Invalid transactional email code: '.$templateId));
     	}
     	$this->setSenderName(Mage::getStoreConfig('trans_email/ident_'.$sender.'/name', $storeId));
     	$this->setSenderEmail(Mage::getStoreConfig('trans_email/ident_'.$sender.'/email', $storeId));
@@ -325,6 +417,19 @@ class Mage_Core_Model_Email_Template extends Varien_Object
             if ($this->getDesignConfig()->getOldStore()) {
                 Mage::getDesign()->setStore($this->getDesignConfig()->getOldStore());
             }
+        }
+        return $this;
+    }
+
+    public function addBcc($bcc)
+    {
+        if (is_array($bcc)) {
+            foreach ($bcc as $email) {
+            	$this->getMail()->addBcc($email);
+            }
+        }
+        elseif($bcc) {
+            $this->getMail()->addBcc($bcc);
         }
         return $this;
     }

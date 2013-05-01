@@ -18,12 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-/**
- * Adminhtml dashboard block
- *
- * @category   Mage
- * @package    Mage_Adminhtml
- */
 class Mage_Adminhtml_Block_Dashboard extends Mage_Adminhtml_Block_Template
 {
     protected $_locale;
@@ -31,68 +25,60 @@ class Mage_Adminhtml_Block_Dashboard extends Mage_Adminhtml_Block_Template
     public function __construct()
     {
         parent::__construct();
-        $this->setTemplate('dashboard/main.phtml');
+        $this->setTemplate('dashboard/index.phtml');
 
     }
 
     protected function _prepareLayout()
     {
-        $this->setChild('product',
-                $this->getLayout()->createBlock('adminhtml/dashboard_tab_bar_product')
+        $this->setChild('store_switcher',
+            $this->getLayout()->createBlock('adminhtml/store_switcher')
+                ->setUseConfirm(false)
+                ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
+                ->setTemplate('dashboard/store/switcher.phtml')
         );
 
-        $this->setChild('order',
-                $this->getLayout()->createBlock('adminhtml/dashboard_tab_bar_order')
+        $this->setChild('lastOrders',
+                $this->getLayout()->createBlock('adminhtml/dashboard_orders_grid')
         );
 
-        $this->setChild('visitor',
-                $this->getLayout()->createBlock('adminhtml/dashboard_tab_bar_visitor')
+        $this->setChild('totals',
+                $this->getLayout()->createBlock('adminhtml/dashboard_totals')
         );
 
-        $this->setChild('button_submit',
-                $this->getLayout()->createBlock('adminhtml/widget_button')->addData(
-                    array(
-                        'label' => $this->__('Apply'),
-                        'onclick'=>'submitForm(this)'
-                    )
-                )
+        $this->setChild('sales',
+                $this->getLayout()->createBlock('adminhtml/dashboard_sales')
         );
 
+        $this->setChild('lastSearches',
+                $this->getLayout()->createBlock('adminhtml/dashboard_searches_last')
+        );
+
+        $this->setChild('topSearches',
+                $this->getLayout()->createBlock('adminhtml/dashboard_searches_top')
+        );
+
+        $this->setChild('diagrams',
+                $this->getLayout()->createBlock('adminhtml/dashboard_diagrams')
+        );
+
+        $this->setChild('grids',
+                $this->getLayout()->createBlock('adminhtml/dashboard_grids')
+        );
 
         parent::_prepareLayout();
     }
 
-    /**
-     * Retrieve locale
-     *
-     * @return Mage_Core_Model_Locale
-     */
-    public function getLocale()
+    public function getStoreSwitcherHtml()
     {
-        if (!$this->_locale) {
-            $this->_locale = Mage::app()->getLocale();
+        return $this->getChildHtml('store_switcher');
+    }
+
+    public function getSwitchUrl()
+    {
+        if ($url = $this->getData('switch_url')) {
+            return $url;
         }
-        return $this->_locale;
+        return $this->getUrl('*/*/*', array('_current'=>true, 'period'=>null));
     }
-
-    /**
-     * Retrieve locale code
-     *
-     * @return string
-     */
-    public function getLocaleCode()
-    {
-        return $this->getLocale()->getLocaleCode();
-    }
-
-    public function getConfigureAction($section)
-    {
-        return $this->getUrl('*/*/configure', array('section'=>$section));
-    }
-
-    public function getFieldFormat()
-    {
-        return $this->getLocale()->getDateStrFormat(Mage_Core_Model_Locale::FORMAT_TYPE_SHORT);
-    }
-
 }

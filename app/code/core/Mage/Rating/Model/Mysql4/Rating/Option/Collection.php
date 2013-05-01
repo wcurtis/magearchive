@@ -35,7 +35,7 @@ class Mage_Rating_Model_Mysql4_Rating_Option_Collection extends Varien_Data_Coll
         $this->_ratingOptionTable   = Mage::getSingleton('core/resource')->getTableName('rating/rating_option');
         $this->_ratingVoteTable     = Mage::getSingleton('core/resource')->getTableName('rating/rating_vote');
 
-        $this->_sqlSelect->from($this->_ratingOptionTable);
+        $this->_select->from($this->_ratingOptionTable);
 
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('rating/rating_option'));
     }

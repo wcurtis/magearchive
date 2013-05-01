@@ -85,7 +85,7 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
             $url = Mage::getDesign()->getSkinUrl('images/no_image.jpg');
         }
         elseif ($attribute = $product->getResource()->getAttribute('image')) {
-            $url = $attribute->getFrontend()->getUrl($this);
+            $url = $attribute->getFrontend()->getUrl($product);
         }
         return $url;
     }
@@ -102,7 +102,7 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
             $url = Mage::getDesign()->getSkinUrl('images/no_image.jpg');
         }
         elseif ($attribute = $product->getResource()->getAttribute('small_image')) {
-            $url = $attribute->getFrontend()->getUrl($this);
+            $url = $attribute->getFrontend()->getUrl($product);
         }
         return $url;
     }
@@ -149,7 +149,7 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
     public function getStatuses()
     {
         if(is_null($this->_statuses)) {
-            $this->_statuses = Mage::getModel('catalog/product_status')->getResourceCollection()->load();
+            $this->_statuses = array();//Mage::getModel('catalog/product_status')->getResourceCollection()->load();
         }
 
         return $this->_statuses;

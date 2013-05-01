@@ -46,8 +46,8 @@ class Mage_Adminhtml_Block_Newsletter_Template_Edit_Form extends Mage_Adminhtml_
     {
         $form = new Varien_Data_Form();
 
-        if($this->_request->isPost()) {
-            $post = $this->_request->getPost();
+        if($this->getRequest()->isPost()) {
+            $post = $this->getRequest()->getPost();
             if (isset($post['template_id'])) {
                 unset($post['template_id']);
             }

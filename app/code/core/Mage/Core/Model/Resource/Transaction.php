@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Resource transaction model
  *
@@ -27,35 +28,72 @@
  */
 class Mage_Core_Model_Resource_Transaction
 {
+
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     protected $_objects = array();
+
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     protected $_objectsByAlias = array();
+
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     protected $_resources = array();
 
+    /**
+     * Enter description here...
+     *
+     */
     public function __construct()
     {
 
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Core_Model_Resource_Transaction
+     */
     protected function _startTransaction()
     {
         foreach ($this->_objects as $object) {
-        	$object->getResource()->beginTransaction();
+            $object->getResource()->beginTransaction();
         }
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Core_Model_Resource_Transaction
+     */
     protected function _commitTransaction()
     {
         foreach ($this->_objects as $object) {
-        	$object->getResource()->commit();
+            $object->getResource()->commit();
         }
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Core_Model_Resource_Transaction
+     */
     protected function _rollbackTransaction()
     {
         foreach ($this->_objects as $object) {
-        	$object->getResource()->rollBack();
+            $object->getResource()->rollBack();
         }
         return $this;
     }
@@ -86,7 +124,7 @@ class Mage_Core_Model_Resource_Transaction
         $this->_startTransaction();
         try {
             foreach ($this->_objects as $object) {
-            	$object->save();
+                $object->save();
             }
             $this->_commitTransaction();
         }
@@ -107,7 +145,7 @@ class Mage_Core_Model_Resource_Transaction
         $this->_startTransaction();
         try {
             foreach ($this->_objects as $object) {
-            	$object->delete();
+                $object->delete();
             }
             $this->_commitTransaction();
         }
@@ -117,4 +155,5 @@ class Mage_Core_Model_Resource_Transaction
         }
         return $this;
     }
+
 }

@@ -32,7 +32,7 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS {$this->getTable('report_event_type')};
+DROP TABLE IF EXISTS {$this->getTable('report_event_types')};
 CREATE TABLE {$this->getTable('report_event_types')} (
   `event_type_id` smallint(6) unsigned NOT NULL auto_increment,
   `event_name` varchar(32) NOT NULL,

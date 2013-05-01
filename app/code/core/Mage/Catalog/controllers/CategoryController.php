@@ -32,6 +32,7 @@ class Mage_Catalog_CategoryController extends Mage_Core_Controller_Front_Action
     public function viewAction()
     {
         $category = Mage::getModel('catalog/category')
+            ->setStoreId(Mage::app()->getStore()->getId())
             ->load($this->getRequest()->getParam('id', false));
         Mage::getModel('catalog/design')->applyDesign($category, 2);
 
@@ -56,9 +57,10 @@ class Mage_Catalog_CategoryController extends Mage_Core_Controller_Front_Action
 
         $this->generateLayoutXml()->generateLayoutBlocks();
 
-        $this->getLayout()->getBlock('root')
-            ->addBodyClass('categorypath-'.$category->getUrlPath())
-            ->addBodyClass('category-'.$category->getUrlKey());
+        if ($root = $this->getLayout()->getBlock('root')) {
+            $root->addBodyClass('categorypath-'.$category->getUrlPath())
+                ->addBodyClass('category-'.$category->getUrlKey());
+        }
 
         $this->_initLayoutMessages('catalog/session');
         $this->_initLayoutMessages('checkout/session');

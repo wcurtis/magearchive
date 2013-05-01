@@ -21,14 +21,14 @@
 <?if( sizeof($this->getTotals()) > 0 ):?>
 <div class="box">
     <div class="entry-edit">
-        <table border="0" cellpadding="0" cellspacing="0" class="bar">
+        <table border="0" cellspacing="0" width="100%">
             <tr>
             <?foreach( $this->getTotals() as $_total ):?>
-                <td>
-                <div <?if ($_total['grand']):?>class="grand-total"<?endif;?>>
-                    <?=$_total['label']?><br />
-                    <strong><?=$this->getOrder()->formatPrice($_total['value'])?></strong>
-                </div>
+                <td class="a-center">
+                    <div <?if ($_total['grand']):?>class="grand-total"<?endif;?>>
+                        <?=$_total['label']?><br />
+                        <?=$_total['value']?>
+                    </div>
                 </td>
             <?endforeach;?>
             </tr>

@@ -172,14 +172,18 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
             if ($shipment = $this->_initShipment()) {
                 $shipment->register();
 
+                $comment = '';
                 if (!empty($data['comment_text'])) {
                     $shipment->addComment($data['comment_text'], isset($data['comment_customer_notify']));
-                    if (isset($data['comment_customer_notify'])) {
-                        $shipment->sendUpdateEmail($data['comment_text']);
-                    }
+                    $comment = $data['comment_text'];
+                }
+
+                if (!empty($data['send_email'])) {
+                    $shipment->setEmailSent(true);
                 }
 
                 $this->_saveShipment($shipment);
+                $shipment->sendEmail(!empty($data['send_email']), $comment);
                 $this->_getSession()->addSuccess($this->__('Shipment was successfully created.'));
                 $this->_redirect('*/sales_order/view', array('order_id' => $shipment->getOrderId()));
                 return;
@@ -196,6 +200,25 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
             $this->_getSession()->addError($this->__('Can not save shipment.'));
         }
         $this->_redirect('*/*/new', array('order_id' => $this->getRequest()->getParam('order_id')));
+    }
+
+    public function emailAction()
+    {
+        try {
+            if ($shipment = $this->_initShipment()) {
+                $shipment->sendEmail(true);
+                $this->_getSession()->addSuccess($this->__('Shipment was successfully sent.'));
+            }
+        }
+        catch (Mage_Core_Exception $e) {
+            $this->_getSession()->addError($e->getMessage());
+        }
+        catch (Exception $e) {
+            $this->_getSession()->addError($this->__('Can not send shipment information.'));
+        }
+        $this->_redirect('*/*/view', array(
+            'shipment_id' => $this->getRequest()->getParam('shipment_id')
+        ));
     }
 
     /**
@@ -310,9 +333,9 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
         }
 
         if ( is_object($response)){
-            $className = Mage::getConfig()->getBlockClassName('core/template');
+            $className = Mage::getConfig()->getBlockClassName('adminhtml/template');
             $block = new $className();
-            $block->setType('core/template')
+            $block->setType('adminhtml/template')
                 ->setIsAnonymous(true)
                 ->setTemplate('sales/order/shipment/tracking/info.phtml');
 
@@ -342,9 +365,7 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
             }
             $shipment = $this->_initShipment();
             $shipment->addComment($data['comment'], isset($data['is_customer_notified']));
-            if (isset($data['is_customer_notified'])) {
-                $shipment->sendUpdateEmail($data['comment']);
-            }
+            $shipment->sendUpdateEmail(!empty($data['is_customer_notified']), $data['comment']);
             $shipment->save();
 
             $response = $this->getLayout()->createBlock('adminhtml/sales_order_comments_view')

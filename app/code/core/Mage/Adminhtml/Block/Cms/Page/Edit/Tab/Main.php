@@ -45,70 +45,63 @@ class Mage_Adminhtml_Block_Cms_Page_Edit_Tab_Main extends Mage_Adminhtml_Block_W
         }
 
     	$fieldset->addField('title', 'text', array(
-            'name' => 'title',
-            'label' => Mage::helper('cms')->__('Page Title'),
-            'title' => Mage::helper('cms')->__('Page Title'),
-            'required' => true,
+            'name'      => 'title',
+            'label'     => Mage::helper('cms')->__('Page Title'),
+            'title'     => Mage::helper('cms')->__('Page Title'),
+            'required'  => true,
         ));
 
     	$fieldset->addField('identifier', 'text', array(
-            'name' => 'identifier',
-            'label' => Mage::helper('cms')->__('SEF URL Identifier'),
-            'title' => Mage::helper('cms')->__('SEF URL Identifier'),
-            'required' => true,
+            'name'      => 'identifier',
+            'label'     => Mage::helper('cms')->__('SEF URL Identifier'),
+            'title'     => Mage::helper('cms')->__('SEF URL Identifier'),
+            'required'  => true,
             'after_element_html' => '<span class="hint">' . Mage::helper('cms')->__('(eg: domain.com/identifier)') . '</span>',
         ));
 
-        $stores = Mage::getResourceModel('core/store_collection')->load()->toOptionHash();
-        $stores[0] = Mage::helper('cms')->__('All stores');
-
-    	$fieldset->addField('store_id', 'select', array(
-            'name'      => 'store_id',
-            'label'     => Mage::helper('cms')->__('Store View'),
-            'title'     => Mage::helper('cms')->__('Store View'),
-            'required'  => true,
-            'options'    => $stores,
-        ));
-
-        $layouts = array();
-        foreach (Mage::getConfig()->getNode('global/cms/layouts')->children() as $layoutName=>$layoutConfig) {
-        	$layouts[$layoutName] = (string)$layoutConfig->label;
+        /**
+         * Check is single store mode
+         */
+        if (!Mage::app()->isSingleStoreMode()) {
+            $fieldset->addField('store_id', 'select', array(
+                'name'      => 'store_id',
+                'label'     => Mage::helper('cms')->__('Store View'),
+                'title'     => Mage::helper('cms')->__('Store View'),
+                'required'  => true,
+                'values'    => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm(false, true),
+            ));
         }
-    	$fieldset->addField('root_template', 'select', array(
-            'name'      => 'root_template',
-            'label'     => Mage::helper('cms')->__('Layout'),
-            'required'  => true,
-            'options'    => $layouts,
-        ));
+        else {
+            $fieldset->addField('store_id', 'hidden', array(
+                'name'      => 'store_id',
+                'value'     => Mage::app()->getStore(true)->getId()
+            ));
+            $model->setStoreId(Mage::app()->getStore(true)->getId());
+        }
+
 
     	$fieldset->addField('is_active', 'select', array(
             'label'     => Mage::helper('cms')->__('Status'),
             'title'     => Mage::helper('cms')->__('Page Status'),
             'name'      => 'is_active',
-            'required' => true,
-            'options'    => array(
+            'required'  => true,
+            'options'   => array(
                 '1' => Mage::helper('cms')->__('Enabled'),
                 '0' => Mage::helper('cms')->__('Disabled'),
             ),
         ));
 
     	$fieldset->addField('content', 'editor', array(
-            'name' => 'content',
-            'label' => Mage::helper('cms')->__('Content'),
-            'title' => Mage::helper('cms')->__('Content'),
-            'style' => 'width: 98%; height: 600px;',
-            'wysiwyg' => false,
-            'required' => true,
+            'name'      => 'content',
+            'label'     => Mage::helper('cms')->__('Content'),
+            'title'     => Mage::helper('cms')->__('Content'),
+            'style'     => 'width: 98%; height: 600px;',
+            'wysiwyg'   => false,
+            'required'  => true,
         ));
 
-        $fieldset->addField('layout_update_xml', 'editor', array(
-            'name' => 'layout_update_xml',
-            'label' => Mage::helper('cms')->__('Layout Update XML'),
-            'style' => 'width:98%'
-        ));
 
         $form->setValues($model->getData());
-
         $this->setForm($form);
 
         return parent::_prepareForm();

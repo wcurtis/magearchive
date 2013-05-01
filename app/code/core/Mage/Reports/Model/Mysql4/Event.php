@@ -31,4 +31,19 @@ class Mage_Reports_Model_Mysql4_Event extends Mage_Core_Model_Mysql4_Abstract
     {
         $this->_init('reports/event', 'event_id');
     }
+
+    public function updateCustomerType(Mage_Reports_Model_Event $model, $visitorId, $customerId, $types = array())
+    {
+        if ($types) {
+            $this->_getWriteAdapter()->update($this->getMainTable(),
+                array('subject_id'=>$customerId, 'subtype'=>0),
+                array(
+                    $this->_getWriteAdapter()->quoteInto('subject_id=?', $visitorId),
+                    $this->_getWriteAdapter()->quoteInto('subtype=?', 1),
+                    $this->_getWriteAdapter()->quoteInto('event_type_id IN(?)', $types)
+                )
+            );
+        }
+        return $this;
+    }
 }

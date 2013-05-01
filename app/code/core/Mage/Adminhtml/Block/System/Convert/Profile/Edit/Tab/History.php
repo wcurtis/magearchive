@@ -36,7 +36,7 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Edit_Tab_History extends Mage_
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('core/convert_history_collection')
+        $collection = Mage::getResourceModel('dataflow/profile_history_collection')
             ->addFieldToFilter('profile_id', Mage::registry('current_convert_profile')->getId());
         $collection->getSelect()
             ->join(array(

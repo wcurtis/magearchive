@@ -122,6 +122,8 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
         $orderItem->setTaxInvoiced($orderItem->getTaxInvoiced()+$this->getTaxAmount());
         $orderItem->setDiscountInvoiced($orderItem->getDiscountInvoiced()+$this->getDiscountAmount());
         $orderItem->setRowInvoiced($orderItem->getRowInvoiced()+$this->getRowTotal());
+        $orderItem->setBaseDiscountInvoiced($orderItem->getBaseDiscountInvoiced()+$this->getBaseDiscountAmount());
+        $orderItem->setBaseRowInvoiced($orderItem->getBaseRowInvoiced()+$this->getBaseRowTotal());
         return $this;
     }
 
@@ -137,6 +139,8 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
         $orderItem->setTaxInvoiced($orderItem->getTaxInvoiced()-$this->getTaxAmount());
         $orderItem->setDiscountInvoiced($orderItem->getDiscountInvoiced()-$this->getDiscountAmount());
         $orderItem->setRowInvoiced($orderItem->getRowInvoiced()-$this->getRowTotal());
+        $orderItem->setBaseDiscountInvoiced($orderItem->getBaseDiscountInvoiced()-$this->getBaseDiscountAmount());
+        $orderItem->setBaseRowInvoiced($orderItem->getBaseRowInvoiced()-$this->getBaseRowTotal());
         return $this;
     }
 
@@ -147,8 +151,8 @@ class Mage_Sales_Model_Order_Invoice_Item extends Mage_Core_Model_Abstract
      */
     public function calcRowTotal()
     {
-        $rowTotal = $this->getPrice()*$this->getQty();
-        $this->setRowTotal($rowTotal);
+        $this->setRowTotal($this->getPrice()*$this->getQty());
+        $this->setBaseRowTotal($this->getBasePrice()*$this->getQty());
         return $this;
     }
 

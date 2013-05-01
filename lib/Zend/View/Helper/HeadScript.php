@@ -14,7 +14,7 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -28,7 +28,7 @@ require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container_Standalone
@@ -40,19 +40,27 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
     const FILE   = 'FILE';
     const SCRIPT = 'SCRIPT';
     /**#@-*/
-    
+
     /**
      * Registry key for placeholder
      * @var string
      */
     protected $_regKey = 'Zend_View_Helper_HeadScript';
 
+    /**
+     * Are arbitrary attributes allowed?
+     * @var bool
+     */
+    protected $_arbitraryAttributes = false;
+    
     /**#@+
      * Capture type and/or attributes (used for hinting during capture)
      * @var string
      */
+    protected $_captureLock;
     protected $_captureScriptType  = null;
     protected $_captureScriptAttrs = null;
+    protected $_captureType;
     /**#@-*/
 
     /**
@@ -132,10 +140,16 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
      */
     public function captureStart($captureType = Zend_View_Helper_Placeholder_Container_Abstract::APPEND, $type = 'text/javascript', $attrs = array())
     {
+        if ($this->_captureLock) {
+            require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
+            throw new Zend_View_Helper_Placeholder_Container_Exception('Cannot nest headScript captures');
+        }
+
+        $this->_captureLock        = true;
         $this->_captureType        = $captureType;
         $this->_captureScriptType  = $type;
         $this->_captureScriptAttrs = $attrs;
-        return parent::captureStart($captureType);
+        ob_start();
     }
     
     /**
@@ -153,9 +167,9 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
         $this->_captureLock        = false;
 
         switch ($this->_captureType) {
-            case self::SET:
-            case self::PREPEND:
-            case self::APPEND:
+            case Zend_View_Helper_Placeholder_Container_Abstract::SET:
+            case Zend_View_Helper_Placeholder_Container_Abstract::PREPEND:
+            case Zend_View_Helper_Placeholder_Container_Abstract::APPEND:
                 $action = strtolower($this->_captureType) . 'Script';
                 break;
             default:
@@ -224,12 +238,14 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
                     break;
                 case 'file':
                 default:
-                    $attrs['src'] = $content;
-                    $item = $this->createData($type, $attrs);
-                    if ('offsetSet' == $action) {
-                        $this->offsetSet($index, $item);
-                    } else {
-                        $this->$action($item);
+                    if (!$this->_isDuplicate($content)) {
+                        $attrs['src'] = $content;
+                        $item = $this->createData($type, $attrs);
+                        if ('offsetSet' == $action) {
+                            $this->offsetSet($index, $item);
+                        } else {
+                            $this->$action($item);
+                        }
                     }
                     break;
             }
@@ -237,8 +253,26 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
             return $this;
         }
 
-        require_once 'Zend/View/Exception.php';
-        throw new Zend_View_Exception(sprintf('Method "%s" does not exist', $method));
+        return parent::__call($method, $args);
+    }
+
+    /**
+     * Is the file specified a duplicate?
+     * 
+     * @param  string $file 
+     * @return bool
+     */
+    protected function _isDuplicate($file)
+    {
+        foreach ($this->getContainer() as $item) {
+            if (($item->source === null) 
+                && array_key_exists('src', $item->attributes)
+                && ($file == $item->attributes['src']))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -273,7 +307,7 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
             throw new Zend_View_Exception('Invalid argument passed to append(); please use one of the helper methods, appendScript() or appendFile()');
         }
 
-        return parent::append($value);
+        return $this->getContainer()->append($value);
     }
 
     /**
@@ -289,7 +323,7 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
             throw new Zend_View_Exception('Invalid argument passed to prepend(); please use one of the helper methods, prependScript() or prependFile()');
         }
 
-        return parent::prepend($value);
+        return $this->getContainer()->prepend($value);
     }
 
     /**
@@ -305,7 +339,7 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
             throw new Zend_View_Exception('Invalid argument passed to set(); please use one of the helper methods, setScript() or setFile()');
         }
 
-        return parent::set($value);
+        return $this->getContainer()->set($value);
     }
 
     /**
@@ -323,7 +357,29 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
         }
 
         $this->_isValid($value);
-        return parent::offsetSet($index, $value);
+        return $this->getContainer()->offsetSet($index, $value);
+    }
+
+    /**
+     * Set flag indicating if arbitrary attributes are allowed
+     * 
+     * @param  bool $flag 
+     * @return Zend_View_Helper_HeadScript
+     */
+    public function setAllowArbitraryAttributes($flag)
+    {
+        $this->_arbitraryAttributes = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Are arbitrary attributes allowed?
+     * 
+     * @return bool
+     */
+    public function arbitraryAttributesAllowed()
+    {
+        return $this->_arbitraryAttributes;
     }
 
     /**
@@ -340,7 +396,9 @@ class Zend_View_Helper_HeadScript extends Zend_View_Helper_Placeholder_Container
         $attrString = '';
         if (!empty($item->attributes)) {
             foreach ($item->attributes as $key => $value) {
-                if (!in_array($key, $this->_optionalAttributes)) {
+                if (!$this->arbitraryAttributesAllowed() 
+                    && !in_array($key, $this->_optionalAttributes)) 
+                {
                     continue;
                 }
                 if ('defer' == $key) {

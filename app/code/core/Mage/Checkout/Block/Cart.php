@@ -74,6 +74,11 @@ class Mage_Checkout_Block_Cart extends Mage_Checkout_Block_Cart_Abstract
         return $this->getUrl('checkout/onepage', array('_secure'=>true));
     }
 
+    public function getItemProduct(Mage_Sales_Model_Quote_Item $item)
+    {
+        return $this->helper('checkout')->getQuoteItemProduct($item);
+    }
+
     public function getItemDeleteUrl(Mage_Sales_Model_Quote_Item $item)
     {
         return $this->getUrl('checkout/cart/delete', array('id'=>$item->getId()));
@@ -82,11 +87,6 @@ class Mage_Checkout_Block_Cart extends Mage_Checkout_Block_Cart_Abstract
     public function getItemUrl($item)
     {
         return $this->helper('checkout')->getQuoteItemProductUrl($item);
-    }
-
-    public function getItemImageUrl($item)
-    {
-        return $this->helper('checkout')->getQuoteItemProductImageUrl($item);
     }
 
     public function getItemName($item)

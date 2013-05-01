@@ -15,8 +15,8 @@
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage Format
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Format.php 7447 2008-01-15 20:47:58Z thomas $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Format.php 8229 2008-02-20 22:19:48Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,7 +31,7 @@ require_once 'Zend/Locale/Data.php';
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage Format
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Locale_Format
@@ -318,6 +318,7 @@ class Zend_Locale_Format
      * @param   string  $input    Localized number string
      * @param   array   $options  Options: number_format, locale, precision. See {@link setOptions()} for details.
      * @return  string  locale formatted number
+     * @throws Zend_Locale_Exception
      */
     public static function toNumber($value, array $options = array())
     {
@@ -346,7 +347,7 @@ class Zend_Locale_Format
                 }
             }
         } else {
-            // seperate negative format pattern when avaiable
+            // seperate negative format pattern when available
             if (iconv_strpos($format, ';') !== false) {
                 if (call_user_func(Zend_Locale_Math::$comp, $value, 0) < 0) {
                     $format = iconv_substr($format, iconv_strpos($format, ';') + 1);
@@ -373,6 +374,10 @@ class Zend_Locale_Format
                 $options['precision'] = 0;
             }
             $value = Zend_Locale_Math::normalize($value);
+        }
+        if (strpos($format, '0') === false) {
+            require_once 'Zend/Locale/Exception.php';
+            throw new Zend_Locale_Exception('Wrong format... missing 0');
         }
 
         // get number parts

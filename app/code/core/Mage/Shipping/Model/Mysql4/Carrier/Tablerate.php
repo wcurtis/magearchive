@@ -37,6 +37,8 @@ class Mage_Shipping_Model_Mysql4_Carrier_Tablerate extends Mage_Core_Model_Mysql
         $write = $this->_getWriteAdapter();
 
         $select = $read->select()->from($this->getMainTable());
+        /*
+        //commented out code since we don't want to get state by using zip code
         if (!$request->getDestCountryId() && !$request->getDestRegionId()) {
 
             // assuming that request is coming from shopping cart
@@ -55,6 +57,9 @@ class Mage_Shipping_Model_Mysql4_Carrier_Tablerate extends Mage_Core_Model_Mysql
             $region = $read->quote($request->getDestRegionId());
             $country = $read->quote($request->getDestCountryId());
         }
+        */
+        $region = $read->quote($request->getDestRegionId());
+        $country = $read->quote($request->getDestCountryId());
         $zip = $read->quote($request->getDestPostcode());
         $select->where("(dest_zip=$zip)
                      OR (dest_region_id=$region AND dest_zip='')

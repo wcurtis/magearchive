@@ -23,6 +23,8 @@ $installer = $this;
 
 $installer->startSetup();
 
+if (!$installer->tableExists('catalog_category_entity')) {
+
 $installer->run("
 
 DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity')};
@@ -37,8 +39,7 @@ CREATE TABLE {$this->getTable('catalog_category_entity')} (
   `is_active` tinyint(1) unsigned NOT NULL default '1',
   PRIMARY KEY  (`entity_id`),
   KEY `FK_catalog_category_ENTITY_ENTITY_TYPE` (`entity_type_id`),
-  KEY `FK_catalog_category_ENTITY_STORE` (`store_id`),
-  CONSTRAINT `FK_CATALOG_CATEGORY_ENTITY_TREE_NODE` FOREIGN KEY (`entity_id`) REFERENCES {$this->getTable('catalog_category_tree')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `FK_catalog_category_ENTITY_STORE` (`store_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Category Entities';
 
 DROP TABLE IF EXISTS {$this->getTable('catalog_category_entity_datetime')};
@@ -141,25 +142,6 @@ CREATE TABLE {$this->getTable('catalog_category_product')} (
   CONSTRAINT `CATALOG_CATEGORY_PRODUCT_CATEGORY` FOREIGN KEY (`category_id`) REFERENCES {$this->getTable('catalog_category_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `CATALOG_CATEGORY_PRODUCT_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES {$this->getTable('catalog_product_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS {$this->getTable('catalog_category_tree')};
-CREATE TABLE {$this->getTable('catalog_category_tree')} (
-  `entity_id` int(10) unsigned NOT NULL auto_increment,
-  `pid` int(10) unsigned default '0',
-  `left_key` int(10) unsigned default '0',
-  `right_key` int(10) unsigned default '0',
-  `level` smallint(4) unsigned NOT NULL default '0',
-  `order` smallint(6) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`entity_id`),
-  KEY `FK_CATEGORY_PARENT` (`pid`),
-  KEY `IDX_ORDER` (`order`),
-  KEY `IDX_LEVEL` (`level`),
-  KEY `IDX_ORDER_LEVEL` (`level`,`order`),
-  CONSTRAINT `FK_CATALOG_CATEGORY_TREE_PARENT` FOREIGN KEY (`pid`) REFERENCES {$this->getTable('catalog_category_tree')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Categories tree';
-
-/* Root Node */
-INSERT INTO {$this->getTable('catalog_category_tree')} (`entity_id`,`pid`,`left_key`,`right_key`,`level`,`order`) VALUES ('1',NULL,'0','0','0','1');
 
 DROP TABLE IF EXISTS {$this->getTable('catalog_compare_item')};
 CREATE TABLE {$this->getTable('catalog_compare_item')} (
@@ -514,22 +496,27 @@ insert  into {$this->getTable('catalog_product_visibility')}(`visibility_id`,`vi
 
 insert  into {$this->getTable('core_email_template')}(`template_id`,`template_code`,`template_text`,`template_type`,`template_subject`,`template_sender_name`,`template_sender_email`,`added_at`,`modified_at`) values (NULL,'Send product to a friend','Welcome, {{var name}}<br /><br />Please look at <a href=\"{{var product.getProductUrl()}}\">{{var product.name}}</a><br /><br />Here is message: <br />{{var message}}<br /><br />',2,'Welcome, {{var name}}',NULL,NULL,NOW(),NOW());
 
-    ");
+ALTER TABLE `{$this->getTable('catalog/category_entity')}` ADD `path` VARCHAR( 255 ) NOT NULL, ADD `position` INT NOT NULL;
+");
+
+}
 
 $installer->endSetup();
 
 $installer->installEntities();
 
 // Create Root Catalog Node
+Mage::getModel('catalog/category')->setId(1)->setPath(1)->setName('Root Catalog')->save();
+
 $category = Mage::getModel('catalog/category');
 /* @var $category Mage_Catalog_Model_Category */
 
 $category->setStoreId(0);
-$category->setParentId(1);
-$category->setName('Root Catalog');
+$category->setName('Default Category');
 $category->setDisplayMode('PRODUCTS');
 $category->setAttributeSetId($category->getDefaultAttributeSetId());
 $category->setIsActive(1);
+$category->setPath('1/');
 $category->setInitialSetupFlag(true);
 $category->save();
 

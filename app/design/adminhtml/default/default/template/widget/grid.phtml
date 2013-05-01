@@ -34,7 +34,7 @@ $numColumns = sizeof($this->getColumns());
     <?if($this->canDisplayContainer()):?>
         <?if($this->getGridHeader()):?>
         <div class="content-header">
-            <table cellspacing="0" class="grid-header">
+            <table cellspacing="0">
                 <tr>
                     <td style="width:50%;"><h2><?=$this->getGridHeader();?></h2></td>
                 </tr>
@@ -70,7 +70,7 @@ $numColumns = sizeof($this->getColumns());
             <?endif;?>
 
             <?=$this->__('of %s pages', $this->getCollection()->getLastPageNumber())?>
-            <span class="spacer">|</span>
+            <span class="separator">|</span>
             <?=$this->__('View')?>
             <select name="<?=$this->getVarNameLimit()?>" onchange="<?=$this->getId()?>JsObject.loadByElement(this)">
                 <option value="20"<?if($this->getCollection()->getPageSize()==20):?> selected<?endif;?>>20</option>
@@ -79,9 +79,14 @@ $numColumns = sizeof($this->getColumns());
                 <option value="100"<?if($this->getCollection()->getPageSize()==100):?> selected<?endif;?>>100</option>
                 <option value="200"<?if($this->getCollection()->getPageSize()==200):?> selected<?endif;?>>200</option>
             </select>
-            <?=$this->__('per page')?><span class="spacer">|</span>
+            <?=$this->__('per page')?><span class="separator">|</span>
             <?=$this->__('Total %d records found', $this->getCollection()->getSize())?>
             <span id="<?=$this->getHtmlId()?>-total-count" class="no-display"><?=$this->getCollection()->getSize()?></span>
+            <?if($this->getRssLists()):?>
+                <?foreach ($this->getRssLists() as $_rss):?>
+                <span class="separator">|</span><a href="<?=$_rss->getUrl()?>" class="link-feed"><?=$_rss->getLabel()?></a>
+                <?endforeach?>
+            <?endif;?>
         </td>
     <?endif?>
     <?if($this->getExportTypes()):?>

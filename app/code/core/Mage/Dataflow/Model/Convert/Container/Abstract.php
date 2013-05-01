@@ -25,12 +25,15 @@
  * @category   Mage
  * @package    Mage_Dataflow
  */
-abstract class Mage_Dataflow_Model_Convert_Container_Abstract implements Mage_Dataflow_Model_Convert_Container_Interface
+abstract class Mage_Dataflow_Model_Convert_Container_Abstract
+    implements Mage_Dataflow_Model_Convert_Container_Interface
 {
 
     protected $_vars;
 
     protected $_profile;
+
+    protected $_action;
 
     protected $_data;
 
@@ -59,12 +62,23 @@ abstract class Mage_Dataflow_Model_Convert_Container_Abstract implements Mage_Da
         return $this;
     }
 
+    public function getAction()
+    {
+        return $this->_action;
+    }
+
+    public function setAction(Mage_Dataflow_Model_Convert_Action_Interface $action)
+    {
+        $this->_action = $action;
+        return $this;
+    }
+
     public function getProfile()
     {
         return $this->_profile;
     }
 
-    public function setProfile(Mage_Dataflow_Model_Convert_Profile_Abstract $profile)
+    public function setProfile(Mage_Dataflow_Model_Convert_Profile_Interface $profile)
     {
         $this->_profile = $profile;
         return $this;
@@ -138,7 +152,7 @@ abstract class Mage_Dataflow_Model_Convert_Container_Abstract implements Mage_Da
 
     public function addException($error, $level=null)
     {
-        $e = new Varien_Convert_Exception($error);
+        $e = new Mage_Dataflow_Model_Convert_Exception($error);
         $e->setLevel(!is_null($level) ? $level : Mage_Dataflow_Model_Convert_Exception::NOTICE);
         $e->setContainer($this);
         $e->setPosition($this->getPosition());

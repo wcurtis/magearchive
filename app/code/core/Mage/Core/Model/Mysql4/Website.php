@@ -38,34 +38,6 @@ class Mage_Core_Model_Mysql4_Website extends Mage_Core_Model_Mysql4_Abstract
 
     protected function _afterSave(Mage_Core_Model_Abstract $model)
     {
-        if ($model->getGroups()) {
-            $defaultUpdate = false;
-            $defaultId = 0;
-            if (!$model->getDefaultGroupId()) {
-                $defaultUpdate = true;
-            }
-            foreach ($model->getGroups() as $group) {
-                if ($group instanceof Mage_Core_Model_Store_Group) {
-                    $group->setWebsiteId($model->getId());
-                    $group->save();
-                    if ($defaultUpdate && !$defaultId) {
-                        $defaultId = $group->getId();
-                    }
-                }
-            }
-            if ($defaultUpdate && $defaultId) {
-                $this->_saveDefaultGroup($model->getId(), $defaultId);
-            }
-        }
-        return $this;
-    }
-
-    protected function _saveDefaultGroup($websiteId, $groupId)
-    {
-        $write = $this->_getWriteAdapter();
-        $bind = array('default_group_id'=>$groupId);
-        $condition = $write->quoteInto('website_id=?', $websiteId);
-        $this->_getWriteAdapter()->update($this->getMainTable(), $bind, $condition);
         return $this;
     }
 

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Action_Helper
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,7 +28,7 @@ require_once 'Zend/Session.php';
  * @uses       Zend_Controller_Action_Helper_Abstract
  * @category   Zend
  * @package    Zend_Controller
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -133,7 +133,7 @@ class Zend_Controller_Action_Helper_FlashMessenger extends Zend_Controller_Actio
 
         self::$_session->{$this->_namespace}[] = $message;
 
-        return;
+        return $this;
     }
 
     /**
@@ -163,7 +163,7 @@ class Zend_Controller_Action_Helper_FlashMessenger extends Zend_Controller_Actio
     }
 
     /**
-     * Clear all messages from the current namespace
+     * Clear all messages from the previous request & current namespace
      *
      * @return bool True if messages were cleared, false if none existed
      */
@@ -204,6 +204,21 @@ class Zend_Controller_Action_Helper_FlashMessenger extends Zend_Controller_Actio
     }
 
     /**
+     * clear messages from the current request & current namespace
+     *
+     * @return bool
+     */
+    public function clearCurrentMessages()
+    {
+        if ($this->hasCurrentMessages()) {
+            unset(self::$_session->{$this->_namespace});
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * getIterator() - complete the IteratorAggregate interface, for iterating
      *
      * @return ArrayObject
@@ -229,5 +244,16 @@ class Zend_Controller_Action_Helper_FlashMessenger extends Zend_Controller_Actio
         }
 
         return 0;
+    }
+
+    /**
+     * Strategy pattern: proxy to addMessage()
+     * 
+     * @param  string $message 
+     * @return void
+     */
+    public function direct($message)
+    {
+        return $this->addMessage($message);
     }
 }

@@ -241,6 +241,9 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
         $order->setPayment($convertQuote->paymentToOrderPayment($this->getQuote()->getPayment()));
 
         foreach ($address->getAllItems() as $item) {
+            $item->setDescription(
+                Mage::helper('checkout')->getQuoteItemProductDescription($item)
+            );
             $order->addItem($convertQuote->itemToOrderItem($item));
         }
 

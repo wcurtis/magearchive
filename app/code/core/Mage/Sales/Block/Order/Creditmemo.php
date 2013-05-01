@@ -77,4 +77,12 @@ class Mage_Sales_Block_Order_Creditmemo extends Mage_Core_Block_Template
     {
         return Mage::getUrl('*/*/view', array('order_id' => $order->getId()));
     }
+
+    public function getPrintCreditmemoUrl($creditmemo){
+        return Mage::getUrl('*/*/printCreditmemo', array('creditmemo_id' => $creditmemo->getId()));
+    }
+
+    public function getPrintAllCreditmemosUrl($order){
+        return Mage::getUrl('*/*/printCreditmemo', array('order_id' => $order->getId()));
+    }
 }

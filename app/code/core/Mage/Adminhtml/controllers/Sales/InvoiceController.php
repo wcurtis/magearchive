@@ -78,4 +78,27 @@ class Mage_Adminhtml_Sales_InvoiceController extends Mage_Adminhtml_Controller_A
     {
         return Mage::getSingleton('admin/session')->isAllowed('sales/invoice');
     }
+
+    public function pdfinvoicesAction(){
+        $invoicesIds = $this->getRequest()->getPost('invoice_ids');
+        if (!empty($invoicesIds)) {
+            $invoices = Mage::getResourceModel('sales/order_invoice_collection')
+                ->addAttributeToSelect('*')
+                ->addAttributeToFilter('entity_id', array('in' => $invoicesIds))
+                ->load();
+            if (!isset($pdf)){
+                $pdf = Mage::getModel('sales/order_pdf_invoice')->getPdf($invoices);
+            } else {
+                $pages = Mage::getModel('sales/order_pdf_invoice')->getPdf($invoices);
+                $pdf->pages = array_merge ($pdf->pages, $pages->pages);
+            }
+
+            header("Cache-Control: public");
+            header('Content-Disposition: attachment; filename="invoice'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf"');
+            header('Content-Type: application/pdf');
+            echo $pdf->render();
+        }
+        $this->_redirect('*/*/');
+    }
+
 }

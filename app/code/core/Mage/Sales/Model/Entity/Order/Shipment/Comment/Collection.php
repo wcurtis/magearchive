@@ -27,10 +27,9 @@
  */
 class Mage_Sales_Model_Entity_Order_Shipment_Comment_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getSingleton('sales_entity/order_shipment_comment'));
-        $this->setObject('sales/order_shipment_comment');
+        $this->_init('sales/order_shipment_comment');
     }
 
     public function setShipmentFilter($shipmentId)

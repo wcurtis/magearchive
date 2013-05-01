@@ -27,11 +27,6 @@
 
 class Mage_Reports_Model_Mysql4_Tag_Product_Collection extends Mage_Tag_Model_Mysql4_Product_Collection
 {
-    protected function _construct()
-    {
-        $this->_init('tag/tag');
-    }
-
     public function addUniqueTagedCount()
     {
         $this->getSelect()

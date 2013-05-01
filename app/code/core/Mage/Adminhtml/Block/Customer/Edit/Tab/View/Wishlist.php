@@ -41,8 +41,8 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_View_Wishlist extends Mage_Adminhtm
     {
         $collection = Mage::getModel('wishlist/wishlist')->loadByCustomer(Mage::registry('current_customer'))
             ->getProductCollection()
-                ->addAttributeToSelect('name')
-                ->addStoreData();
+            ->addAttributeToSelect('name')
+            ->addStoreData();
 
         $this->setCollection($collection);
 
@@ -69,18 +69,14 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_View_Wishlist extends Mage_Adminhtm
             'index'     => 'name'
         ));
 
-        $stores = Mage::getResourceModel('core/store_collection')
-            ->setWithoutDefaultFilter()
-            ->load()
-                ->toOptionHash();
-
-        $this->addColumn('store', array(
-            'header'    => Mage::helper('customer')->__('Added From'),
-            'index'     => 'store_id',
-            'type' => 'options',
-            'options' => $stores,
-            'width'     => '160px',
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('store', array(
+                'header'    => Mage::helper('customer')->__('Added From'),
+                'index'     => 'store_id',
+                'type'      => 'store',
+                'width'     => '160px',
+            ));
+        }
 
         $this->addColumn('added_at', array(
             'header'    => Mage::helper('customer')->__('Date Added'),

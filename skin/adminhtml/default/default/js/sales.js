@@ -426,7 +426,7 @@ AdminOrder.prototype = {
         var info = $('order:items_grid').getElementsBySelector('input', 'select');
         var data = $H({});
         for(var i=0; i<info.length; i++){
-            if(info[i].type != 'checkbox' || info[i].checked) {
+            if(!info[i].disabled && (info[i].type != 'checkbox' || info[i].checked)) {
                 data[info[i].name] = info[i].getValue();
             }
         }
@@ -562,6 +562,19 @@ AdminOrder.prototype = {
         var data = Form.serializeElements(fields, true);
 
         return $H(data);
+    },
+
+    toggleCustomPrice: function(checkbox, elemId, tierBlock) {
+        if (checkbox.checked) {
+            $(elemId).disabled = false;
+            $(elemId).show();
+            if($(tierBlock)) $(tierBlock).hide();
+        }
+        else {
+            $(elemId).disabled = true;
+            $(elemId).hide();
+            if($(tierBlock)) $(tierBlock).show();
+        }
     },
 
     submit : function(){

@@ -18,73 +18,81 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * Adminhtml add product urlrewrite form
+ * Sitemap edit form
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sitemap_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
 
+    /**
+     * Init form
+     */
     public function __construct()
     {
         parent::__construct();
         $this->setId('sitemap_form');
-        $this->setTitle(Mage::helper('adminhtml')->__('Block Information'));
+        $this->setTitle(Mage::helper('adminhtml')->__('Sitemap Information'));
     }
+
 
     protected function _prepareForm()
     {
         $model = Mage::registry('sitemap_sitemap');
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
 
-        $fieldset = $form->addFieldset('add_sitemap_form', array('legend' => Mage::helper('adminhtml')->__('Sitemap')));
-
-        $fieldset->addField('sitemap_id', 'hidden', array(
-	        'name' => 'sitemap_id',
-	        'value'=>$model->getId()
+        $form = new Varien_Data_Form(array(
+            'id'        => 'edit_form',
+            'action'    => $this->getData('action'),
+            'method'    => 'post'
         ));
 
-//
-//        $fieldset->addField('sitemap_type', 'text', array(
-//            'label' => Mage::helper('adminhtml')->__('Search Engine'),
-//            'name'  => 'sitemap_type',
-//            'value' => $model->getSitemapType()
-//             )
-//        );
+        $fieldset = $form->addFieldset('add_sitemap_form', array('legend' => Mage::helper('sitemap')->__('Sitemap')));
+
+        if ($model->getId()) {
+        	$fieldset->addField('sitemap_id', 'hidden', array(
+                'name' => 'sitemap_id',
+            ));
+        }
 
         $fieldset->addField('sitemap_filename', 'text', array(
-            'label' => Mage::helper('adminhtml')->__('Filename'),
-            'name' => 'sitemap_filename',
+            'label' => Mage::helper('sitemap')->__('Filename'),
+            'name'  => 'sitemap_filename',
             'value' => $model->getSitemapFilename()
-            )
-        );
-
-        $fieldset->addField('sitemap_path', 'text', array(
-            'label' => Mage::helper('adminhtml')->__('Path'),
-            'name' => 'sitemap_path',
-            'value' => $model->getSitemapPath()
-            )
-        );
-
-		$stores = Mage::getResourceModel('core/store_collection')->setWithoutDefaultFilter()->load()->toOptionHash();
-        $fieldset->addField('store_id', 'select', array(
-	        'label' 		=> Mage::helper('adminhtml')->__('Store'),
-	        'title' 		=> Mage::helper('adminhtml')->__('Store'),
-	        'name' 			=> 'store_id',
-	        'required' 		=> true,
-	        'options'		=> $stores,
-	        'value' => $model->getStoreId()
         ));
 
+        $fieldset->addField('sitemap_path', 'text', array(
+            'label' => Mage::helper('sitemap')->__('Path'),
+            'name'  => 'sitemap_path',
+            'value' => $model->getSitemapPath()
+        ));
 
+        if (!Mage::app()->isSingleStoreMode()) {
+            $fieldset->addField('store_id', 'select', array(
+                'label'    => Mage::helper('sitemap')->__('Store View'),
+                'title'    => Mage::helper('sitemap')->__('Store View'),
+                'name'     => 'store_id',
+                'required' => true,
+                'value'    => $model->getStoreId(),
+                'values'   => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm()
+            ));
+        }
+        else {
+            $fieldset->addField('store_id', 'hidden', array(
+                'name'     => 'store_id',
+                'value'    => Mage::app()->getStore(true)->getId()
+            ));
+            $model->setStoreId(Mage::app()->getStore(true)->getId());
+        }
 
+        $form->setValues($model->getData());
 
         $form->setUseContainer(true);
-        $form->setAction( $form->getAction() . 'ret/' . $this->getRequest()->getParam('ret') );
+
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 

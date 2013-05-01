@@ -22,7 +22,7 @@
 <config>
    <modules>
       <Mage_Sendfriend>
-         <version>0.7.0</version>
+         <version>0.7.1</version>
          <depends>
             <Mage_Catalog />
          </depends>
@@ -68,6 +68,15 @@
       <blocks>
          <sendfriend><class>Mage_Sendfriend_Block</class></sendfriend>
       </blocks>
+      <template>
+            <email>
+                <sendfriend_email_template translate="label" module="sendfriend">
+                    <label>Send product to a friend</label>
+                    <file>product_share.html</file>
+                    <type>html</type>
+                </sendfriend_email_template>
+            </email>
+        </template>
    </global>
 
    <frontend>
@@ -102,7 +111,7 @@
         <sendfriend>
             <email>
                 <enabled>1</enabled>
-                <template>11</template>
+                <template>sendfriend_email_template</template>
                 <allow_guest>0</allow_guest>
                 <max_recipients>5</max_recipients>
                 <max_per_hour>5</max_per_hour>

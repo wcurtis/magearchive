@@ -45,12 +45,13 @@ varienTabs.prototype = {
                 }
             }
         }
-        this.showTabContent($(activeTabId));
+
+        this.displayFirst = activeTabId;
         Event.observe(window,'load',this.moveTabContentInDest.bind(this));
     },
     
     moveTabContentInDest : function(){
-        for(var tab in this.tabs){
+        for(var tab=0; tab<this.tabs.length; tab++){
             if($(this.destElementId) &&  !this.tabs[tab].contentMoved){
                 var tabContentElement = $(this.getTabContentElementId(this.tabs[tab]));
                 if(tabContentElement && tabContentElement.parentNode.id != this.destElementId){
@@ -64,6 +65,10 @@ varienTabs.prototype = {
                     }
                 }
             }
+        }
+        if (this.displayFirst) {
+            this.showTabContent($(this.displayFirst));
+            this.displayFirst = null;
         }
     },
     

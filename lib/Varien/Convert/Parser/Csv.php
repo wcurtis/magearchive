@@ -102,27 +102,17 @@ class Varien_Convert_Parser_Csv extends Varien_Convert_Parser_Abstract
             foreach ($fields as $j=>$f) {
                 $row[$f] = $line[$j];
             }
-            /*
-            if ($i <= 100)
-            {
-                $data[] = $row;
-            }
-            */
-            //$map = new Varien_Convert_Mapper_Column();
             $map->setData(array($row));
             $map->map();
             $row = $map->getData();
-            //$import = Mage::getModel('dataflow/import');
             $import->setImportId(0);
             $import->setSessionId($sessionId);
             $import->setSerialNumber($i);
-            $import->setValue(serialize($row));
+            $import->setValue(serialize($row[0]));
             $import->save();
-            //unset($import);
         }
         fclose($fp);
         unset($sessionId);
-        //$this->setData($data);
         return $this;
     } // end
 
@@ -159,7 +149,7 @@ class Varien_Convert_Parser_Csv extends Varien_Convert_Parser_Abstract
                     echo str_replace('"', '\"',$tmp).'<br>';
                 }
                 */
-                $v = isset($row[$f]) ? str_replace(array('"', '\\'), array($fEsc.'"', $fEsc.'\\'), $row[$f]) : '';
+                $v = isset($row[$f]) ? str_replace(array('"', '\\'), array($fEnc.'"', $fEsc.'\\'), $row[$f]) : '';
 
                 $line[] = $fEnc.$v.$fEnc;
             }

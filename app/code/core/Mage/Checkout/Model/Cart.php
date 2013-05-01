@@ -26,6 +26,11 @@
  */
 class Mage_Checkout_Model_Cart extends Varien_Object
 {
+    protected function _getResource()
+    {
+        return Mage::getResourceSingleton('checkout/cart');
+    }
+
     /**
      * Retrieve checkout session model
      *
@@ -47,6 +52,27 @@ class Mage_Checkout_Model_Cart extends Varien_Object
     }
 
 
+    public function getItemsCount()
+    {
+        if (!$this->hasItemsCount()) {
+            $this->setItemsCount($this->getQuote()->getItemsCollection()->getSize());
+        }
+        return $this->getData('items_count');
+    }
+
+    public function getItemsQty()
+    {
+        if (!$this->hasItemsQty()) {
+            $this->setItemsQty($this->_getResource()->getItemsQty($this));
+        }
+        return $this->getData('items_qty');
+    }
+
+    /**
+     * Retrieve array of cart product ids
+     *
+     * @return array
+     */
     public function getProductIds()
     {
         $products = $this->getData('product_ids');
@@ -123,13 +149,13 @@ class Mage_Checkout_Model_Cart extends Varien_Object
     {
         if ($product->getId() && $product->isVisibleInCatalog()) {
             switch ($product->getTypeId()) {
-                case Mage_Catalog_Model_Product::TYPE_SIMPLE:
+                case Mage_Catalog_Model_Product_Type::TYPE_SIMPLE:
                     $this->_addSimpleProduct($product, $qty);
                     break;
-                case Mage_Catalog_Model_Product::TYPE_CONFIGURABLE_SUPER:
+                case Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE:
                     $this->_addConfigurableProduct($product, $qty);
                     break;
-                case Mage_Catalog_Model_Product::TYPE_GROUPED_SUPER:
+                case Mage_Catalog_Model_Product_Type::TYPE_GROUPED:
                     $this->_addGroupedProduct($product, $qty);
                     break;
                 default:
@@ -156,6 +182,7 @@ class Mage_Checkout_Model_Cart extends Varien_Object
     {
         $item = $this->getQuote()->addCatalogProduct($product, $qty);
         if ($item->getHasError()) {
+            $this->setLastQuoteMessage($item->getQuoteMessage());
             Mage::throwException($item->getMessage());
         }
         return $this;
@@ -178,14 +205,11 @@ class Mage_Checkout_Model_Cart extends Varien_Object
         }
 
         $added = false;
-        foreach($product->getSuperGroupProductsLoaded() as $productLink) {
-            if(isset($groupedProducts[$productLink->getLinkedProductId()])) {
-                $qty =  $groupedProducts[$productLink->getLinkedProductId()];
+        foreach($product->getTypeInstance()->getAssociatedProducts() as $subProduct) {
+            if(isset($groupedProducts[$subProduct->getId()])) {
+                $qty =  $groupedProducts[$subProduct->getId()];
                 if (!empty($qty)) {
-                    $subProduct = Mage::getModel('catalog/product')
-                        ->load($productLink->getLinkedProductId())
-                        ->setSuperProduct($product);
-
+                    $subProduct->setSuperProduct($product);
                     $this->getQuote()->addCatalogProduct($subProduct, $qty);
                     $added = true;
                 }
@@ -206,24 +230,25 @@ class Mage_Checkout_Model_Cart extends Varien_Object
     protected function _addConfigurableProduct(Mage_Catalog_Model_Product $product, $qty=1)
     {
         if($product->getConfiguredAttributes()) {
-            $subProductId = $product->getSuperLinkIdByOptions($product->getConfiguredAttributes());
+            $subProduct = $product->getTypeInstance()->getProductByAttributes(
+                $product->getConfiguredAttributes()
+            );
         } else {
-            $subProductId = false;
+            $subProduct = false;
         }
-        if($subProductId) {
-            $subProduct = Mage::getModel('catalog/product')
-                ->load($subProductId)
-                ->setSuperProduct($product);
 
+        if($subProduct) {
+            $subProduct->setSuperProduct($product);
             $item = $this->getQuote()->addCatalogProduct($subProduct, $qty);
             if ($item->getHasError()) {
+                $this->setLastQuoteMessage($item->getQuoteMessage());
                 Mage::throwException($item->getMessage());
             }
         }
         else {
             $this->getCheckoutSession()->setRedirectUrl($product->getProductUrl());
             $this->getCheckoutSession()->setUseNotice(true);
-            Mage::throwException(Mage::helper('checkout')->__('Please specify the product option(s)'));
+            Mage::throwException(Mage::helper('checkout')->__('Please specify the- product option(s)'));
         }
         return $this;
     }
@@ -284,7 +309,7 @@ class Mage_Checkout_Model_Cart extends Varien_Object
                 continue;
             }
 
-        	if (!empty($itemInfo['remove'])) {
+        	if (!empty($itemInfo['remove']) || (isset($itemInfo['qty']) && $itemInfo['qty']=='0')) {
         	    $this->removeItem($itemId);
         	    continue;
         	}

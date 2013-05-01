@@ -32,9 +32,9 @@ class Mage_Customer_Model_Entity_Group_Collection extends Mage_Core_Model_Mysql4
     public function setTaxGroupFilter($classId)
     {
         $taxClassGroupTable = Mage::getSingleton('core/resource')->getTableName('tax/tax_class_group');
-        $this->_sqlSelect->joinLeft($taxClassGroupTable, "{$taxClassGroupTable}.class_group_id=main_table.customer_group_id");
-    	$this->_sqlSelect->where("{$taxClassGroupTable}.class_parent_id = ?", $classId);
-    	return $this;
+        $this->_select->joinLeft($taxClassGroupTable, "{$taxClassGroupTable}.class_group_id=main_table.customer_group_id");
+        $this->_select->where("{$taxClassGroupTable}.class_parent_id = ?", $classId);
+        return $this;
     }
 
     public function setIgnoreIdFilter($indexes)
@@ -42,7 +42,7 @@ class Mage_Customer_Model_Entity_Group_Collection extends Mage_Core_Model_Mysql4
         if( !count($indexes) > 0 ) {
             return $this;
         }
-        $this->_sqlSelect->where('main_table.customer_group_id NOT IN(?)', $indexes);
+        $this->_select->where('main_table.customer_group_id NOT IN(?)', $indexes);
         return $this;
     }
 
@@ -55,7 +55,7 @@ class Mage_Customer_Model_Entity_Group_Collection extends Mage_Core_Model_Mysql4
     public function addTaxClass()
     {
         $taxClassTable = Mage::getSingleton('core/resource')->getTableName('tax/tax_class');
-        $this->_sqlSelect->joinLeft($taxClassTable, "main_table.tax_class_id = {$taxClassTable}.class_id");
+        $this->_select->joinLeft($taxClassTable, "main_table.tax_class_id = {$taxClassTable}.class_id");
 
         return $this;
     }

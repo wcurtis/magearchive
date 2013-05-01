@@ -32,7 +32,7 @@ class Mage_Review_Block_List extends Mage_Core_Block_Template
     {
         parent::__construct();
         $this->setTemplate('review/list.phtml');
-        $productId = Mage::registry('controller')->getRequest()->getParam('id', false);
+        $productId = Mage::app()->getRequest()->getParam('id', false);
 
         $this->_collection = Mage::getModel('review/review')->getCollection();
 
@@ -48,7 +48,7 @@ class Mage_Review_Block_List extends Mage_Core_Block_Template
 
     public function getAddLink()
     {
-        $productId = Mage::registry('controller')->getRequest()->getParam('id', false);
+        $productId = Mage::app()->getRequest()->getParam('id', false);
         return Mage::getUrl('review/product/list', array('id' => $productId));
     }
 
@@ -59,7 +59,7 @@ class Mage_Review_Block_List extends Mage_Core_Block_Template
 
     protected function _toHtml()
     {
-        $request    = Mage::registry('controller')->getRequest();
+        $request    = Mage::app()->getRequest();
         $productId  = $request->getParam('id', false);
 
         $this->_getCollection()

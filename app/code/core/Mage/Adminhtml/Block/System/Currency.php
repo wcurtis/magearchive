@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Manage currency block
  *
@@ -26,7 +27,8 @@
  */
 class Mage_Adminhtml_Block_System_Currency extends Mage_Adminhtml_Block_Template
 {
-    public function __construct()
+
+    protected function _construct()
     {
         $this->setTemplate('system/currency/rates.phtml');
     }
@@ -86,7 +88,7 @@ class Mage_Adminhtml_Block_System_Currency extends Mage_Adminhtml_Block_Template
 
     protected function getServicesHtml()
     {
-        return $this->getLayout()->createBlock('core/html_select')
+        return $this->getLayout()->createBlock('adminhtml/html_select')
             ->setOptions(Mage::getModel('adminhtml/system_config_source_currency_service')->toOptionArray(0))
             ->setId('rate_services')
             ->setName('rate_services')
@@ -104,4 +106,5 @@ class Mage_Adminhtml_Block_System_Currency extends Mage_Adminhtml_Block_Template
     {
         return $this->getUrl('*/*/fetchRates');
     }
+
 }

@@ -39,12 +39,11 @@ class Mage_Core_Model_Mysql4_Store extends Mage_Core_Model_Mysql4_Abstract
 
     protected function _afterSave(Mage_Core_Model_Abstract $object)
     {
-    	parent::_afterSave($object);
-    	$this->updateDatasharing();
-    	$this->_updateGroupDefaultStore($object->getGroupId(), $object->getId());
-    	$this->_changeGroup($object);
+        parent::_afterSave($object);
+        $this->_updateGroupDefaultStore($object->getGroupId(), $object->getId());
+        $this->_changeGroup($object);
 
-    	return $this;
+        return $this;
     }
 
     protected function _afterDelete(Mage_Core_Model_Abstract $model)
@@ -89,55 +88,9 @@ class Mage_Core_Model_Mysql4_Store extends Mage_Core_Model_Mysql4_Abstract
         return $this;
     }
 
-    public function updateDatasharing($key='default')
-    {
-        $path = 'advanced/datashare/'.$key;
-    	$this->_getWriteAdapter()->delete($this->getTable('config_data'), "path like '$path'");
-
-    	$websites = Mage::getResourceModel('core/website_collection')->setLoadDefault(true)->load();
-    	$stores = Mage::getResourceModel('core/store_collection')->setLoadDefault(true)->load();
-    	/*
-    	$fields = Mage::getResourceModel('core/config_field_collection')
-    		->addFieldToFilter('path', array('like'=>'advanced/datashare/%'))
-    		->load();
-        */
-    	$data = Mage::getModel('core/config_data')
-    		->setScope('websites')
-    		->setPath($path);
-
-    	$allStoreIds = array();
-    	foreach ($stores as $s) {
-    		$w = $websites->getItemById($s->getWebsiteId());
-    		if (!$w) {
-    			continue;
-    		}
-    		$stores = $w->getStores();
-    		if (empty($stores)) {
-    			$stores = array();
-    		}
-    		$stores[] = $s->getId();
-    		$w->setStores($stores);
-    		$allStoreIds[] = $s->getId();
-    	}
-    	$websites->getItemById(0)->setStores($allStoreIds);
-
-    	foreach ($websites as $w) {
-    		if (!$w->getStores()) {
-    			continue;
-    		}
-    		$data->unsConfigId()
-    			->setScopeId($w->getId())
-    			->setValue(join(',',$w->getStores()))
-    			->save();
-    	}
-
-    	Mage::app()->getConfig()->removeCache();
-    	return $this;
-    }
-
     protected function _getLoadSelect($field, $value, $object)
     {
-	   	$select = $this->_getReadAdapter()->select()
+        $select = $this->_getReadAdapter()->select()
             ->from($this->getMainTable())
             ->where($field.'=?', $value)
             ->order('sort_order ASC');

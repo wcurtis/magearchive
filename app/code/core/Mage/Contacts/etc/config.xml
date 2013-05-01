@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Contacts>
-            <version>0.7.2</version>
+            <version>0.8.0</version>
         </Mage_Contacts>
     </modules>
     <frontend>
@@ -54,6 +54,15 @@
                 </connection>
             </contacts_setup>
         </resources>
+        <template>
+            <email>
+                <contacts_email_email_template translate="label" module="contacts">
+                    <label>Contact Form</label>
+                    <file>contact_form.html</file>
+                    <type>text</type>
+                </contacts_email_email_template>
+            </email>
+        </template>
     </global>
 
     <adminhtml>
@@ -86,7 +95,7 @@
             <email>
                 <recipient_email><![CDATA[hello@example.com]]></recipient_email>
                 <sender_email_identity>custom2</sender_email_identity>
-                <email_template>12</email_template>
+                <email_template>contacts_email_email_template</email_template>
             </email>
         </contacts>
     </default>

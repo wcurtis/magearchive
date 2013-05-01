@@ -37,7 +37,7 @@ class Mage_Core_Model_Mysql4_Email_Template_Collection extends Varien_Data_Colle
     {
         parent::__construct(Mage::getSingleton('core/resource')->getConnection('core_read'));
         $this->_templateTable = Mage::getSingleton('core/resource')->getTableName('core/email_template');
-        $this->_sqlSelect->from($this->_templateTable, array('template_id','template_code',
+        $this->_select->from($this->_templateTable, array('template_id','template_code',
                                                              'template_type',
                                                              'template_subject','template_sender_name',
                                                              'template_sender_email',
@@ -48,7 +48,7 @@ class Mage_Core_Model_Mysql4_Email_Template_Collection extends Varien_Data_Colle
                 
     public function toOptionArray()
     {
-    	return $this->_toOptionArray('template_id', 'template_code');
+        return $this->_toOptionArray('template_id', 'template_code');
     }
     
 }

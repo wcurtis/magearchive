@@ -19,9 +19,11 @@
  */
 ?>
 <div class="entry-edit">
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Product Categories')?></h4>
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Product Categories')?></h4>
+    </div>
     <fieldset id="grop_fields">
-        <input type="hidden" name="categories" id="product_categories" value="">
+        <input type="hidden" name="category_ids" id="product_categories" value="<?=$this->getIdsString()?>">
         <div id="tree-div" class="tree"></div>
     </fieldset>
 </div>
@@ -29,7 +31,7 @@
 <script type="text/javascript">
 Ext.EventManager.onDocumentReady(function() {
 	var tree = new Ext.tree.TreePanel('tree-div', {
-        animate:false, 
+        animate:false,
         loader: false,
         enableDD:false,
         containerScroll: true,
@@ -37,9 +39,13 @@ Ext.EventManager.onDocumentReady(function() {
 		selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
 		rootVisible: '<?=$this->getRootNode()->getIsVisible()?>'
 	});
-	
-	tree.on('check', function() {
-		$('product_categories').value = this.getChecked().join(',');
+
+	tree.on('check', function(node) {
+	    if(node.attributes.checked) {
+            categoryAdd(node.id);
+	    } else {
+            categoryRemove(node.id);
+	    }
 	}, tree);
 
 	// set the root node
@@ -54,18 +60,16 @@ Ext.EventManager.onDocumentReady(function() {
 	tree.setRootNode(root);
 	bildCategoryTree(root, <?=$this->getTreeJson()?>);
     tree.addListener('click', categoryClick.createDelegate(this));
-	
+
     // render the tree
     tree.render();
     root.expand();
     tree.expandAll();
-    
-    $('product_categories').value = tree.getChecked().join(',');
 });
 
 function bildCategoryTree(parent, config){
     if (!config) return null;
-	
+
     if (parent && config && config.length){
         for (var i = 0; i < config.length; i++){
             config[i].uiProvider = Ext.tree.CheckboxNodeUI;
@@ -75,12 +79,22 @@ function bildCategoryTree(parent, config){
                 bildCategoryTree(node, config[i].children);
             }
         }
-    }	    
+    }
 }
 
 function categoryClick(node, e){
     node.getUI().check(!node.getUI().checked())
     varienElementMethods.setHasChanges(Event.element(e), e);
 };
+function categoryAdd(id) {
+    var ids = $('product_categories').value.split(',');
+    ids.push(id);
+    $('product_categories').value = ids.join(',');
+}
+function categoryRemove(id) {
+    var ids = $('product_categories').value.split(',');
+    ids.splice(ids.indexOf(id), 1);
+    $('product_categories').value = ids.join(',');
+}
 </script>
 <?endif;?>

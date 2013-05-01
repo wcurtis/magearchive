@@ -611,12 +611,28 @@ class Mage_Core_Model_Url extends Varien_Object
     {
         Varien_Profiler::start(__METHOD__);
 
+        if (isset($routeParams['_query'])) {
+            if (is_string($routeParams['_query'])) {
+                $this->setQuery($routeParams['_query']);
+            } elseif (is_array($routeParams['_query'])) {
+                $this->setQueryParams($routeParams['_query']);
+            }
+            unset($routeParams['_query']);
+        }
+
+        if (isset($routeParams['_fragment'])) {
+            $this->setFragment($routeParams['_fragment']);
+            unset($routeParams['_fragment']);
+        }
+
+#echo "<hr> *** ".$routePath." : ";
         $url = $this->getRouteUrl($routePath, $routeParams);
 
         $session = Mage::getSingleton('core/session');
         if ($sessionId = $session->getSessionIdForHost($url)) {
             $this->setQueryParam($session->getSessionIdQueryParam(), $sessionId);
         }
+
 
         if ($this->getQuery()) {
             $url .= '?'.$this->getQuery();

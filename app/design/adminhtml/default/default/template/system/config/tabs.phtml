@@ -22,6 +22,14 @@
     <label for="store_switcher"><?=$this->__('Current Configuration Scope:')?></label>
     <select id="store_switcher" class="system-config-store-switcher" onchange="location.href=this.options[this.selectedIndex].getAttribute('url')">
     <?foreach ($this->getStoreSelectOptions() as $_value=>$_option):?>
+    <?if (isset($_option['is_group'])):?>
+        <?if ($_option['is_close']):?>
+            </optgroup>
+        <?else:?>
+            <optgroup label="<?=$_option['label']?>" style="<?=$_option['style']?>">
+        <?endif;?>
+        <?continue?>
+    <?endif;?>
       <option value="<?=$_value?>" url="<?=$_option['url']?>" <?=$_option['selected']?'selected':''?> style="<?=$_option['style']?>">
           <?=$_option['label']?>
       </option>
@@ -35,18 +43,27 @@
 <?if($this->getTitle()):?>
     <h3><?=$this->getTitle()?></h3>
 <?endif?>
-<?if(!empty($tabs)):?>
-<ul id="<?=$this->getId()?>" class="tabs">
-<?foreach ($tabs as $_tab):?>
-    <li>
-        <a href="<?=$_tab->getUrl()?>" id="<?=$this->getTabId($_tab)?>" title="<?=$_tab->getTitle()?>" class="tab-item-link <?=$_tab->getClass()?>">
-            <span><div class="changed" title="<?=$this->__('The information in this tab has been changed.')?>"></div><div class="error" title="<?=$this->__('This tab contains invalid data. Please solve the problem before saving.')?>"></div><?=$_tab->getLabel()?></span>
-        </a>
-        <div id="<?=$this->getId()?>_<?=$_tab->getId()?>_content" style="display:none"><?=$_tab->getContent()?></div>
+<?if($this->getTabs()):?>
+<ul id="<?=$this->getId()?>" class="tabs config-tabs">
+<?foreach ($this->getTabs() as $_tab):?>
+    <?if($_tab->getSections()):?>
+    <li <?if ($_tab->getClass()):?>class="<?=$_tab->getClass()?>"<?endif?>>
+        <dl>
+        <dt class="label" style=""><?=$_tab->getLabel()?></dt>
+        <?$_iterator = 1;?>
+        <?foreach ($_tab->getSections() as $_section):?>
+            <dd>
+                <a href="<?=$_section->getUrl()?>" class="<?=$_section->getClass()?><?if($_section->getId()==$this->getActiveSection()):?> active<?endif?> <?=$_section->getIsLast()?'last':''?>">
+                    <span <?if($_tab->getId()==$this->getActiveTab()):?>class="active"<?endif?>>
+                        <?=$_section->getLabel()?>
+                    </span>
+                </a>
+            </dd>
+            <?$_iterator++ ;?>
+        <?endforeach;?>
+        </dl>
     </li>
+    <?endif;?>
 <?endforeach;?>
 </ul>
-<script type="text/javascript" language="javascript">
-    <?=$this->getId()?>JsTabs = new varienTabs('<?=$this->getId()?>', '<?=$this->getDestElementId()?>', '<?=$this->getActiveTabId()?>');
-</script>
 <?endif;?>

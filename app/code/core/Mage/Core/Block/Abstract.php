@@ -25,10 +25,12 @@
  * For block generation you must define Data source class, data source class method,
  * parameters array and block template
  *
+ * @category   Mage
+ * @package    Mage_Core
  */
-
 abstract class Mage_Core_Block_Abstract extends Varien_Object
 {
+
     /**
      * Block name in layout
      *
@@ -115,19 +117,19 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
 
     protected static $_urlModel;
 
-    public function __construct($data=array())
+
+    /**
+     * Internal constructor, that is called from real constructor
+     *
+     * Please override this one instead of overriding real __construct constructor
+     *
+     */
+    protected function _construct()
     {
-        parent::__construct($data);
-
-        if (Mage::registry('controller')) {
-            $this->_request = Mage::registry('controller')->getRequest();
-        }
-        else {
-            throw new Exception(Mage::helper('core')->__("Can't retrieve request object"));
-        }
+        /**
+         * Please override this one instead of overriding real __construct constructor
+         */
     }
-
-    protected function _construct() {}
 
     /**
      * Retrieve request object
@@ -136,6 +138,12 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      */
     public function getRequest()
     {
+        if ($controller = Mage::app()->getFrontController()) {
+            $this->_request = $controller->getRequest();
+        }
+        else {
+            throw new Exception(Mage::helper('core')->__("Can't retrieve request object"));
+        }
         return $this->_request;
     }
 
@@ -168,7 +176,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      */
     public function getAction()
     {
-        return Mage::registry('action');
+        return Mage::app()->getFrontController()->getAction();
     }
 
     /**
@@ -263,19 +271,6 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     }
 
     /**
-     * Retrieve block attribute value
-     *
-     * Wrapper for method "getData"
-     *
-     * @param   string $name
-     * @return  mixed
-     */
-    public function getAttribute($name)
-    {
-        return $this->getData($name);
-    }
-
-    /**
      * Set block attribute value
      *
      * Wrapper for method "setData"
@@ -349,7 +344,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
 
         if (!empty($this->_sortedChildren)) {
             $key = array_search($alias, $this->_sortedChildren);
-            if (!empty($key)) {
+            if ($key!==false) {
                 unset($this->_sortedChildren[$key]);
             }
         }
@@ -445,7 +440,9 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      * @param   string $name
      * @param   Mage_Core_Block_Abstract $child
      */
-    protected function _beforeChildToHtml($name, $child) {}
+    protected function _beforeChildToHtml($name, $child)
+    {
+    }
 
     /**
      * Retrieve block html
@@ -455,7 +452,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      */
     public function getBlockHtml($name)
     {
-        if (!($layout = $this->getLayout()) && !($layout = Mage::registry('action')->getLayout())) {
+        if (!($layout = $this->getLayout()) && !($layout = Mage::app()->getFrontController()->getAction()->getLayout())) {
             return '';
         }
         if (!($block = $layout->getBlock($name))) {
@@ -473,7 +470,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      * @param   string $alias
      * @return  object $this
      */
-    function insert($block, $siblingName='', $after=false, $alias='')
+    public function insert($block, $siblingName='', $after=false, $alias='')
     {
         if ($block->getIsAnonymous()) {
             $this->setChild('', $block);
@@ -520,22 +517,29 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      * @param   string $alias
      * @return  Mage_Core_Block_Abstract
      */
-    function append($block, $alias='')
+    public function append($block, $alias='')
     {
         $this->insert($block, '', true, $alias);
         return $this;
     }
 
-    protected function _toHtml()
-    {
-        return '';
-    }
-
+    /**
+     * Before rendering html, but after trying to load cache
+     *
+     * @return Mage_Core_Block_Abstract
+     */
     protected function _beforeToHtml()
     {
         return $this;
     }
 
+    /**
+     * Produce and return block's html output
+     *
+     * It is a final method, but you can override _toHmtl() method in descendants if needed
+     *
+     * @return string
+     */
     final public function toHtml()
     {
         Mage::dispatchEvent('core_block_abstract_to_html_before', array('block' => $this));
@@ -553,6 +557,16 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         Mage::dispatchEvent('core_block_abstract_to_html_after', array('block' => $this));
 
         return $html;
+    }
+
+    /**
+     * Override this method in descendants to produce html
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        return '';
     }
 
     /**
@@ -636,12 +650,24 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $type
+     * @return Mage_Core_Block_Abstract
+     */
     public function getHelper($type)
     {
-        return $this->getLayout()->getHelper($type);
+        return $this->getLayout()->getBlockSingleton($type);
         //return $this->helper($type);
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $name
+     * @return Mage_Core_Block_Abstract
+     */
     public function helper($name)
     {
         return $this->getLayout()->helper($name);
@@ -658,6 +684,19 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     public function formatDate($date=null, $format='short', $showTime=false)
     {
         return $this->helper('core')->formatDate($date, $format, $showTime);
+    }
+
+    /**
+     * Retrieve formating time
+     *
+     * @param   string $time
+     * @param   string $format
+     * @param   bool $showDate
+     * @return  string
+     */
+    public function formatTime($time=null, $format='short', $showDate=false)
+    {
+        return $this->helper('core')->formatTime($time, $format, $showDate);
     }
 
     /**
@@ -689,7 +728,11 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return Mage::app()->getTranslator()->translate($args);
     }
 
-
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getCacheKey()
     {
         if (!$this->hasData('cache_key')) {
@@ -698,6 +741,11 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return $this->getData('cache_key');
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return array
+     */
     public function getCacheTags()
     {
         if (!$this->hasData('cache_tags')) {
@@ -709,6 +757,11 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return $tags;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return int
+     */
     public function getCacheLifetime()
     {
         if (!$this->hasData('cache_lifetime')) {
@@ -717,6 +770,11 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return $this->getData('cache_lifetime');
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return unknown
+     */
     protected function _loadCache()
     {
         if (is_null($this->getCacheLifetime()) || !Mage::app()->useCache('block_html')) {
@@ -725,6 +783,12 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return Mage::app()->loadCache($this->getCacheKey());
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $data
+     * @return Mage_Core_Block_Abstract
+     */
     protected function _saveCache($data)
     {
         if (is_null($this->getCacheLifetime()) || !Mage::app()->useCache('block_html')) {
@@ -735,7 +799,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     }
 
     /**
-     * Retirve escaped data
+     * Escape html entities
      *
      * @param   mixed $data
      * @return  mixed

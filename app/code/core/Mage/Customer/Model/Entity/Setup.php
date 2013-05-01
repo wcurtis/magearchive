@@ -19,134 +19,150 @@
  */
 
 
+/**
+ * Customer resource setup model
+ *
+ * @category   Mage
+ * @package    Mage_Customer
+ */
 class Mage_Customer_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 {
+
     public function getDefaultEntities()
     {
         return array(
-            'customer'=>array(
-                'table'=>'customer/entity',
-                'increment_model'=>'eav/entity_increment_numeric',
-                'increment_per_store'=>false,
+            'customer' => array(
+                'table'                 => 'customer/entity',
+                'increment_model'       => 'eav/entity_increment_numeric',
+                'increment_per_store'   => false,
                 'attributes' => array(
+                    'website_id' => array(
+                        'type'          => 'static',
+                        'label'         => 'Create In',
+                        'input'         => 'select',
+                        'source'        => 'customer/customer_attribute_source_website',
+                        'backend'       => 'customer/customer_attribute_backend_website',
+                        'sort_order'    => 1,
+                    ),
                     'store_id' => array(
-                        'type'=>'static',
-                        'label'=>'Create In',
-                        'input'=>'select',
-                        'source'=>'customer_entity/customer_attribute_source_store',
-                        'backend'=>'customer_entity/customer_attribute_backend_store',
-                        'sort_order'=>1,
+                        'type'          => 'static',
+                        'label'         => 'Create In',
+                        'input'         => 'select',
+                        'source'        => 'customer/customer_attribute_source_store',
+                        'backend'       => 'customer/customer_attribute_backend_store',
+                        'visible'       => false,
+                        'sort_order'    => 2,
                     ),
                     'created_in' => array(
-                        'type'=>'int',
-                        'label'=>'Created From',
-                        'input'=>'select',
-                        'source'=>'customer_entity/customer_attribute_source_store',
-                        'sort_order'=>2,
+                        'type'          => 'varchar',
+                        'label'         => 'Created From',
+                        'sort_order'    => 3,
                     ),
                     'firstname' => array(
-                        'label'=>'First Name',
-                        'sort_order'=>3,
+                        'label'         => 'First Name',
+                        'sort_order'    => 4,
                     ),
                     'lastname' => array(
-                        'label'=>'Last Name',
-                        'sort_order'=>4,
+                        'label'         => 'Last Name',
+                        'sort_order'    => 5,
                     ),
                     'email' => array(
-                        'label'=>'Email',
-                        'class'=>'validate-email',
-                        'sort_order'=>5,
-                    ),
-                    'password_hash' => array(
-                        'input'=>'hidden', 
-                        'backend'=>'customer_entity/customer_attribute_backend_password', 
-                        'required'=>false,
+                        'type'          => 'static',
+                        'label'         => 'Email',
+                        'class'         => 'validate-email',
+                        'sort_order'    => 6,
                     ),
                     'group_id' => array(
-                        'type'=>'int', 
-                        'input'=>'select', 
-                        'label'=>'Customer Group',
-                        'source'=>'customer_entity/customer_attribute_source_group',
-                        'sort_order'=>6,
+                        'type'          => 'static',
+                        'input'         => 'select',
+                        'label'         => 'Customer Group',
+                        'source'        => 'customer/customer_attribute_source_group',
+                        'sort_order'    => 7,
+                    ),
+                    'password_hash' => array(
+                        'input'         => 'hidden',
+                        'backend'       => 'customer/customer_attribute_backend_password',
+                        'required'      => false,
                     ),
                     'default_billing' => array(
-                        'type'=>'int', 
-                        'visible'=>false, 
-                        'required'=>false, 
-                        'backend'=>'customer_entity/customer_attribute_backend_billing',
+                        'type'          => 'int',
+                        'visible'       => false,
+                        'required'      => false,
+                        'backend'       => 'customer/customer_attribute_backend_billing',
                     ),
                     'default_shipping' => array(
-                        'type'=>'int', 
-                        'visible'=>false, 
-                        'required'=>false, 
-                        'backend'=>'customer_entity/customer_attribute_backend_shipping',
+                        'type'          => 'int',
+                        'visible'       => false,
+                        'required'      => false,
+                        'backend'       => 'customer/customer_attribute_backend_shipping',
                     ),
                 ),
             ),
-            
+
             'customer_address'=>array(
-                'table'=>'customer/address_entity',
+                'table'=> 'customer/address_entity',
                 'attributes' => array(
                     'firstname' => array(
-                        'label'=>'First Name',
-                        'sort_order'=>1,
+                        'label'         => 'First Name',
+                        'sort_order'    => 1,
                     ),
                     'lastname' => array(
-                        'label'=>'Last Name',
-                        'sort_order'=>2,
+                        'label'         => 'Last Name',
+                        'sort_order'    => 2,
                     ),
                     'company' => array(
-                        'label'=>'Company',
-                        'required'=>false,
-                        'sort_order'=>3,
+                        'label'         => 'Company',
+                        'required'      => false,
+                        'sort_order'    => 3,
                     ),
                     'street' => array(
-                        'type'=>'text', 
-                        'backend'=>'customer_entity/address_attribute_backend_street', 
-                        'input'=>'multiline', 
-                        'label'=>'Street Address',
-                        'sort_order'=>4,
+                        'type'          => 'text',
+                        'backend'       => 'customer_entity/address_attribute_backend_street',
+                        'input'         => 'multiline',
+                        'label'         => 'Street Address',
+                        'sort_order'    => 4,
                     ),
                     'city' => array(
-                        'label'=>'City',
-                        'sort_order'=>5,
+                        'label'         => 'City',
+                        'sort_order'    => 5,
                     ),
                     'country_id' => array(
-                        'type'=>'varchar', 
-                        'input'=>'select', 
-                        'label'=>'Country',
-                        'class'=>'countries', 
-                        'source'=>'customer_entity/address_attribute_source_country',
-                        'sort_order'=>6,
+                        'type'          => 'varchar',
+                        'input'         => 'select',
+                        'label'         => 'Country',
+                        'class'         => 'countries',
+                        'source'        => 'customer_entity/address_attribute_source_country',
+                        'sort_order'    => 6,
                     ),
                     'region' => array(
-                        'backend'=>'customer_entity/address_attribute_backend_region', 
-                        'label'=>'State/Province',
-                        'class'=>'regions',
-                        'sort_order'=>7,
+                        'backend'       => 'customer_entity/address_attribute_backend_region',
+                        'label'         => 'State/Province',
+                        'class'         => 'regions',
+                        'sort_order'    => 7,
                     ),
                     'region_id' => array(
-                        'type'=>'int', 
-                        'input'=>'hidden', 
-                        'source'=>'customer_entity/address_attribute_source_region', 
-                        'required'=>'false',
-                        'sort_order'=>8,
+                        'type'          => 'int',
+                        'input'         => 'hidden',
+                        'source'        => 'customer_entity/address_attribute_source_region',
+                        'required'      => 'false',
+                        'sort_order'    => 8,
                     ),
                     'postcode' => array(
-                        'label'=>'Zip/Postal Code',
-                        'sort_order'=>9,
+                        'label'         => 'Zip/Postal Code',
+                        'sort_order'    => 9,
                     ),
                     'telephone' => array(
-                        'label'=>'Telephone',
-                        'sort_order'=>10,
+                        'label'         => 'Telephone',
+                        'sort_order'    => 10,
                     ),
                     'fax' => array(
-                        'label'=>'Fax',
-                        'required'=>false,
-                        'sort_order'=>11,
+                        'label'         => 'Fax',
+                        'required'      => false,
+                        'sort_order'    => 11,
                     ),
                 ),
             ),
         );
     }
+
 }

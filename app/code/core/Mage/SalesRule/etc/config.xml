@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_SalesRule>
-            <version>0.7.2</version>
+            <version>0.7.5</version>
         </Mage_SalesRule>
     </modules>
     <global>
@@ -76,6 +76,15 @@
         </resources>
 
         <events>
+            <sales_quote_address_discount_item>
+                <observers>
+                    <salesrule>
+                        <type>singleton</type>
+                        <class>salesrule/observer</class>
+                        <method>sales_quote_address_discount_item</method>
+                    </salesrule>
+                </observers>
+            </sales_quote_address_discount_item>
             <sales_order_place_after>
                 <observers>
                     <salesrule>

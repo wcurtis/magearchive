@@ -118,23 +118,24 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
     public function _prepareForm()
     {
         $form = new Varien_Data_Form();
+        $fieldset = $form->addFieldset('main', array('no_container'=>true));
 
-        $form->addField('type','hidden',
+        $fieldset->addField('type','hidden',
             array(
                 'name' =>  $this->_getFieldName('type'),
             )
         );
 
-        $form->setHtmlIdPrefix($this->_getFieldIdPrefix());
+        $fieldset->setHtmlIdPrefix($this->_getFieldIdPrefix());
 
-        $form->addField('sender','text',
+        $fieldset->addField('sender','text',
             array(
                 'name'  =>  $this->_getFieldName('sender'),
                 'label' =>  Mage::helper('sales')->__('From'),
                 'class' =>  $this->getMessage()->getMessage() ? 'required-entry' : ''
             )
         );
-        $form->addField('recipient','text',
+        $fieldset->addField('recipient','text',
             array(
                 'name'  =>  $this->_getFieldName('recipient'),
                 'label' =>  Mage::helper('sales')->__('To'),
@@ -142,7 +143,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
             )
         );
 
-        $form->addField('message', 'textarea',
+        $fieldset->addField('message', 'textarea',
             array(
                 'name'      =>  $this->_getFieldName('message'),
                 'label'     =>  Mage::helper('sales')->__('Message'),

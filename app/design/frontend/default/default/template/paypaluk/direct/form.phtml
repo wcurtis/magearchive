@@ -61,7 +61,8 @@
                 </select>
             </div>
         </li>
-        <li>
+        <?if ($this->hasSsCardType()):?>
+        <li id="<?=$_code?>_cc_type_ss_div">
             <div class="input-box">
                 <label for="<?=$_code?>_issue"><?=$this->__('Switch/Solo Only')?> <span class="required">*</span></label><br/>
                 <ul style="margin:5px 0;">
@@ -83,7 +84,21 @@
                 </li>
                </ul>
             </div>
+            <script type="text/javascript">
+            var SSChecked<?=$_code?> = function() {
+                var elm = $('<?=$_code?>_cc_type');
+                if (elm.value=='SS') {
+                    $('<?=$_code?>_cc_type_ss_div').show();
+                } else {
+                    $('<?=$_code?>_cc_type_ss_div').hide();
+                }
+            };
+
+            Event.observe($('<?=$_code?>_cc_type'), 'change', SSChecked<?=$_code?>);
+            SSChecked<?=$_code?>();
+            </script>
         </li>
+        <?endif;?>
         <?if($this->hasVerification()):?>
         <li>
             <div class="input-box">

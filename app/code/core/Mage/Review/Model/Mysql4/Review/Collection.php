@@ -45,7 +45,7 @@ class Mage_Review_Model_Mysql4_Review_Collection extends Varien_Data_Collection_
         $this->_reviewEntityTable   = $resources->getTableName('review/review_entity');
         $this->_reviewStoreTable   = $resources->getTableName('review/review_store');
 
-        $this->_sqlSelect->from(array('main_table'=>$this->_reviewTable))
+        $this->_select->from(array('main_table'=>$this->_reviewTable))
             ->join(array('detail'=>$this->_reviewDetailTable), 'main_table.review_id=detail.review_id');
 
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('review/review'));
@@ -67,7 +67,7 @@ class Mage_Review_Model_Mysql4_Review_Collection extends Varien_Data_Collection_
      */
     public function addStoreFilter($storeId)
     {
-        $this->_sqlSelect->join(array('store'=>$this->_reviewStoreTable), 'main_table.review_id=store.review_id AND store.store_id=' . (int)$storeId, array());
+        $this->_select->join(array('store'=>$this->_reviewStoreTable), 'main_table.review_id=store.review_id AND store.store_id=' . (int)$storeId, array());
         return $this;
     }
 
@@ -92,14 +92,13 @@ class Mage_Review_Model_Mysql4_Review_Collection extends Varien_Data_Collection_
      */
     public function addEntityFilter($entity, $pkValue)
     {
-        Mage::log('Add entity filter to review collection');
         if (is_numeric($entity)) {
             $this->addFilter('entity',
                 $this->getConnection()->quoteInto('main_table.entity_id=?', $entity),
                 'string');
         }
         elseif (is_string($entity)) {
-            $this->_sqlSelect->join($this->_reviewEntityTable,
+            $this->_select->join($this->_reviewEntityTable,
                 'main_table.entity_id='.$this->_reviewEntityTable.'.entity_id');
 
             $this->addFilter('entity',
@@ -128,14 +127,13 @@ class Mage_Review_Model_Mysql4_Review_Collection extends Varien_Data_Collection_
      */
     public function addStatusFilter($status)
     {
-        Mage::log('Add status filter to review collection');
         if (is_numeric($status)) {
             $this->addFilter('status',
                 $this->getConnection()->quoteInto('main_table.status_id=?', $status),
                 'string');
         }
         elseif (is_string($status)) {
-            $this->_sqlSelect->join($this->_reviewStatusTable,
+            $this->_select->join($this->_reviewStatusTable,
                 'main_table.status_id='.$this->_reviewStatusTable.'.status_id');
 
             $this->addFilter('status',
@@ -168,8 +166,8 @@ class Mage_Review_Model_Mysql4_Review_Collection extends Varien_Data_Collection_
 
     public function addReviewsTotalCount()
     {
-        $this->_sqlSelect->joinLeft(array('r' => $this->_reviewTable), 'main_table.entity_pk_value = r.entity_pk_value', 'COUNT(r.review_id) as total_reviews');
-        $this->_sqlSelect->group('main_table.review_id');
+        $this->_select->joinLeft(array('r' => $this->_reviewTable), 'main_table.entity_pk_value = r.entity_pk_value', 'COUNT(r.review_id) as total_reviews');
+        $this->_select->group('main_table.review_id');
 
         return $this;
     }

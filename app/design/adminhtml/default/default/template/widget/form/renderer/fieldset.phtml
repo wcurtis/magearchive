@@ -19,11 +19,20 @@
  */
 ?>
 <?$_element = $this->getElement()?>
-<div>
+<?if ($_element->getLegend()):?>
+<div class="entry-edit-head">
     <h4 class="icon-head head-edit-form fieldset-legend"><?=$_element->getLegend()?></h4>
-    <fieldset id="<?=$_element->getHtmlId()?>"<?=$_element->serialize(array('class'))?>>
-        <table cellspacing="0" class="form-list">
-    <?=$_element->getChildrenHtml()?>
-        </table>
-    </fieldset>
+    <div class="form-buttons"><?=$_element->getHeaderBar()?></div>
 </div>
+<?endif;?>
+<?if (!$_element->getNoContainer()):?>
+    <fieldset id="<?=$_element->getHtmlId()?>"<?=$_element->serialize(array('class'))?>>
+<?endif;?>
+        <table cellspacing="0" class="form-list">
+            <tbody>
+                <?=$_element->getChildrenHtml()?>
+            </tbody>
+        </table>
+<?if (!$_element->getNoContainer()):?>
+    </fieldset>
+<?endif;?>

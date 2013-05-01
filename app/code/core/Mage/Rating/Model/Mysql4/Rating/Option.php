@@ -72,7 +72,7 @@ class Mage_Rating_Model_Mysql4_Rating_Option
 
     public function addVote($option)
     {
-        $action = Mage::registry('action');
+        $action = Mage::app()->getFrontController()->getAction();
 
         if ($action instanceof Mage_Core_Controller_Front_Action || $action instanceof Mage_Adminhtml_Controller_Action) {
             $optionData = $this->load($option->getId());

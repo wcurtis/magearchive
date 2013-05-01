@@ -33,32 +33,43 @@ class Mage_Dataflow_Model_Mysql4_Import extends Mage_Core_Model_Mysql4_Abstract
         $this->_init('dataflow/import', 'import_id');
     }
 
-    public function loadBySessionId($session_id, $start = 0)
+    public function select($sessionId)
     {
+        return $this->_getReadAdapter()->select()
+            ->from($this->getMainTable())
+            ->where('session_id=?', $sessionId)
+            ->where('status=?', 0);
+    }
+
+    public function loadBySessionId($sessionId, $min = 0, $max = 100)
+    {
+        if (!is_numeric($min) || !is_numeric($max)) {
+            return array();
+        }
         $read = $this->_getReadAdapter();
         $select = $read->select()->from($this->getTable('dataflow/import'), '*')
+            ->where('import_id between '.(int)$min.' and '.(int)$max)
             ->where('status=?', '0')
-            ->where('session_id=?', $session_id)
-            ->limit($start, 100);
+            ->where('session_id=?', $sessionId);
         return $read->fetchAll($select);
     }
 
-    public function loadTotalBySessionId($session_id)
+    public function loadTotalBySessionId($sessionId)
     {
         $read = $this->_getReadAdapter();
         $select = $read->select()->from($this->getTable('dataflow/import'),
         array('max'=>'max(import_id)','min'=>'min(import_id)', 'cnt'=>'count(*)'))
             ->where('status=?', '0')
-            ->where('session_id=?', $session_id);
+            ->where('session_id=?', $sessionId);
         return $read->fetchRow($select);
     }
 
-    public function loadById($import_id)
+    public function loadById($importId)
     {
         $read = $this->_getReadAdapter();
         $select = $read->select()->from($this->getTable('dataflow/import'),'*')
             ->where('status=?', 0)
-            ->where('import_id=?', $import_id);
+            ->where('import_id=?', $importId);
         return $read->fetchRow($select);
     }
 

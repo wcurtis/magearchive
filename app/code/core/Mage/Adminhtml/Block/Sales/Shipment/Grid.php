@@ -88,6 +88,24 @@ class Mage_Adminhtml_Block_Sales_Shipment_Grid extends Mage_Adminhtml_Block_Widg
             'type'  => 'number',
         ));
 
+        $this->addColumn('action',
+            array(
+                'header'    => Mage::helper('sales')->__('Action'),
+                'width'     => '50px',
+                'type'      => 'action',
+                'getter'     => 'getId',
+                'actions'   => array(
+                    array(
+                        'caption' => Mage::helper('sales')->__('View'),
+                        'url'     => array('base'=>'*/*/view'),
+                        'field'   => 'shipment_id'
+                    )
+                ),
+                'filter'    => false,
+                'sortable'  => false,
+                'is_system' => true
+        ));
+
         return parent::_prepareColumns();
     }
 
@@ -99,6 +117,19 @@ class Mage_Adminhtml_Block_Sales_Shipment_Grid extends Mage_Adminhtml_Block_Widg
                 'order_id'  => $row->getOrderId()
             )
         );
+    }
+
+    protected function _prepareMassaction()
+    {
+        $this->setMassactionIdField('entity_id');
+        $this->getMassactionBlock()->setFormFieldName('shipment_ids');
+
+        $this->getMassactionBlock()->addItem('pdfshipments_order', array(
+             'label'=> Mage::helper('sales')->__('PDF Packingslips'),
+             'url'  => $this->getUrl('*/*/pdfshipments'),
+        ));
+
+        return $this;
     }
 
     public function getGridUrl()

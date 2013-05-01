@@ -21,43 +21,44 @@
 /**
  * Catalog category helper
  *
+ * @category   Mage
+ * @package    Mage_Catalog
  */
 class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
 {
-    /**
-     * Retrieve category children nodes
-     *
-     * @param   int $parent
-     * @param   int $maxChildLevel
-     * @return  Varien_Data_Tree_Node_Collection
-     */
-    protected function _getChildCategories($parent, $maxChildLevel=1)
-    {
-        $collection = Mage::getResourceModel('catalog/category_collection')
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('url_key')
-            ->addAttributeToSelect('is_active');
-
-        $tree = Mage::getResourceModel('catalog/category_tree');
-
-        $nodes = $tree->loadNode($parent)
-            ->loadChildren($maxChildLevel-1)
-            ->getChildren();
-        $tree->addCollectionData($collection);
-
-        return $nodes;
-    }
 
     /**
      * Retrieve current store categories
      *
-     * @param   int $maxChildLevel
-     * @return  Varien_Data_Tree_Node_Collection
+     * @param   boolean|string $sorted
+     * @param   boolean $asCollection
+     * @return  Varien_Data_Tree_Node_Collection|Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection|array
      */
-    public function getStoreCategories($maxChildLevel=1)
+    public function getStoreCategories($sorted=false, $asCollection=false)
     {
         $parent = Mage::app()->getStore()->getRootCategoryId();
-        return $this->_getChildCategories($parent, $maxChildLevel);
+
+        /**
+         * Check if parent node of the store still exists
+         */
+        if (!Mage::getModel('catalog/category')->load($parent)->getId()) {
+            return array();
+        }
+
+        $tree = Mage::getResourceSingleton('catalog/category_tree');
+        /* @var $tree Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree */
+
+        $nodes = $tree->loadNode($parent)
+            ->loadChildren()
+            ->getChildren();
+
+        $tree->addCollectionData(null, $sorted, $parent);
+
+        if ($asCollection) {
+            return $tree->getCollection();
+        } else {
+            return $nodes;
+        }
     }
 
     /**
@@ -69,8 +70,8 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
     public function getCategoryUrl($category)
     {
         return Mage::getModel('catalog/category')
-			->setData($category->getData())
-			->getCategoryUrl();
+            ->setData($category->getData())
+            ->getCategoryUrl();
     }
 
     /**
@@ -93,12 +94,15 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        $rootCategory = Mage::getModel('catalog/category')
-            ->load(Mage::app()->getStore()->getRootCategoryId());
+        $tree = Mage::getResourceSingleton('catalog/category_tree');
+        /* @var $tree Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree */
+        $tree->load();
 
-        if (!in_array($category->getId(), explode(',', $rootCategory->getAllChildren()))) {
+        $children = $tree->getChildren(Mage::app()->getStore()->getRootCategoryId(), true);
+        if (!in_array($category->getId(), $children)) {
             return false;
         }
+
         return true;
     }
 

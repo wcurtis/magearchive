@@ -67,7 +67,7 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function customerHasAddresses()
     {
-        return $this->getCustomer()->getLoadedAddressCollection()->count()>0;
+        return count($this->getCustomer()->getAddresses());
     }
 
     /**************************************************************************

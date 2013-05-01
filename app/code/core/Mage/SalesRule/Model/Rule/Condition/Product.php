@@ -19,45 +19,24 @@
  */
 
 
-class Mage_SalesRule_Model_Rule_Condition_Product extends Mage_Rule_Model_Condition_Abstract
+class Mage_SalesRule_Model_Rule_Condition_Product extends Mage_CatalogRule_Model_Rule_Condition_Product
 {
-    public function loadAttributeOptions()
+
+    protected function _addSpecialAttributes(array &$attributes)
     {
-        $productAttributes = Mage::getResourceSingleton('catalog/product')
-            ->loadAllAttributes()->getAttributesByCode();
-
-        $attributes = array();
-        foreach ($productAttributes as $attr) {
-            if (!$attr->getIsVisible()) {
-                continue;
-            }
-            $attributes[$attr->getAttributeCode()] = $attr->getFrontend()->getLabel();
-        }
-
-        $attributes['qty'] = Mage::helper('salesrule')->__('Quantity in cart');
-        $attributes['price'] = Mage::helper('salesrule')->__('Price in cart');
-        $attributes['row_total'] = Mage::helper('salesrule')->__('Row total in cart');
-        $attributes['attribute_set_id'] = Mage::helper('salesrule')->__('Attribute Set');
-
-        asort($attributes);
-        $this->setAttributeOption($attributes);
-
-        return $this;
-    }
-
-    public function collectValidatedAttributes($productCollection)
-    {
-        $productCollection->addAttributeToSelect($this->getAttribute());
-        return $this;
+        parent::_addSpecialAttributes($attributes);
+        $attributes['quote_item_qty'] = Mage::helper('salesrule')->__('Quantity in cart');
+        $attributes['quote_item_price'] = Mage::helper('salesrule')->__('Price in cart');
+        $attributes['quote_item_row_total'] = Mage::helper('salesrule')->__('Row total in cart');
     }
 
     public function validate(Varien_Object $object)
     {
     	$product = Mage::getModel('catalog/product')
     		->load($object->getProductId())
-    		->setQty($object->getQty())
-    		->setPrice($object->getPrice())
-    		->setRowTotal($object->getRowTotal());
+    		->setQuoteItemQty($object->getQty())
+    		->setQuoteItemPrice($object->getPrice())
+    		->setQuoteItemRowTotal($object->getRowTotal());
 
     	return parent::validate($product);
     }

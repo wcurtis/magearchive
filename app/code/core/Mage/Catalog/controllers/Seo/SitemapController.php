@@ -19,30 +19,47 @@
  */
 
 
-class Mage_Catalog_Seo_SitemapController extends Mage_Core_Controller_Front_Action {
-	
+/**
+ * SEO sitemap controller
+ *
+ * @category   Mage
+ * @package    Mage_Catalog
+ */
+class Mage_Catalog_Seo_SitemapController extends Mage_Core_Controller_Front_Action
+{
+
+    /**
+     * Check if SEO sitemap is enabled in configuration
+     *
+     * @return Mage_Catalog_Seo_SitemapController
+     */
     public function preDispatch(){
         parent::preDispatch();
         if(!Mage::getStoreConfig('catalog/seo/site_map')){
-    		  $this->_redirect('noroute');
-    		  $this->setFlag('',self::FLAG_NO_DISPATCH,true);
-    	}
-    	return $this;    
-        
+              $this->_redirect('noroute');
+              $this->setFlag('',self::FLAG_NO_DISPATCH,true);
+        }
+        return $this;
     }
-    public function categoryAction()
-    {    	      
-    	$this->loadLayout(); 
-        $this->getLayout()->getBlock('seo.container')->setActiveTab('category');       	  	
-    	$this->renderLayout();    	
-    }
-    
-     public function productAction()
-    {
-    	$this->loadLayout();  	    	 
-    	$this->getLayout()->getBlock('seo.container')->setActiveTab('product');       	   	
-	    $this->renderLayout();    	
-    }    
-   
-}
 
+    /**
+     * Display categories listing
+     *
+     */
+    public function categoryAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    /**
+     * Display products listing
+     *
+     */
+    public function productAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+}

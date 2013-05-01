@@ -21,24 +21,24 @@
 -->
 <convert version="1.0">
 
-    <container name="catalog_file" type="varien/convert_adapter_io">
+    <container name="catalog_file" type="dataflow/convert_adapter_io">
         <var name="path">/tmp</var>
         <var name="filename">test.xml</var>
     </container>
 
 
     <profile name="import_products_from_excel_xml">
-        <action method="load" type="varien/convert_adapter_io">
+        <action method="load" type="dataflow/convert_adapter_io">
             <var name="filename">products.xml</var>
         </action>
 
-        <action method="parse" type="varien/convert_parser_xml_excel">
+        <action method="parse" type="dataflow/convert_parser_xml_excel">
             <var name="single_sheet">Products</var>
         </action>
 
         <action method="parse" type="catalog/convert_parser_product"/>
 
-        <action method="validate" type="varien/convert_validator_dryrun"/>
+        <action method="validate" type="dataflow/convert_validator_dryrun"/>
 
         <action method="save" type="eav/convert_adapter_collection"/>
     </profile>
@@ -50,13 +50,13 @@
 
         <action method="unparse" type="catalog/convert_parser_product"/>
 
-        <action method="unparse" type="varien/convert_parser_xml_excel">
+        <action method="unparse" type="dataflow/convert_parser_xml_excel">
             <var name="single_sheet">Products</var>
         </action>
 
-        <action method="validate" type="varien/convert_validator_dryrun"/>
+        <action method="validate" type="dataflow/convert_validator_dryrun"/>
 
-        <action method="save" type="varien/convert_adapter_io">
+        <action method="save" type="dataflow/convert_adapter_io">
             <var name="filename">products.xml</var>
         </action>
     </profile>
@@ -64,7 +64,7 @@
     <profile name="import_catalog">
         <action method="load" use="catalog_file"/>
 
-        <action method="parse" type="varien/convert_parser_xml_excel"/>
+        <action method="parse" type="dataflow/convert_parser_xml_excel"/>
 
         <action method="save" type="catalog/convert_adapter_catalog"/>
     </profile>
@@ -72,7 +72,7 @@
     <profile name="export_catalog">
         <action method="load" type="catalog/convert_adapter_catalog"/>
 
-        <action method="unparse" type="varien/convert_parser_xml_excel"/>
+        <action method="unparse" type="dataflow/convert_parser_xml_excel"/>
 
         <action method="save" use="catalog_file"/>
     </profile>
@@ -80,27 +80,27 @@
     <profile name="export_catalog_to_http">
         <action method="load" type="catalog/convert_adapter_catalog"/>
 
-        <action method="unparse" type="varien/convert_parser_xml_excel"/>
+        <action method="unparse" type="dataflow/convert_parser_xml_excel"/>
 
-        <action method="save" type="Varien_Convert_Adapter_Http">
+        <action method="save" type="Mage_Dataflow_Model_Convert_Adapter_Http">
             <var name="Content-Disposition">attachment; filename=catalog.xml</var>
             <var name="Content-Type">application/octet-stream</var>
         </action>
     </profile>
 
     <profile name="import_csv_to_table">
-        <action method="load" type="Varien_Convert_Adapter_Io">
+        <action method="load" type="Mage_Dataflow_Model_Convert_Adapter_Io">
             <var name="type">file</var>
             <var name="filename">data.csv</var>
         </action>
 
-        <action method="parse" type="Varien_Convert_Parser_Csv"/>
+        <action method="parse" type="Mage_Dataflow_Model_Convert_Parser_Csv"/>
 
-        <action method="map" type="Varien_Convert_Mapper_Column">
+        <action method="map" type="Mage_Dataflow_Model_Convert_Mapper_Column">
             <input name="field_in_result">field_in_source</input>
         </action>
 
-        <action method="validate" type="Varien_Convert_Validator_Column">
+        <action method="validate" type="Mage_Dataflow_Model_Convert_Validator_Column">
             <var name="field_in_table">!=''</var>
         </action>
 
@@ -115,9 +115,9 @@
             <var name="status">pending</var>
         </action>
 
-        <action method="unparse" type="Varien_Convert_Parser_Csv"/>
+        <action method="unparse" type="Mage_Dataflow_Model_Convert_Parser_Csv"/>
 
-        <action method="save" type="Varien_Convert_Adapter_Io">
+        <action method="save" type="Mage_Dataflow_Model_Convert_Adapter_Io">
             <var name="type">ftp</var>
             <var name="host">some.host.com</var>
             <var name="path">upload</var>

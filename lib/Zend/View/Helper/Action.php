@@ -15,8 +15,8 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Action.php 7086 2007-12-11 20:35:31Z matthew $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Action.php 8347 2008-02-23 19:10:47Z ralph $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -25,7 +25,7 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Action 
@@ -124,6 +124,7 @@ class Zend_View_Helper_Action
 
         // clone the view object to prevent over-writing of view variables
         $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+        $viewRendererViewObj = $viewRenderer->view;
         $viewRenderer->view = $this->cloneView(); 
         
         $this->request->setParams($params) 
@@ -135,7 +136,7 @@ class Zend_View_Helper_Action
         $this->dispatcher->dispatch($this->request, $this->response); 
  
         // reset the view object to it's original state
-        $viewRenderer->view = $this->view;
+        $viewRenderer->view = $viewRendererViewObj;
         
         if (!$this->request->isDispatched() 
             || $this->response->isRedirect()) 

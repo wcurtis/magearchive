@@ -72,27 +72,78 @@ class Mage_Tag_Model_Mysql4_Tag extends Mage_Core_Model_Mysql4_Abstract
     public function aggregate($object)
     {
         $selectLocal = $this->_getReadAdapter()->select()
-            ->from(array('main'=>$this->getTable('relation')), array('customers'=>'COUNT(DISTINCT main.customer_id)','products'=>'COUNT(DISTINCT main.product_id)','store_id', 'uses'=>'COUNT(main.tag_relation_id)'))
-            ->join(array('store'=>$this->getTable('catalog/product_store')), 'store.product_id = main.product_id AND store.store_id=main.store_id', array())
-            ->group('main.store_id')
+            ->from(
+                array('main'  => $this->getTable('relation')),
+                array(
+                    'customers'=>'COUNT(DISTINCT main.customer_id)',
+                    'products'=>'COUNT(DISTINCT main.product_id)',
+                    'store_id',
+                    'uses'=>'COUNT(main.tag_relation_id)'
+                )
+            )
+            ->join(array('store' => $this->getTable('core/store')),
+                'store.store_id=main.store_id AND store.store_id>0',
+                array()
+            )
+            ->join(array('product_website' => $this->getTable('catalog/product_website')),
+                'product_website.website_id=store.website_id AND product_website.product_id=main.product_id',
+                array()
+            )
             ->where('main.tag_id = ?', $object->getId())
-            ->where('main.active');
+            ->where('main.active')
+            ->group('main.store_id');
 
         $selectGlobal = $this->_getReadAdapter()->select()
-            ->from(array('main'=>$this->getTable('relation')), array('customers'=>'COUNT(DISTINCT main.customer_id)','products'=>'COUNT(DISTINCT main.product_id)','store_id'=>'( 0 )' /* Workaround*/, 'uses'=>'COUNT(main.tag_relation_id)'))
-            ->join(array('store'=>$this->getTable('catalog/product_store')), 'store.product_id = main.product_id AND store.store_id=main.store_id', array())
+            ->from(
+                array('main'=>$this->getTable('relation')),
+                array(
+                    'customers'=>'COUNT(DISTINCT main.customer_id)',
+                    'products'=>'COUNT(DISTINCT main.product_id)',
+                    'store_id'=>'( 0 )' /* Workaround*/,
+                    'uses'=>'COUNT(main.tag_relation_id)'
+                )
+            )
+            ->join(array('store' => $this->getTable('core/store')),
+                'store.store_id=main.store_id AND store.store_id>0',
+                array()
+            )
+            ->join(array('product_website' => $this->getTable('catalog/product_website')),
+                'product_website.website_id=store.website_id AND product_website.product_id=main.product_id',
+                array()
+            )
             ->where('main.tag_id = ?', $object->getId())
             ->where('main.active');
 
         $selectHistorical = $this->_getReadAdapter()->select()
-            ->from(array('main'=>$this->getTable('relation')), array('historical_uses'=>'COUNT(main.tag_relation_id)', 'store_id'))
-            ->join(array('store'=>$this->getTable('catalog/product_store')), 'store.product_id = main.product_id AND store.store_id=main.store_id', array())
+            ->from(
+                array('main'=>$this->getTable('relation')),
+                array('historical_uses'=>'COUNT(main.tag_relation_id)',
+                'store_id')
+            )
+            ->join(array('store' => $this->getTable('core/store')),
+                'store.store_id=main.store_id AND store.store_id>0',
+                array()
+            )
+            ->join(array('product_website' => $this->getTable('catalog/product_website')),
+                'product_website.website_id=store.website_id AND product_website.product_id=main.product_id',
+                array()
+            )
             ->group('main.store_id')
             ->where('main.tag_id = ?', $object->getId());
 
        $selectHistoricalGlobal = $this->_getReadAdapter()->select()
-            ->from(array('main'=>$this->getTable('relation')), array('historical_uses'=>'COUNT(main.tag_relation_id)'))
-            ->join(array('store'=>$this->getTable('catalog/product_store')), 'store.product_id = main.product_id AND store.store_id=main.store_id', array())
+            ->from(
+                array('main'=>$this->getTable('relation')),
+                array('historical_uses'=>'COUNT(main.tag_relation_id)')
+            )
+            ->join(array('store' => $this->getTable('core/store')),
+                'store.store_id=main.store_id AND store.store_id>0',
+                array()
+            )
+            ->join(array('product_website' => $this->getTable('catalog/product_website')),
+                'product_website.website_id=store.website_id AND product_website.product_id=main.product_id',
+                array()
+            )
             ->where('main.tag_id = ?', $object->getId());
 
         $historicalAll = $this->_getReadAdapter()->fetchAll($selectHistorical);

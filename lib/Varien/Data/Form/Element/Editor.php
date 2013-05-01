@@ -51,7 +51,7 @@ class Varien_Data_Form_Element_Editor extends Varien_Data_Form_Element_Textarea
                 <textarea name="'.$this->getName().'" title="'.$this->getTitle().'" id="'.$this->getHtmlId().'" class="textarea '.$this->getClass().'" '.$this->serialize($this->getHtmlAttributes()).' >'.$this->getEscapedValue().'</textarea>
         		<script language="javascript" type="text/javascript" src="'.$this->getForm()->getBaseUrl().'js/tiny_mce/tiny_mce.js"></script>
         		<script language="javascript" type="text/javascript">
-                    tinyMCE.init({
+                   /* tinyMCE.init({
                         mode : "exact",
                         theme : "'.$this->getTheme().'",
                         elements : "' . $element . '",
@@ -65,7 +65,7 @@ class Varien_Data_Form_Element_Editor extends Varien_Data_Form_Element_Textarea
                         convert_urls : "false",
                         force_br_newlines : "true",
                         doctype : \'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\'
-                    });
+                    });*/
                 </script>';
 
                 /*plugins : "inlinepopups,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,zoom,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras",

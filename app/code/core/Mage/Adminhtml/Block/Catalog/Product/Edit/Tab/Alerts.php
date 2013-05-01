@@ -18,12 +18,14 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * Alerts products admin grid
+ * Product alerts tab
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
+
 class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts extends Mage_Adminhtml_Block_Template
 {
     public function __construct()
@@ -32,82 +34,37 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts extends Mage_Adminhtm
         $this->setTemplate('catalog/product/tab/alert.phtml');
     }
 
-    public function getAlerts()
-    {
-        return Mage::getSingleton('customeralert/config')
-            ->getAlerts();
-    }
-
     protected function _prepareLayout()
     {
-        $params = $this->getRequest()->getParams();
-        $data['product_id'] = isset($params['id']) ? $params['id'] : 0;
-        $data['store_id'] = isset($params['store']) ? $params['store'] : 0;
+        $accordion = $this->getLayout()->createBlock('adminhtml/widget_accordion')
+            ->setId('productAlerts');
+        /* @var $accordion Mage_Adminhtml_Block_Widget_Accordion */
 
-        if($data['store_id']){
-            $accordion = $this->getLayout()->createBlock('adminhtml/widget_accordion')
-                ->setId('alertsBlockId');
-            $messages = array();
-            foreach ($this->getAlerts() as $key=>$val) {
-                $alertModel = Mage::getSingleton('customeralert/config')->getAlertByType($key);
-                $alertModel->setParamValues($data);
-                $accordion->addItem($key, array(
-                    'title'     => $val['label'],
-                    'content'   => $this->getLayout()
-                                    ->createBlock('adminhtml/catalog_product_edit_tab_alerts_customers',$key,array('id'=>$key))
-                                    ->setModel($alertModel)
-                                    ->loadCustomers(),
-                    'open'      => false,
-                ));
-                if($alertModel->getAlertText()){
-                    if(is_array($alertModel->getAlertText())){
-                        foreach ($alertModel->getAlertText() as $val){
-                            $messages[] = array('method'=>'notice','label'=>$val);
-                        }
-                    } else {
-                        $messages[] = array('method'=>'notice','label'=>$alertModel->getAlertText());
-                    }
-                }
-            }
-            $this->setChild('accordion', $accordion);
-            $this->setChild('addToQuery_button',
-                $this->getLayout()->createBlock('adminhtml/widget_button')
-                    ->setData(array(
-                        'label'     => Mage::helper('catalog')->__('Notify Now'),
-                        'onclick'   => "queue.add()",
-                        'class'     => 'add'
-                    )));
+        $alertPriceAllow = Mage::getStoreConfig('catalog/productalert/allow_price');
+        $alertStockAllow = Mage::getStoreConfig('catalog/productalert/allow_stock');
+
+        if ($alertPriceAllow) {
+            $accordion->addItem('price', array(
+                'title'     => Mage::helper('adminhtml')->__('Price alert subscription was saved successfully'),
+                'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_alerts_price')->toHtml() . '<br />',
+                'open'      => true
+            ));
         }
-        $message = $this->getLayout()->createBlock('core/messages');
-        foreach ($messages as $mess) {
-            $message->getMessageCollection()->add(Mage::getSingleton('core/message')->$mess['method']($mess['label']));
+        if ($alertStockAllow) {
+            $accordion->addItem('stock', array(
+                'title'     => Mage::helper('adminhtml')->__('Stock notification was saved successfully'),
+                'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_alerts_stock'),
+                'open'      => true
+            ));
         }
-        $this->setChild('message', $message);
+
+        $this->setChild('accordion', $accordion);
+
         return parent::_prepareLayout();
-    }
-
-    public function getAddToQueryButtonHtml()
-    {
-        return $this->getChildHtml('addToQuery_button');
     }
 
     public function getAccordionHtml()
     {
         return $this->getChildHtml('accordion');
     }
-
-    public function getMessageHtml()
-    {
-        return $this->getChildHtml('message');
-    }
-
-    public function getAddToQueueUrl()
-    {
-        $params = $this->getRequest()->getParams();
-        $data['product_id'] = isset($params['id']) ? $params['id'] : 0;
-        $data['store_id'] = isset($params['store']) ? $params['store'] : 0;
-
-        return $this->getUrl('*/catalog_product/addCustomersToAlertQueue',$data);
-    }
-
 }

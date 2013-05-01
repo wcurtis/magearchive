@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -58,7 +58,7 @@ require_once 'Zend/Gdata/Gapps/EmailListRecipientFeed.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Gapps extends Zend_Gdata
@@ -100,16 +100,17 @@ class Zend_Gdata_Gapps extends Zend_Gdata
     /**
      * Create Gdata_Gapps object
      * 
-     * @param Zend_Http_Client $client (optional) The HTTP client to use when 
+     * @param Zend_Http_Client $client (optional) The HTTP client to use when
      *          when communicating with the Google Apps servers.
      * @param string $domain (optional) The Google Apps domain which is to be 
      *          accessed.
+     * @param string $applicationId The identity of the app in the form of Company-AppName-Version
      */
-    public function __construct($client = null, $domain = null)
+    public function __construct($client = null, $domain = null, $applicationId = 'MyCompany-MyApp-1.0')
     {
         $this->registerPackage('Zend_Gdata_Gapps');
         $this->registerPackage('Zend_Gdata_Gapps_Extension');
-        parent::__construct($client);
+        parent::__construct($client, $applicationId);
         $this->_httpClient->setParameterPost('service', self::AUTH_SERVICE_NAME);
         $this->_domain = $domain;        
     }
@@ -605,7 +606,7 @@ class Zend_Gdata_Gapps extends Zend_Gdata
             foreach ($this->_registeredPackages as $name) {
                  try {
                      require_once 'Zend/Loader.php';
-                     Zend_Loader::loadClass("${name}_${class}");
+                     @Zend_Loader::loadClass("${name}_${class}");
                      $foundClassName = "${name}_${class}";
                      break;
                  } catch (Zend_Exception $e) {

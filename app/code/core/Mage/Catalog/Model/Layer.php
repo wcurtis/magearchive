@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog view layer model
  *
@@ -26,10 +27,11 @@
  */
 class Mage_Catalog_Model_Layer extends Varien_Object
 {
+
     /**
      * Retrieve current layer product collection
      *
-     * @return Mage_Eav_Model_Entity_Collection_Abstract
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
      */
     public function getProductCollection()
     {
@@ -44,27 +46,34 @@ class Mage_Catalog_Model_Layer extends Varien_Object
         return $collection;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection $collection
+     * @return Mage_Catalog_Model_Layer
+     */
     public function prepareProductCollection($collection)
     {
         $collection->addAttributeToSelect('name')
-        	->addAttributeToSelect('url_key')
+            ->addAttributeToSelect('url_key')
+
             ->addAttributeToSelect('price')
             ->addAttributeToSelect('special_price')
             ->addAttributeToSelect('special_from_date')
             ->addAttributeToSelect('special_to_date')
             ->joinMinimalPrice()
-            ->addAttributeToSelect('image')
-            ->addAttributeToSelect('small_image')
-            ->addAttributeToSelect('short_description')
+
             ->addAttributeToSelect('description')
-            ->joinField('store_id',
-                'catalog/product_store',
-                'store_id',
-                'product_id=entity_id',
-                '{{table}}.store_id='.(int) $this->getCurrentStore()->getId());
+            ->addAttributeToSelect('short_description')
 
+            ->addAttributeToSelect('image')
+            ->addAttributeToSelect('thumbnail')
+            ->addAttributeToSelect('small_image')
 
-        $collection->getEntity()->setStore((int) $this->getCurrentStore()->getId());
+            ->addAttributeToSelect('tax_class_id')
+
+            ->addStoreFilter();
+
         Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);
         Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
 
@@ -100,18 +109,24 @@ class Mage_Catalog_Model_Layer extends Varien_Object
         return Mage::app()->getStore();
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     */
     public function getFilterableAttributes()
     {
         $entity = $this->getProductCollection()->getEntity();
         $setIds = $this->getProductCollection()->getSetIds();
-        $collection = Mage::getResourceModel('eav/entity_attribute_collection');
+        $collection = Mage::getModel('eav/entity_attribute')->getCollection();
+        /* @var $collection Mage_Eav_Model_Mysql4_Entity_Attribute_Collection */
         $collection->getSelect()->distinct(true);
         $collection->setEntityTypeFilter($entity->getConfig()->getId())
             ->setAttributeSetFilter($setIds)
             ->addIsFilterableFilter()
             ->load();
         foreach ($collection as $item) {
-        	$item->setEntity($entity);
+            $item->setEntity($entity);
         }
 
         return $collection;
@@ -131,4 +146,5 @@ class Mage_Catalog_Model_Layer extends Varien_Object
         }
         return $state;
     }
+
 }

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Action_Helper
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -66,7 +66,7 @@ require_once 'Zend/View.php';
  * @uses       Zend_Controller_Action_Helper_Abstract
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_Helper_Abstract
@@ -264,13 +264,13 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
             require_once 'Zend/Filter/PregReplace.php';
             require_once 'Zend/Filter/Word/UnderscoreToSeparator.php';
             $this->_inflector = new Zend_Filter_Inflector();
-            $this->_inflector->addRules(array(
-                     ':module'     => array('Word_CamelCaseToDash', 'stringToLower'),
+            $this->_inflector->setStaticRuleReference('moduleDir', $this->_moduleDir) // moduleDir must be specified before the less specific 'module'
+                 ->addRules(array(
+                     ':module'     => array('Word_CamelCaseToDash', 'StringToLower'),
                      ':controller' => array('Word_CamelCaseToDash', new Zend_Filter_Word_UnderscoreToSeparator(DIRECTORY_SEPARATOR), 'StringToLower'),
-                     ':action'     => array('Word_CamelCaseToDash', new Zend_Filter_PregReplace('/[^a-z0-9]+/i', '-'), 'StringToLower'),
+                     ':action'     => array('Word_CamelCaseToDash', new Zend_Filter_PregReplace('#[^a-z0-9' . preg_quote(DIRECTORY_SEPARATOR, '#') . ']+#i', '-'), 'StringToLower'),
                  ))
                  ->setStaticRuleReference('suffix', $this->_viewSuffix)
-                 ->setStaticRuleReference('moduleDir', $this->_moduleDir)
                  ->setTargetReference($this->_inflectorTarget);
         }
 
@@ -360,7 +360,15 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
 
         $inflector = $this->getInflector();
         $this->_setInflectorTarget($this->getViewBasePathSpec());
-        $path = $inflector->filter(array());
+        
+        $request = $this->getRequest();
+        $parts = array(
+            'module'     => $request->getModuleName(),
+            'controller' => $request->getControllerName(),
+            'action'     => $request->getActionName()
+            );
+        
+        $path = $inflector->filter($parts);
         return $path;
     }
 
@@ -916,18 +924,25 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
      */
     public function postDispatch()
     {
-        if ($this->getFrontController()->getParam('noViewRenderer')) {
-            return;
+        if ($this->_shouldRender()) {
+            $this->render();
         }
+    }
 
-        if (!$this->_neverRender
+    /**
+     * Should the ViewRenderer render a view script?
+     * 
+     * @return bool
+     */
+    protected function _shouldRender()
+    {
+        return (!$this->getFrontController()->getParam('noViewRenderer')
+            && !$this->_neverRender
             && !$this->_noRender
             && (null !== $this->_actionController)
             && $this->getRequest()->isDispatched()
-            && !$this->getResponse()->isRedirect())
-        {
-            $this->render();
-        }
+            && !$this->getResponse()->isRedirect()
+        );
     }
 
     /**

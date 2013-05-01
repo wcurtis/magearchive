@@ -335,7 +335,7 @@ abstract class Mage_Core_Model_Mysql4_Abstract extends Mage_Core_Model_Resource_
         $this->_beforeSave($object);
         $this->_checkUnique($object);
 
-        if ($object->getId()) {
+        if (!is_null($object->getId())) {
             $condition = $this->_getWriteAdapter()->quoteInto($this->getIdFieldName().'=?', $object->getId());
             $this->_getWriteAdapter()->update($this->getMainTable(), $this->_prepareDataForSave($object), $condition);
         } else {
@@ -347,7 +347,6 @@ abstract class Mage_Core_Model_Mysql4_Abstract extends Mage_Core_Model_Resource_
 
         return $this;
     }
-
 
     /**
      * Delete the object
@@ -364,6 +363,13 @@ abstract class Mage_Core_Model_Mysql4_Abstract extends Mage_Core_Model_Resource_
         );
         $this->_afterDelete($object);
         return $this;
+    }
+
+    public function addUniqueField($field)
+    {
+        if( is_array($this->_uniqueFields) ) {
+            $this->_uniqueFields[] = $field;
+        }
     }
 
     /**
@@ -490,17 +496,6 @@ abstract class Mage_Core_Model_Mysql4_Abstract extends Mage_Core_Model_Resource_
     protected function _afterDelete(Mage_Core_Model_Abstract $object)
     {
         return $this;
-    }
-
-    public function formatDate($date)
-    {
-    	if (empty($date)) {
-    		return new Zend_Db_Expr('NULL');
-    	}
-        if (!is_numeric($date)) {
-            $date = strtotime($date);
-        }
-        return date('Y-m-d H:i:s', $date);
     }
 
     /**

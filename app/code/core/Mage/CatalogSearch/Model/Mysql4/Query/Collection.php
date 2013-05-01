@@ -41,15 +41,30 @@ class Mage_CatalogSearch_Model_Mysql4_Query_Collection extends Mage_Core_Model_M
 		return $this;
     }
 
-    public function setPopularQueryFilter()
+    public function setPopularQueryFilter($storeIds = null)
     {
     	$this->getSelect()->reset(Zend_Db_Select::FROM)->distinct(true)
     		->from(
     			array('main_table'=>$this->getTable('catalogsearch/search_query')),
     			array('name'=>"if(ifnull(synonim_for,'')<>'', synonim_for, query_text)", 'num_results')
-    		)
-    		->where('num_results>0 and store_id=?',Mage::app()->getStore()->getId())
-    		->order(array('popularity desc','name'));
+    		);
+        if ($storeIds) {
+            if (is_array($storeIds)) {
+                $storeIds = implode(',', $storeIds);
+            }
+            $this->getSelect()->where('num_results>0 and store_id in (?)', $storeIds);
+        } else if ($storeIds === null){
+    		$this->getSelect()->where('num_results>0 and store_id=?',Mage::app()->getStore()->getId());
+        }
+
+        $this->getSelect()->order(array('popularity desc','name'));
+
+		return $this;
+    }
+
+    public function setRecentQueryFilter()
+    {
+    	$this->setOrder('updated_at', 'desc');
 		return $this;
     }
 }

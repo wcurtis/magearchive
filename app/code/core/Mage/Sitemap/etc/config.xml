@@ -21,9 +21,9 @@
 -->
 <config>
     <modules>
-      <Mage_Sitemap>
-         <version>0.7.0</version>
-      </Mage_Sitemap>
+        <Mage_Sitemap>
+            <version>0.7.2</version>
+        </Mage_Sitemap>
     </modules>
     <global>
         <models>
@@ -60,9 +60,18 @@
                 </connection>
             </sitemap_read>
         </resources>
-   </global>
-   <adminhtml>
-       <menu>
+        <template>
+            <email>
+                <sitemap_generate_error_email_template translate="label" module="sitemap">
+                    <label>Sitemap generate Warnings</label>
+                    <file>sitemap_generate_warning.html</file>
+                    <type>text</type>
+                </sitemap_generate_error_email_template>
+            </email>
+        </template>
+    </global>
+    <adminhtml>
+        <menu>
             <catalog>
                 <children>
                     <sitemap translate="title" module="sitemap">
@@ -77,9 +86,9 @@
             <resources>
                 <admin>
                     <children>
-                         <catalog>
+                        <catalog>
                             <children>
-                                 <sitemap>
+                                <sitemap>
                                     <title>Google Sitemap</title>
                                 </sitemap>
                             </children>
@@ -112,15 +121,21 @@
                 <priority>1</priority>
                 <changefreq>daily</changefreq>
             </product>
+            <generate>
+                <enabled>0</enabled>
+                <error_email><![CDATA[]]></error_email>
+                <error_email_template>sitemap_generate_error_email_template</error_email_template>
+                <error_email_identity>general</error_email_identity>
+            </generate>
         </sitemap>
     </default>
     <crontab>
         <jobs>
-            <currency_rates_update>
+            <sitemap_generate>
                 <run>
                     <model>sitemap/observer::scheduledGenerateSitemaps</model>
                 </run>
-            </currency_rates_update>
+            </sitemap_generate>
         </jobs>
     </crontab>
 </config>

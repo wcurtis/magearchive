@@ -32,8 +32,7 @@ class Mage_Adminhtml_Block_System_Design_Grid extends Mage_Adminhtml_Block_Widge
     {
         $storeId = (int) $this->getRequest()->getParam('store', 0);
 
-        $collection = Mage::getResourceModel('core/design_collection')
-            ->joinStore();
+        $collection = Mage::getResourceModel('core/design_collection');
 
         $this->setCollection($collection);
         parent::_prepareCollection();
@@ -42,14 +41,15 @@ class Mage_Adminhtml_Block_System_Design_Grid extends Mage_Adminhtml_Block_Widge
 
     protected function _prepareColumns()
     {
-        $this->addColumn('store',
-            array(
-                'header'   => Mage::helper('catalog')->__('Store'),
-                'width'    => '100px',
-                'filter'   => 'adminhtml/system_design_grid_filter_store',
-                'renderer' => 'adminhtml/system_design_grid_renderer_store',
-                'index'    => 'main_table.store_id',
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('store_id', array(
+                'header'    => Mage::helper('catalog')->__('Store'),
+                'width'     => '100px',
+                'type'      => 'store',
+                'index'     => 'store_id',
+            ));
+        }
+
         $this->addColumn('package',
             array(
                 'header'=> Mage::helper('catalog')->__('Design'),

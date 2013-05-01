@@ -29,18 +29,17 @@ class Mage_Tag_ProductController extends Mage_Core_Controller_Front_Action
 {
     public function listAction()
     {
-        $this->loadLayout();
-        $this->_initLayoutMessages('tag/session');
         $tagId = $this->getRequest()->getParam('tagId');
+        $tag = Mage::getModel('tag/tag')->load($tagId);
 
-        if( intval($tagId) <= 0 ) {
+        if(!$tag->getId()) {
             $this->_redirectReferer();
             return;
         }
+        Mage::register('current_tag', $tag);
 
-        Mage::register('tagId', $tagId);
-        $this->getLayout()->getBlock('content')->append($this->getLayout()->createBlock('tag/product_result'));
-
+        $this->loadLayout();
+        $this->_initLayoutMessages('tag/session');
         $this->renderLayout();
     }
 }

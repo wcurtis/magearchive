@@ -46,18 +46,31 @@ class Mage_Core_Model_Mysql4_Translate extends Mage_Core_Model_Mysql4_Abstract
             return array();
         }
 
+//        $select = $read->select()
+//            ->from(array('main'=>$this->getMainTable()), array(
+//                    'string',
+//                    new Zend_Db_Expr('IFNULL(store.translate, main.translate)')
+//                ))
+//            ->joinLeft(array('store'=>$this->getMainTable()),
+//                $read->quoteInto('store.string=main.string AND store.store_id=?', $storeId),
+//                'string')
+//            ->where('main.store_id=0');
+//
+//        $result = $read->fetchPairs($select);
+//
         $select = $read->select()
-            ->from(array('main'=>$this->getMainTable()), array(
-                    'string',
-                    new Zend_Db_Expr('IFNULL(store.translate, main.translate)')
-                ))
-            ->joinLeft(array('store'=>$this->getMainTable()),
-                $read->quoteInto('store.string=main.string AND store.store_id=?', $storeId),
-                'string')
-            ->where('main.store_id=0');
-        return $read->fetchPairs($select);
+            ->from($this->getMainTable())
+            ->where('store_id in (?)', array(0, $storeId))
+            ->order('store_id');
+
+        $result = array();
+        foreach ($read->fetchAll($select) as $row) {
+            $result[$row['string']] = $row['translate'];
+        }
+
+        return $result;
     }
-    
+
     public function getMainChecksum()
     {
         return parent::getChecksum($this->getMainTable());

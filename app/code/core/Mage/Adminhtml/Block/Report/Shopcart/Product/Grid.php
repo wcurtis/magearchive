@@ -36,7 +36,10 @@ class Mage_Adminhtml_Block_Report_Shopcart_Product_Grid extends Mage_Adminhtml_B
     protected function _prepareCollection()
     {
         $collection = Mage::getResourceModel('reports/product_collection')
+            ->addAttributeToSelect('name')
             ->addAttributeToSelect('price')
+            ->setStoreId('')
+            ->addStoreFilter('')
             ->addCartsCount()
             ->addOrdersCount();
 
@@ -63,7 +66,8 @@ class Mage_Adminhtml_Block_Report_Shopcart_Product_Grid extends Mage_Adminhtml_B
             'width'     =>'80px',
             'type'      =>'currency',
             'currency_code' => (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE),
-            'index'     =>'price'
+            'index'     =>'price',
+            'renderer'  =>'adminhtml/report_grid_column_renderer_currency'
         ));
 
         $this->addColumn('carts', array(
@@ -83,7 +87,7 @@ class Mage_Adminhtml_Block_Report_Shopcart_Product_Grid extends Mage_Adminhtml_B
         $this->setFilterVisibility(false);
 
         $this->addExportType('*/*/exportProductCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportProductXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportProductExcel', Mage::helper('reports')->__('Excel'));
 
         return parent::_prepareColumns();
     }

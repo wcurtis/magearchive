@@ -230,21 +230,35 @@ class Mage_Adminhtml_Sales_Order_InvoiceController extends Mage_Adminhtml_Contro
                 if (!empty($data['comment_text'])) {
                     $invoice->addComment($data['comment_text'], isset($data['comment_customer_notify']));
                 }
-                if (isset($data['comment_customer_notify'])) {
-                    $invoice->sendUpdateEmail($data['comment_text']);
-                }
-
 
                 $invoice->register();
+
+                if (!empty($data['send_email'])) {
+                    $invoice->setEmailSent(true);
+                }
 
                 $transactionSave = Mage::getModel('core/resource_transaction')
                     ->addObject($invoice)
                     ->addObject($invoice->getOrder());
-
+                $shipment = false;
                 if (!empty($data['do_shipment'])) {
-                    $transactionSave->addObject($this->_prepareShipment($invoice));
+                    $shipment = $this->_prepareShipment($invoice);
+                    $transactionSave->addObject($shipment);
                 }
                 $transactionSave->save();
+
+                /**
+                 * Sending emails
+                 */
+                $comment = '';
+                if (isset($data['comment_customer_notify'])) {
+                    $comment = $data['comment_text'];
+                }
+                $invoice->sendEmail(!empty($data['send_email']), $comment);
+                if ($shipment) {
+                    $shipment->sendEmail(!empty($data['send_email']));
+                }
+
                 $this->_getSession()->addSuccess($this->__('Invoice was successfully created'));
 
                 $this->_redirect('*/sales_order/view', array('order_id' => $invoice->getOrderId()));
@@ -341,19 +355,14 @@ class Mage_Adminhtml_Sales_Order_InvoiceController extends Mage_Adminhtml_Contro
     public function addCommentAction()
     {
         try {
-            $this->getRequest()->setParam(
-                'invoice_id',
-                $this->getRequest()->getParam('id')
-            );
+            $this->getRequest()->setParam('invoice_id', $this->getRequest()->getParam('id'));
             $data = $this->getRequest()->getPost('comment');
             if (empty($data['comment'])) {
                 Mage::throwException($this->__('Comment text field can not be empty.'));
             }
             $invoice = $this->_initInvoice();
             $invoice->addComment($data['comment'], isset($data['is_customer_notified']));
-            if (isset($data['is_customer_notified'])) {
-                $invoice->sendUpdateEmail($data['comment']);
-            }
+            $invoice->sendUpdateEmail(!empty($data['is_customer_notified']), $data['comment']);
             $invoice->save();
 
             $response = $this->getLayout()->createBlock('adminhtml/sales_order_comments_view')

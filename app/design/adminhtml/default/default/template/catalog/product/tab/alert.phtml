@@ -23,49 +23,9 @@
  * Template for block Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts
  */
 ?>
-<script type="text/javascript" language="javascript">
-    var Queue = Class.create();
-    var url = '<?=$this->getAddToQueueUrl();?>';
-    
-    function setMessages(messages) {
-        messageObject = $('alert_messages_block');
-        messageObject.update(messages);        
-    }
-    
-    Queue.prototype = {
-        initialize:
-            function() {
-            },
-        add: function(productId, storeId) {
-            new Ajax.Request ( url, {   
-                    param :
-                        { 
-                            'store_id':storeId,
-                            'peoduct_id':productId
-                        },
-                    onSuccess : function(req) 
-                        {
-                            setMessages(req.responseText);
-                        },
-                    onFailure : function()
-                        {
-                           alert('<?=Mage::helper('customeralert')->__('Error in using AJAX while saving customers to queue alert')?>');
-                        }
-                           
-                    })
-        }
-    }
-queue = new Queue();
-</script>
 <div id="alert_messages_block"><?=$this->getMessageHtml()?></div>
 <div>
-	<h4 class="icon-head head-edit-form"><?=Mage::helper('customeralert')->__('Product Alerts')?></h4>
+	<h4 class="icon-head head-edit-form"><?=Mage::helper('productalert')->__('Product Alerts')?></h4>
 </div>
 <div class="clear"></div>
-<br />
-    <?=$this->getAccordionHtml()?>
-<br />
-<div class="right">
-    <?=$this->getAddToQueryButtonHtml()?>
-</div>
-
+<?=$this->getAccordionHtml()?>

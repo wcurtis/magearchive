@@ -35,7 +35,7 @@ class Mage_Rule_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Coll
 
     protected function _construct()
     {
-    	$this->_init('rule/rule');
+        $this->_init('rule/rule');
     }
 
     /**
@@ -49,7 +49,7 @@ class Mage_Rule_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Coll
         parent::__construct(Mage::getSingleton('core/resource')->getConnection('sales_read'));
 
         $ruleTable = Mage::getSingleton('core/resource')->getTableName('sales/quote_rule');
-        $this->_sqlSelect->from($ruleTable)->order('sort_order');
+        $this->_select->from($ruleTable)->order('sort_order');
 
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('sales/quote_rule'));
     }
@@ -103,7 +103,7 @@ class Mage_Rule_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Coll
     {
         $e = $this->getEnv()->getData();
 
-        $this->_sqlSelect->where("is_active=1");
+        $this->_select->where("is_active=1");
 
         if (!empty($e['now'])) {
             if (!is_numeric($e['now'])) {
@@ -113,7 +113,7 @@ class Mage_Rule_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Coll
         } else {
             $now = date("Y-m-d H:i:s");
         }
-        $this->_sqlSelect->where("start_at<='$now' and expire_at>='$now'");
+        $this->_select->where("start_at<='$now' and expire_at>='$now'");
 
         return $this;
     }

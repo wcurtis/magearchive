@@ -26,7 +26,7 @@ class Mage_Eav_Model_Entity_Attribute_Source_Table extends Mage_Eav_Model_Entity
         if (!$this->_options) {
             $this->_options = Mage::getResourceModel('eav/entity_attribute_option_collection')
                 ->setAttributeFilter($this->getAttribute()->getId())
-                ->setStoreFilter($this->getAttribute()->getEntity()->getStoreId())
+                ->setStoreFilter($this->getAttribute()->getStoreId())
                 ->setOrder('value', 'asc')
                 ->load()
                 ->toOptionArray();
@@ -53,13 +53,13 @@ class Mage_Eav_Model_Entity_Attribute_Source_Table extends Mage_Eav_Model_Entity
 
         $collection = Mage::getResourceModel('eav/entity_attribute_option_collection')
             ->setAttributeFilter($this->getAttribute()->getId())
-            ->setStoreFilter($this->getAttribute()->getEntity()->getStoreId())
+            ->setStoreFilter($this->getAttribute()->getStoreId())
             ->setIdFilter($value)
             ->load();
         if ($isMultiple) {
             $values = array();
             foreach ($collection as $item) {
-            	$values[] = $item->getValue();
+                $values[] = $item->getValue();
             }
             return $values;
         }

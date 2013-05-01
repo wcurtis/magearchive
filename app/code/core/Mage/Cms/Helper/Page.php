@@ -53,34 +53,26 @@ class Mage_Cms_Helper_Page extends Mage_Core_Helper_Abstract
 //            return true;
 //        }
 
-        $action->loadLayout(null, false, false);
+        if ($page->getCustomTheme()) {
+            $apply = true;
+            $today = strtotime('today');
+            if (($from = $page->getCustomThemeFrom()) && strtotime($from)>$today) {
+                $apply = false;
+            }
+            if ($apply && ($to = $page->getCustomThemeTo()) && strtotime($to)<$today) {
+                $apply = false;
+            }
+            if ($apply) {
+                list($package, $theme) = explode('/', $page->getCustomTheme());
+                Mage::getSingleton('core/design_package')
+                    ->setPackageName($package)
+                    ->setTheme($theme);
+            }
+        }
+
+        $action->loadLayout(array('default', 'cms_page'), false, false);
         $action->getLayout()->getUpdate()->addUpdate($page->getLayoutUpdateXml());
         $action->generateLayoutXml()->generateLayoutBlocks();
-
-        // show breadcrumbs
-        if (Mage::getStoreConfig('web/default/show_cms_breadcrumbs')
-            && ($breadcrumbs = $action->getLayout()->getBlock('breadcrumbs'))
-            && ($page->getIdentifier()!==Mage::getStoreConfig('web/default/cms_home_page'))
-            && ($page->getIdentifier()!==Mage::getStoreConfig('web/default/cms_no_route'))) {
-                $breadcrumbs->addCrumb('home', array('label'=>Mage::helper('cms')->__('Home'), 'title'=>Mage::helper('cms')->__('Go to Home Page'), 'link'=>Mage::getBaseUrl()));
-                $breadcrumbs->addCrumb('cms_page', array('label'=>$page->getTitle(), 'title'=>$page->getTitle()));
-        }
-
-        if ($root = $action->getLayout()->getBlock('root')) {
-            $template = (string)Mage::getConfig()->getNode('global/cms/layouts/'.$page->getRootTemplate().'/template');
-            $root->setTemplate($template);
-            $root->addBodyClass('cms-'.$page->getIdentifier());
-        }
-
-        if ($head = $action->getLayout()->getBlock('head')) {
-            $head->setTitle($page->getTitle());
-        }
-
-        if ($content = $action->getLayout()->getBlock('content')) {
-            $block = $action->getLayout()->createBlock('cms/page')->setPage($page);
-            $content->append($block);
-        }
-
         $action->renderLayout();
 
         return true;

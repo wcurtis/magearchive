@@ -42,23 +42,23 @@ class Mage_Tax_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Colle
             ? 'main_table.tax_customer_class_id = ?'
             : 'main_table.tax_product_class_id = ?';
 
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('class_table' => $this->getTable('tax/tax_class')),
             $sqlJoin
         );
-        $this->_sqlSelect->where($sqlWhere, $classTypeId);
+        $this->_select->where($sqlWhere, $classTypeId);
 
         return $this;
     }
 
     public function joinClassTable()
     {
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('class_customer_table' => $this->getTable('tax/tax_class')),
             'main_table.tax_customer_class_id = class_customer_table.class_id',
             array('class_customer_name' => 'class_name')
         );
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('class_product_table' => $this->getTable('tax/tax_class')),
             'main_table.tax_product_class_id = class_product_table.class_id',
             array('class_product_name' => 'class_name')
@@ -69,7 +69,7 @@ class Mage_Tax_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Colle
 
     public function joinRateTypeTable()
     {
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('rate_type_table' => $this->getTable('tax/tax_rate_type')),
             'main_table.tax_rate_type_id = rate_type_table.type_id',
             array('rate_type_name' => 'type_name')

@@ -35,18 +35,43 @@ class Mage_Catalog_Block_Category_View extends Mage_Core_Block_Template
         if ($headBlock = $this->getLayout()->getBlock('head')) {
             if ($title = $this->getCurrentCategory()->getMetaTitle()) {
                 $headBlock->setTitle($title.' '.Mage::getStoreConfig('catalog/seo/title_separator').' '.Mage::getStoreConfig('system/store/name'));
-            }/*
-            elseif ($headBlock = $this->getLayout()->getBlock('head')) {
-                $headBlock->setTitle($this->getCurrentCategory()->getName());
             }
+            if ($description = $this->getCurrentCategory()->getMetaDescription()) {
+                $headBlock->setDescription($description);
+            }
+            if ($keywords = $this->getCurrentCategory()->getMetaKeywords()) {
+                $headBlock->setKeywords($keywords);
+            }
+            /*
+            want to show rss feed in the url
             */
+            if ($this->IsRssCatalogEnable() && $this->IsTopCategory()) {
+                $title = $this->helper('rss')->__('%s RSS Feed',$this->getCurrentCategory()->getName());
+                $headBlock->addItem('rss', $this->getRssLink(), 'title="'.$title.'"');
+            }
         }
         if ($layout = $this->getCurrentCategory()->getPageLayout()) {
-            $template = (string)Mage::getConfig()->getNode('global/cms/layouts/'.$layout.'/template');
-            $this->getLayout()->getBlock('root')->setTemplate($template);
+            if ($template = (string)Mage::getConfig()->getNode('global/cms/layouts/'.$layout.'/template')) {
+                $this->getLayout()->getBlock('root')->setTemplate($template);
+            }
         }
 
         return $this;
+    }
+
+    public function IsRssCatalogEnable()
+    {
+        return Mage::getStoreConfig('rss/catalog/category');
+    }
+
+    public function IsTopCategory()
+    {
+        return $this->getCurrentCategory()->getParentId()==Mage::app()->getStore()->getRootCategoryId();
+    }
+
+    public function getRssLink()
+    {
+        return Mage::getUrl('rss/catalog/category',array('cid' => $this->getCurrentCategory()->getId(), 'sid' => Mage::app()->getStore()->getId()));
     }
 
     public function getProductListHtml()

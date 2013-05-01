@@ -91,7 +91,7 @@ originModel.prototype = {
         } else {
             var countryElements = $$('.countries');
         }
-        for(var i in countryElements) {
+        for(var i=0; i<countryElements.size(); i++) {
             Event.observe(countryElements[i], 'change', this.reloadRegionField.bind(this));
             this.initRegionField(countryElements[i]);
             if ($(countryElements[i].id+'_inherit')) {
@@ -158,12 +158,15 @@ originModel.prototype = {
                     }
                 }
                 html+= '</select>';
-                new Insertion.Before(this.regionElement, html);
-                Element.remove(this.regionElement);
+                var parentNode = this.regionElement.parentNode;
+                var regionElementId = this.regionElement.id;
+
+                this.regionElement.remove();
+                new Insertion.Bottom(parentNode, html);
+                this.regionElement = $(regionElementId);
             } else if (this.reload) {
                 var html = '<input type="text" name="'+this.regionElement.name+'" id="'+this.regionElement.id+'" class="input-text" title="'+this.regionElement.title+'"'+(disabled?" disabled":"")+'>';
-                new Insertion.Before(this.regionElement, html);
-                Element.remove(this.regionElement);
+                this.regionElement.replace(html);
             }
         }
     }

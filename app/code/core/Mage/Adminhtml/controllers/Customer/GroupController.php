@@ -29,10 +29,11 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
     protected function _initGroup()
     {
         Mage::register('current_group', Mage::getModel('customer/group'));
-        if ($groupId = $this->getRequest()->getParam('id')) {
+        $groupId = $this->getRequest()->getParam('id');
+        if (!is_null($groupId)) {
             Mage::registry('current_group')->load($groupId);
         }
-        
+
     }
     /**
      * Customer groups list.
@@ -60,7 +61,7 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
         $this->_addBreadcrumb(Mage::helper('customer')->__('Customers'), Mage::helper('customer')->__('Customers'));
         $this->_addBreadcrumb(Mage::helper('customer')->__('Customer Groups'), Mage::helper('customer')->__('Customer Groups'), $this->getUrl('*/customer_group'));
 
-        if (Mage::registry('current_group')->getId()) {
+        if (!is_null(Mage::registry('current_group')->getId())) {
             $this->_addBreadcrumb(Mage::helper('customer')->__('Edit Group'), Mage::helper('customer')->__('Edit Customer Groups'));
         } else {
             $this->_addBreadcrumb(Mage::helper('customer')->__('New Group'), Mage::helper('customer')->__('New Customer Groups'));
@@ -87,14 +88,15 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
     public function saveAction()
     {
         $customerGroup = Mage::getModel('customer/group');
-        if ($id = (int)$this->getRequest()->getParam('id')) {
+        $id = $this->getRequest()->getParam('id');
+        if (!is_null($id)) {
             $customerGroup->load($id);
         }
-        
-        if ($code = $this->getRequest()->getParam('code')) {
+
+        if ($taxClass = $this->getRequest()->getParam('tax_class')) {
             try {
-                $customerGroup->setCode($code)
-                    ->setTaxClassId($this->getRequest()->getParam('tax_class'))
+                $customerGroup->setCode($this->getRequest()->getParam('code'))
+                    ->setTaxClassId($taxClass)
                     ->save();
 
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('customer')->__('Customer Group was successfully saved'));

@@ -18,65 +18,106 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_Model_Entity_Product_Collection
+class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
 {
     public function addFieldsToFilter($fields)
     {
         if ($fields) {
-            $selects = array();
-            foreach ($fields as $table=>$conditions) {
-                $select = $this->_read->select();
-                $select->from($table, 'entity_id');
+            /*$entityIds = null;*/
+            $previousSelect = null;
+            foreach ($fields as $table => $conditions) {
+                $select = $this->getConnection()->select();
+                $select->from(array('t1' => $table), 'entity_id');
 
-                foreach ($conditions as $attributeId=>$conditionValue) {
-                    $field = 'value';
-                    $storeId = $this->getEntity()->getStoreId();
+                $join = false;
 
-                    if (is_numeric($attributeId)) {
-                        $select->where("{$table}.attribute_id = ?", $attributeId);
-                    } else {
-                        $field = $attributeId;
-                        $storeId = 0;
-                    }
-                    $select->where('store_id = ?', $storeId);
+                foreach ($conditions as $attributeId => $conditionValue) {
+                    $conditionData = array();
 
-                    if (is_array($conditionValue)){
+                    if (is_array($conditionValue)) {
                         if (isset($conditionValue['in'])){
-                            $condition = $conditionValue['in'];
-                            $suffix = 'in (?)';
-                        } else if (isset($conditionValue['like'])) {
-                            $condition = $conditionValue['like'];
-                            $suffix = 'like ?';
-                        } else if (isset($conditionValue['from']) && isset($conditionValue['to'])) {
-                            $suffix = '?';
+                            $conditionData[] = array('IN (?)', $conditionValue['in']);
+                        }
+                        elseif (isset($conditionValue['like'])) {
+                            $conditionData[] = array('LIKE ?', $conditionValue['like']);
+                        }
+                        elseif (isset($conditionValue['from']) && isset($conditionValue['to'])) {
                             if ($conditionValue['from']) {
                                 if (!is_numeric($conditionValue['from'])){
                                     $conditionValue['from'] = date("Y-m-d H:i:s", strtotime($conditionValue['from']));
                                 }
-
-                                $select->where("{$table}.value >= ?", $conditionValue['from']);
+                                $conditionData[] = array('>= ?', $conditionValue['from']);
                             }
-
                             if ($conditionValue['to']) {
                                 if (!is_numeric($conditionValue['to'])){
                                     $conditionValue['to'] = date("Y-m-d H:i:s", strtotime($conditionValue['to']));
                                 }
-
-                                $select->where("{$table}.value <= ?", $conditionValue['to']);
+                                $conditionData[] = array('<= ?', $conditionValue['to']);
                             }
-                            continue;
                         }
                     } else {
-                        $condition = $conditionValue;
-                        $suffix = '= ?';
+                        $conditionData[] = array('= ?', $conditionValue);
                     }
 
-                    $select->where("{$table}.{$field} {$suffix}", $condition);
+                    if (!is_numeric($attributeId)) {
+                        foreach ($conditionData as $data) {
+                            $select->where('t1.'.$attributeId . ' ' . $data[0], $data[1]);
+                        }
+                    }
+                    else {
+                        if ($join == false) {
+                            $storeId = $this->getStoreId();
+                            $select->joinLeft(
+                                array('t2' => $table),
+                                $this->getConnection()->quoteInto('t1.entity_id = t2.entity_id AND t1.attribute_id = t2.attribute_id AND t2.store_id=?', $storeId),
+                                array()
+                            );
+                            $select->where('t1.store_id = ?', 0);
+                            $join = true;
+                        }
+                        $select->where('t1.attribute_id = ?', $attributeId);
+                        foreach ($conditionData as $data) {
+                            $select->where('IFNULL(t2.value, t1.value) ' . $data[0], $data[1]);
+                        }
+                    }
                 }
-                $selects[] = $select;
+
+                if (!is_null($previousSelect)) {
+                    $entityIds = $this->getConnection()->fetchCol($previousSelect);
+                    if (!count($entityIds))
+                        $entityIds = null;
+
+                    $select->where('t1.entity_id IN(?)', $entityIds);
+                }
+                $previousSelect = $select;
+
+                /*if (!is_null($entityIds) && $entityIds) {
+                    $select->where('t1.entity_id IN(?)', $entityIds);
+                }
+                elseif (!is_null($entityIds) && !$entityIds) {
+                    continue;
+                }
+
+                $entityIds = array();
+                $rowSet = $this->getConnection()->fetchAll($select);
+                foreach ($rowSet as $row) {
+                    $entityIds[] = $row['entity_id'];
+                }*/
             }
 
-            $this->addFieldToFilter('entity_id', array('in' => new Zend_Db_Expr(implode(" UNION ", $selects))));
+            /*if ($entityIds) {
+                $this->addFieldToFilter('entity_id', array('IN', $entityIds));
+            }
+            else {
+                $this->addFieldToFilter('entity_id', 'IS NULL');
+            }*/
+
+            $entityIds = $this->getConnection()->fetchCol($select);
+            if (!count($entityIds))
+                $entityIds = null;
+
+            $this->addFieldToFilter('entity_id', array('in' => $entityIds));
+
         }
 
         return $this;

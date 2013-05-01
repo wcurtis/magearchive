@@ -19,17 +19,17 @@
  */
 
 
-class Mage_Adminhtml_Model_Search_Catalog extends Varien_Object 
+class Mage_Adminhtml_Model_Search_Catalog extends Varien_Object
 {
     public function load()
     {
         $arr = array();
-        
+
         if (!$this->hasStart() || !$this->hasLimit() || !$this->hasQuery()) {
             $this->setResults($arr);
             return $this;
         }
-        
+
         $collection = Mage::helper('catalogSearch')->getQuery()->getResultCollection()
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('description')
@@ -37,19 +37,19 @@ class Mage_Adminhtml_Model_Search_Catalog extends Varien_Object
             ->setCurPage($this->getStart())
             ->setPageSize($this->getLimit())
             ->load();
-        
+
         foreach ($collection as $product) {
             $arr[] = array(
                 'id'            => 'product/1/'.$product->getId(),
                 'type'          => 'Product',
                 'name'          => $product->getName(),
                 'description'   => substr($product->getDescription(), 0, 50),
-                'url'           => $this->getUrl('*/catalog_product/edit', array('id'=>$product->getId())),
+                'url'           => Mage::helper('adminhtml')->getUrl('*/catalog_product/edit', array('id'=>$product->getId())),
             );
         }
-        
+
         $this->setResults($arr);
-        
+
         return $this;
     }
 }

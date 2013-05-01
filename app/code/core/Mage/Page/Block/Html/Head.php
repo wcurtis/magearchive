@@ -71,11 +71,11 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
         return $this;
     }
 
-	public function removeItem($type, $name)
-	{
-		unset($this->_additionalCssJs[$type.'/'.$name]);
-		return $this;
-	}
+    public function removeItem($type, $name)
+    {
+        unset($this->_additionalCssJs[$type.'/'.$name]);
+        return $this;
+    }
 
     public function getAdditionalCssJs()
     {
@@ -93,9 +93,14 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
 
                 case 'skinJs':
                     $lines .= '<script type="text/javascript" src="'.$this->getSkinUrl('js/'.$item['name']).'" '.$item['params'].'></script>';
+                    break;
 
                 case 'css':
                     $lines .= '<link type="text/css" rel="stylesheet" href="'.$this->getSkinUrl('css/'.$item['name']).'" '.$item['params'].'></link>';
+                    break;
+
+                case 'rss':
+                    $lines .= '<link rel="alternate" type="application/rss+xml" href="'.$item['name'].'" '.$item['params'].'></link>';
                     break;
             }
             if (!empty($item['if'])) {

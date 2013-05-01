@@ -65,4 +65,11 @@ class Mage_Core_Model_Mysql4_Url_Rewrite_Collection extends Mage_Core_Model_Mysq
 
         return $this;
     }
+
+    public function filterAllByCategory()
+    {
+        $this->getSelect()
+            ->where('id_path like ?', "category%");
+        return $this;
+    }
 }

@@ -70,19 +70,20 @@ class Mage_Adminhtml_Block_Report_Review_Detail_Grid extends Mage_Adminhtml_Bloc
 
         $this->addColumn('detail', array(
             'header'    =>Mage::helper('reports')->__('Detail'),
-            'width'     =>'70%',
             'index'     =>'detail'
         ));
 
         $this->addColumn('created_at', array(
             'header'    =>Mage::helper('reports')->__('Created at'),
-            'index'     =>'created_at'
+            'index'     =>'created_at',
+            'width'     =>'200px',
+            'type'      =>'datetime'
         ));
 
         $this->setFilterVisibility(false);
 
         $this->addExportType('*/*/exportProductDetailCsv', Mage::helper('reports')->__('CSV'));
-        $this->addExportType('*/*/exportProductDetailXml', Mage::helper('reports')->__('XML'));
+        $this->addExportType('*/*/exportProductDetailExcel', Mage::helper('reports')->__('Excel'));
 
         return parent::_prepareColumns();
     }

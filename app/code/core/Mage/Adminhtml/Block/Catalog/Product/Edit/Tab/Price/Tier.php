@@ -85,10 +85,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Admi
     {
         if (!$this->_customerGroups) {
             $collection = Mage::getModel('customer/group')->getCollection()
-                #->setRealGroupsFilter()
                 ->load();
             $this->_customerGroups = array(
-                Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice::CUST_GROUP_ALL => Mage::helper('catalog')->__('ALL GROUPS'),
+                Mage_Customer_Model_Group::CUST_GROUP_ALL => Mage::helper('catalog')->__('ALL GROUPS'),
             );
             foreach ($collection->getIterator() as $item) {
                 $this->_customerGroups[$item->getId()] = $item->getCustomerGroupCode();
@@ -100,24 +99,19 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Admi
 
     public function getDefaultCustomerGroup()
     {
-        return Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice::CUST_GROUP_ALL;
-        #return Mage::getStoreConfig(Mage_Customer_Model_Group::XML_PATH_DEFAULT_ID);
+        return Mage_Customer_Model_Group::CUST_GROUP_ALL;
     }
 
     public function getAfterElementHtml()
     {
         $html = $this->getData('after_element_html');
 
-        $storeId = null;
         $attribute = $this->getElement()->getEntityAttribute();
-        if (!$attribute->getIsGlobal()) {
-            $storeId = $attribute->getEntity()->getStoreId();
-        } else {
+        if ($attribute->isScopeGlobal()) {
             $html .= $this->getGlobalIcon();
         }
-        $currencyCode = (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, $storeId);
-        $html .= ' (' . Mage::helper('catalog')->__('Currency') . ' - <strong>'.$currencyCode.'</strong>)';
-
+        $currencyCode = (string) Mage::app()->getStore($attribute->getStoreId())->getBaseCurrencyCode();
+        $html .= '<strong>['.$currencyCode.']</strong>';
         return $html;
     }
 

@@ -32,6 +32,19 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Account extends Mage_Adminhtm
         $this->setTemplate('sales/order/create/form/account.phtml');
     }
 
+    protected function _prepareLayout()
+    {
+        Varien_Data_Form::setElementRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_element')
+        );
+        Varien_Data_Form::setFieldsetRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_fieldset')
+        );
+        Varien_Data_Form::setFieldsetElementRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_fieldset_element')
+        );
+    }
+
     public function getHeaderCssClass()
     {
         return 'head-account';
@@ -59,6 +72,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Account extends Mage_Adminhtm
             }
 
             $this->_form = new Varien_Data_Form();
+            $fieldset = $this->_form->addFieldset('main', array());
             $customerModel = Mage::getModel('customer/customer');
 
             foreach ($customerModel->getAttributes() as $attribute) {
@@ -66,7 +80,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Account extends Mage_Adminhtm
                     continue;
                 }
                 if ($inputType = $attribute->getFrontend()->getInputType()) {
-                    $element = $this->_form->addField($attribute->getAttributeCode(), $inputType,
+                    $element = $fieldset->addField($attribute->getAttributeCode(), $inputType,
                         array(
                             'name'  => $attribute->getAttributeCode(),
                             'label' => $attribute->getFrontend()->getLabel(),

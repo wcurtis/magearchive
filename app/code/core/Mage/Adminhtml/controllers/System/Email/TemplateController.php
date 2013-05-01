@@ -78,14 +78,14 @@ class Mage_Adminhtml_System_Email_TemplateController extends Mage_Adminhtml_Cont
         }
 
         try {
-            $template->setTemplateSubject($request->getParam('subject'))
-                ->setTemplateCode($request->getParam('code'))
+            $template->setTemplateSubject($request->getParam('template_subject'))
+                ->setTemplateCode($request->getParam('template_code'))
 /*
                 ->setTemplateSenderEmail($request->getParam('sender_email'))
                 ->setTemplateSenderName($request->getParam('sender_name'))
 */
-                ->setTemplateText($request->getParam('text'))
-				->setModifiedAt(now());
+                ->setTemplateText($request->getParam('template_text'))
+				->setModifiedAt(Mage::getSingleton('core/date')->gmtDate());
 
             if (!$template->getId()) {
                 $type = constant(Mage::getConfig()->getModelClassName('core/email_template') . "::TYPE_HTML");
@@ -130,6 +130,14 @@ class Mage_Adminhtml_System_Email_TemplateController extends Mage_Adminhtml_Cont
         $this->renderLayout();
     }
 
+    public function defaultTemplateAction()
+    {
+        $template = Mage::getModel('core/email_template');
+
+        $template->loadDefault($this->getRequest()->getParam('code'), $this->getRequest()->getParam('locale'));
+
+        $this->getResponse()->setBody(Zend_Json::encode($template->getData()));
+    }
 
     protected function _isAllowed()
     {

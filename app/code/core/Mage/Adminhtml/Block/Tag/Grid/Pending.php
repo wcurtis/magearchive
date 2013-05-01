@@ -103,20 +103,21 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
         */
 
           // Collection for stores filters
-        if(!$collection = Mage::registry('stores_select_collection')) {
+        if (!$collection = Mage::registry('stores_select_collection')) {
             $collection =  Mage::app()->getStore()->getResourceCollection()
                 ->load();
             Mage::register('stores_select_collection', $collection);
         }
 
-         $this->addColumn('visible_in', array(
-            'header'    => Mage::helper('tag')->__('Visible In'),
-            'type'      => 'select',
-            'index'     => 'stores',
-             'sortable'  => false,
-            'filter'      => 'adminhtml/tag_grid_all_filter_visible',
-            'renderer'      => 'adminhtml/tag_grid_all_renderer_visible'
-        ));
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('visible_in', array(
+                'header'    => Mage::helper('tag')->__('Visible In'),
+                'type'      => 'store',
+                'index'     => 'stores',
+                'sortable'  => false,
+                'store_view'=> true
+            ));
+        }
 
         $this->addColumn('actions', array(
             'header'    => Mage::helper('tag')->__('Actions'),

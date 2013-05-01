@@ -14,8 +14,8 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Registry.php 7096 2007-12-12 20:59:05Z matthew $
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Registry.php 8183 2008-02-19 22:27:20Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -33,7 +33,7 @@ require_once 'Zend/View/Helper/Placeholder/Container.php';
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */ 
 class Zend_View_Helper_Placeholder_Registry
@@ -115,7 +115,8 @@ class Zend_View_Helper_Placeholder_Registry
     public function containerExists($key)
     {
         $key = (string) $key;
-        return isset($this->_items[$key]);
+        $return =  array_key_exists($key, $this->_items);
+        return $return;
     }
 
     /**

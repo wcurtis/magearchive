@@ -67,14 +67,14 @@ class Mage_Core_Controller_Varien_Router_Admin extends Mage_Core_Controller_Vari
             exit;
         }
 
-        if (!$request->isPost()) {
+        if (Mage::app()->isInstalled() && !$request->isPost()) {
             $shouldBeSecure = substr(Mage::getStoreConfig('web/unsecure/base_url'),0,5)==='https'
                 || Mage::getStoreConfigFlag('web/secure/use_in_adminhtml')
                 && substr(Mage::getStoreConfig('web/secure/base_url'),0,5)==='https';
 
-            if ($shouldBeSecure != Mage::app()->getStore()->isCurrentlySecure()) {
-                $url = Mage::getBaseUrl('link', $shouldBeSecure).ltrim($request->getPathInfo(), '/');
-#echo $url; exit;
+            if ($shouldBeSecure && !Mage::app()->getStore()->isCurrentlySecure()) {
+                $url = Mage::getBaseUrl('link', true).ltrim($request->getPathInfo(), '/');
+
                 Mage::app()->getFrontController()->getResponse()
                     ->setRedirect($url)
                     ->sendResponse();

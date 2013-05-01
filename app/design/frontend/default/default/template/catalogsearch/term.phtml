@@ -21,17 +21,16 @@
 <div class="page-head">
     <h3><?=$this->__('Popular Search Terms')?></h3>
 </div>
-<?$_items = $this->getTermCollection();?>
-<?if($_items->getSize()):?>
-<?=$this->getPagerHtml();?>
-<div class="content">
-<ul class="bare-list">    
-        <?foreach ($_items as $_item):?>
-            <li><a href="<?=$this->getSearchUrl($_item)?>"><?=$_item->name?></a></li>
+<?if( sizeof($this->getTerms()) > 0 ):?>
+<div class="box base-mini mini-product-tags">
+    <div class="content">
+    <ul class="bare-list">
+        <?foreach ($this->getTerms() as $_term):?>
+            <li><a href="<?=$this->getSearchUrl($_term)?>" style="font-size:<?=$_term->getRatio()*70+75?>%;"><?=$_term->getName()?></a></li>
         <?endforeach;?>
-</ul>
+    </ul>
+    </div>
 </div>
-<?=$this->getPagerHtml();?>
 <?else:?>
-    <div><?=$this->__('There is no popular search term.');?></div>
+    <div><?=$this->__('There is no search terms.');?></div>
 <?endif?>

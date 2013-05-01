@@ -26,7 +26,7 @@
  */
 class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
-	protected $_loadDefault = false;
+    protected $_loadDefault = false;
 
     protected function _construct()
     {
@@ -35,13 +35,13 @@ class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Col
 
     public function setLoadDefault($loadDefault)
     {
-    	$this->_loadDefault = $loadDefault;
-    	return $this;
+        $this->_loadDefault = $loadDefault;
+        return $this;
     }
 
     public function getLoadDefault()
     {
-    	return $this->_loadDefault;
+        return $this->_loadDefault;
     }
 
     public function setWithoutDefaultFilter()
@@ -108,19 +108,19 @@ class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Col
 
     public function load($printQuery = false, $logQuery = false)
     {
-    	if (!$this->getLoadDefault()) {
-    		$this->getSelect()->where($this->getConnection()->quoteInto('main_table.store_id>?', 0));
-    	}
-    	$this->getSelect()->order('main_table.sort_order ASC');
-    	parent::load($printQuery, $logQuery);
-    	return $this;
+        if (!$this->getLoadDefault()) {
+            $this->getSelect()->where($this->getConnection()->quoteInto('main_table.store_id>?', 0));
+        }
+        $this->getSelect()->order('main_table.sort_order ASC');
+        parent::load($printQuery, $logQuery);
+        return $this;
     }
 
     public function loadByCategoryIds(array $categories)
     {
         $this->setLoadDefault(true);
         $condition = $this->getConnection()->quoteInto('root_category_id IN(?)', $categories);
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('group_table' => $this->getTable('core/store_group')),
             'main_table.group_id=group_table.group_id',
             array('root_category_id')
@@ -131,7 +131,7 @@ class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Col
 
     public function addRootCategoryIdAttribute()
     {
-        $this->_sqlSelect->joinLeft(
+        $this->_select->joinLeft(
             array('group_table' => $this->getTable('core/store_group')),
             'main_table.group_id=group_table.group_id',
             array('root_category_id')

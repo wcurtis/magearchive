@@ -206,7 +206,8 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
     {
         $email = $this->getRequest()->getPost('email');
         if ($email) {
-            $customer = Mage::getModel('customer/customer')->loadByEmail($email);
+            $customer = Mage::getModel('customer/customer')->setWebsiteId(Mage::app()->getStore()->getWebsiteId())->loadByEmail($email);
+            /* @var $customer Mage_Customer_Model_Customer */
             if ($customer->getId()) {
                 try {
                     $newPassword = $customer->generatePassword();
@@ -314,7 +315,10 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                     return;
                 }
 
-                if ($customer->hashPassword($currPass) == Mage::getSingleton('customer/session')->getCustomer()->getPasswordHash()) {
+                $oldPass = Mage::getSingleton('customer/session')->getCustomer()->getPasswordHash();
+                list($_salt, $salt) = explode(':', $oldPass);
+
+                if ($customer->hashPassword($currPass, $salt) == $oldPass) {
                     $customer->setPassword($newPass);
                 } else {
                     Mage::getSingleton('customer/session')

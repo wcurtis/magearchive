@@ -25,28 +25,32 @@
  * @package    Mage_Review
  */
 
-class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Model_Entity_Product_Collection
+class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
 {
     protected $_entitiesAlias = array();
     protected $_reviewStoreTable;
     protected $_addStoreDataFlag = false;
 
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getResourceSingleton('catalog/product'));
-        $this->setObject('catalog/product');
+        $this->_init('catalog/product');
         $this->setRowIdFieldName('review_id');
         $this->_reviewStoreTable = Mage::getSingleton('core/resource')->getTableName('review/review_store');
     }
 
-    public function addStoreFilter($storeId)
+    protected function _initSelect()
     {
-        $pstoreTable = Mage::getSingleton('core/resource')->getTableName('catalog/product_store');
+        parent::_initSelect();
+        $this->_joinFields();
+        return $this;
+    }
+
+    public function addStoreFilter($storeId=null)
+    {
+        parent::addStoreFilter($storeId);
         $this->getSelect()
             ->join(array('store'=>$this->_reviewStoreTable),
-                'rt.review_id=store.review_id AND store.store_id=' . (int)$storeId, array())
-            ->join(array('pstore'=>$pstoreTable),
-                'pstore.product_id=e.entity_id AND pstore.store_id=' . (int)$storeId, array());
+                'rt.review_id=store.review_id AND store.store_id=' . (int)$storeId, array());
 
         return $this;
     }
@@ -58,7 +62,6 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
                 'rt.review_id=store.review_id AND store.store_id=' . (int)$storeId, array());
         return $this;
     }
-
 
     /**
      * Add stores data
@@ -121,13 +124,6 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
         return $this;
     }
 
-    public function resetSelect()
-    {
-        parent::resetSelect();
-        $this->_joinFields();
-        return $this;
-    }
-
     protected function _joinFields()
     {
         $reviewTable = Mage::getSingleton('core/resource')->getTableName('review/review');
@@ -141,6 +137,7 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
                 'rt.entity_pk_value = e.entity_id',
                 array('review_id', 'created_at', 'entity_pk_value', 'status_id'))
             ->join(array('rdt' => $reviewDetailTable), 'rdt.review_id = rt.review_id');
+        return $this;
     }
 
     /**
@@ -184,7 +181,7 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
         return $this;
     }
 
-    public function addAttributeToFilter($attribute, $condition=null)
+    public function addAttributeToFilter($attribute, $condition=null, $joinType='inner')
     {
         switch( $attribute ) {
             case 'rt.review_id':
@@ -211,7 +208,7 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
                 break;
 
             default:
-                parent::addAttributeToFilter($attribute, $condition);
+                parent::addAttributeToFilter($attribute, $condition, $joinType);
         }
         return $this;
     }
@@ -226,23 +223,15 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
     }
 
 
-    public function load($printQuery=false, $logQuery=false)
-    {
-        parent::load($printQuery, $logQuery);
-        if($this->_addStoreDataFlag) {
-            $this->_addStoreData();
-        }
-        return $this;
-    }
-
-    protected function _addStoreData()
+    protected function _addStoreData_addStoreData()
     {
         $reviewsIds = $this->getColumnValues('review_id');
         $storesToReviews = array();
         if (count($reviewsIds)>0) {
             $select = $this->_read->select()
                 ->from($this->_reviewStoreTable)
-                ->where('review_id IN(?)', $reviewsIds);
+                ->where('review_id IN(?)', $reviewsIds)
+                ->where('store_id > ?', 0);
             $result = $this->_read->fetchAll($select);
             foreach ($result as $row) {
                 if (!isset($storesToReviews[$row['review_id']])) {

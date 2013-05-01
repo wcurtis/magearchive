@@ -39,13 +39,13 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
         if(!$this->_validateProducts()) {
             return;
         }
-
+        /* OLD FUNCTINALITY
         if($countNotInStore = count($this->_getHelper()->getProductsNotInStoreIds())) {
             // If we have selected products, that not exists in selected store we'll show warning
             $this->_getSession()->addWarning(
                 $this->__('There is %d product(s) that will be not updated for selected store', $countNotInStore)
             );
-        }
+        } */
 
         $this->loadLayout();
 
@@ -93,24 +93,15 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
 
                 $product->setStoreId($this->_getHelper()->getSelectedStoreId())
                     ->load($product->getId())
-                    ->addData($data)
-                    ->setStoreId($this->_getHelper()->getSelectedStoreId());
+                    ->addData($data);
 
-                // Workaround for store dissapearing bug
-                $storeIds = $product->getResource()->getStoreIds($product);
-                $storeIds = array_fill_keys($storeIds, $storeIds);
-                if ($product->getStoreId() == 0) {
-                    $product->setPostedStores($storeIds);
-                } else {
-                    $product->setPostedStores(array($product->getStoreId()=>$product->getStoreId()));
-                }
 
                 $product->save();
             }
 
             $this->_getSession()->addSuccess(
                 $this->__('Total of %d record(s) were successfully updated',
-                count($this->_getHelper()->getProducts())-count($productsNotInStore))
+                count($this->_getHelper()->getProducts()))
             );
         }
         catch (Mage_Core_Exception $e) {

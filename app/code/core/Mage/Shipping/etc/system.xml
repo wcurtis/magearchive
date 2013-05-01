@@ -22,9 +22,10 @@
 <config>
     <sections>
         <shipping translate="label" module="shipping">
-            <label>Shipping</label>
+            <label>Shipping Settings</label>
+            <tab>sales</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>130</sort_order>
+            <sort_order>310</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>0</show_in_store>
@@ -96,8 +97,9 @@
         </shipping>
         <carriers translate="label" module="shipping">
             <label>Shipping Methods</label>
+            <tab>sales</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>140</sort_order>
+            <sort_order>320</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>0</show_in_store>

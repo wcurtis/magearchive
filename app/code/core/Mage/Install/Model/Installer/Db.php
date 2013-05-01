@@ -24,18 +24,18 @@
  * @category   Mage
  * @package    Mage_Install
  */
-class Mage_Install_Model_Installer_Db
+class Mage_Install_Model_Installer_Db extends Mage_Install_Model_Installer_Abstract
 {
     /**
      * Check database connection
-     * 
+     *
      * $data = array(
      *      [db_host]
      *      [db_name]
      *      [db_user]
      *      [db_pass]
      * )
-     * 
+     *
      * @param array $data
      */
     public function checkDatabase($data)
@@ -46,17 +46,17 @@ class Mage_Install_Model_Installer_Db
             'password'  => $data['db_pass'],
             'dbname'    => $data['db_name']
         );
-        
+
         try {
             $connection = Mage::getSingleton('core/resource')->createConnection('install', $this->_getConnenctionType(), $config);
             $result = $connection->query('SELECT 1');
         }
         catch (Exception $e){
-            Mage::getSingleton('install/session')->addError($e->getMessage());
+            $this->_getInstaller()->getDataModel()->addError($e->getMessage());
             Mage::throwException(Mage::helper('install')->__('Database connection error'));
         }
     }
-    
+
     protected function _getConnenctionType()
     {
         return (string) Mage::getConfig()->getNode('global/resources/default_setup/connection/type');

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Abstract class for form, coumn and fieldset
  *
@@ -26,6 +27,7 @@
  */
 class Varien_Data_Form_Abstract extends Varien_Object
 {
+
     /**
      * Form level elements collection
      *
@@ -40,18 +42,34 @@ class Varien_Data_Form_Abstract extends Varien_Object
      */
     protected $_types = array();
 
+    /**
+     * Enter description here...
+     *
+     * @param array $attributes
+     */
     public function __construct($attributes = array())
     {
         parent::__construct($attributes);
-
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $type
+     * @param string $className
+     * @return Varien_Data_Form_Abstract
+     */
     public function addType($type, $className)
     {
         $this->_types[$type] = $className;
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Varien_Data_Form_Element_Collection
+     */
     public function getElements()
     {
         if (empty($this->_elements)) {
@@ -84,7 +102,7 @@ class Varien_Data_Form_Abstract extends Varien_Object
      * @param   string $type
      * @param   array  $config
      * @param   mixed  $after
-     * @return unknown
+     * @return Varien_Data_Form_Element_Abstract
      */
     public function addField($elementId, $type, $config, $after=false)
     {
@@ -103,12 +121,26 @@ class Varien_Data_Form_Abstract extends Varien_Object
         return $element;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $elementId
+     * @return Varien_Data_Form_Abstract
+     */
     public function removeField($elementId)
     {
         $this->getElements()->remove($elementId);
         return $this;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $elementId
+     * @param unknown_type $config
+     * @param unknown_type $after
+     * @return Varien_Data_Form_Element_Fieldset
+     */
     public function addFieldset($elementId, $config, $after=false)
     {
         $element = new Varien_Data_Form_Element_Fieldset($config);
@@ -117,6 +149,13 @@ class Varien_Data_Form_Abstract extends Varien_Object
         return $element;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $elementId
+     * @param array $config
+     * @return Varien_Data_Form_Element_Column
+     */
     public function addColumn($elementId, $config)
     {
         $element = new Varien_Data_Form_Element_Column($config);
@@ -126,6 +165,12 @@ class Varien_Data_Form_Abstract extends Varien_Object
         return $element;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param array $arrAttributes
+     * @return array
+     */
     public function __toArray(array $arrAttributes = array())
     {
         $res = array();

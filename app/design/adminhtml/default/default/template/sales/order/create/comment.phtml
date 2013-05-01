@@ -18,9 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
  ?>
-    <!--<h4 class="icon-head fieldset-legend <?=$this->getHeaderCssClass()?>"><?=$this->getHeaderText()?></h4>-->
-	<?=Mage::helper('sales')->__('Add Order Comment')?><br/>
-        <textarea style="width:90%; height: 6em;" name="order[comment][customer_note]"><?=$this->getCommentNote()?></textarea><br/>
-        <input type="checkbox" id="notify_customer" name="order[comment][customer_note_notify]" value="1" <?if($this->getNoteNotify()):?>checked="true"<?endif;?>/> 
-        <label for="notify_customer" class="normal"><?=Mage::helper('sales')->__('Apply Comment to the Confirmation Email')?></label>
-    <script type="text/javascript">order.commentFieldsBind('order:comment')</script>
+<!--<h4 class="icon-head fieldset-legend <?=$this->getHeaderCssClass()?>"><?=$this->getHeaderText()?></h4>-->
+<?=Mage::helper('sales')->__('Order Comments')?><br/>
+<textarea style="width:90%; height: 8em;" name="order[comment][customer_note]"><?=$this->getCommentNote()?></textarea><br/>
+<script type="text/javascript">order.commentFieldsBind('order:comment')</script>

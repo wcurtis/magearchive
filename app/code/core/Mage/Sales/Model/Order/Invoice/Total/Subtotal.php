@@ -30,14 +30,19 @@ class Mage_Sales_Model_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Ord
     public function collect(Mage_Sales_Model_Order_Invoice $invoice)
     {
         $subtotal = 0;
+        $baseSubtotal = 0;
 
         foreach ($invoice->getAllItems() as $item) {
             $item->calcRowTotal();
             $subtotal+= $item->getRowTotal();
+            $baseSubtotal+= $item->getBaseRowTotal();
         }
 
         $invoice->setSubtotal($subtotal);
+        $invoice->setBaseSubtotal($baseSubtotal);
+
         $invoice->setGrandTotal($invoice->getGrandTotal() + $subtotal);
+        $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() + $baseSubtotal);
         return $this;
     }
 }

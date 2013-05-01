@@ -1,0 +1,74 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Simple product deatle template
+ *
+ * @see Mage_Catalog_Block_Product_View_Type_Simple
+ */
+?>
+<?$_product = $this->getProduct()?>
+
+<?$_tierPrices = $this->getTierPrices()?>
+<?if(count($_tierPrices)>0):?>
+    <div class="product-pricing">
+        <ul class="bare">
+        <?foreach($_tierPrices as $_price):?>
+            <li><?=$this->__('Buy %s for %s each', $_price['price_qty'], $_price['formated_price'])?>
+            <?if(($_product->getPrice() == $_product->getFinalPrice() && $_product->getPrice() > $_price['price'])
+            || ($_product->getPrice() != $_product->getFinalPrice() &&  $_product->getFinalPrice() > $_price['price'])):?>
+                <?=$this->__('and')?> <strong><?=$this->__('save %s%%', $_price['savePercent'])?>
+            <?endif?></strong>
+            </li>
+        <?endforeach?>
+        </ul>
+    </div>
+<?endif;?>
+
+<?if($_product->isSaleable()):?>
+    <p><small><?=$this->__('Availability: In stock.')?></small></p>
+<?else:?>
+    <p><small><?=$this->__('Availability: Out of stock.')?></small></p>
+<?endif;?>
+
+<?=$this->helper('catalog/product')->getPriceHtml($_product)?>
+
+<?if($_product->isSaleable()):?>
+    <fieldset class="add-to-cart-box">
+        <legend><?=$this->__('Add Items to Cart')?></legend>
+        <span class="qty-box"><label for="qty"><?=$this->__('Qty')?>:</label>
+        <input name="qty" type="text" class="input-text qty" id="qty" maxlength="12" value="<?=$this->getMinimalQty($_product)?>"/></span>
+        <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button>
+        <?if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
+            <strong><?=$this->__('OR')?></strong>
+        <?endif;?>
+    </fieldset>
+<?endif;?>
+
+<div class="add-to-box">
+<?if ($this->helper('wishlist')->isAllow()) :?>
+    <a href="<?=$this->helper('wishlist')->getAddUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a><br/>
+<?endif;?>
+
+<?if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product) ):?>
+    <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
+<?endif;?>
+</div>
+

@@ -156,10 +156,10 @@ class Varien_File_Uploader
             $char = 0;
             while( ($char < 2) && ($char < strlen($fileName)) ) {
                 if (empty($this->_dispretionPath)) {
-                    $this->_dispretionPath = DIRECTORY_SEPARATOR.$fileName[$char];
+                    $this->_dispretionPath = DIRECTORY_SEPARATOR.('.' == $fileName[$char] ? '_' : $fileName[$char]);
                 }
                 else {
-                    $this->_dispretionPath = $this->_addDirSeparator($this->_dispretionPath) . $fileName[$char];
+                    $this->_dispretionPath = $this->_addDirSeparator($this->_dispretionPath) . ('.' == $fileName[$char] ? '_' : $fileName[$char]);
                 }
                 $char ++;
             }
@@ -168,7 +168,7 @@ class Varien_File_Uploader
         }
 
         if( $this->_allowRenameFiles ) {
-            $fileName = $this->_renameDestinationFile($this->_addDirSeparator($destFile).$fileName);
+            $fileName = self::getNewFileName($this->_addDirSeparator($destFile).$fileName);
         }
 
         $destFile = $this->_addDirSeparator($destFile) . $fileName;
@@ -184,6 +184,7 @@ class Varien_File_Uploader
             $this->_uploadedFileDir = $destinationFolder;
             $result = $this->_file;
             $result['path'] = $destinationFolder;
+            $result['file'] = $fileName;
             return $result;
         } else {
             return $result;
@@ -360,7 +361,7 @@ class Varien_File_Uploader
         return $this;
     }
 
-    private function _renameDestinationFile($destFile)
+    static public function getNewFileName($destFile)
     {
         $fileInfo = pathinfo($destFile);
         if( file_exists($destFile) ) {
@@ -377,4 +378,5 @@ class Varien_File_Uploader
 
         return $destFileName;
     }
+
 }

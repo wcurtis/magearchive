@@ -96,7 +96,26 @@ class Mage_Adminhtml_Block_Catalog_Search_Grid extends Mage_Adminhtml_Block_Widg
             ),
             'align' => 'left',
         ));
-
+        $this->addColumn('action',
+            array(
+                'header'    => Mage::helper('catalog')->__('Action'),
+                'width'     => '100px',
+                'type'      => 'action',
+                'getter'     => 'getId',
+                'actions'   => array(
+                    array(
+                        'caption' => Mage::helper('catalog')->__('Edit'),
+                        'url'     => array(
+                            'base'=>'*/*/edit',
+                            //'params'=>array('catalog'=>$this->getRequest()->getParam('store'))
+                        ),
+                        'field'   => 'id'
+                    )
+                ),
+                'filter'    => false,
+                'sortable'  => false,
+                'index'     => 'catalog',
+        ));
         return parent::_prepareColumns();
     }
 

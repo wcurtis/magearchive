@@ -389,4 +389,17 @@
             </updates>
         </layout>
     </adminhtml>
+    <stores>
+        <admin>
+            <!-- default admin design package and theme -->
+            <design>
+                <package>
+                    <name>default</name>
+                </package>
+                <theme>
+                    <default>default</default>
+                </theme>
+            </design>
+        </admin>
+    </stores>
 </config>

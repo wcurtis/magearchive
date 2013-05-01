@@ -14,7 +14,7 @@
  *
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Placeholder.php 7078 2007-12-11 14:29:33Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -28,7 +28,7 @@ require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helpers
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_Standalone
@@ -59,6 +59,18 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
      * @var string
      */
     protected $_captureAttrs = null;
+
+    /**
+     * Capture lock
+     * @var bool
+     */
+    protected $_captureLock;
+
+    /**
+     * Capture type (append, prepend, set)
+     * @var string
+     */
+    protected $_captureType;
 
     /**
      * Constructor
@@ -154,8 +166,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
             return $this;
         }
 
-        require_once 'Zend/View/Exception.php';
-        throw new Zend_View_Exception(sprintf('Invalid method %s::%s()', __CLASS__, $method));
+        return parent::__call($method, $args);
     }
 
     /**
@@ -190,7 +201,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
             throw new Zend_View_Exception('Invalid value passed to append; please use appendStyle()');
         }
 
-        return parent::append($value);
+        return $this->getContainer()->append($value);
     }
    
     /**
@@ -207,7 +218,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
             throw new Zend_View_Exception('Invalid value passed to offsetSet; please use offsetSetStyle()');
         }
 
-        return parent::offsetSet($index, $value);
+        return $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -223,7 +234,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
             throw new Zend_View_Exception('Invalid value passed to prepend; please use prependStyle()');
         }
 
-        return parent::prepend($value);
+        return $this->getContainer()->prepend($value);
     }
 
     /**
@@ -239,7 +250,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
             throw new Zend_View_Exception('Invalid value passed to set; please use setStyle()');
         }
 
-        return parent::set($value);
+        return $this->getContainer()->set($value);
     }
 
     /**
@@ -251,8 +262,15 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
      */
     public function captureStart($type = Zend_View_Helper_Placeholder_Container_Abstract::APPEND, $attrs = null)
     {
-        $this->_captureAttrs = $attrs;
-        return parent::captureStart($type);
+        if ($this->_captureLock) {
+            require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
+            throw new Zend_View_Helper_Placeholder_Container_Exception('Cannot nest headStyle captures');
+        }
+
+        $this->_captureLock        = true;
+        $this->_captureAttrs       = $attrs;
+        $this->_captureType        = $type;
+        ob_start();
     }
     
     /**
@@ -268,13 +286,13 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
         $this->_captureLock  = false;
 
         switch ($this->_captureType) {
-            case self::SET:
+            case Zend_View_Helper_Placeholder_Container_Abstract::SET:
                 $this->setStyle($content, $attrs);
                 break;
-            case self::PREPEND:
+            case Zend_View_Helper_Placeholder_Container_Abstract::PREPEND:
                 $this->prependStyle($content, $attrs);
                 break;
-            case self::APPEND:
+            case Zend_View_Helper_Placeholder_Container_Abstract::APPEND:
             default:
                 $this->appendStyle($content, $attrs);
                 break;

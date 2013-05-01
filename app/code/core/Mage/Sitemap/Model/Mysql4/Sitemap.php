@@ -18,10 +18,22 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
+/**
+ * Sitemap resource model
+ *
+ * @category   Mage
+ * @package    Mage_Sitemap
+ */
 class Mage_Sitemap_Model_Mysql4_Sitemap extends Mage_Core_Model_Mysql4_Abstract
 {
+
+    /**
+     * Init resource model
+     */
     protected function _construct()
     {
         $this->_init('sitemap/sitemap', 'sitemap_id');
     }
+
 }

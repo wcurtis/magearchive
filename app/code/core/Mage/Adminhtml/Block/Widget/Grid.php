@@ -147,9 +147,14 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
      */
     protected $_massactionBlockName = 'adminhtml/widget_grid_massaction';
 
-    public function __construct()
+    /*
+    * RSS list
+    */
+    protected $_rssLists = array();
+
+    public function __construct($attributes=array())
     {
-        parent::__construct();
+        parent::__construct($attributes);
         $this->setTemplate('widget/grid.phtml');
         $this->setRowClickCallback('openGridRow');
         $this->_emptyText = Mage::helper('adminhtml')->__('No records found.');
@@ -407,6 +412,7 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
                     'index'     => $this->getMassactionIdField(),
                     'type'      => 'massaction',
                     'name'      => $this->getMassactionBlock()->getFormFieldName(),
+                    'align'     => 'center',
                     'is_system' => true
                 ))
                 ->setSelected($this->getMassactionBlock()->getSelected())
@@ -627,6 +633,34 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
         return $this;
     }
 
+     /**
+     * Retrieve rss lists types
+     *
+     * @return array
+     */
+    public function getRssLists()
+    {
+        return empty($this->_rssLists) ? false : $this->_rssLists;
+    }
+
+     /**
+     * Add new rss list to grid
+     *
+     * @param   string $url
+     * @param   string $label
+     * @return  Mage_Adminhtml_Block_Widget_Grid
+     */
+    public function addRssList($url, $label)
+    {
+        $this->_rssLists[] = new Varien_Object(
+            array(
+                'url'   => $this->getUrl($url),
+                'label' => $label
+            )
+        );
+        return $this;
+    }
+
     /**
      * Retrieve grid HTML
      *
@@ -659,7 +693,7 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
             $data = array();
             foreach ($this->_columns as $column) {
                 if (!$column->getIsSystem()) {
-                    $data[] = '"'.str_replace('"', '""', $column->getRowField($item)).'"';
+                    $data[] = '"'.str_replace(array('"', '\\'), array('""', '\\\\'), $column->getRowField($item)).'"';
                 }
             }
             $csv.= implode(',', $data)."\n";
@@ -670,7 +704,7 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
             $data = array();
             foreach ($this->_columns as $column) {
                 if (!$column->getIsSystem()) {
-                    $data[] = '"'.str_replace('"', '""', $column->getRowField($this->getTotals())).'"';
+                    $data[] = '"'.str_replace(array('"', '\\'), array('""', '\\\\'), $column->getRowField($this->getTotals())).'"';
                 }
             }
             $csv.= implode(',', $data)."\n";
@@ -699,6 +733,47 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
         }
         $xml.= '</items>';
         return $xml;
+    }
+
+    public function getExcel($filename = '')
+    {
+        $this->_prepareGrid();
+        $headers = array();
+        $data = array();
+        foreach ($this->_columns as $column) {
+            if (!$column->getIsSystem()) {
+                $headers[] = $column->getHeader();
+            }
+        }
+        $data[] = $headers;
+
+        foreach ($this->getCollection() as $item) {
+            $row = array();
+            foreach ($this->_columns as $column) {
+                if (!$column->getIsSystem()) {
+                    $row[] = $column->getRowField($item);
+                }
+            }
+            $data[] = $row;
+        }
+
+        if ($this->getCountTotals())
+        {
+            $row = array();
+            foreach ($this->_columns as $column) {
+                if (!$column->getIsSystem()) {
+                    $row[] = $column->getRowField($this->getTotals());
+                }
+            }
+            $data[] = $row;
+        }
+
+        $xmlObj = new Varien_Convert_Parser_Xml_Excel();
+        $xmlObj->setVar('single_sheet', $filename);
+        $xmlObj->setData($data);
+        $xmlObj->unparse();
+
+        return $xmlObj->getData();
     }
 
     public function canDisplayContainer()

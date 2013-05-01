@@ -71,4 +71,20 @@ class Mage_PaypalUk_Block_Direct_Form extends Mage_Payment_Block_Form_Cc
         $years = array(0=>$this->__('Year'))+$years;
         return $years;
     }
+
+    /*
+    * switch/solo card type available
+    */
+    public function hasSsCardType()
+    {
+        $availableTypes =$this->getMethod()->getConfigData('cctypes');
+        if ($availableTypes) {
+            $availableTypes = explode(',', $availableTypes);
+             if (in_array('SS', $availableTypes)) {
+                 return true;
+             }
+        }
+        return false;
+    }
+
 }

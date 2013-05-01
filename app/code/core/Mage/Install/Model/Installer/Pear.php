@@ -26,7 +26,7 @@ require_once "Varien/Pear/Package.php";
  * @category   Mage
  * @package    Mage_Install
  */
-class Mage_Install_Model_Installer_Pear
+class Mage_Install_Model_Installer_Pear extends Mage_Install_Model_Installer_Abstract
 {
     public function getPackages()
     {

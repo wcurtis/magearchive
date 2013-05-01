@@ -97,7 +97,13 @@ class Mage_GiftMessage_Model_Observer extends Varien_Object
             foreach ($giftMessages as $entityId=>$message) {
 
                 $giftMessage = Mage::getModel('giftmessage/message');
-                $entity = $giftMessage->getEntityModelByType($message['type'])->load($entityId);
+                $entity = $giftMessage->getEntityModelByType($message['type']);
+
+                if ($message['type']=='quote') {
+                    $entity->setStoreId(Mage::app()->getStore()->getId());
+                }
+
+                $entity->load($entityId);
 
                 if($entity->getGiftMessageId()) {
                     $giftMessage->load($entity->getGiftMessageId());

@@ -31,6 +31,7 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
     const XML_PATH_MAX_SALE_QTY = 'cataloginventory/options/max_sale_qty';
     const XML_PATH_BACKORDERS   = 'cataloginventory/options/backorders';
     const XML_PATH_CAN_SUBTRACT = 'cataloginventory/options/can_subtract';
+    const XML_PATH_NOTIFY_STOCK_QTY = 'cataloginventory/options/notify_stock_qty';
 
     protected function _construct()
     {
@@ -152,6 +153,14 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
             return (float) Mage::getStoreConfig(self::XML_PATH_MAX_SALE_QTY);
         }
         return $this->getData('max_sale_qty');
+    }
+
+    public function getNotifyStockQty()
+    {
+        if ($this->getUseConfigNotifyStockQty()) {
+            return (float) Mage::getStoreConfig(self::XML_PATH_NOTIFY_STOCK_QTY);
+        }
+        return $this->getData('notify_stock_qty');
     }
 
     /**
@@ -298,9 +307,18 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
     {
         if ($this->getBackorders() == Mage_CatalogInventory_Model_Stock::BACKORDERS_NO
             && $this->getQty() <= $this->getMinQty()) {
-            if(!$this->getProduct() || !$this->getProduct()->isConfigurable()) {
+            if(!$this->getProduct() || !$this->getProduct()->isSuper()) {
                 $this->setIsInStock(false);
             }
+        }
+        /**
+         * if qty is below notify qty, update the low stock date to today date otherwise set null
+         */
+        if ($this->getNotifyStockQty() && $this->getQty()<$this->getNotifyStockQty()
+            && (!$this->getProduct() || !$this->getProduct()->isSuper())) {
+            $this->setLowStockDate($this->_getResource()->formatDate(time()));
+        } else {
+            $this->setLowStockDate(false);
         }
         Mage::dispatchEvent('cataloginventory_stock_item_save_before', array('item'=>$this));
         return $this;

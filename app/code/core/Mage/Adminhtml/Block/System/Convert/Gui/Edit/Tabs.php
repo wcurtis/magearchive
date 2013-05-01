@@ -50,6 +50,13 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tabs extends Mage_Adminhtml_B
         ));
 
         if (!$new) {
+            if ($profile->getDirection()!='export') {
+                $this->addTab('upload', array(
+                    'label'     => Mage::helper('adminhtml')->__('Upload File'),
+                    'content'   => $this->getLayout()->createBlock('adminhtml/system_convert_gui_edit_tab_upload')->toHtml(),
+                ));
+            }
+
             $this->addTab('run', array(
                 'label'     => Mage::helper('adminhtml')->__('Run Profile'),
                 'content'   => $this->getLayout()->createBlock('adminhtml/system_convert_profile_edit_tab_run')->toHtml(),

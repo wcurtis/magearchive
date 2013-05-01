@@ -38,8 +38,8 @@ class Mage_Directory_Model_Mysql4_Currency_Collection extends Varien_Data_Collec
         $this->_currencyNameTable   = $resource->getTableName('directory/currency_name');
         $this->_currencyRateTable   = $resource->getTableName('directory/currency_rate');
 
-        $this->_sqlSelect->from(array('main_table'=>$this->_currencyNameTable));
-        /*$this->_sqlSelect->join(array('name_table'=>$this->_currencyNameTable),
+        $this->_select->from(array('main_table'=>$this->_currencyNameTable));
+        /*$this->_select->join(array('name_table'=>$this->_currencyNameTable),
             "main_table.currency_code=name_table.currency_code");*/
 
         $this->setItemObjectClass(Mage::getConfig()->getModelClassName('directory/currency'));
@@ -48,7 +48,7 @@ class Mage_Directory_Model_Mysql4_Currency_Collection extends Varien_Data_Collec
     public function joinRates($currency)
     {
         $alias = $currency.'_rate';
-        $this->_sqlSelect->joinLeft(array($alias=>$this->_currencyRateTable),
+        $this->_select->joinLeft(array($alias=>$this->_currencyRateTable),
             $this->getConnection()->quoteInto("$alias.currency_to=main_table.currency_code AND $alias.currency_from=?", $currency),
             'rate');
         return $this;

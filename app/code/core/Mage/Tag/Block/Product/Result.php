@@ -29,17 +29,10 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
 {
     protected $_collection;
 
-    public function __construct()
-    {
-        #$this->setTemplate('tag/product/result.phtml');
 
-        $this->setTemplate('catalogsearch/result.phtml');
-        $this->setTagId(Mage::registry('tagId'));
-    }
-
-    public function getTagInfo()
+    public function getTag()
     {
-        return Mage::getModel('tag/tag')->load($this->getTagId());
+        return Mage::registry('current_tag');
     }
 
     protected function _prepareLayout()
@@ -47,13 +40,17 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
         $title = $this->getHeaderText();
         $this->getLayout()->getBlock('head')->setTitle($title);
         $this->getLayout()->getBlock('root')->setHeaderTitle($title);
+        return parent::_prepareLayout();
+    }
 
+    public function initList($template)
+    {
         $resultBlock = $this->getLayout()->createBlock('catalog/product_list', 'product_list')
+            ->setTemplate($template)
             ->setAvailableOrders(array('name'=>Mage::helper('tag')->__('Name'), 'price'=>Mage::helper('tag')->__('Price')))
             ->setModes(array('list' => Mage::helper('tag')->__('List'), 'grid' => Mage::helper('tag')->__('Grid')))
             ->setCollection($this->_getCollection());
         $this->setChild('search_result_list', $resultBlock);
-        return parent::_prepareLayout();
     }
 
     public function getProductListHtml()
@@ -66,8 +63,8 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
         if( !$this->_collection ) {
             $tagModel = Mage::getModel('tag/tag');
             $this->_collection = $tagModel->getEntityCollection()
-                ->addTagFilter($this->getTagId())
-                ->addStoreFilter(Mage::app()->getStore()->getId());
+                ->addTagFilter($this->getTag()->getId())
+                ->addStoreFilter();
         }
         return $this->_collection;
     }
@@ -90,8 +87,8 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
 
     public function getHeaderText()
     {
-        if( $this->getTagInfo()->getName() ) {
-            return Mage::helper('tag')->__("Products tagged with '%s'", $this->getTagInfo()->getName());
+        if( $this->getTag()->getName() ) {
+            return Mage::helper('tag')->__("Products tagged with '%s'", $this->getTag()->getName());
         } else {
             return false;
         }

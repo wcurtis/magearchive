@@ -53,7 +53,7 @@
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/tools.js')?>"></script>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/bundle.js')?>"></script>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/uploader.js')?>"></script>
-
+    <?=Mage::helper('adminhtml/js')->includeSkinScript('js/product.js')?>
     <script type="text/javascript">
         var BLANK_URL = '<?=$this->getJsUrl()?>blank.html';
         var BLANK_IMG = '<?=$this->getJsUrl()?>spacer.gif';
@@ -64,6 +64,11 @@
     <style type="text/css" media="all">
         /*<![CDATA[*/ @import "<?=$this->getSkinUrl('styles.css')?>"; /*]]>*/
     </style>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('reset.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('widgets.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('boxes.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('newsletter.css')?>" media="all"/>
+    <link type="text/css" rel="stylesheet" href="<?=$this->getSkinUrl('catalog.css')?>" media="all"/>
     <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('iestyles.css')?>" type="text/css" media="all" /> <![endif]-->
     <!--[if lt IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('below_ie7.css')?>" type="text/css" media="all" /> <![endif]-->
     <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('ie7.css')?>" type="text/css" media="all" /> <![endif]-->
@@ -91,7 +96,10 @@
         Ext.UpdateManager.defaults.disableCaching = true;
     </script>
 <?endif;?>
-    <?=$this->getChildHtml('js_translate')?>
+    <script type="text/javascript">
+        Fieldset.addToPrefix(<?=Mage::helper('adminhtml')->getCurrentUserId()?>);
+    </script>
+    <?=$this->helper('core/js')->getTranslatorScript()?>
 <?if($this->getCanLoadRulesJs()):?>
     <script type="text/javascript" src="<?=$this->getSkinUrl('js/rules.js')?>"></script>
 <?endif?>
@@ -100,43 +108,42 @@
 <![if !IE]><table cellspacing="0" width="100%"><tr><td><![endif]>
 <div>
         <div class="middle-popup">
-            <?=$this->getChildHtml('breadcrumbs')?>
+            <div class="middle" id="anchor-content">
+                <div id="page:main-container">
                 <?if($this->getChildHtml('left')):?>
-                <div class="simple-container-left" id="page:main-container">
-                    <div class="container <?=$this->getContainerCssClass()?>" id="page:container">
-                            <div class="main">
-                                    <div class="content-container">
-                                            <div class="content" id="content">
-                                                <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-                                                <?=$this->getChildHtml('content')?>
-                                            </div>
-                                    </div>
-                                    <div class="section-menu" id="page:left">
-                                        <?=$this->getChildHtml('left')?>
-                                        <div class="bottom"></div>
-                                    </div>
-                            </div>
+                    <div class="<?=$this->getContainerCssClass()?>" id="page:container">
+                        <table cellspacing="0" width="100%">
+                            <tr>
+                                <td class="side-col" id="page:left">
+                                    <?=$this->getChildHtml('left')?>
+                                </td>
+                                <td class="main-col" id="content">
+                                    <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
+                                    <?=$this->getChildHtml('content')?>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                </div>
                 <?else:?>
-                <div class="simple-container-popup" id="page:main-container">
                     <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
                     <?=$this->getChildHtml('content')?>
-                </div>
                 <?endif;?>
+                </div>
+            </div>
         </div>
 
-
+        <div class="footer">
+            <?=$this->getChildHtml('footer')?>
+        </div>
        </div>
 <![if !IE]></td></tr></table><![endif]>
         <?=$this->getChildHtml('js')?>
 
 <?=$this->getChildHtml('profiler')?>
-<div id="loading-process" style="display:none">
-    <p><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=$this->__('Loading...')?>"/><br/><?=$this->__('Loading...')?></p>
-</div>
 <div id="loading-mask" style="display:none">
-    <p class="loader"><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=$this->__('Loading...')?>"/></p>
+    <p class="loader" id="loading_mask_loader"><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=Mage::helper('adminhtml')->__('Loading...')?>"/><br/><?=Mage::helper('adminhtml')->__('Please wait...')?></p>
 </div>
+
+<?=$this->getChildHtml('before_body_end')?>
 </body>
 </html>

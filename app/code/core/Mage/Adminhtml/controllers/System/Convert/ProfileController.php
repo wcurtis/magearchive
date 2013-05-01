@@ -30,7 +30,7 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
     protected function _initProfile($idFieldName = 'id')
     {
         $profileId = (int) $this->getRequest()->getParam($idFieldName);
-        $profile = Mage::getModel('core/convert_profile');
+        $profile = Mage::getModel('dataflow/profile');
 
         if ($profileId) {
             $profile->load($profileId);

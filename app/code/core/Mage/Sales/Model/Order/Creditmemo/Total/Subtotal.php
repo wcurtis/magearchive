@@ -29,15 +29,20 @@ class Mage_Sales_Model_Order_Creditmemo_Total_Subtotal extends Mage_Sales_Model_
      */
     public function collect(Mage_Sales_Model_Order_Creditmemo $creditmemo)
     {
-        $subtotal = 0;
+        $subtotal       = 0;
+        $baseSubtotal   = 0;
 
         foreach ($creditmemo->getAllItems() as $item) {
             $item->calcRowTotal();
             $subtotal+= $item->getRowTotal();
+            $baseSubtotal+= $item->getBaseRowTotal();
         }
 
         $creditmemo->setSubtotal($subtotal);
+        $creditmemo->setBaseSubtotal($baseSubtotal);
+
         $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $subtotal);
+        $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseSubtotal);
         return $this;
     }
 }

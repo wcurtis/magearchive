@@ -249,11 +249,10 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
                         $this->__('Credit Memo total must be positive.')
                     );
                 }
+                $comment = '';
                 if (!empty($data['comment_text'])) {
+                    $comment = $data['comment_text'];
                     $creditmemo->addComment($data['comment_text'], isset($data['comment_customer_notify']));
-                    if (isset($data['comment_customer_notify'])) {
-                        $creditmemo->sendUpdateEmail($data['comment_text']);
-                    }
                 }
 
                 if (isset($data['do_refund'])) {
@@ -264,7 +263,12 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
                 }
 
                 $creditmemo->register();
+                if (!empty($data['send_email'])) {
+                    $creditmemo->setEmailSent(true);
+                }
+
                 $this->_saveCreditmemo($creditmemo);
+                $creditmemo->sendEmail(!empty($data['send_email']), $comment);
                 $this->_getSession()->addSuccess($this->__('Creditmemo was successfully created'));
                 $this->_redirect('*/sales_order/view', array('order_id' => $creditmemo->getOrderId()));
                 return;
@@ -344,10 +348,8 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
             }
             $creditmemo = $this->_initCreditmemo();
             $creditmemo->addComment($data['comment'], isset($data['is_customer_notified']));
-            if (isset($data['is_customer_notified'])) {
-                $creditmemo->sendUpdateEmail($data['comment']);
-            }
             $creditmemo->save();
+            $creditmemo->sendUpdateEmail(!empty($data['is_customer_notified']), $data['comment']);
 
             $response = $this->getLayout()->createBlock('adminhtml/sales_order_comments_view')
                 ->setEntity($creditmemo)

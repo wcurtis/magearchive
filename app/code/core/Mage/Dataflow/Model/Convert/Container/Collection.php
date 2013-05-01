@@ -30,7 +30,7 @@ class Mage_Dataflow_Model_Convert_Container_Collection
 
     protected $_items = array();
 
-    protected $_defaultClass = 'Varien_Convert_Container_Generic';
+    protected $_defaultClass = 'Mage_Dataflow_Model_Convert_Container_Generic';
 
     public function setDefaultClass($className)
     {

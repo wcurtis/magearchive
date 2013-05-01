@@ -23,7 +23,8 @@
     <sections>
         <currency translate="label" module="directory">
             <label>Currency Setup</label>
-            <sort_order>45</sort_order>
+            <tab>general</tab>
+            <sort_order>60</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -38,6 +39,7 @@
                         <base translate="label">
                             <label>Base currency</label>
                             <frontend_type>select</frontend_type>
+                            <frontend_model>directory/adminhtml_frontend_currency_base</frontend_model>
                             <source_model>adminhtml/system_config_source_currency</source_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
@@ -65,7 +67,7 @@
                     </fields>
                 </options>z
                 <import translate="label">
-                    <label>Import Settings</label>
+                    <label>Scheduled Import Settings</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>50</sort_order>
                     <show_in_default>1</show_in_default>
@@ -138,5 +140,29 @@
                 </import>
             </groups>
         </currency>
+        <system>
+            <groups>
+                <currency translate="label">
+                    <label>Currency</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>50</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <installed translate="label">
+                            <label>Installed Currencies</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_locale</backend_model>
+                            <source_model>adminhtml/system_config_source_locale_currency_all</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </installed>
+                    </fields>
+                </currency>
+            </groups>
+        </system>
     </sections>
 </config>

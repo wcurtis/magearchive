@@ -58,7 +58,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
             ->_addContent(
                 $this->getLayout()->createBlock('adminhtml/tax_rate_toolbar_save')
                 ->assign('header', Mage::helper('tax')->__('Add New Tax Rate'))
-                ->assign('form', $this->getLayout()->createBlock('adminhtml/tax_rate_form_add'))
+                ->assign('form', $this->getLayout()->createBlock('adminhtml/tax_rate_form'))
             )
             ->renderLayout();
     }
@@ -120,7 +120,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
             ->_addContent(
                 $this->getLayout()->createBlock('adminhtml/tax_rate_toolbar_save')
                 ->assign('header', Mage::helper('tax')->__('Edit Tax Rate'))
-                ->assign('form', $this->getLayout()->createBlock('adminhtml/tax_rate_form_add'))
+                ->assign('form', $this->getLayout()->createBlock('adminhtml/tax_rate_form'))
             )
             ->renderLayout();
     }
@@ -282,7 +282,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
                     'tax_region_id' => $regions[$v[0]],
                     'tax_postcode'  => (empty($v[2]) || $v[2]=='*') ? null : $v[2]
                 );
-                
+
                 $rateModel = Mage::getModel('tax/rate')
                     ->setData($rateData);
                 foreach ($rateTypes as $i => $typeId) {

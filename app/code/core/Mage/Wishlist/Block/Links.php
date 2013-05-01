@@ -18,21 +18,22 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Links block
  *
  * @category   Mage
  * @package    Mage_Wishlist
  */
-
 class Mage_Wishlist_Block_Links extends Mage_Core_Block_Template
 {
+
     protected $_wishlist = null;
 
     public function addWishlistLink()
     {
         if ($this->helper('wishlist')->isAllow()){
-            
+
             $count = $this->helper('wishlist')->getItemCount();
             #$count = $this->getWishlistItems()->getSize();
             if( $count > 1 ) {
@@ -45,4 +46,5 @@ class Mage_Wishlist_Block_Links extends Mage_Core_Block_Template
             $this->getParentBlock()->addLink(null, 'class="top-link-wishlist" href="'.Mage::getUrl('wishlist').'"', $text, 1);
         }
     }
+
 }

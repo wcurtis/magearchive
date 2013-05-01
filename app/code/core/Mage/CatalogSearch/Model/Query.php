@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Catalog search query model
  *
@@ -26,9 +26,9 @@ class Mage_CatalogSearch_Model_Query extends Mage_Core_Model_Abstract
 {
     protected function _construct()
     {
-        $this->_init('catalogsearch/query');        
+        $this->_init('catalogsearch/query');
     }
- 
+
     /**
      * Retrieve collection of search results
      *
@@ -39,18 +39,19 @@ class Mage_CatalogSearch_Model_Query extends Mage_Core_Model_Abstract
         $collection = $this->getData('result_collection');
         if (is_null($collection)) {
             $collection = Mage::getResourceModel('catalogsearch/search_collection');
-            
+
             $text = $this->getSynonimFor();
             if (!$text) {
                 $text = $this->getQueryText();
             }
-            
-            $collection->addSearchFilter($text);
+
+            $collection->addSearchFilter($text)
+                ->addStoreFilter();
             $this->setData('result_collection', $collection);
         }
         return $collection;
     }
-    
+
     /**
      * Retrieve collection of suggest queries
      *

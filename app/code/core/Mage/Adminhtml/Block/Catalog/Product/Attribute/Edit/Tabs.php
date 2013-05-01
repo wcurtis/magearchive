@@ -38,22 +38,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tabs extends Mage_Admi
     protected function _beforeToHtml()
     {
         $this->addTab('main', array(
-            'label'     => Mage::helper('catalog')->__('Attribute Properties'),
-            'title'     => Mage::helper('catalog')->__('Attribute Properties'),
+            'label'     => Mage::helper('catalog')->__('Properties'),
+            'title'     => Mage::helper('catalog')->__('Properties'),
             'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_attribute_edit_tab_main')->toHtml(),
             'active'    => true
-        ));
-
-        $this->addTab('front', array(
-            'label'     => Mage::helper('catalog')->__('Frontend Properties'),
-            'title'     => Mage::helper('catalog')->__('Frontend Properties'),
-            'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_attribute_edit_tab_front')->toHtml(),
-        ));
-
-        $this->addTab('system', array(
-            'label'     => Mage::helper('catalog')->__('System Properties'),
-            'title'     => Mage::helper('catalog')->__('System Properties'),
-            'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_attribute_edit_tab_system')->toHtml(),
         ));
 
         $model = Mage::registry('entity_attribute');

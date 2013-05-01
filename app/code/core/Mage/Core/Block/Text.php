@@ -28,13 +28,13 @@ class Mage_Core_Block_Text extends Mage_Core_Block_Abstract
 
     public function setText($text)
     {
-        $this->setAttribute('text', $text);
+        $this->setData('text', $text);
         return $this;
     }
 
     public function getText()
     {
-        return $this->getAttribute('text');
+        return $this->getData('text');
     }
 
     public function addText($text, $before=false)

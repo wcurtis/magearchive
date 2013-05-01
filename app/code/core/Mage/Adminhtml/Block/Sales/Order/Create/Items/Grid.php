@@ -59,7 +59,8 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items_Grid extends Mage_Adminhtml_
 
     public function getItemOrigPrice($item)
     {
-        return $this->convertPrice($item->getProduct()->getPrice());
+        //return $this->convertPrice($item->getProduct()->getPrice());
+        return $this->convertPrice($item->getPrice());
     }
 
     public function isGiftMessagesAvailable($item=null)
@@ -99,5 +100,38 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items_Grid extends Mage_Adminhtml_
         return $this->getQuote()->getShippingAddress()->getDiscountAmount();
     }
 
-}
+    public function usedCustomPriceForItem($item)
+    {
+        return $item->getCustomPrice();
+    }
 
+    public function getQtyTitle($item)
+    {
+        if ($prices = $item->getProduct()->getTierPrice()) {
+            $info = array();
+            foreach ($prices as $data) {
+                $qty    = $data['price_qty']*1;
+                $price  = $this->convertPrice($data['price']);
+            	$info[] = $this->helper('sales')->__('Buy %s for price %s', $qty, $price);
+            }
+            return implode(', ', $info);
+        }
+        else {
+            return $this->helper('sales')->__('Item ordered qty');
+        }
+    }
+
+    public function getTierHtml($item)
+    {
+        $html = '';
+        if ($prices = $item->getProduct()->getTierPrice()) {
+            foreach ($prices as $data) {
+                $qty    = $data['price_qty']*1;
+                $price  = $this->convertPrice($data['price']);
+            	$info[] = $this->helper('sales')->__('%s for %s', $qty, $price);
+            }
+            $html = implode('<br/>', $info);
+        }
+        return $html;
+    }
+}

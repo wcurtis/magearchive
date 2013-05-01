@@ -43,7 +43,7 @@ class Mage_Checkout_Block_Multishipping_Address_Select extends Mage_Checkout_Blo
     {
         $collection = $this->getData('address_collection');
         if (is_null($collection)) {
-            $collection = $this->_getCheckout()->getCustomer()->getLoadedAddressCollection();
+            $collection = $this->_getCheckout()->getCustomer()->getAddresses();
             $this->setData('address_collection', $collection);
         }
         return $collection;

@@ -56,15 +56,27 @@ class Mage_Adminhtml_Block_Urlrewrite_Add_Form extends Mage_Adminhtml_Block_Widg
             )
         );
 
-		$stores = Mage::getResourceModel('core/store_collection')->setWithoutDefaultFilter()->load()->toOptionHash();
-        $fieldset->addField('store_id', 'select', array(
-	        'label' 		=> Mage::helper('adminhtml')->__('Store'),
-	        'title' 		=> Mage::helper('adminhtml')->__('Store'),
-	        'name' 			=> 'store_id',
-	        'required' 		=> true,
-	        'options'		=> $stores
-        ));
-
+        if (!Mage::app()->isSingleStoreMode()) {
+            $fieldset->addField('store_id', 'select', array(
+                'label'     => $this->__('Store'),
+                'title'     => $this->__('Store'),
+                'name'      => 'store_id',
+                'required'  => true,
+                'values'    => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm(),
+            ));
+        }
+        else {
+            $fieldset->addField('store_id', 'select', array(
+                'name'      => 'store_id',
+                'label'     => $this->__('Store'),
+                'title'     => $this->__('Store'), 
+                'required'  => true,
+                'value'     => Mage::app()->getStore(true)->getId(),
+                'options'   => array('' => '', 
+                    Mage::app()->getStore(true)->getId() => Mage::app()->getStore(true)->getName()       
+                )
+            ));
+        }
         $fieldset->addField('id_path', 'text', array(
 	        'label' 		=> Mage::helper('adminhtml')->__('ID Path'),
 	        'title' 		=> Mage::helper('adminhtml')->__('ID Path'),
@@ -125,9 +137,9 @@ class Mage_Adminhtml_Block_Urlrewrite_Add_Form extends Mage_Adminhtml_Block_Widg
 	        'name' 		=> 'type',
 	        'required' 	=> true,
 	        'options'	=> array('' => '',
-    	       1 => Mage::helper('adminhtml')->__('Category'),
-	           2 => Mage::helper('adminhtml')->__('Product'),
-	           3 => Mage::helper('adminhtml')->__('Custom')
+    	       Mage_Core_Model_Url_Rewrite::TYPE_CATEGORY  => Mage::helper('adminhtml')->__('Category'),
+	           Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT  => Mage::helper('adminhtml')->__('Product'),
+	           Mage_Core_Model_Url_Rewrite::TYPE_CUSTOM  => Mage::helper('adminhtml')->__('Custom')
 	        )
         ));
 

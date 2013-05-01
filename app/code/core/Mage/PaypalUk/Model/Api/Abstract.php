@@ -291,7 +291,6 @@ abstract class Mage_PaypalUk_Model_Api_Abstract extends Varien_Object
      */
     public function getCcTypes()
     {
-        $ccTypes = Mage::getSingleton('payment/config')->getCcTypes();
         $added = false;
         foreach (Mage::getSingleton('payment/config')->getCcTypes() as $code => $name) {
             if ($code=='OT') {

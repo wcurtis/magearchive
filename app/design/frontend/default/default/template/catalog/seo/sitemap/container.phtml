@@ -19,15 +19,12 @@
  */
 ?>
 <div class="page-head">
-    <h3><?=$this->getActiveTabTitle()?></h3>
+    <h3><?=$this->getTitle()?></h3>
 </div>
-<p class="a-right">   
-    <?$_activetab=$this->getActiveTab();?>
-    <?foreach($this->getAvailableTab() as $_key=>$_item):?>
-        <?if($_key!=$_activetab):?>
-        	<a href="<?=$_item['linkurl']?>"><?=$_item['linktitle']?></a><br/>
-        <?endif;?>
-    <?endforeach;?>
-
-</p>
-<?=$this->getSeoActiveTabHtml();?>
+<div class="a-right">
+    <?=$this->getChildHtml('links')?>
+</div>
+<br/>
+<?=$this->getChildHtml('pager_top')?>
+<?=$this->getChildHtml('sitemap')?>
+<?=$this->getChildHtml('pager_bottom')?>

@@ -142,6 +142,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column extends Mage_Adminhtml_Block_Widge
             case 'currency':
                 $rendererClass = 'adminhtml/widget_grid_column_renderer_currency';
                 break;
+            case 'price':
+                $rendererClass = 'adminhtml/widget_grid_column_renderer_price';
+                break;
             case 'country':
                 $rendererClass = 'adminhtml/widget_grid_column_renderer_country';
                 break;
@@ -171,6 +174,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column extends Mage_Adminhtml_Block_Widge
                 break;
             case 'text':
                 $rendererClass = 'adminhtml/widget_grid_column_renderer_longtext';
+                break;
+            case 'store':
+                $rendererClass = 'adminhtml/widget_grid_column_renderer_store';
                 break;
             default:
                 $rendererClass = 'adminhtml/widget_grid_column_renderer_text';
@@ -210,6 +216,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column extends Mage_Adminhtml_Block_Widge
             case 'currency':
                 $filterClass = 'adminhtml/widget_grid_column_filter_range';
                 break;
+            case 'price':
+                $filterClass = 'adminhtml/widget_grid_column_filter_price';
+                break;
             case 'country':
                 $filterClass = 'adminhtml/widget_grid_column_filter_country';
                 break;
@@ -227,6 +236,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column extends Mage_Adminhtml_Block_Widge
 
             case 'radio':
                 $filterClass = 'adminhtml/widget_grid_column_filter_radio';
+                break;
+            case 'store':
+                $filterClass = 'adminhtml/widget_grid_column_filter_store';
                 break;
             default:
                 $filterClass = 'adminhtml/widget_grid_column_filter_text';

@@ -27,7 +27,23 @@
  */
 class Mage_Payment_Model_Method_Free extends Mage_Payment_Model_Method_Abstract
 {
-
     protected $_code = 'free';
 
+    public function isAvailable()
+    {
+        /* @var $quote Mage_Sales_Model_Quote */
+        $quote = Mage::helper('checkout')->getQuote();
+        $totals = $quote->getTotals();
+
+        if( !isset($totals['grand_total']) ) {
+            return false;
+        }
+        $grandTotal = $totals['grand_total'];
+
+        if( $grandTotal->getValue() == 0 ) {
+            return true;
+        }
+
+        return false;
+    }
 }

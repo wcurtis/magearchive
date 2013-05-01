@@ -45,7 +45,9 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
 
         $this->setRequest($request);
 
-        $this->_getXmlQuotes();
+        $this->_result = $this->_getQuotes();
+
+        $this->_updateFreeMethodQuote($request);
 
         return $this->getResult();
     }
@@ -108,6 +110,9 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
         }
 
         $r->setWeight($request->getPackageWeight());
+        if ($request->getFreeMethodWeight()!=$request->getPackageWeight()) {
+            $r->setFreeMethodWeight($request->getFreeMethodWeight());
+        }
 
         $r->setValue($request->getPackageValue());
 
@@ -119,6 +124,19 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
     public function getResult()
     {
        return $this->_result;
+    }
+
+    protected function _getQuotes()
+    {
+        return $this->_getXmlQuotes();
+    }
+
+    protected function _setFreeMethodRequest($freeMethod)
+    {
+        $r = $this->_rawRequest;
+
+        $r->setWeight($r->getFreeMethodWeight());
+        $r->setService($freeMethod);
     }
 
     protected function _getXmlQuotes()
@@ -389,7 +407,7 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
         }
 
 
-        $this->_parseXmlResponse($responseBody);
+        return $this->_parseXmlResponse($responseBody);
     }
 
     protected function _parseXmlResponse($response)
@@ -442,7 +460,7 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
                 $result->append($rate);
             }
         }
-        $this->_result = $result;
+        return $result;
     }
 
     public function getMethodPrice($cost, $method='')

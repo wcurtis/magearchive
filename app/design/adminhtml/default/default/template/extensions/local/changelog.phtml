@@ -20,7 +20,9 @@
 ?>
 <div class="entry-edit">
     <?foreach ($this->getReleases() as $_log):?>
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=$_log['version']['release']?> (<?=$_log['stability']['release']?>)</h4>
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?=$_log['version']['release']?> (<?=$_log['stability']['release']?>)</h4>
+    </div>
     <fieldset>
         <legend><?=$_log['version']['release']?> (<?=$_log['stability']['release']?>)</legend>
 

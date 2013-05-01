@@ -31,9 +31,21 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Upsell extends Mage_Adminhtm
     {
         parent::__construct();
         $this->setId('up_sell_product_grid');
-        $this->setDefaultFilter(array('in_products'=>1));
         $this->setDefaultSort('id');
         $this->setUseAjax(true);
+        if ($this->_getProduct()->getId()) {
+            $this->setDefaultFilter(array('in_products'=>1));
+        }
+    }
+
+    /**
+     * Retirve currently edited product model
+     *
+     * @return Mage_Catalog_Model_Product
+     */
+    protected function _getProduct()
+    {
+        return Mage::registry('current_product');
     }
 
     protected function _addColumnFilterToCollection($column)
@@ -61,23 +73,11 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Upsell extends Mage_Adminhtm
 
     protected function _prepareCollection()
     {
-
-        $collection = Mage::getResourceModel('catalog/product_link_collection')
-            ->setLinkType('up_sell')
-            ->setProductId(Mage::registry('product')->getId())
-            ->setStoreId(Mage::registry('product')->getStoreId())
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('price')
-            ->addAttributeToSelect('attribute_set_id')
-            ->addAttributeToSelect('type_id')
-            ->addAttributeToSelect('status')
-            ->addAttributeToSelect('visibility')
-            ->addLinkAttributeToSelect('position')
-            ->useProductItem();
-
+        $collection = Mage::getModel('catalog/product_link')->useUpSellLinks()
+            ->getProductCollection()
+            ->setProduct($this->_getProduct())
+            ->addAttributeToSelect('*');
         $this->setCollection($collection);
-
         return parent::_prepareCollection();
     }
 
@@ -103,17 +103,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Upsell extends Mage_Adminhtm
             'index'     => 'name'
         ));
 
-        $types = Mage::getResourceModel('catalog/product_type_collection')
-            ->load()
-            ->toOptionHash();
-
         $this->addColumn('type',
             array(
                 'header'=> Mage::helper('catalog')->__('Type'),
                 'width' => '100px',
                 'index' => 'type_id',
                 'type'  => 'options',
-                'options' => $types,
+                'options' => Mage::getSingleton('catalog/product_type')->getOptionArray(),
         ));
 
         $sets = Mage::getResourceModel('eav/entity_attribute_set_collection')
@@ -130,22 +126,14 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Upsell extends Mage_Adminhtm
                 'options' => $sets,
         ));
 
-        $statuses = Mage::getResourceModel('catalog/product_status_collection')
-            ->load()
-            ->toOptionHash();
-
         $this->addColumn('status',
             array(
                 'header'=> Mage::helper('catalog')->__('Status'),
                 'width' => '90px',
                 'index' => 'status',
                 'type'  => 'options',
-                'options' => $statuses,
+                'options' => Mage::getSingleton('catalog/product_status')->getOptionArray(),
         ));
-
-        $visibility = Mage::getResourceModel('catalog/product_visibility_collection')
-            ->load()
-            ->toOptionHash();
 
         $this->addColumn('visibility',
             array(
@@ -153,7 +141,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Upsell extends Mage_Adminhtm
                 'width' => '90px',
                 'index' => 'visibility',
                 'type'  => 'options',
-                'options' => $visibility,
+                'options' => Mage::getSingleton('catalog/product_visibility')->getOptionArray(),
         ));
 
         $this->addColumn('sku', array(
@@ -189,11 +177,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Upsell extends Mage_Adminhtm
     protected function _getSelectedProducts()
     {
         $products = $this->getRequest()->getPost('products', null);
-
         if (!is_array($products)) {
-            $products = Mage::registry('product')->getUpSellProductsLoaded()->getColumnValues('entity_id');
+            $products = $this->_getProduct()->getUpSellProductIds();
         }
-
         return $products;
     }
 

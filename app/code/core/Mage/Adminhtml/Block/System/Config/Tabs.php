@@ -18,47 +18,77 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
- * admin customer left menu
+ * System configuration tabs block
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
+class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widget
 {
-    public function __construct()
+
+    /**
+     * Tabs
+     *
+     * @var array
+     */
+    protected $_tabs;
+
+    /**
+     * Enter description here...
+     *
+     */
+    protected function _construct()
     {
-        parent::__construct();
         $this->setId('system_config_tabs');
-        $this->setDestElementId('system_config_form');
         $this->setTitle(Mage::helper('adminhtml')->__('Configuration'));
         $this->setTemplate('system/config/tabs.phtml');
     }
 
-    protected function _sortSections($a, $b)
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $a
+     * @param unknown_type $b
+     * @return int
+     */
+    protected function _sort($a, $b)
     {
-        //echo $a->label.'['.$a->sort_order.'] vs '.$b->label . '['.$b->sort_order.'] = ' . (string)($a->sort_order < $b->sort_order ? -1 : ($a->sort_order > $b->sort_order ? 1 : 0))  . " \n<br>";
         return (int)$a->sort_order < (int)$b->sort_order ? -1 : ((int)$a->sort_order > (int)$b->sort_order ? 1 : 0);
-
     }
 
+    /**
+     * Enter description here...
+     *
+     */
     public function initTabs()
     {
         $current = $this->getRequest()->getParam('section');
-
-
         $websiteCode = $this->getRequest()->getParam('website');
         $storeCode = $this->getRequest()->getParam('store');
-
 
         $url = Mage::getModel('adminhtml/url');
 
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections = $configFields->getSections($current);
+        $tabs     = (array)$configFields->getTabs()->children();
 
         $sections = (array)$sections;
 
-        usort($sections, array($this, '_sortSections'));
+        usort($sections, array($this, '_sort'));
+        usort($tabs, array($this, '_sort'));
+
+        foreach ($tabs as $tab) {
+            $helperName = $configFields->getAttributeModule($tab);
+            $label = Mage::helper($helperName)->__((string)$tab->label);
+
+            $this->addTab($tab->getName(), array(
+                'label' => $label,
+                'class' => (string) $tab->class
+            ));
+        }
+
 
         foreach ($sections as $section) {
 
@@ -66,6 +96,7 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
 
             //$code = $section->getPath();
             $code = $section->getName();
+
             $sectionAllowed = $this->checkSectionPermissions($code);
             if ((empty($current) && $sectionAllowed)) {
 
@@ -73,9 +104,6 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
                 $this->getRequest()->setParam('section', $current);
             }
 
-            if (($section->getName()==$current && !$hasChildren)) {
-                //redirec
-            }
             $helperName = $configFields->getAttributeModule($section);
 
             $label = Mage::helper($helperName)->__((string)$section->label);
@@ -88,16 +116,24 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
                 }
             }
             if ( $sectionAllowed && $hasChildren) {
-                $defaultTab = $current;
-                $this->addTab($code, array(
+                $this->addSection($code, (string)$section->tab, array(
+                    'class'     => (string)$section->class,
                     'label'     => $label,
                     'url'       => $url->getUrl('*/*/*', array('_current'=>true, 'section'=>$code)),
                 ));
             }
 
             if ($code == $current) {
-                $this->setActiveTab($code);
+                $this->setActiveTab($section->tab);
+                $this->setActiveSection($code);
             }
+        }
+
+        /*
+         * Set last sections
+         */
+        foreach ($this->getTabs() as $tab) {
+            $tab->getSections()->getLastItem()->setIsLast(true);
         }
 
         Mage::helper('adminhtml')->addPageHelpUrl($current.'/');
@@ -105,6 +141,52 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         return $this;
     }
 
+    public function addTab($code, $config)
+    {
+        $tab = new Varien_Object($config);
+        $tab->setId($code);
+        $this->_tabs[$code] = $tab;
+        return $this;
+    }
+
+    /**
+     * Retrive tab
+     *
+     * @param string $code
+     * @return Varien_Object
+     */
+    public function getTab($code)
+    {
+        if(isset($this->_tabs[$code])) {
+            return $this->_tabs[$code];
+        }
+
+        return null;
+    }
+
+    public function addSection($code, $tabCode, $config)
+    {
+        if($tab = $this->getTab($tabCode)) {
+            if(!$tab->getSections()) {
+                $tab->setSections(new Varien_Data_Collection());
+            }
+            $section = new Varien_Object($config);
+            $section->setId($code);
+            $tab->getSections()->addItem($section);
+        }
+        return $this;
+    }
+
+    public function getTabs()
+    {
+        return $this->_tabs;
+    }
+
+    /**
+     * Enter description here...
+     *
+     * @return array
+     */
     public function getStoreSelectOptions()
     {
         $section = $this->getRequest()->getParam('section');
@@ -112,44 +194,72 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         $curWebsite = $this->getRequest()->getParam('website');
         $curStore   = $this->getRequest()->getParam('store');
 
-        $websitesConfig = Mage::getConfig()->getNode('websites');
-        $storesConfig = Mage::getConfig()->getNode('stores');
+        $storeModel = Mage::getSingleton('adminhtml/system_store');
+        /* @var $storeModel Mage_Adminhtml_Model_System_Store */
 
         $url = Mage::getModel('adminhtml/url');
 
         $options = array();
         $options['default'] = array(
-            'label'    => Mage::helper('adminhtml')->__('Default config'),
+            'label'    => Mage::helper('adminhtml')->__('Default Config'),
             'url'      => $url->getUrl('*/*/*', array('section'=>$section)),
             'selected' => !$curWebsite && !$curStore,
             'style'    => 'background:#CCC; font-weight:bold;',
         );
 
-        foreach ($websitesConfig->children() as $wCode=>$wConfig) {
-        	if ($wConfig->descend('system/website/id')==0) {
-        		continue;
-        	}
-            $options['website_'.$wCode] = array(
-                'label'    => (string)$wConfig->descend('system/website/name'),
-                'url'      => $url->getUrl('*/*/*', array('section'=>$section, 'website'=>$wCode)),
-                'selected' => !$curStore && $curWebsite==$wCode,
-                'style'    => 'padding-left:16px; background:#DDD; font-weight:bold;',
-            );
-            $websiteStores = $wConfig->descend('system/stores');
-            if ($websiteStores) {
-                foreach ($websiteStores->children() as $sCode=>$sId) {
-                    $options['store_'.$sCode] = array(
-                        'label'    => (string)$storesConfig->descend($sCode.'/system/store/name'),
-                        'url'      => $url->getUrl('*/*/*', array('section'=>$section, 'website'=>$wCode, 'store'=>$sCode)),
-                        'selected' => $curStore==$sCode,
-                        'style'    => 'padding-left:32px;',
+        foreach ($storeModel->getWebsiteCollection() as $website) {
+            $websiteShow = false;
+            foreach ($storeModel->getGroupCollection() as $group) {
+                if ($group->getWebsiteId() != $website->getId()) {
+                    continue;
+                }
+                $groupShow = false;
+                foreach ($storeModel->getStoreCollection() as $store) {
+                    if ($store->getGroupId() != $group->getId()) {
+                        continue;
+                    }
+                    if (!$websiteShow) {
+                        $websiteShow = true;
+                        $options['website_' . $website->getCode()] = array(
+                            'label'    => $website->getName(),
+                            'url'      => $url->getUrl('*/*/*', array('section'=>$section, 'website'=>$website->getCode())),
+                            'selected' => !$curStore && $curWebsite == $website->getCode(),
+                            'style'    => 'padding-left:16px; background:#DDD; font-weight:bold;',
+                        );
+                    }
+                    if (!$groupShow) {
+                        $groupShow = true;
+                        $options['group_' . $group->getId() . '_open'] = array(
+                            'is_group'  => true,
+                            'is_close'  => false,
+                            'label'     => $group->getName(),
+                            'style'     => 'padding-left:32px;'
+                        );
+                    }
+                    $options['store_' . $store->getCode()] = array(
+                        'label'    => $store->getName(),
+                        'url'      => $url->getUrl('*/*/*', array('section'=>$section, 'website'=>$website->getCode(), 'store'=>$store->getCode())),
+                        'selected' => $curStore == $store->getCode(),
+                        'style'    => '',
+                    );
+                }
+                if ($groupShow) {
+                    $options['group_' . $group->getId() . '_close'] = array(
+                        'is_group'  => true,
+                        'is_close'  => true,
                     );
                 }
             }
         }
+
         return $options;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getStoreButtonsHtml()
     {
         $curWebsite = $this->getRequest()->getParam('website');
@@ -193,6 +303,12 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         return $html;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $code
+     * @return boolean
+     */
     public function checkSectionPermissions($code=null)
     {
         static $permissions;
@@ -207,10 +323,9 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
 
         $showTab = false;
         if ( $permissions->isAllowed('system/config/'.$code) ) {
-	        $showTab = true;
-	    }
+            $showTab = true;
+        }
         return $showTab;
     }
-
 
 }

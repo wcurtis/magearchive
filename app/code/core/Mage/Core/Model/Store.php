@@ -18,29 +18,47 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Store model
  *
+ * @category   Mage
+ * @package    Mage_Core
  */
 class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
 {
-    const XML_PATH_USE_REWRITES        = 'web/seo/use_rewrites';
-    const XML_PATH_UNSECURE_BASE_URL   = 'web/unsecure/base_url';
-    const XML_PATH_SECURE_BASE_URL     = 'web/secure/base_url';
-    const XML_PATH_SECURE_IN_FRONTEND  = 'web/secure/use_in_frontend';
-    const XML_PATH_SECURE_IN_ADMINHTML = 'web/secure/use_in_adminhtml';
+    const XML_PATH_USE_REWRITES         = 'web/seo/use_rewrites';
+    const XML_PATH_UNSECURE_BASE_URL    = 'web/unsecure/base_url';
+    const XML_PATH_SECURE_BASE_URL      = 'web/secure/base_url';
+    const XML_PATH_SECURE_IN_FRONTEND   = 'web/secure/use_in_frontend';
+    const XML_PATH_SECURE_IN_ADMINHTML  = 'web/secure/use_in_adminhtml';
 
-    const URL_TYPE_LINK  = 'link';
-    const URL_TYPE_WEB   = 'web';
-    const URL_TYPE_SKIN  = 'skin';
-    const URL_TYPE_JS    = 'js';
-    const URL_TYPE_MEDIA = 'media';
+    const XML_PATH_PRICE_SCOPE          = 'general/price/scope';
+    const PRICE_SCOPE_GLOBAL = 0;
+    const PRICE_SCOPE_WEBSITE = 1;
 
-    const DEFAULT_CODE = 'default';
+    const URL_TYPE_LINK                 = 'link';
+    const URL_TYPE_WEB                  = 'web';
+    const URL_TYPE_SKIN                 = 'skin';
+    const URL_TYPE_JS                   = 'js';
+    const URL_TYPE_MEDIA                = 'media';
+
+    const DEFAULT_CODE                  = 'default';
 
     protected $_priceFilter;
 
+    /**
+     * Website model
+     *
+     * @var Mage_Core_Model_Website
+     */
     protected $_website;
+
+    /**
+     * Group model
+     *
+     * @var Mage_Core_Model_Store_Group
+     */
     protected $_group;
 
     protected $_configCache = array();
@@ -52,11 +70,6 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
     protected $_baseUrlCache = array();
 
     protected $_session;
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     protected function _construct()
     {
@@ -125,16 +138,16 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
      *
      * @return int
      */
-    public function getId()
-    {
-        if (is_null(parent::getId())) {
-            $this->setId($this->getConfig('system/store/id'));
-        }
-        return parent::getId();
-    }
+//    public function getId()
+//    {
+//        if (is_null(parent::getId())) {
+//            $this->setId($this->getConfig('system/store/id'));
+//        }
+//        return parent::getId();
+//    }
 
     /**
-     * Retrieve store code
+     * Retrieve Store code
      *
      * @return string
      */
@@ -160,27 +173,19 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         $fullPath = 'stores/'.$this->getCode().'/'.$path;
         $data = $config->getNode($fullPath);
         if (!$data) {
-            Mage::log('Invalid store configuration path: '.$path);
             return null;
         }
         return $this->_processConfigValue($fullPath, $path, $data);
+    }
 
-        if (!$data->hasChildren()) {
-            $value = $this->processSubst((string)$data);
-        } else {
-            $value = array();
-
-            foreach ($data->children() as $k=>$v) {
-                if ($v->children()) {
-                    $value[$k] = $v;
-                } else {
-                    $value[$k] = $this->processSubst((string)$v);
-                }
-            }
-        }
-
-        $this->_configCache[$path] = $value;
-        return $value;
+    /**
+     * Set website model
+     *
+     * @param Mage_Core_Model_Website $website
+     */
+    public function setWebsite(Mage_Core_Model_Website $website)
+    {
+        $this->_website = $website;
     }
 
     /**
@@ -190,9 +195,23 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
      */
     public function getWebsite()
     {
-        return Mage::app()->getWebsite($this->getConfig('system/website/id'));
+        if (is_null($this->getWebsiteId())) {
+            return false;
+        }
+        if (is_null($this->_website)) {
+            $this->_website = Mage::app()->getWebsite($this->getWebsiteId());
+        }
+        return $this->_website;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param string $fullPath
+     * @param string $path
+     * @param Varien_Simplexml_Element $node
+     * @return string
+     */
     protected function _processConfigValue($fullPath, $path, $node)
     {
         if (isset($this->_configCache[$path])) {
@@ -232,6 +251,13 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         return $sValue;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @todo check and delete this if it is not used anymore
+     * @param string $value
+     * @return string
+     */
     public function processSubst($value)
     {
         if (!is_string($value)) {
@@ -259,26 +285,6 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         return rtrim(Mage::app()->getRequest()->getBasePath().'/').'/';
     }
 
-    public function getDatashareStores($key)
-    {
-        // TODO store level data sharing configuration in next version
-        // if ($stores = $this->getConfig('advanced/datashare/'.$key)) {
-        if ($stores = $this->getConfig('advanced/datashare/'.$key)) {
-            return explode(',', $stores);
-        } else {
-            $this->updateDatasharing($key);
-            if ($stores = $this->getConfig('advanced/datashare/'.$key)) {
-                return explode(',', $stores);
-            }
-        }
-        return $this->getWebsite()->getStoresIds();
-    }
-
-    public function updateDatasharing()
-    {
-        $this->_getResource()->updateDatasharing();
-    }
-
     /**
      * Retrieve url using store configuration specific
      *
@@ -292,7 +298,6 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
             ->setStore($this);
         return $url->getUrl($route, $params);
     }
-
 
     public function getBaseUrl($type=self::URL_TYPE_LINK, $secure=null)
     {
@@ -327,6 +332,7 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
             }
             $this->_baseUrlCache[$cacheKey] = rtrim($url, '/').'/';
         }
+#echo "CACHE: ".$cacheKey.','.$this->_baseUrlCache[$cacheKey].' *** ';
 
         return $this->_baseUrlCache[$cacheKey];
     }
@@ -343,10 +349,13 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
                 return false;
             }
             $uri = Zend_Uri::factory($secureBaseUrl);
-            return $uri->getScheme() == 'https'
-                && $uri->getPort() == $_SERVER['SERVER_PORT'];
+            $isSecure = ($uri->getScheme() == 'https' )
+                && isset($_SERVER['SERVER_PORT'])
+                && ($uri->getPort() == $_SERVER['SERVER_PORT']);
+            return $isSecure;
         } else {
-            return 443 == $_SERVER['SERVER_PORT'];
+            $isSecure = isset($_SERVER['SERVER_PORT']) && (443 == $_SERVER['SERVER_PORT']);
+            return $isSecure;
         }
     }
 
@@ -361,7 +370,11 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
      */
     public function getBaseCurrencyCode()
     {
-        return $this->getConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
+        if ($this->getConfig(Mage_Core_Model_Store::XML_PATH_PRICE_SCOPE) == Mage_Core_Model_Store::PRICE_SCOPE_GLOBAL) {
+            return Mage::app()->getBaseCurrencyCode();
+        } else {
+            return $this->getConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
+        }
     }
 
     /**
@@ -444,6 +457,7 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         $codes = $this->getData('available_currency_codes');
         if (is_null($codes)) {
             $codes = explode(',', $this->getConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_ALLOW));
+            $codes[] = $this->getBaseCurrencyCode();
             $this->setData('available_currency_codes', $codes);
         }
         return $codes;
@@ -459,7 +473,13 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         $currency = $this->getData('current_currency');
         if (is_null($currency)) {
             $currency = Mage::getModel('directory/currency')->load($this->getCurrentCurrencyCode());
-            $this->setData('current_currency', $currency);
+            if ($this->getBaseCurrency()->getRate($currency)) {
+                $this->setData('current_currency', $currency);
+            }
+            else {
+                $this->setData('current_currency', $this->getBaseCurrency());
+                $this->setCurrentCurrencyCode($this->getBaseCurrency()->getCode());
+            }
         }
         return $currency;
     }
@@ -490,6 +510,12 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         return $value;
     }
 
+    /**
+     * round price
+     *
+     * @param mixed $price
+     * @return double
+     */
     public function roundPrice($price)
     {
         return round($price, 2);
@@ -512,7 +538,7 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
     /**
      * Get store price filter
      *
-     * @return unknown
+     * @return Varien_Filter_Sprintf
      */
     public function getPriceFilter()
     {
@@ -531,6 +557,11 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         return $this->_priceFilter;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return int
+     */
     public function getRootCategoryId()
     {
         if (!$this->getGroup()) {
@@ -539,23 +570,30 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
         return $this->getGroup()->getRootCategoryId();
     }
 
+    /**
+     * Set group model for store
+     *
+     * @param Mage_Core_Model_Store_Group $group
+     */
+    public function setGroup(Mage_Core_Model_Store_Group $group)
+    {
+        $this->_group = $group;
+    }
+
+    /**
+     * Retrieve group model
+     *
+     * @return Mage_Core_Model_Store_Group
+     */
     public function getGroup()
     {
-        if (!$this->getGroupId()) {
+        if (is_null($this->getGroupId())) {
             return false;
         }
         if (is_null($this->_group)) {
             $this->_group = Mage::getModel('core/store_group')->load($this->getGroupId());
         }
         return $this->_group;
-    }
-
-    public function getStoreInGroupCount()
-    {
-        if (!$this->getGroupId()) {
-            return 0;
-        }
-        return $this->getCollection()->addGroupFilter($this->getGroupId())->getSize();
     }
 
     public function isCanDelete()

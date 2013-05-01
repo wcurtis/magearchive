@@ -28,22 +28,13 @@
  */
 class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstract
 {
-
-    protected function _construct()
-    {
-        parent::_construct();
-    }
-
     protected function _prepareLayout()
     {
-
-    	if ($headBlock = $this->getLayout()->getBlock('head')) {
+        $this->getLayout()->createBlock('catalog/breadcrumbs');
+        if ($headBlock = $this->getLayout()->getBlock('head')) {
             if ($title = $this->getProduct()->getMetaTitle()) {
                 $headBlock->setTitle($title.' '.Mage::getStoreConfig('catalog/seo/title_separator').' '.Mage::getStoreConfig('system/store/name'));
-            }/*
-            else {
-                $headBlock->setTitle($this->getProduct()->getName());
-            }*/
+            }
 
             if ($keyword = $this->getProduct()->getMetaKeyword()) {
                 $headBlock->setKeywords($keyword);
@@ -57,29 +48,7 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
                 $headBlock->setDescription( $this->getProduct()->getDescription() );
             }
         }
-        $this->getLayout()->createBlock('catalog/breadcrumbs');
         return parent::_prepareLayout();
-    }
-
-    protected function _beforeToHtml()
-    {
-        $this->_prepareData();
-        return parent::_beforeToHtml();
-    }
-
-    protected function _prepareData()
-    {
-        $product = $this->getProduct();
-
-        $groupCollection = $product->getSuperGroupProducts()
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('price')
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSort('position', 'asc')
-            ->useProductItem();
-
-        Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($groupCollection);
-        return $this;
     }
 
     /**
@@ -100,8 +69,6 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
     {
         $data = array();
         $product = $this->getProduct();
-        //print_r($product->getData());
-        //die;
         $attributes = $product->getAttributes();
         foreach ($attributes as $attribute) {
             if ($product->getSuperAttributesIds() && (in_array($attribute->getAttributeId(), $product->getSuperAttributesIds()) || !$attribute->getUseInSuperProduct())) {
@@ -121,44 +88,6 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
         return $data;
     }
 
-
-    public function getGalleryImages()
-    {
-        $collection = $this->getProduct()->getGallery();
-        return $collection;
-    }
-
-    public function getTierPrices($product)
-    {
-        $prices = $product->getFormatedTierPrice();
-        $res = array();
-        if (is_array($prices)) {
-            foreach ($prices as $price) {
-                if ($product->getPrice() != $product->getFinalPrice()) {
-                    if ($price['price']<$product->getFinalPrice()) {
-                        $price['savePercent'] = ceil(100 - (( 100 / $product->getFinalPrice() ) * $price['price'] ));
-                        $res[] = $price;
-                    }
-                }
-                else {
-                    $price['savePercent'] = ceil(100 - (( 100 / $product->getPrice() ) * $price['price'] ));
-                    $res[] = $price;
-                }
-            }
-        }
-        return $res;
-    }
-
-    public function getGalleryUrl($image=null)
-    {
-        $params = array('id'=>$this->getProduct()->getId());
-        if ($image) {
-            $params['image'] = $image->getValueId();
-            return $this->getUrl('*/*/gallery', $params);
-        }
-        return $this->getUrl('*/*/gallery', $params);
-    }
-
     public function getAlertHtml($type)
     {
         return $this->getLayout()->createBlock('customeralert/alerts')
@@ -174,21 +103,21 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
         return null;
     }
 
+    public function canEmailToFriend()
+    {
+        $sendToFriendModel = Mage::registry('send_to_friend_model');
+        return $sendToFriendModel && $sendToFriendModel->canEmailToFriend();
+    }
 
-	public function canEmailToFriend()
-	{
-	    $sendToFriendModel = Mage::registry('send_to_friend_model');
-	    return $sendToFriendModel && $sendToFriendModel->canEmailToFriend();
-	}
+    public function getAddToCartUrl($product, $additional = array())
+    {
+        $additional = array();
 
-	public function getAddToCartUrl($product, $additional = array())
-	{
-	    $additional = array();
+        if ($this->getRequest()->getParam('wishlist_next')){
+            $additional['wishlist_next'] = 1;
+        }
 
-	    if ($this->getRequest()->getParam('wishlist_next')){
-	        $additional['wishlist_next'] = 1;
-	    }
+        return parent::getAddToCartUrl($product, $additional);
+    }
 
-	    return parent::getAddToCartUrl($product, $additional);
-	}
 }

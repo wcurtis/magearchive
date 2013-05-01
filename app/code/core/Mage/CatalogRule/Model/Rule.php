@@ -22,9 +22,9 @@
 class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
 {
     protected $_productIds = array();
-    
+
     protected $_now;
-    
+
     protected function _construct()
     {
         parent::_construct();
@@ -49,12 +49,12 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
         }
         return $this->_now;
     }
-    
+
     public function setNow($now)
     {
         $this->_now = $now;
     }
-    
+
     public function toString($format='')
     {
         $str = Mage::helper('catalogrule')->__("Name: %s", $this->getName()) ."\n"
@@ -67,17 +67,17 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
              . $this->getActions()->toStringRecursive() ."\n\n";
         return $str;
     }
-    
+
     /**
      * Returns rule as an array for admin interface
-     * 
+     *
      * Output example:
      * array(
      *   'name'=>'Example rule',
      *   'conditions'=>{condition_combine::toArray}
      *   'actions'=>{action_collection::toArray}
      * )
-     * 
+     *
      * @return array
      */
     public function toArray(array $arrAttributes = array())
@@ -85,7 +85,7 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
         $out = parent::toArray($arrAttributes);
         $out['customer_registered'] = $this->getCustomerRegistered();
         $out['customer_new_buyer'] = $this->getCustomerNewBuyer();
-        
+
         return $out;
     }
     /*
@@ -94,7 +94,7 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
         $this->validateProduct($product) && $this->updateProduct($product);
         return $this;
     }
-    
+
     public function validateProduct(Mage_Catalog_Model_Product $product)
     {
         if (!$this->getIsCollectionValidated()) {
@@ -110,7 +110,7 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
 
         return $result;
     }
-    
+
     public function updateProduct(Mage_Sales_Model_Product $product)
     {
         $this->getActions()->updateProduct($product);
@@ -121,13 +121,13 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
     {
         return Mage::getResourceModel('catalogrule/rule_collection');
     }
-    
+
     protected function _afterSave()
     {
         $this->_getResource()->updateRuleProductData($this);
         parent::_afterSave();
     }
-    
+
     public function getMatchingProductIds()
     {
         if (empty($this->_productIds)) {
@@ -137,8 +137,15 @@ class Mage_CatalogRule_Model_Rule extends Mage_Rule_Model_Rule
             $productCollection = Mage::getResourceModel('catalog/product_collection');
             $conditions->collectValidatedAttributes($productCollection);
             $productCollection->load();
-            
+
             foreach ($productCollection as $product) {
+                $categoryCollection = $product->getCategoryCollection()->load();
+                $categories = array();
+                foreach ($categoryCollection as $category) {
+                    $categories[] = $category->getId();
+                }
+                $product->setCategories($categories);
+
                 if ($conditions->validate($product)) {
                     $this->_productIds[] = $product->getId();
                 }

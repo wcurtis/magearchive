@@ -27,68 +27,34 @@ class Mage_SalesRule_Model_Rule_Condition_Product_Combine extends Mage_Rule_Mode
         $this->setType('salesrule/rule_condition_product_combine');
     }
 
-    public function loadOperatorOptions()
-    {
-    	$this->setOperatorOption(array(
-    		1=>'FOUND',
-    		0=>'NOT FOUND',
-    	));
-    	return $this;
-    }
-
     public function getNewChildSelectOptions()
     {
+        $productCondition = Mage::getModel('salesrule/rule_condition_product');
+        $productAttributes = $productCondition->loadAttributeOptions()->getAttributeOption();
+        $pAttributes = array();
+        $iAttributes = array();
+        foreach ($productAttributes as $code=>$label) {
+            if (strpos($code, 'quote_item_')===0) {
+                $iAttributes[] = array('value'=>'salesrule/rule_condition_product|'.$code, 'label'=>$label);
+            } else {
+                $pAttributes[] = array('value'=>'salesrule/rule_condition_product|'.$code, 'label'=>$label);
+            }
+        }
+
         $conditions = parent::getNewChildSelectOptions();
         $conditions = array_merge_recursive($conditions, array(
-            array('value'=>'salesrule/rule_condition_product', 'label'=>'Product attribute'),
+            array('value'=>'salesrule/rule_condition_product_combine', 'label'=>Mage::helper('catalog')->__('Conditions Combination')),
+            array('label'=>Mage::helper('catalog')->__('Cart Item Attribute'), 'value'=>$iAttributes),
+            array('label'=>Mage::helper('catalog')->__('Product Attribute'), 'value'=>$pAttributes),
         ));
         return $conditions;
     }
 
-    public function asHtml()
+    public function collectValidatedAttributes($productCollection)
     {
-    	$html = $this->getTypeElement()->getHtml().
-    	    Mage::helper('salesrule')->__("If an item is %s in the cart with %s of these conditions true:",
-    		$this->getOperatorElement()->getHtml(), $this->getAttributeElement()->getHtml());
-       	if ($this->getId()!='1') {
-       	    $html.= $this->getRemoveLinkHtml();
-       	}
-    	return $html;
-    }
-
-    /**
-     * validate
-     *
-     * @param Varien_Object $object Quote
-     * @return boolean
-     */
-    public function validate(Varien_Object $object)
-    {
-        $all = $this->getAttribute()==='all';
-        $found = false;
-        foreach ($object->getAllItems() as $item) {
-            $found = $all ? true : false;
-            foreach ($this->getConditions() as $cond) {
-                if ($all && !$cond->validate($item)) {
-                    $found = false;
-                    break;
-                } elseif (!$all && $cond->validate($item)) {
-                    $found = true;
-                    break 2;
-                }
-            }
-            if ($found && (bool)$this->getOperator()) {
-                break;
-            }
+        foreach ($this->getConditions() as $condition) {
+            $condition->collectValidatedAttributes($productCollection);
         }
-        if ($found && (bool)$this->getOperator()) {
-            // found an item and we're looking for existing one
-
-            return true;
-        } elseif (!$found && !(bool)$this->getOperator()) {
-            // not found and we're making sure it doesn't exist
-            return true;
-        }
-        return false;
+        return $this;
     }
 }

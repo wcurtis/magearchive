@@ -145,10 +145,12 @@
                 <active>1</active>
                 <model>payment/method_free</model>
                 <order_status>pending</order_status>
-                <title>Free</title>
+                <title>No Payment Information Required</title>
                 <allowspecific>0</allowspecific>
+<!--
                 <min_order_total>0</min_order_total>
                 <max_order_total>0</max_order_total>
+-->
                 <sort_order>1</sort_order>
             </free>
 

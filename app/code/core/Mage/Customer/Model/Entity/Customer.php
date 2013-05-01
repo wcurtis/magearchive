@@ -36,26 +36,38 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
         );
     }
 
+    /**
+     * Retrieve customer entity default attributes
+     *
+     * @return array
+     */
+    protected function _getDefaultAttributes()
+    {
+        return array(
+            'entity_type_id',
+            'attribute_set_id',
+            'created_at',
+            'updated_at',
+            'increment_id',
+            'store_id',
+            'website_id'
+        );
+    }
+
     protected function _beforeSave(Varien_Object $customer)
     {
         parent::_beforeSave($customer);
-        /* @var $customer Mage_Customer_Model_Customer */
-        $customer->setParentId(null);
-
-        $collection = Mage::getResourceModel('customer/customer_collection')
-            ->addAttributeToFilter('email', $customer->getEmail());
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->getEntityTable(), array($this->getEntityIdField()))
+            ->where('email=?', $customer->getEmail());
+        if ($customer->getSharingConfig()->isWebsiteScope()) {
+            $select->where('website_id=?', (int) $customer->getWebsiteId());
+        }
         if ($customer->getId()) {
-            $collection->addAttributeToFilter('entity_id', array('neq' => $customer->getId()));
+            $select->where('entity_id !=?', $customer->getId());
         }
 
-        if ($stores = $customer->getSharedStoreIds()) {
-            $collection->addAttributeToFilter('store_id', array('in' => $customer->getSharedStoreIds()));
-        }
-
-        $collection->setPage(1,1)
-            ->load();
-
-        if ($collection->getSize() > 0) {
+        if ($this->_getWriteAdapter()->fetchOne($select)) {
             Mage::throwException(Mage::helper('customer')->__('Customer email already exists'));
         }
 
@@ -77,8 +89,7 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
 
     protected function _saveAddresses(Mage_Customer_Model_Customer $customer)
     {
-        foreach ($customer->getAddressCollection() as $address)
-        {
+        foreach ($customer->getAddresses() as $address) {
             if ($address->getData('_deleted')) {
                 $address->delete();
             }
@@ -93,20 +104,15 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
 
     public function loadByEmail(Mage_Customer_Model_Customer $customer, $email, $testOnly=false)
     {
-        $collection = Mage::getResourceModel('customer/customer_collection')
-            ->addAttributeToSelect('*')
-            ->addAttributeToFilter('email', $email)
-            ->setPage(1,1);
-
-        if ($testOnly) {
-            $collection->addAttributeToSelect('email');
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->getEntityTable(), array($this->getEntityIdField()))
+            ->where('email=?', $email);
+        if ($customer->getSharingConfig()->isWebsiteScope()) {
+            $select->where('website_id=?', (int) $customer->getWebsiteId());
         }
 
-        $collection->load();
-        $customer->setData(array());
-        foreach ($collection->getItems() as $item) {
-            $customer->setData($item->getData());
-            break;
+        if ($id = $this->_getReadAdapter()->fetchOne($select)) {
+            $this->load($customer, $id);
         }
         return $this;
     }
@@ -146,10 +152,5 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
         $customer->setPassword($newPassword);
         $this->saveAttribute($customer, 'password_hash');
         return $this;
-    }
-
-    public function getHashPassword($password)
-    {
-        return md5($password);
     }
 }

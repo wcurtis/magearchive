@@ -82,13 +82,14 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Grid extends Mage_Adminhtml
         ));
 
         $this->addColumn('is_global', array(
-            'header'=>Mage::helper('catalog')->__('Global'),
+            'header'=>Mage::helper('catalog')->__('Scope'),
             'sortable'=>true,
             'index'=>'is_global',
             'type' => 'options',
             'options' => array(
-                '1' => Mage::helper('catalog')->__('Yes'),
-                '0' => Mage::helper('catalog')->__('No'),
+                Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE =>Mage::helper('catalog')->__('Store View'),
+                Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE =>Mage::helper('catalog')->__('Website'),
+                Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL =>Mage::helper('catalog')->__('Global'),
             ),
             'align' => 'center',
         ));

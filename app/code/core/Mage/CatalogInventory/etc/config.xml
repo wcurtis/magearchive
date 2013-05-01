@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_CatalogInventory>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Sales />
@@ -138,7 +138,7 @@
                     </inventory>
                 </observers>
             </catalog_product_save_after>
-            <catalog_product_copy>
+            <catalog_model_product_duplicate>
                 <observers>
                     <inventory>
                         <type>singleton</type>
@@ -146,7 +146,7 @@
                         <method>copyInventoryData</method>
                     </inventory>
                 </observers>
-            </catalog_product_copy>
+            </catalog_model_product_duplicate>
         </events>
 
     </global>
@@ -199,10 +199,11 @@
         <cataloginventory>
             <options>
                 <backorders>0</backorders>
-                <can_subtract>0</can_subtract>
+                <can_subtract>1</can_subtract>
                 <max_sale_qty>10000</max_sale_qty>
                 <min_sale_qty>1</min_sale_qty>
                 <min_qty>0</min_qty>
+                <notify_stock_qty>1</notify_stock_qty>
             </options>
         </cataloginventory>
     </default>

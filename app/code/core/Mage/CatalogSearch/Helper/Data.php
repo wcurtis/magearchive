@@ -132,4 +132,15 @@ class Mage_CatalogSearch_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return $this->_getUrl('catalogsearch/advanced');
     }
+    public function getCustomImageUrl($product, $type='')
+    {
+        switch ($type) {
+            case 'small':
+                return $this->getSmallImageUrl($product);
+            case 'thumbnail':
+                return $this->getThumbnailImageUrl($product);
+            default:
+                return $product->getImageUrl();
+        }
+    }
 }

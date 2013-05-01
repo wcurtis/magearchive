@@ -42,9 +42,10 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
      */
     protected $_viewVars = array();
 
-    public function __construct($data=array())
+    protected static $_showTemplateHints;
+
+    protected function _construct()
     {
-        parent::__construct($data);
         $this->_baseUrl = Mage::getBaseUrl();
         $this->_jsUrl = Mage::getBaseUrl('js');
     }
@@ -89,6 +90,15 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
         return false;
     }
 
+    public function getShowTemplateHints()
+    {
+        if (is_null(self::$_showTemplateHints)) {
+            self::$_showTemplateHints = Mage::getStoreConfig('dev/debug/template_hints')
+                && Mage::helper('core')->isDevAllowed();
+        }
+        return self::$_showTemplateHints;
+    }
+
     /**
      * Retrieve block view from file (template)
      *
@@ -105,13 +115,13 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
         if (!$do) {
             ob_start();
         }
-        if (Mage::getStoreConfig('dev/debug/template_hints')) {
+        if ($this->getShowTemplateHints()) {
             echo '<div style="position:relative; border:1px dotted red; margin:6px 2px; padding:18px 2px 2px 2px;"><div style="position:absolute; left:0; top:0; padding:2px 5px; background:red; color:white; font:normal 11px Arial; text-align:left !important; z-index:999;">'.$fileName.'</div>';
         }
 
         include $this->_viewDir.DS.$fileName;
 
-        if (Mage::getStoreConfig('dev/debug/template_hints')) {
+        if ($this->getShowTemplateHints()) {
             echo '</div>';
         }
 
@@ -149,28 +159,6 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
     }
 
     /**
-     * Before rendering html, but after trying to load cache
-     *
-     * If returns false html is rendered empty and cache is not saved
-     *
-     * @return boolean
-     */
-    protected function _beforeToHtml()
-    {
-        return parent::_beforeToHtml();
-    }
-
-    /**
-     * Before assign child block actions
-     *
-     * @param string $blockName
-     */
-    protected function _beforeChildToHtml($blockName, $blockObject)
-    {
-        // before assign child block actions
-    }
-
-    /**
      * Render block HTML
      *
      * @return string
@@ -185,32 +173,23 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
     }
 
     /**
-     * Retrieve HTML of template
+     * Get base url of the application
      *
-     * @param   string $tplName
-     * @param   array $assign
-     * @return  string
+     * @return string
      */
-    public function tpl($tplName, array $args=array())
-    {
-        $block = $this->getLayout()->createBlock('core/template');
-        /* @var $block Mage_Core_Block_Template */
-        foreach ($assign as $k=>$v) {
-            $block->assign($k, $v);
-        }
-        return $block->setTemplate($tplName)->toHtml();
-/*
-        extract($args);
-        ob_start();
-        include $this->_viewDir.DS.$tplName;
-        return ob_get_clean(); */
-    }
-
     public function getBaseUrl()
     {
         return $this->_baseUrl;
     }
 
+    /**
+     * Get url of base javascript file
+     *
+     * To get url of skin javascript file use getSkinUrl()
+     *
+     * @param string $fileName
+     * @return string
+     */
     public function getJsUrl($fileName='')
     {
         return $this->_jsUrl.$fileName;

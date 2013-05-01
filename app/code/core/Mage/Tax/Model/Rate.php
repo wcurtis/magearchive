@@ -65,13 +65,24 @@ class Mage_Tax_Model_Rate extends Mage_Core_Model_Abstract
         return $this->_dataCollection;
     }
 
+    protected function _beforeSave()
+    {
+        if (!$this->getTaxPostcode()) {
+            $this->setTaxPostcode('*');
+        }
+        if (!$this->hasTaxRegionId()) {
+            $this->setTaxRegionId(0);
+        }
+        parent::_beforeSave();
+    }
+
     protected function _afterSave()
     {
         foreach ($this->getRateDataCollection() as $dataModel) {
             $dataModel->setTaxRateId($this->getId());
             $dataModel->save();
         }
-        return parent::_afterSave();
+        parent::_afterSave();
     }
 
 //    public function loadWithAttributes($rateId)

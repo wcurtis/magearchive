@@ -17,30 +17,30 @@
  * @subpackage Zend_InfoCard_Xml
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 2794 2007-01-16 01:29:51Z bkarwin $
+ * @version    $Id: Interface.php 8064 2008-02-16 10:58:39Z thomas $
  * @author     John Coggeshall <john@zend.com>
  */
 
 /**
  * The Interface used to represent an XML Data Type
- * 
+ *
  * @category   Zend
  * @package    Zend_InfoCard
  * @subpackage Zend_InfoCard_Xml
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @author     John Coggeshall <john@zend.com>
  */
-interface Zend_InfoCard_Xml_Element_Interface 
+interface Zend_InfoCard_Xml_Element_Interface
 {
-	/**
-	 * Return the data within the object as an XML document
-	 */
-	public function asXML();
-	
-	/**
-	 * Magic function which allows us to treat the object as a string to return XML 
-	 * (same as the asXML() method)
-	 */
-	public function __toString();
+    /**
+     * Return the data within the object as an XML document
+     */
+    public function asXML();
+
+    /**
+     * Magic function which allows us to treat the object as a string to return XML
+     * (same as the asXML() method)
+     */
+    public function __toString();
 }

@@ -19,8 +19,22 @@
  */
 
 
+/**
+ * Config element model
+ *
+ * @category   Mage
+ * @package    Mage_Core
+ */
 class Mage_Core_Model_Config_Element extends Varien_Simplexml_Element
 {
+
+    /**
+     * Enter description here...
+     *
+     * @param string $var
+     * @param boolean $value
+     * @return boolean
+     */
     public function is($var, $value=true)
     {
         $flag = $this->$var;
@@ -37,6 +51,11 @@ class Mage_Core_Model_Config_Element extends Varien_Simplexml_Element
         return !empty($flag) && (0===strcasecmp($value, (string)$flag));
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return string
+     */
     public function getClassName()
     {
         if ($this->class) {

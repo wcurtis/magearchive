@@ -31,7 +31,7 @@ class Mage_SearchLucene_Block_Results extends Mage_Core_Block_Template
         $query = $request->getParam('q', false);
         $queryEscaped = htmlspecialchars($query);
 
-        Mage::registry('action')->getLayout()->getBlock('head.meta')->setTitle(Mage::helper('searchlucene')->__('Search results for: %s', $queryEscaped));
+        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('head.meta')->setTitle(Mage::helper('searchlucene')->__('Search results for: %s', $queryEscaped));
 
         $var = Mage::getBaseDir('var');
         $index_dir = $var . DS . 'search' . DS . 'index';

@@ -26,18 +26,19 @@
  */
 class Mage_Customer_Model_Entity_Customer_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
 {
-    protected $_addressEntity;
-    public function __construct()
+    protected function _construct()
     {
-        $this->setEntity(Mage::getResourceSingleton('customer/customer'));
-        $this->setObject('customer/customer');
+        $this->_init('customer/customer');
     }
 
-    public function setStore($store)
+    public function groupByEmail()
     {
-        $this->getEntity()->setStore($store);
+        $this->getSelect()
+            ->from(array('email'=>$this->getEntity()->getEntityTable()),
+                array('email_count'=>new Zend_Db_Expr('COUNT(email.entity_id)'))
+            )
+            ->where('email.entity_id=e.entity_id')
+            ->group('email.email');
         return $this;
     }
-
-
 }

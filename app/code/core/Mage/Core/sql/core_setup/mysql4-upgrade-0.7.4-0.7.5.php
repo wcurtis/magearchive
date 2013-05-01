@@ -19,7 +19,7 @@
  */
 
 $installer = $this;
-/* @var $installer Mage_Customer_Model_Entity_Setup */
+/* @var $installer Mage_Core_Model_Resource_Setup */
 
 $installer->startSetup();
 
@@ -37,18 +37,34 @@ CREATE TABLE {$this->getTable('core_store_group')} (
   CONSTRAINT `FK_STORE_GROUP_WEBSITE` FOREIGN KEY (`website_id`) REFERENCES {$this->getTable('core_website')} (`website_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO {$this->getTable('core_store_group')} VALUES (0,0,'Default',0,0);
-ALTER TABLE {$this->getTable('core_store')} DROP FOREIGN KEY `FK_STORE_LANGUAGE`;
-ALTER TABLE {$this->getTable('core_store')} DROP INDEX `FK_STORE_LANGUAGE`;
+ALTER TABLE {$this->getTable('core_store')}
+    DROP FOREIGN KEY `FK_STORE_LANGUAGE`;
+ALTER TABLE {$this->getTable('core_store')}
+    DROP INDEX `FK_STORE_LANGUAGE`;
 DROP TABLE IF EXISTS {$this->getTable('core_language')};
-ALTER TABLE {$this->getTable('core_store')} DROP `language_code`;
-ALTER TABLE {$this->getTable('core_store')} ADD `group_id` smallint(5) unsigned NOT NULL AFTER `website_id`;
-ALTER TABLE {$this->getTable('core_store')} ADD INDEX `FK_STORE_GROUP` (`group_id`);
-ALTER TABLE {$this->getTable('core_store')} ADD CONSTRAINT `FK_STORE_GROUP_STORE` FOREIGN KEY (`group_id`) REFERENCES {$this->getTable('core_store_group')} (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE {$this->getTable('core_website')} DROP `is_active`;
-ALTER TABLE {$this->getTable('core_website')} DROP INDEX `is_active`, ADD INDEX (`sort_order`);
-ALTER TABLE {$this->getTable('core_website')} ADD `default_group_id` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE {$this->getTable('core_website')} ADD INDEX (`default_group_id`);
-UPDATE {$this->getTable('core_website')} SET `default_group_id`='0' WHERE `website_id`=0;
+ALTER TABLE {$this->getTable('core_store')}
+    DROP `language_code`;
+ALTER TABLE {$this->getTable('core_store')}
+    ADD `group_id` smallint(5) unsigned NOT NULL AFTER `website_id`;
+ALTER TABLE {$this->getTable('core_store')}
+    ADD INDEX `FK_STORE_GROUP` (`group_id`);
+ALTER TABLE {$this->getTable('core_store')}
+    ADD CONSTRAINT `FK_STORE_GROUP_STORE` FOREIGN KEY (`group_id`)
+    REFERENCES {$this->getTable('core_store_group')} (`group_id`)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE;
+ALTER TABLE {$this->getTable('core_website')}
+    DROP INDEX `is_active`,
+    ADD INDEX (`sort_order`);
+ALTER TABLE {$this->getTable('core_website')}
+    DROP `is_active`;
+ALTER TABLE {$this->getTable('core_website')}
+    ADD `default_group_id` smallint(5) unsigned NOT NULL default '0';
+ALTER TABLE {$this->getTable('core_website')}
+    ADD INDEX (`default_group_id`);
+UPDATE {$this->getTable('core_website')}
+    SET `default_group_id`='0'
+    WHERE `website_id`=0;
 ");
 
 $websiteRows = $installer->getConnection()
@@ -94,6 +110,12 @@ foreach ($websiteRows as $websiteRow) {
     $installer->getConnection()
         ->update($this->getTable('core_store'),
             array('group_id'=>$groupId),
+            $installer->getConnection()->quoteInto('website_id=?', $websiteRow['website_id'])
+        );
+    // set created group as default for website
+    $installer->getConnection()
+        ->update($this->getTable('core_website'),
+            array('default_group_id'=>$groupId),
             $installer->getConnection()->quoteInto('website_id=?', $websiteRow['website_id'])
         );
 }

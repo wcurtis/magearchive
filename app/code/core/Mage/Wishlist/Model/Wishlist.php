@@ -89,7 +89,9 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         $collection = $this->getData('product_collection');
         if (is_null($collection)) {
             $collection = Mage::getResourceModel('wishlist/product_collection')
-                ->addWishlistFilter($this);
+                ->addWishlistFilter($this)
+                ->addWishListSortOrder()
+	        ;
             $this->setData('product_collection', $collection);
         }
         return $collection;
@@ -140,9 +142,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      */
     public function getSharedStoreIds()
     {
-        // TODO in next version
-        // return $this->getStore()->getDatashareStores('wishlist');
-        return $this->getStore()->getDatashareStores('default');
+        return Mage::app()->getStore()->getWebsite()->getStoreIds();
     }
 
     /**

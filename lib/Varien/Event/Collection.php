@@ -131,7 +131,7 @@ class Varien_Event_Collection
      * @return Varien_Event_Collection
      */
     public function dispatch($eventName, array $data=array())
-    {Mage::log($eventName);
+    {
         $event = $this->getEventByName($eventName);
         $event->addData($data)->dispatch();
         $this->getGlobalObservers()->dispatch($event);

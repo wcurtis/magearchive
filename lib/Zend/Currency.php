@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Currency
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id: Currency.php 6137 2007-08-19 14:55:27Z shreef $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -31,7 +31,7 @@ require_once 'Zend/Locale/Format.php';
 /**
  * @category   Zend
  * @package    Zend_Currency
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Currency
@@ -252,7 +252,7 @@ class Zend_Currency
 
     /**
      * Returns the actual or details of other currency symbols,
-     * when no symbol is avaiable it returns the currency shortname (f.e. FIM for Finnian Mark)
+     * when no symbol is available it returns the currency shortname (f.e. FIM for Finnian Mark)
      *
      * @param  string              $currency   OPTIONAL Currency name
      * @param  string|Zend_Locale  $locale     OPTIONAL Locale to display informations

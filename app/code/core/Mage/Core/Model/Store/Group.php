@@ -27,56 +27,202 @@
 
 class Mage_Core_Model_Store_Group extends Mage_Core_Model_Abstract
 {
-    protected $_stores = array();
+    /**
+     * Group Store collection array
+     *
+     * @var array
+     */
+    protected $_stores;
+
+    /**
+     * Group store ids array
+     *
+     * @var array
+     */
+    protected $_storeIds = array();
+
+    /**
+     * Group store codes array
+     *
+     * @var array
+     */
+    protected $_storeCodes = array();
+
+    /**
+     * The number of stores in a group
+     *
+     * @var int
+     */
+    protected $_storesCount = 0;
+
+    /**
+     * Group default store
+     *
+     * @var Mage_Core_Model_Store
+     */
     protected $_defaultStore;
+
+    /**
+     * Website model
+     *
+     * @var Mage_Core_Model_Website
+     */
     protected $_website;
 
+    /**
+     * init model
+     *
+     */
     protected function _construct()
     {
         $this->_init('core/store_group');
     }
 
-    public function addStore(Mage_Core_Model_Store $model)
+    /**
+     * Load store collection and set internal data
+     *
+     */
+    protected function _loadStores()
     {
-        $this->_stores[spl_object_hash($model)] = $model;
-        return $this;
+        $this->_stores = array();
+        $this->_storesCount = 0;
+        foreach ($this->getStoreCollection() as $store) {
+            $this->_stores[$store->getId()] = $store;
+            $this->_storeIds[$store->getId()] = $store->getId();
+            $this->_storeCodes[$store->getId()] = $store->getCode();
+            if ($this->getDefaultStoreId() == $store->getId()) {
+                $this->_defaultStore = $store;
+            }
+            $this->_storesCount ++;
+        }
     }
 
+    /**
+     * Set website stores
+     *
+     * @param array $stores
+     */
+    public function setStores($stores)
+    {
+        $this->_stores = array();
+        $this->_storesCount = 0;
+        foreach ($stores as $store) {
+            $this->_stores[$store->getId()] = $store;
+            $this->_storeIds[$store->getId()] = $store->getId();
+            $this->_storeCodes[$store->getId()] = $store->getCode();
+            if ($this->getDefaultStoreId() == $store->getId()) {
+                $this->_defaultStore = $store;
+            }
+            $this->_storesCount ++;
+        }
+    }
+
+    /**
+     * Retrieve new (not loaded) Store collection object with group filter
+     *
+     * @return Mage_Core_Model_Mysql4_Store_Collection
+     */
+    public function getStoreCollection()
+    {
+        return Mage::getModel('core/store')
+            ->getCollection()
+            ->addGroupFilter($this->getId());
+    }
+
+    /**
+     * Retrieve wersite store objects
+     *
+     * @return array
+     */
     public function getStores()
     {
+        if (is_null($this->_stores)) {
+            $this->_loadStores();
+        }
         return $this->_stores;
     }
 
+    /**
+     * Retrieve website store ids
+     *
+     * @return array
+     */
+    public function getStoreIds()
+    {
+        if (is_null($this->_stores)) {
+            $this->_loadStores();
+        }
+        return $this->_storeIds;
+    }
+
+    /**
+     * Retrieve website store codes
+     *
+     * @return array
+     */
+    public function getStoreCodes()
+    {
+        if (is_null($this->_stores)) {
+            $this->_loadStores();
+        }
+        return $this->_storeCodes;
+    }
+
+    public function getStoresCount()
+    {
+        if (is_null($this->_stores)) {
+            $this->_loadStores();
+        }
+        return $this->_storesCount;
+    }
+
+    /**
+     * Retrieve default store model
+     *
+     * @return Mage_Core_Model_Store
+     */
     public function getDefaultStore()
     {
         if (!$this->getDefaultStoreId()) {
             return false;
         }
-        if (is_null($this->_defaultStore)) {
-            $this->_defaultStore = Mage::getModel('core/store')->load($this->getDefaultStoreId());
+        if (is_null($this->_stores)) {
+            $this->_loadStores();
         }
         return $this->_defaultStore;
     }
 
+    /**
+     * Set website model
+     *
+     * @param Mage_Core_Model_Website $website
+     */
+    public function setWebsite(Mage_Core_Model_Website $website)
+    {
+        $this->_website = $website;
+    }
+
+    /**
+     * Retrieve website model
+     *
+     * @return Mage_Core_Model_Website
+     */
     public function getWebsite()
     {
-        if (!$this->getWebsiteId()) {
+        if (is_null($this->getWebsiteId())) {
             return false;
         }
         if (is_null($this->_website)) {
-            $this->_website = Mage::getModel('core/website')->load($this->getWebsiteId());
+            $this->_website = Mage::app()->getWebsite($this->getWebsiteId());
         }
         return $this->_website;
     }
 
-    public function getGroupInWebsiteCount()
-    {
-        if (!$this->getWebsiteId()) {
-            return 0;
-        }
-        return $this->getCollection()->addWebsiteFilter($this->getWebsiteId())->getSize();
-    }
-
+    /**
+     * Is can delete group
+     *
+     * @return bool
+     */
     public function isCanDelete()
     {
         if (!$this->getId()) {

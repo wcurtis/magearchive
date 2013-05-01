@@ -27,33 +27,33 @@
  */
 class Mage_Catalog_Block_Product_List_Related extends Mage_Catalog_Block_Product_Abstract
 {
-
+    protected $_itemCollection;
     protected function _prepareData()
     {
-        $collection = Mage::registry('product')->getRelatedProducts()
+        $collection = Mage::registry('product')->getRelatedProductCollection()
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('price')
             ->addAttributeToSelect('image')
             ->addAttributeToSelect('small_image')
             ->addAttributeToSelect('thumbnail')
             ->addAttributeToSort('position', 'asc')
-            ->addExcludeProductFilter(Mage::getSingleton('checkout/cart')->getProductIds())
-            ->useProductItem();
+            ->addExcludeProductFilter(Mage::getSingleton('checkout/cart')->getProductIds());
 
         Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);
         Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
         $collection->load();
+        $this->_itemCollection = $collection;
         return $this;
     }
 
-    protected function    _beforeToHtml()
+    protected function _beforeToHtml()
     {
         $this->_prepareData();
         return parent::_beforeToHtml();
     }
 
     public function getItems() {
-        return Mage::registry('product')->getRelatedProducts();
+        return $this->_itemCollection;
     }
 
 }

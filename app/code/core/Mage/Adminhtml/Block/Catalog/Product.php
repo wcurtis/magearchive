@@ -43,13 +43,16 @@ class Mage_Adminhtml_Block_Catalog_Product extends Mage_Adminhtml_Block_Template
                     'class'   => 'add'
                     ))
                 );
-
-        $this->setChild('store_switcher',
-            $this->getLayout()->createBlock('adminhtml/store_switcher')
-                ->setUseConfirm(false)
-                ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
-        );
-
+        /**
+         * Display store switcher if system has more one store
+         */
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->setChild('store_switcher',
+                $this->getLayout()->createBlock('adminhtml/store_switcher')
+                    ->setUseConfirm(false)
+                    ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
+            );
+        }
         $this->setChild('grid', $this->getLayout()->createBlock('adminhtml/catalog_product_grid', 'product.grid'));
         return parent::_prepareLayout();
     }

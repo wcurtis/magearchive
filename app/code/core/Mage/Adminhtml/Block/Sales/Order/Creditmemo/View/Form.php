@@ -24,12 +24,13 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View_Form extends Mage_Adminhtml_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View_Form extends Mage_Adminhtml_Block_Sales_Order_Abstract
 {
     protected function _construct()
     {
         parent::_construct();
         $this->setTemplate('sales/order/creditmemo/view/form.phtml');
+        $this->setOrder($this->getCreditmemo()->getOrder());
     }
 
     /**
@@ -46,7 +47,7 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View_Form extends Mage_Adminht
 
         $totalsBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totals')
             ->setSource($this->getCreditmemo())
-            ->setCurrency($this->getCreditmemo()->getOrder()->getOrderCurrency())
+            ->setOrder($this->getCreditmemo()->getOrder())
             ->setGrandTotalTitle(Mage::helper('sales')->__('Total Refund'));
         $this->setChild('totals', $totalsBlock);
 
@@ -68,11 +69,6 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View_Form extends Mage_Adminht
     public function getCreditmemo()
     {
         return Mage::registry('current_creditmemo');
-    }
-
-    public function formatPrice($price)
-    {
-        return $this->getCreditmemo()->getOrder()->formatPrice($price);
     }
 
     public function getOrderUrl()

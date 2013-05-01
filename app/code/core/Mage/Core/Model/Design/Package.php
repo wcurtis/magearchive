@@ -198,7 +198,7 @@ class Mage_Core_Model_Design_Package
 			$params['_package'] = $this->getPackageName();
 		}
 		if (empty($params['_theme'])) {
-			$params['_theme'] = $this->getTheme($params['_type']);
+			$params['_theme'] = $this->getTheme( (isset($params['_type'])) ? $params['_type'] : '' );
 		}
 		return $this;
 	}

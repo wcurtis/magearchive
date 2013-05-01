@@ -21,7 +21,6 @@
 
 class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
 {
-
     protected $_data = array();
     protected $_checkout = null;
     protected $_quote = null;
@@ -42,6 +41,17 @@ class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
         $layout = $this->getLayout();
         $update = $layout->getUpdate();
         $update->load('checkout_onepage_shippingmethod');
+        $layout->generateXml();
+        $layout->generateBlocks();
+        $output = $layout->getOutput();
+        return $output;
+    }
+
+    protected function _getPaymentMethodsHtml()
+    {
+        $layout = $this->getLayout();
+        $update = $layout->getUpdate();
+        $update->load('checkout_onepage_paymentmethod');
         $layout->generateXml();
         $layout->generateBlocks();
         $output = $layout->getOutput();
@@ -205,6 +215,9 @@ class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
             $result = $this->getOnepage()->saveShippingMethod($data);
             Mage::dispatchEvent('checkout_controller_onepage_save_shipping_method', array('request'=>$this->getRequest()));
             $this->getResponse()->setBody(Zend_Json::encode($result));
+
+            $result['payment_methods_html'] = $this->_getPaymentMethodsHtml();
+            $this->getResponse()->setBody(Zend_Json::encode($result));
         }
 
     }
@@ -241,12 +254,30 @@ class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
     {
         $this->_expireAjax();
 
-        $result = $this->getOnepage()->saveOrder();
-        /*
-        when there is redirect to third party, we don't want to save order yet.
-        we will save the order in return action.
-        */
-        if ($redirectUrl = $this->getOnePage()->getQuote()->getPayment()->getOrderPlaceRedirectUrl()) {
+        try {
+            $this->getOnepage()->saveOrder();
+            $redirectUrl = $this->getOnepage()->getCheckout()->getRedirectUrl();
+            $result['success'] = true;
+            $result['error']   = false;
+        }
+        catch (Mage_Core_Exception $e) {
+            Mage::logException($e);
+            $result['success'] = false;
+            $result['error'] = true;
+            $result['error_messages'] = $e->getMessage();
+        }
+        catch (Exception $e) {
+            Mage::logException($e);
+            $result['success']  = false;
+            $result['error']    = true;
+            $result['error_messages'] = $this->__('There is an error in placing an order. Please try again later or contact the store owner.');
+        }
+
+        /**
+         * when there is redirect to third party, we don't want to save order yet.
+         * we will save the order in return action.
+         */
+        if (isset($redirectUrl)) {
             $result['redirect'] = $redirectUrl;
         }
 

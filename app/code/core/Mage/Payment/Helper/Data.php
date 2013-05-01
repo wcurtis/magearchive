@@ -73,6 +73,11 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
                 continue;
             }
 
+            if ( !$methodInstance->isAvailable() ) {
+                /* if the payment method can not be used at this time */
+                continue;
+            }
+
             $sortOrder = (int)Mage::getStoreConfig($prefix.'sort_order');
             $methodInstance->setSortOrder($sortOrder);
 //            while (isset($res[$sortOrder])) {

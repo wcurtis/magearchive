@@ -1,9 +1,9 @@
 ############################################
 ## uncomment these lines for CGI mode
 ## make sure to specify the correct cgi php binary file name
-## it might be /cgi-bin/php5-cgi
+## it might be /cgi-bin/php-cgi
 
-#Action php5-cgi /cgi-bin/php-cgi
+#Action php5-cgi /cgi-bin/php5-cgi
 #AddHandler php5-cgi .php
 
 ############################################

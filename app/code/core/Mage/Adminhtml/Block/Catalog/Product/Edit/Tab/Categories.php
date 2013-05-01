@@ -34,17 +34,24 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Categories extends Mage_Admi
         $this->setTemplate('catalog/product/edit/categories.phtml');
     }
 
+    /**
+     * Retrieve currently edited product
+     *
+     * @return Mage_Catalog_Model_Product
+     */
+    public function getProduct()
+    {
+        return Mage::registry('current_product');
+    }
+
     protected function getCategoryIds()
     {
-        if (is_null($this->_categoryIds)) {
-            $this->_categoryIds = array();
-            $collection = Mage::registry('product')->getCategoryCollection()
-                ->load();
-            foreach ($collection as $category) {
-            	$this->_categoryIds[] = $category->getId();
-            }
-        }
-        return $this->_categoryIds;
+        return $this->getProduct()->getCategoryIds();
+    }
+
+    public function getIdsString()
+    {
+        return implode(',', $this->getCategoryIds());
     }
 
     public function getRootNode()

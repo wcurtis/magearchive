@@ -20,47 +20,98 @@
 
 
 /**
- * Configuration for Admin model
+ * Admin configuration model
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
 {
+
+    /**
+     * Enter description here...
+     *
+     * @var Varien_Simplexml_Element
+     */
     protected $_sections;
 
+    /**
+     * Tabs
+     *
+     * @var Varien_Simplexml_Element
+     */
+    protected $_tabs;
+
+    /**
+     * Enter description here...
+     *
+     * @param string $sectionCode
+     * @param string $websiteCode
+     * @param string $storeCode
+     * @return Varien_Simplexml_Element
+     */
     public function getSections($sectionCode=null, $websiteCode=null, $storeCode=null)
     {
         if (empty($this->_sections)) {
-
-            $mergeConfig = Mage::getModel('core/config_base');
-
-            $config = Mage::getConfig();
-            $modules = $config->getNode('modules')->children();
-
-            // check if local modules are disabled
-            $disableLocalModules = (string)$config->getNode('global/disable_local_modules');
-            $disableLocalModules = !empty($disableLocalModules) && (('true' === $disableLocalModules) || ('1' === $disableLocalModules));
-
-            foreach ($modules as $modName=>$module) {
-                if ($module->is('active')) {
-                    if ($disableLocalModules && ('local' === (string)$module->codePool)) {
-                        continue;
-                    }
-                    $configFile = $config->getModuleDir('etc', $modName).DS.'system.xml';
-                    if ($mergeConfig->loadFile($configFile)) {
-                        $config->extend($mergeConfig, true);
-                    }
-                }
-            }
-            #$config->applyExtends();
-
-            $this->_sections = $config->getNode('sections');
+            $this->_initSectionsAndTabs();
         }
 
         return $this->_sections;
     }
 
+    /**
+     * Retrive tabs
+     *
+     * @return Varien_Simplexml_Element
+     */
+    public function getTabs()
+    {
+        if (empty($this->_tabs)) {
+            $this->_initSectionsAndTabs();
+        }
+
+        return $this->_tabs;
+    }
+
+    protected function _initSectionsAndTabs()
+    {
+        $mergeConfig = Mage::getModel('core/config_base');
+
+        $config = Mage::getConfig();
+        $modules = $config->getNode('modules')->children();
+
+        // check if local modules are disabled
+        $disableLocalModules = (string)$config->getNode('global/disable_local_modules');
+        $disableLocalModules = !empty($disableLocalModules) && (('true' === $disableLocalModules) || ('1' === $disableLocalModules));
+
+        foreach ($modules as $modName=>$module) {
+            if ($module->is('active')) {
+                if ($disableLocalModules && ('local' === (string)$module->codePool)) {
+                    continue;
+                }
+                $configFile = $config->getModuleDir('etc', $modName).DS.'system.xml';
+
+                if ($mergeConfig->loadFile($configFile)) {
+                    $config->extend($mergeConfig, true);
+                }
+            }
+        }
+        #$config->applyExtends();
+
+        $this->_sections = $config->getNode('sections');
+        $this->_tabs = $config->getNode('tabs');
+    }
+
+
+
+    /**
+     * Enter description here...
+     *
+     * @param string $sectionCode
+     * @param string $websiteCode
+     * @param string $storeCode
+     * @return Varien_Simplexml_Element
+     */
     public function getSection($sectionCode=null, $websiteCode=null, $storeCode=null)
     {
 
@@ -73,6 +124,15 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
         }
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Simplexml_Element $node
+     * @param string $websiteCode
+     * @param string $storeCode
+     * @param boolean $isField
+     * @return boolean
+     */
     public function hasChildren ($node, $websiteCode=null, $storeCode=null, $isField=false)
     {
         $showTab = false;
@@ -97,7 +157,7 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
             if (isset($node->groups)) {
                 foreach ($node->groups->children() as $children){
                     if ($this->hasChildren ($children, $websiteCode, $storeCode)) {
-                    	return true;
+                        return true;
                     }
 
                 }
@@ -105,7 +165,7 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
 
                 foreach ($node->fields->children() as $children){
                     if ($this->hasChildren ($children, $websiteCode, $storeCode, true)) {
-                    	return true;
+                        return true;
                     }
                 }
             } else {
@@ -116,6 +176,14 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
 
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param Varien_Simplexml_Element $sectionNode
+     * @param Varien_Simplexml_Element $groupNode
+     * @param Varien_Simplexml_Element $fieldNode
+     * @return string
+     */
     function getAttributeModule($sectionNode = null, $groupNode = null, $fieldNode = null)
     {
         $moduleName = 'adminhtml';
@@ -134,4 +202,5 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
 
         return $moduleName;
     }
+
 }

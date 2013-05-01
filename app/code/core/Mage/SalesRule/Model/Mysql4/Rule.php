@@ -38,9 +38,9 @@ class Mage_SalesRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
 
     public function updateRuleProductData(Mage_SalesRule_Model_Rule $rule)
     {
-        foreach ($rule->getActions()->getActions() as $action) {
-            break;
-        }
+//        foreach ($rule->getActions()->getActions() as $action) {
+//            break;
+//        }
 
         $ruleId = $rule->getId();
 
@@ -61,7 +61,7 @@ class Mage_SalesRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         }
 
         $productIds = explode(',', $rule->getProductIds());
-        $storeIds = explode(',', $rule->getStoreIds());
+        $websiteIds = explode(',', $rule->getWebsiteIds());
         $customerGroupIds = explode(',', $rule->getCustomerGroupIds());
 
         $fromTime = strtotime($rule->getFromDate());
@@ -73,14 +73,14 @@ class Mage_SalesRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         $sortOrder = (int)$rule->getSortOrder();
 
         $rows = array();
-        $header = 'replace into '.$this->getTable('salesrule/rule_product').' (rule_id, from_time, to_time, store_id, customer_group_id, product_id, coupon_code, sort_order) values ';
+        $header = 'replace into '.$this->getTable('salesrule/rule_product').' (rule_id, from_time, to_time, website_id, customer_group_id, product_id, coupon_code, sort_order) values ';
         try {
             $write->beginTransaction();
 
             foreach ($productIds as $productId) {
-                foreach ($storeIds as $storeId) {
+                foreach ($websiteIds as $websiteId) {
                     foreach ($customerGroupIds as $customerGroupId) {
-                        $rows[] = "('$ruleId', '$fromTime', '$toTime', '$storeId', '$customerGroupId', '$productId', $couponCode, '$sortOrder')";
+                        $rows[] = "('$ruleId', '$fromTime', '$toTime', '$websiteId', '$customerGroupId', '$productId', $couponCode, '$sortOrder')";
                         if (sizeof($rows)==100) {
                             $sql = $header.join(',', $rows);
                             $write->query($sql);

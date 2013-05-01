@@ -40,11 +40,31 @@ function __autoload($class)
     $a = explode('_', $class);
     Varien_Profiler::start('AUTOLOAD');
     Varien_Profiler::start('AUTOLOAD: '.$a[0]);
-    #$loaded[$class] = 1;
-    include ($classFile);
+
+    include($classFile);
+
     Varien_Profiler::stop('AUTOLOAD');
     Varien_Profiler::stop('AUTOLOAD: '.$a[0]);
 #error_log($_SERVER['REMOTE_ADDR'].' - AUTOLOAD: '.$class.': '.(microtime(true)-$timer)."\n", 3, 'var/log/magento.log');
+}
+
+/**
+ * Object destructor
+ *
+ * @param mixed $object
+ */
+function destruct($object)
+{
+    if (is_array($object)) {
+        foreach ($object as $obj) {
+            destruct($obj);
+        }
+    } elseif (is_object($object)) {
+        if (in_array('__destruct', get_class_methods($object))) {
+            $object->__destruct();
+        }
+    }
+    unset($object);
 }
 
 /**
@@ -121,6 +141,20 @@ function checkMagicQuotes()
     }
 }
 
+function mageFindClassFile($class)
+{
+    $classFile = uc_words($class, DS).'.php';
+    $found = false;
+    foreach (explode(PS, get_include_path()) as $path) {
+        $fileName = $path.DS.$classFile;
+        if (file_exists($fileName)) {
+            $found = $fileName;
+            break;
+        }
+    }
+    return $found;
+}
+
 /**
  * Custom error handler
  *
@@ -130,12 +164,11 @@ function checkMagicQuotes()
  * @param integer $errline
  */
 function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
-
     if (strpos($errstr, 'DateTimeZone::__construct')!==false) {
         // there's no way to distinguish between caught system exceptions and warnings
         return false;
     }
-
+#echo "TEST:".error_reporting();
     $errno = $errno & error_reporting();
     if($errno == 0) return false;
     if(!defined('E_STRICT'))            define('E_STRICT', 2048);
@@ -207,6 +240,19 @@ function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
     return true;
 }
 
+function mageDebugBacktrace()
+{
+    $d = debug_backtrace();
+    echo "<pre>";
+    foreach ($d as $i=>$r) {
+        if ($i==0) {
+            continue;
+        }
+        echo "[$i] {$r['file']}:{$r['line']}\n";
+    }
+    echo "</pre>";
+}
+
 function mageSendErrorHeader()
 {
     return;
@@ -240,6 +286,33 @@ function mageDelTree($path) {
         unlink($path);
     }
 }
+
+function mageParseCsv($string, $delimiter=",", $enclosure='"', $escape='\\')
+{
+    $elements = explode($delimiter, $string);
+    for ($i = 0; $i < count($elements); $i++) {
+        $nquotes = substr_count($elements[$i], $enclosure);
+        if ($nquotes %2 == 1) {
+            for ($j = $i+1; $j < count($elements); $j++) {
+                if (substr_count($elements[$j], $enclosure) > 0) {
+                    // Put the quoted string's pieces back together again
+                    array_splice($elements, $i, $j-$i+1,
+                        implode($delimiter, array_slice($elements, $i, $j-$i+1)));
+                    break;
+                }
+            }
+        }
+        if ($nquotes > 0) {
+            // Remove first and last quotes, then merge pairs of quotes
+            $qstr =& $elements[$i];
+            $qstr = substr_replace($qstr, '', strpos($qstr, $enclosure), 1);
+            $qstr = substr_replace($qstr, '', strrpos($qstr, $enclosure), 1);
+            $qstr = str_replace($enclosure.$enclosure, $enclosure, $qstr);
+        }
+    }
+    return $elements;
+}
+
 
 if ( !function_exists('sys_get_temp_dir') )
 {

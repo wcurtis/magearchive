@@ -24,40 +24,61 @@ class Mage_Sales_Model_Quote_Address_Total_Discount
 {
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
-        $validator = Mage::getModel('salesrule/validator')
-        	->setCouponCode($address->getQuote()->getCouponCode())
-        	->setCustomerGroupId($address->getQuote()->getCustomerGroupId())
-        	->setStoreId($address->getQuote()->getStoreId());
+        $quote = $address->getQuote();
+        $eventArgs = array(
+            'website_id'=>Mage::app()->getStore($quote->getStoreId())->getWebsiteId(),
+            'customer_group_id'=>$quote->getCustomerGroupId(),
+            'coupon_code'=>$quote->getCouponCode(),
+        );
 
-        $address->setDiscountAmount(0);
-        $address->setSubtotalWithDiscount(0);
         $address->setFreeShipping(0);
 
-        $appliedRuleIds = '';
         $totalDiscountAmount = 0;
         $subtotalWithDiscount= 0;
+        $baseTotalDiscountAmount = 0;
+        $baseSubtotalWithDiscount= 0;
+
+        $hasDiscount = false;
         foreach ($address->getAllItems() as $item) {
             if ($item->getNoDiscount()) {
                 $item->setDiscountAmount(0);
+                $item->setBaseDiscountAmount(0);
                 $item->setRowTotalWithDiscount($item->getRowTotal());
+                $item->setBaseRowTotalWithDiscount($item->getRowTotal());
+
                 $subtotalWithDiscount+=$item->getRowTotal();
+                $baseSubtotalWithDiscount+=$item->getBaseRowTotal();
             }
             else {
-                $validator->process($item);
-            	$totalDiscountAmount += $item->getDiscountAmount();
-            	$item->setRowTotalWithDiscount($item->getRowTotal()-$item->getDiscountAmount());
-            	$subtotalWithDiscount+=$item->getRowTotalWithDiscount();
-            	$appliedRuleIds = trim($appliedRuleIds.','.$item->getAppliedRuleIds(), ',');
+                $eventArgs['item'] = $item;
+                Mage::dispatchEvent('sales_quote_address_discount_item', $eventArgs);
+
+                if ($item->getDiscountAmount()) {
+                    $hasDiscount = true;
+                }
+
+                $totalDiscountAmount += $item->getDiscountAmount();
+                $baseTotalDiscountAmount += $item->getBaseDiscountAmount();
+
+                $item->setRowTotalWithDiscount($item->getRowTotal()-$item->getDiscountAmount());
+                $item->setBaseRowTotalWithDiscount($item->getBaseRowTotal()-$item->getBaseDiscountAmount());
+
+                $subtotalWithDiscount+=$item->getRowTotalWithDiscount();
+                $baseSubtotalWithDiscount+=$item->getBaseRowTotalWithDiscount();
             }
         }
-        $address->setSubtotalWithDiscount($subtotalWithDiscount);
-        $address->setCouponCode($validator->getConfirmedCouponCode());
+
         $address->setDiscountAmount($totalDiscountAmount);
-        $address->setAppliedRuleIds($appliedRuleIds);
-        $address->getQuote()->setCouponCode($validator->getConfirmedCouponCode());
+        $address->setSubtotalWithDiscount($subtotalWithDiscount);
+        $address->setBaseDiscountAmount($baseTotalDiscountAmount);
+        $address->setBaseSubtotalWithDiscount($baseSubtotalWithDiscount);
+
+        if (!$hasDiscount) {
+            $quote->setCouponCode(null);
+        }
 
         $address->setGrandTotal($address->getGrandTotal() - $address->getDiscountAmount());
-
+        $address->setBaseGrandTotal($address->getBaseGrandTotal()-$address->getBaseDiscountAmount());
         return $this;
     }
 

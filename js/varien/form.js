@@ -154,14 +154,18 @@ VarienForm.prototype = {
 
 RegionUpdater = Class.create();
 RegionUpdater.prototype = {
-    initialize: function (countryEl, regionTextEl, regionSelectEl, regions)
+    initialize: function (countryEl, regionTextEl, regionSelectEl, regions, disableAction)
     {
         this.countryEl = $(countryEl);
         this.regionTextEl = $(regionTextEl);
         this.regionSelectEl = $(regionSelectEl);
         this.regions = regions;
 
-        this.update();
+        this.disableAction = (typeof disableAction=='undefined') ? 'hide' : disableAction;
+
+        if (this.regionSelectEl.options.length<=1) {
+            this.update();
+        }
 
         Event.observe(this.countryEl, 'change', this.update.bind(this));
     },
@@ -169,13 +173,15 @@ RegionUpdater.prototype = {
     update: function()
     {
         if (this.regions[this.countryEl.value]) {
-            var i, option, region;
-            var def = this.regionTextEl.value.toLowerCase();
+            var i, option, region, def;
+
+            if (this.regionTextEl) {
+                def = this.regionTextEl.value.toLowerCase();
+                this.regionTextEl.value = '';
+            }
             if (!def) {
                 def = this.regionSelectEl.getAttribute('defaultValue');
             }
-
-            this.regionTextEl.value = '';
 
             this.regionSelectEl.options.length = 1;
             for (regionId in this.regions[this.countryEl.value]) {
@@ -196,12 +202,30 @@ RegionUpdater.prototype = {
                 }
             }
 
-            this.regionTextEl.style.display = 'none';
-            this.regionSelectEl.style.display = '';
+            if (this.disableAction=='hide') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.style.display = 'none';
+                }
+                this.regionSelectEl.style.display = '';
+            } else if (this.disableAction=='disable') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.disabled = true;
+                }
+                this.regionSelectEl.disabled = false;
+            }
             this.setMarkDisplay(this.regionSelectEl, true);
         } else {
-            this.regionTextEl.style.display = '';
-            this.regionSelectEl.style.display = 'none';
+            if (this.disableAction=='hide') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.style.display = '';
+                }
+                this.regionSelectEl.style.display = 'none';
+            } else if (this.disableAction=='disable') {
+                if (this.regionTextEl) {
+                    this.regionTextEl.disabled = false;
+                }
+                this.regionSelectEl.disabled = true;
+            }
             this.setMarkDisplay(this.regionSelectEl, false);
         }
     },

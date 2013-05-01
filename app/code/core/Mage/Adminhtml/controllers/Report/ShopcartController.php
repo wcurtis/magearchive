@@ -52,19 +52,19 @@ class Mage_Adminhtml_Report_ShopcartController extends Mage_Adminhtml_Controller
         $content    = $this->getLayout()->createBlock('adminhtml/report_shopcart_customer_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export shopcart customer report to XML format
+     * Export shopcart customer report to Excel XML format
      */
-    public function exportCustomerXmlAction()
+    public function exportCustomerExcelAction()
     {
         $fileName   = 'shopcart_customer.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_shopcart_customer_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     public function productAction()
@@ -85,19 +85,52 @@ class Mage_Adminhtml_Report_ShopcartController extends Mage_Adminhtml_Controller
         $content    = $this->getLayout()->createBlock('adminhtml/report_shopcart_product_grid')
             ->getCsv();
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     /**
-     * Export products report to XML format
+     * Export products report to Excel XML format
      */
-    public function exportProductXmlAction()
+    public function exportProductExcelAction()
     {
         $fileName   = 'shopcart_product.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_shopcart_product_grid')
-            ->getXml();
+            ->getExcel($fileName);
 
-        $this->_sendUploadResponse($fileName, $content);
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function abandonedAction()
+    {
+        $this->_initAction()
+            ->_setActiveMenu('report/shopcart/abandoned')
+            ->_addBreadcrumb(Mage::helper('reports')->__('Abandoned carts'), Mage::helper('reports')->__('Abandoned carts'))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/report_shopcart_abandoned'))
+            ->renderLayout();
+    }
+
+    /**
+     * Export abandoned carts report grid to CSV format
+     */
+    public function exportAbandonedCsvAction()
+    {
+        $fileName   = 'shopcart_abandoned.csv';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_shopcart_abandoned_grid')
+            ->getCsv();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * Export abandoned carts report to Excel XML format
+     */
+    public function exportAbandonedExcelAction()
+    {
+        $fileName   = 'shopcart_abandoned.xml';
+        $content    = $this->getLayout()->createBlock('adminhtml/report_shopcart_abandoned_grid')
+            ->getExcel($fileName);
+
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 
     protected function _isAllowed()
@@ -109,21 +142,12 @@ class Mage_Adminhtml_Report_ShopcartController extends Mage_Adminhtml_Controller
             case 'product':
                 return Mage::getSingleton('admin/session')->isAllowed('report/shopcart/product');
                 break;
+            case 'abandoned':
+                return Mage::getSingleton('admin/session')->isAllowed('report/shopcart/abandoned');
+                break;
             default:
                 return Mage::getSingleton('admin/session')->isAllowed('report/shopcart');
                 break;
         }
-    }
-
-    protected function _sendUploadResponse($fileName, $content)
-    {
-        header('HTTP/1.1 200 OK');
-        header('Content-Disposition: attachment; filename='.$fileName);
-        header('Last-Modified: '.date('r'));
-        header("Accept-Ranges: bytes");
-        header("Content-Length: ".sizeof($content));
-        header("Content-type: application/octet-stream");
-        echo $content;
-        exit;
     }
 }

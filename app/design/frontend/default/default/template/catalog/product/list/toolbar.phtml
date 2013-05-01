@@ -88,7 +88,7 @@
                 <?endif;?>
             </td>
             <?endif;?>
-            <td class="a-right">
+            <td class="a-center">
                 <?=$this->__('Sort by')?> <select name="" onchange="setLocation(this.value)">
                 <?foreach($this->getAvailableOrders() as $_key=>$_order):?>
                     <option value="<?=$this->getOrderUrl($_key, 'asc')?>"<?if($this->isOrderCurrent($_key)):?> selected<?endif;?>>
@@ -102,6 +102,9 @@
                     <a href="<?=$this->getOrderUrl(null, 'desc')?>"><img src="<?=$this->getSkinUrl('images/sort_asc_arrow.gif')?>" alt="<?=$this->__('Set Descending Direction')?>" class="v-middle"/></a>
                 <?endif;?>
             </td>
+            <?if ($this->helper('rss/catalog')->getTagFeedUrl()):?>
+            <td class="a-right"><a href="<?=$this->helper('rss/catalog')->getTagFeedUrl()?>" class="no-wrap link-feed"><?=$this->__('Subscribe to Feed')?></a></td>
+            <?endif;?>
         </tr>
     </table>
     <?endif;?>
