@@ -1,0 +1,75 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<div class="input-left">
+    <h3><?=$this->__('Personal Information')?></h3>
+    <p>
+        <?=$this->getCustomer()->toString('{{firstname}} {{lastname}}<br/>{{email}}')?>
+        <br/>
+        <a href="<?=$this->getAccountUrl()?>"><?=$this->__('Edit Personal Information')?></a>
+    </p>
+    <h3><?=_('Newsletters')?></h3>
+    <?=$this->getSubscriptionText()?>
+    <p><a href="<?=$this->getManageNewsletterUrl()?>"><?=$this->__('Edit Newsletter Subscription')?></a></p>
+</div>
+<div class="input-right">
+<h3><?=$this->__('Addresses')?></h3>
+<?if($_addresses = $this->getPrimaryAddresses()):?>
+    <?foreach ($_addresses as $_address):?>
+    <address>
+        <?=$_address->toString("{{firstname}} {{lastname}}<br/>{{street}}<br/>{{city}}, {{regionName}} {{postcode}}<br/>T: {{telephone}}")?>
+        <br/><a href="<?=$this->getAddressEditUrl($_address)?>"><?=$this->__('Edit Address')?></a>
+    </address>
+    <?endforeach;?>
+<?endif;?>
+<a href="<?=$this->getAddressesUrl()?>"><?=$this->__('Go to Address Book')?></a>
+</div>
+<div class="clearfix"></div>
+
+<div>
+    <h3><?=$this->__('Last 5 Orders')?></h3>
+    <p>
+    <?=$this->__('Order List...')?><br/>
+    <a href=""><?=$this->__('View Order List')?></a>
+    </p>
+</div>
+
+
+<div class="input-left">
+    <h3><?=$this->__('Personal Information')?></h3>
+</div>
+<div class="input-right">
+    <h3><?=$this->__('My Wishlist')?></h3>
+</div>
+
+<div class="input-left">
+    <h3><?=$this->__('My Reviews')?></h3>
+</div>
+<div class="input-right">
+    <h3><?=$this->__('My Tags')?></h3>
+</div>
+
+<div class="input-left">
+    <h3><?=$this->__('Last Viewed Items')?></h3>
+</div>
+<div class="input-right">
+    <h3><?=$this->__('Shoppping Cart')?></h3>
+</div>

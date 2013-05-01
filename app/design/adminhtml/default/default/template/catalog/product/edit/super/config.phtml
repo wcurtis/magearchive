@@ -1,0 +1,289 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="entry-edit">
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Super product attributes configuration')?></h4>
+    <fieldset id="<?=$this->getHtmlId()?>">
+        <legend><?=Mage::helper('catalog')->__('Super product attributes configuration')?></legend>
+        <input type="hidden" id="<?=$this->getHtmlId()?>_save_links" name="_super_links_json" value=""/>
+        <input type="hidden" id="<?=$this->getHtmlId()?>_save_attributes" name="_super_attributes_json" />
+        <ul id="<?=$this->getHtmlId()?>_attributes" class="super-attributes">
+        </ul>
+    </fieldset>
+</div>
+<div class="no-display" id="<?=$this->getHtmlId()?>_attribute_template">
+    <div class="attribute-name-container">
+        '{{frontend_label}}'
+    </div>
+    <div class="values-container">
+        <label for="__id___label" class="bold"><?=Mage::helper('catalog')->__('Attribute Name:')?></label>
+        <input id="__id___label" type="text" class="input-text attribute-label required-entry template no-display" value="'{{label}}'"/>
+        <ul class="attribute-values">
+        </ul>
+    </div>
+</div>
+<div class="no-display" id="<?=$this->getHtmlId()?>_value_template">
+    <div class="attribute-value-label-container">
+    <?=Mage::helper('catalog')->__('Option:')?> <strong>'{{label}}'</strong>
+</div>
+<div class="attribute-values-container-main">
+    <div class="attribute-values-container">
+    <?=Mage::helper('catalog')->__('Price:')?>
+    <input id="__id___pricing" type="text" class="input-text attribute-price validate-number template no-display" value="'{{pricing_value}}'"/>
+</div>
+<div class="attribute-values-container">
+    <select class="attribute-price-type">
+        <option value="0"><?=Mage::helper('catalog')->__('Fixed')?></option>
+        <option value="1"><?=Mage::helper('catalog')->__('Percentage')?></option>
+    </select>
+</div>
+</div>
+</div>
+<?=$this->getGridHtml()?>
+<script type="text/javascript">
+<!--
+var SuperProductModel = Class.create();
+SuperProductModel.prototype = {
+	initialize: function (attributes, links, idPrefix, grid) {
+		this.attributes = attributes;
+		this.templatesSyntax = /(^|.|\r|\n)('{{\s*(\w+)\s*}}')/;
+		this.idPrefix   = idPrefix;
+		this.links 		= $H(links);
+		this.addAttributeTemplate = new Template($(idPrefix + 'attribute_template').innerHTML.replace(/__id__/g,"'{{html_id}}'").replace(/ template no-display/g,''), this.templatesSyntax);
+		this.addValueTemplate = new Template($(idPrefix + 'value_template').innerHTML.replace(/__id__/g,"'{{html_id}}'").replace(/ template no-display/g,''), this.templatesSyntax);
+		this.container = $(idPrefix + 'attributes');
+		this.onLabelUpdate = this.updateLabel.bindAsEventListener(this);
+		this.onValuePriceUpdate = this.updateValuePrice.bindAsEventListener(this);
+		this.onValueTypeUpdate = this.updateValueType.bindAsEventListener(this);
+		this.createAttributes();
+		this.grid = grid;
+		this.grid.rowClickCallback = this.rowClick.bind(this);
+		this.grid.initRowCallback = this.rowInit.bind(this);
+		this.grid.checkboxCheckCallback = this.registerProduct.bind(this);
+		this.grid.rows.each(function(row) {
+			this.rowInit(this.grid, row);			
+		}.bind(this));
+	},
+	createAttributes: function() {
+		this.attributes.each(function(attribute, index) {
+			var li = $(Builder.node('li', {className:'attribute'}));
+			li.id = this.idPrefix + '_attribute_' + index;
+			attribute.html_id = li.id;
+			if(attribute && attribute.label && attribute.label.blank()) {
+				attribute.label = '&nbsp;'
+			} 
+			li.update(this.addAttributeTemplate.evaluate(attribute));
+			li.attributeObject = attribute;
+			
+			this.container.appendChild(li);
+			li.attributeValues = li.getElementsByClassName('attribute-values')[0];	
+			attribute.values.each(function(value){
+				this.createValueRow(li, value);
+			}.bind(this));
+		
+				
+			Event.observe(li.getElementsByClassName('attribute-label')[0],'change', this.onLabelUpdate);
+			Event.observe(li.getElementsByClassName('attribute-label')[0],'keyup',  this.onLabelUpdate);
+		}.bind(this));
+		Sortable.create(this.container, {handle:'attribute-name-container',onUpdate:this.updatePositions.bind(this)});
+		this.updateSaveInput();
+	},
+	updateLabel: function (event) {
+		var li = Event.findElement(event, 'LI');
+		li.attributeObject.label = Event.element(event).value;
+		this.updateSaveInput();
+	},
+	updatePositions: function(param) {
+		this.container.immediateDescendants().each(function(row, index) {
+			row.attributeObject.position = index;
+		});
+		this.updateSaveInput();
+	},
+	registerProduct: function(grid, element, checked) {
+		if(checked){
+            if(element.linkAttributes) {
+            	this.links[element.value]=element.linkAttributes;
+            }
+        }
+        else{
+            this.links.remove(element.value);
+        }
+        this.updateGrid();        
+        this.grid.rows.each(function(row) {
+			this.revalidateRow(this.grid, row);			
+		}.bind(this));
+		this.updateValues();
+	},
+	rowClick: function(grid, event) {
+		var trElement = Event.findElement(event, 'tr');
+        var isInput   = Event.element(event).tagName == 'INPUT';
+        if(trElement){
+            var checkbox = Element.getElementsBySelector(trElement, 'input');
+            if(checkbox[0] && !checkbox[0].disabled){
+                var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
+                grid.setCheckboxChecked(checkbox[0], checked);
+            }
+        }
+	},
+	rowInit: 		 function(grid, row) {
+		var checkbox = $(row).getElementsByClassName('checkbox')[0];
+		var input = $(row).getElementsByClassName('value-json')[0];
+		
+		if(checkbox && input) {
+			checkbox.linkAttributes = input.value.evalJSON();
+			if(!checkbox.checked) {
+				if(!this.checkAttributes(checkbox.linkAttributes)) {
+					$(row).addClassName('invalid');
+					checkbox.disable();
+				} else {
+					$(row).removeClassName('invalid');
+					checkbox.enable();
+				}
+			}
+		}
+	},
+	revalidateRow: function(grid, row) {
+		var checkbox = $(row).getElementsByClassName('checkbox')[0];
+		if(checkbox ) {
+			if(!checkbox.checked) {
+				if(!this.checkAttributes(checkbox.linkAttributes)) {
+					$(row).addClassName('invalid');
+					checkbox.disable();
+				} else {
+					$(row).removeClassName('invalid');
+					checkbox.enable();
+				}
+			}
+		}
+	},
+	checkAttributes:	function(attributes) {
+		var result = true;
+		this.links.each(function(pair) {
+			var fail = false;
+			for(var i = 0; i < pair.value.length && !fail; i++) {				
+				for(var j = 0; j < attributes.length && !fail; j ++) {
+					if(pair.value[i].attribute_id == attributes[j].attribute_id && pair.value[i].value_index != attributes[j].value_index) {
+						fail = true;
+					}
+				}
+			}
+			if(!fail) {
+				result = false;
+			}
+		});
+		
+		return result;
+	},
+	updateGrid: function () {
+		this.grid.reloadParams = {'products[]':this.links.keys()};
+	},
+	updateValues: function () {
+		var uniqueAttributeValues = $H({});
+		this.links.each(function(pair) {
+			for (var i = 0, length=pair.value.length; i < length; i ++) {
+				var attribute = pair.value[i];
+				if(uniqueAttributeValues.keys().indexOf(attribute.attribute_id)==-1) {
+					uniqueAttributeValues[attribute.attribute_id] = $H({});
+				}
+				uniqueAttributeValues[attribute.attribute_id][attribute.value_index] = attribute;
+			}
+		});
+		this.container.immediateDescendants().each(function(row) {
+			var attribute = row.attributeObject;
+			for(var i = 0, length=attribute.values.length; i < length; i ++) {
+				if(uniqueAttributeValues.keys().indexOf(attribute.attribute_id)==-1
+					|| uniqueAttributeValues[attribute.attribute_id].keys().indexOf(attribute.values[i].value_index)==-1) {
+					row.attributeValues.immediateDescendants().each(function(elem){
+						if(elem.valueObject.value_index==attribute.values[i].value_index) {
+							elem.remove();
+						}
+					});					
+					attribute.values[i] = undefined;
+					
+				} else {
+					uniqueAttributeValues[attribute.attribute_id].remove(attribute.values[i].value_index);
+				}
+			}			
+			attribute.values = attribute.values.compact();
+			if(uniqueAttributeValues[attribute.attribute_id]) {
+				uniqueAttributeValues[attribute.attribute_id].each(function(pair){
+					attribute.values.push(pair.value);
+					this.createValueRow(row,pair.value);
+				}.bind(this));
+			}
+		}.bind(this));
+		this.updateSaveInput();		
+	},
+	createValueRow: function(container, value) {
+		
+		var templateVariables = $H({});
+		if(!this.valueAutoIndex) {
+			this.valueAutoIndex = 1;
+		}
+		templateVariables.html_id = container.id  + '_' + this.valueAutoIndex;
+		templateVariables.merge(value);
+		this.valueAutoIndex++;
+		
+		var li = $(Builder.node('li', {className:'attribute-value'}));
+		li.id = templateVariables.html_id;
+		li.update(this.addValueTemplate.evaluate(templateVariables));
+		li.valueObject = value;
+		if (typeof li.valueObject.is_percent == 'undefined') {
+			li.valueObject.is_percent = 0;
+		}
+		
+		if (typeof li.valueObject.pricing_value == 'undefined') {
+			li.valueObject.pricing_value = null;
+		}
+		
+		container.attributeValues.appendChild(li);
+		var priceField = li.getElementsByClassName('attribute-price')[0];
+		var priceTypeField = li.getElementsByClassName('attribute-price-type')[0];
+		
+		if(parseInt(value.is_percent)) {
+			priceTypeField.options[1].selected = true;
+			priceTypeField.options[0].selected = false;
+		} else {
+			priceTypeField.options[1].selected = false;
+			priceTypeField.options[0].selected = true;
+		}
+		Event.observe(priceField, 'keyup', this.onValuePriceUpdate);
+		Event.observe(priceField, 'change', this.onValuePriceUpdate);
+		Event.observe(priceTypeField, 'change', this.onValueTypeUpdate);
+	},
+	updateValuePrice: function(event) {
+		var li = Event.findElement(event, 'LI');
+		li.valueObject.pricing_value = (Event.element(event).value.blank() ? null : Event.element(event).value);
+		this.updateSaveInput();
+	},
+	updateValueType:  function(event) {
+		var li = Event.findElement(event, 'LI');
+		li.valueObject.is_percent = (Event.element(event).value.blank() ? null : Event.element(event).value);
+		this.updateSaveInput();
+	},
+	updateSaveInput: function() {
+		$('<?=$this->getHtmlId()?>_save_attributes').value = this.attributes.toJSON();
+		$('<?=$this->getHtmlId()?>_save_links').value  = this.links.toJSON();
+	}
+}
+
+var superProduct = new SuperProductModel(<?=$this->getAttributesJson()?>,<?=$this->getLinksJson()?>,'<?=$this->getHtmlId()?>_',<?=$this->getGridJsObject()?>);
+//-->
+</script>

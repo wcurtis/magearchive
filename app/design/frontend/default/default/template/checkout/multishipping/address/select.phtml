@@ -1,0 +1,54 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="page-head button-level">
+    <h3><?=$this->__('Change Billing Address')?></h3>
+    <button class="form-button-alt" onclick="setLocation('<?=$this->getAddNewUrl()?>')"><span><?=$this->__('Add New Address')?></span></button>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<div class="content-box">
+<?$_index=0?>
+<?foreach ($this->getAddressCollection() as $_address):?>
+    <?if($_index%3==0):?><div class="col3-set box-set"><?endif;?>
+    <div class="col-<?=($_index%3+1)?>">
+        <div class="box">
+            <p class="actions">
+                <a href="<?=$this->getEditAddressUrl($_address)?>"><?=$this->__('Edit Address')?></a><span class="separator">|</span>
+                <a href="<?=$this->getSetAddressUrl($_address)?>"><strong><?=$this->__('Select Address')?></strong></a>
+            </p>
+            <address>
+                <?=$_address->getFormated(true)?>
+                <?if($this->isAddressDefaultBilling($_address)):?>
+                <br/><strong><?=$this->__('Default Billing')?></strong>
+                <?endif;?>
+                <?if($this->isAddressDefaultShipping($_address)):?>
+                <br/><strong><?=$this->__('Default Shipping')?></strong>
+                <?endif;?>
+            </address>
+        </div>
+    </div>
+    <?if($_index && $_index%3==0):?></div><br/><?endif;?>
+<?$_index++?>
+<?endforeach;?>
+<?if(!$_index || $_index%3!=0):?></div><br/><?endif;?>
+</div>
+<div class="form-buttons">
+    <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Billing Information')?></a>
+</div>

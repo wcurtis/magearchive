@@ -1,0 +1,93 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div>
+    <? $_cmemo = $this->getCmemo() ?>
+    <div class="box-left">
+        <div class="entry-view">
+            <h4 class="icon-head head-order-date"><?=Mage::helper('sales')->__('Credit Memo Date: %s', $this->getCmemoDateFormatted())?></h4>
+        </div>
+        <div class="entry-view">
+            <h4 class="icon-head head-shipping-address"><?=Mage::helper('sales')->__('Shipping Address')?></h4>
+            <div class="box customer-personal-brief">
+                <?$_shipping = $_cmemo->getShippingAddress()?>
+                <address><?=$_shipping->getFirstname()?> <?=$_shipping->getLastname()?><br/>
+                <?=$_shipping->getCompany()?><br/>
+                <?=$_shipping->getStreet()?><br/>
+                <?=$_shipping->getCity()?>, <?=$_shipping->getRegion()?> <?=$_shipping->getPostcode()?><br/>
+                <strong>T</strong> | <?=$_shipping->getTelephone();
+                if ($_shipping->getFax()):?><br /><strong>F</strong> | <?=$_shipping->getFax()?><?endif;?>
+                </address>
+            </div>
+        </div>
+        <div class="entry-view">
+            <h4 class="icon-head head-shipping-method"><?=Mage::helper('sales')->__('Shipping Method')?></h4>
+            <div class="box customer-personal-brief">
+                <?=$_cmemo->getOrder()->getShippingMethod()?> <?=$_cmemo->getOrder()->getShippingDescription()?>
+            </div>
+        </div>
+    </div>
+    <div class="box-right">
+        <div class="entry-view">
+            <h4 class="icon-head head-customer-view"><?=Mage::helper('sales')->__('Invoice Status: %s', $_cmemo->getStatusName($_cmemo->getInvoiceStatusId()))?></h4>
+        </div>
+        <div class="entry-view">
+            <h4 class="icon-head head-billing-address"><?=Mage::helper('sales')->__('Billing Address')?></h4>
+            <div class="box customer-personal-brief">
+                <?$_billing = $_cmemo->getBillingAddress()?>
+                <address><?=$_billing->getFirstname()?> <?=$_billing->getLastname()?><br/>
+                <?=$_billing->getCompany()?><br/>
+                <?=$_billing->getStreet()?><br/>
+                <?=$_billing->getCity()?>, <?=$_billing->getRegion()?> <?=$_billing->getPostcode()?><br/>
+                <strong>T</strong> | <?=$_billing->getTelephone();
+                if ($_billing->getFax()):?><br /><strong>F</strong> | <?=$_billing->getFax()?><?endif;?></address>
+            </div>
+        </div>
+        <div class="entry-view">
+            <h4 class="icon-head head-payment-method"><?=Mage::helper('sales')->__('Payment Method')?></h4>
+            <div class="box customer-personal-brief">
+                <?$_payment = $_cmemo->getInvoice()->getOrder()->getPayment()?>
+                <?=$_payment->getMethod()?>: <?=$_payment->getCcType()?> xxxx<?=$_payment->getCcLast4()?>
+                <?if (! $_cmemo->getPayment()):?><br/><strong><?=Mage::helper('sales')->__("Haven't been charged yet")?></strong><?endif;?>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div class="entry-view">
+        <h4 class="icon-head head-order-items"><?=Mage::helper('sales')->__('Items Shipped')?></h4>
+    </div>
+    <div>
+        <?=$this->getItemsHtml()?>
+    </div>
+    <div class="box order-totals">
+        <table cellspacing="0">
+            <tfoot>
+                <tr><td class="label"><strong><?=Mage::helper('sales')->__('Grand Total')?></strong></td><td class="emph"><strong><?=$_cmemo->getOrderCurrency()->format($_cmemo->getGrandTotal())?></strong></td></tr>
+                <tr><td class="label"><strong><?=Mage::helper('sales')->__('Total Paid')?></strong></td><td class="emph"><strong><?=$_cmemo->getOrderCurrency()->format($_cmemo->getTotalPaid())?></strong></td></tr>
+                <tr><td class="label"><strong><?=Mage::helper('sales')->__('Total Due')?></strong></td><td class="emph"><strong><?=$_cmemo->getOrderCurrency()->format($_cmemo->getTotalDue())?></strong></td></tr>
+            </tfoot>
+            <tbody>
+                <tr><td><?=Mage::helper('sales')->__('Subtotal')?></td><td><?=$_cmemo->getOrderCurrency()->format($_cmemo->getSubtotal())?></td></tr>
+                <?if ($_cmemo->getTaxAmount()):?><tr><td><?=Mage::helper('sales')->__('Tax')?></td><td><?=$_cmemo->getOrderCurrency()->format($_cmemo->getTaxAmount())?></td></tr><?endif;?>
+                <?if ($_cmemo->getShippingAmount()):?><tr><td><?=Mage::helper('sales')->__('Shipping')?></td><td><?=$_cmemo->getOrderCurrency()->format($_cmemo->getShippingAmount())?></td></tr><?endif;?>
+            </tbody>
+        </table>
+    </div>
+</div>

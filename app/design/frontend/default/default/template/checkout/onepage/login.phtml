@@ -1,0 +1,64 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="col2-set">
+    <div class="col-1">
+    <h4><?=$this->__('Checkout as a Guest or Register')?></h4>
+
+<p><?=$this->__('You may check out as a guest or register with us for future convenience:')?></p>
+<ul class="form-list">
+    <li><input type="radio" name="checkout_method" id="login:guest" value="guest"<?if($this->getQuote()->getCheckoutMethod()=='guest'):?> checked<?endif?>/> <label for="login:guest"><?=$this->__('Checkout as Guest')?></label></li>
+    <li><input type="radio" name="checkout_method" id="login:register" value="register"<?if($this->getQuote()->getCheckoutMethod()=='register'):?> checked<?endif?>/> <label for="login:register"><?=$this->__('Register')?></label></li>
+</ul>
+
+<strong><?=$this->__('Register and save time!')?></strong><br/>
+<ul class="disc">
+    <li><?=$this->__('Fast and easy check out')?></li>
+    <li><?=$this->__('Easy access to your order history and status')?></li>
+</ul>
+<div class="form-buttons">
+    <button class="form-button" onclick="checkout.setMethod();"><span><?=$this->__('Continue')?></span></button>
+
+</div>
+    </div>
+<div class="col-2">
+    <h4>Login</h4>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+
+        <form id="login-form" action="<?=$this->getPostAction()?>" method="post">
+                <p><strong><?=$this->__('Already registered?')?></strong><br/>
+                <?=$this->__('Log in below to take advantage of Express Checkout:')?></p>
+                <ul class="form-list">
+                        <li><div class="input-box"><label for="email"><?=$this->__('Email Address')?> <span class="required">*</span></label><br/>
+                            <input type="text" class="input-text required-entry validate-email" id="email" name="login[username]"/></div></li>
+                        <li><div class="input-box"><label for="password"><?=$this->__('Password')?> <span class="required">*</span></label><br/>
+                            <input type="password" class="input-text required-entry" id="password" name="login[password]" /></div></li>
+                </ul>
+                <div class="form-buttons">
+                    <p class="required"><?=$this->__('* Required Fields')?></p>
+                        <a href="<?=$this->getUrl('customer/account/forgotpassword')?>" class="left"><?=$this->__('Forgot your password?')?></a><button type="submit" class="form-button"><span><?=$this->__('Login')?></span></button>
+                </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var loginForm = new VarienForm('login-form', true);
+</script>

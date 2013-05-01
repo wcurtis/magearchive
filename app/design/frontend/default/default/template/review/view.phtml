@@ -1,0 +1,56 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if($this->getProductData()->getId()):?>
+    <div class="page-head">
+        <h4><?=$this->__('Review Details')?></h4>
+    </div>
+    <div class="my-review-detail">
+        <div class="product-image">
+            <p><a href="<?=$this->getProductData()->getProductUrl()?>"><img src="<?=$this->getProductData()->getImageUrl()?>" alt="<?=$this->getProductData()->getName()?>" height="100" width="100"></a><br>
+            <?if( $this->getRating() && $this->getRating()->getSize()):?>
+            <small><?=$this->__('Average Customer Rating')?>:</small></p>
+            <?endif;?>
+            <?=$this->helper('review/product')->getSummaryHtml($this->getProductData())?>
+    </div>
+    <div class="details">
+        <h3><?=$this->getProductData()->getName()?></h3>
+        <?if( $this->getRating() && $this->getRating()->getSize()):?>
+        <strong><?=$this->__('Product Rating:')?></strong>
+            <?foreach ($this->getRating() as $_rating):?>
+            <?if($_rating->getPercent()):?>
+                <div class="ratings">
+                   <?=$this->__($_rating->getRatingCode())?>
+                    <div class="rating-box">
+                        <div class="rating" style="width:<?=ceil($_rating->getPercent())?>%;"></div>
+                    </div>
+                </div>
+            <?endif;?>
+            <?endforeach;?>
+        <?endif;?>
+        <div class="clear"></div>
+        <?=$this->__('Product Review (submitted on %s):', $this->dateFormat($this->getReviewData()->getCreatedAt()))?>
+            <div class="description">
+                <p><?=nl2br($this->getReviewData()->getDetail())?></p>
+            </div>
+        </div>
+    </div>
+    <div class="form-buttons"><a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back to Product Reviews')?></a></div><br />
+<?endif;?>

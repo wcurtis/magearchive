@@ -1,0 +1,198 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="entry-edit">
+    <?=$this->getFormHtml()?>
+
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Packages")?></h4>
+    <fieldset id="depends_packages_fieldset">
+        <legend><?=$this->__("Packages")?></legend>
+        <table class="table-editable" cellspacing="0">
+            <thead>
+                <tr>
+                    <th><?=$this->__("Package")?></th>
+                    <th><?=$this->__("Channel")?></th>
+                    <th><?=$this->__("Min")?></th>
+                    <th><?=$this->__("Max")?></th>
+                    <th><?=$this->__("Recommended")?></th>
+                    <th><?=$this->__("Exclude")?></th>
+                    <th><?=$this->__("Type")?></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <tr id="depends_packages_template" style="display:none">
+<?function showDependsPackageTemplate($self, $_i=0) {?>
+                    <td class="field-row">
+                        <!--<select name="depends[package][name][]">
+                        <?foreach ($self->getPackages() as $_value=>$_label):?>
+                            <option value="<?=$_value?>" <?=$self->getSelected('depends/package/name/'.$_i, $_value)?>><?=$_label?></option>
+                        <?endforeach?>
+                        </select>-->
+                        <input class="input-text" style="width:200px;" name="depends[package][name][]" value="<?=$self->getValue('depends/package/name/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:200px;" name="depends[package][channel][]" value="<?=$self->getValue('depends/package/channel/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:50px;" name="depends[package][min][]" value="<?=$self->getValue('depends/package/min/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:50px;" name="depends[package][max][]" value="<?=$self->getValue('depends/package/max/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="depends[package][recommended][]" value="<?=$self->getValue('depends/package/recommended/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="depends[package][exclude][]" <?=$self->getChecked('depends/package/exclude/'.$_i)?>/>
+                    </td><td class="field-row">
+                        <select name="depends[package][type][]">
+                            <?foreach ($self->getDependTypes() as $_value=>$_label):?>
+                                <option value="<?=$_value?>" <?=$self->getSelected('depends/package/type/'.$_i, $_value)?>><?=$_label?></option>
+                            <?endforeach?>
+                        </select>
+                    </td><td class="field-row">
+                        <?=$self->getRemoveRowButtonHtml('tr')?>
+                    </td>
+<?}?>
+<?showDependsPackageTemplate($this)?>
+                </tr>
+            </thead>
+            <tbody id="depends_packages_container">
+            <?if ($this->getData('depends/package/name')):?>
+            <?foreach ($this->getData('depends/package/name') as $_i=>$_dbField):?>
+                <?if (0===$_i) continue;?>
+                <tr>
+<?showDependsPackageTemplate($this, $_i)?>
+                </tr>
+            <?endforeach?>
+            <?endif?>
+            </tbody>
+        </table>
+        <?=$this->getAddRowButtonHtml('depends_packages_container', 'depends_packages_template', 'Add Package dependency')?>
+    </fieldset>
+
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Subpackages")?></h4>
+    <fieldset id="depends_subpackages_fieldset">
+        <legend><?=$this->__("Subpackages")?></legend>
+        <table class="table-editable" cellspacing="0">
+            <thead>
+                <tr>
+                    <th><?=$this->__("Subpackage")?></th>
+                    <th><?=$this->__("Channel")?></th>
+                    <th><?=$this->__("Min")?></th>
+                    <th><?=$this->__("Max")?></th>
+                    <th><?=$this->__("Recommended")?></th>
+                    <th><?=$this->__("Exclude")?></th>
+                    <th><?=$this->__("Type")?></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <tr id="depends_subpackages_template" style="display:none">
+<?function showDependsSubpackageTemplate($self, $_i=0) {?>
+                    <td class="field-row">
+                        <input class="input-text" style="width:200px;" name="depends[subpackage][name][]" value="<?=$self->getValue('depends/subpackage/name/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:200px;" name="depends[subpackage][channel][]" value="<?=$self->getValue('depends/subpackage/channel/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:50px;" name="depends[subpackage][min][]" value="<?=$self->getValue('depends/subpackage/min/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:50px;" name="depends[subpackage][max][]" value="<?=$self->getValue('depends/subpackage/max/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="depends[subpackage][recommended][]" value="<?=$self->getValue('depends/subpackage/recommended/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="depends[subpackage][exclude][]" <?=$self->getChecked('depends/subpackage/exclude/'.$_i)?>/>
+                    </td><td class="field-row">
+                        <select name="depends[subpackage][type][]">
+                        <?foreach ($self->getDependTypes() as $_value=>$_label):?>
+                            <option value="<?=$_value?>" <?=$self->getSelected('depends/subpackage/type/'.$_i, $_value)?>><?=$_label?></option>
+                        <?endforeach?>
+                        </select>
+                    </td><td class="field-row">
+                        <?=$self->getRemoveRowButtonHtml('tr')?>
+                    </td>
+<?}?>
+<?showDependsSubpackageTemplate($this)?>
+                </tr>
+            </thead>
+            <tbody id="depends_subpackages_container">
+            <?if ($this->getData('depends/subpackage/name')):?>
+            <?foreach ($this->getData('depends/subpackage/name') as $_i=>$_dbField):?>
+                <?if (0===$_i) continue;?>
+                <tr>
+<?showDependsSubpackageTemplate($this, $_i)?>
+                </tr>
+            <?endforeach?>
+            <?endif?>
+            </tbody>
+        </table>
+        <?=$this->getAddRowButtonHtml('depends_subpackages_container', 'depends_subpackages_template', 'Add Subpackage dependency')?>
+    </fieldset>
+
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Extensions")?></h4>
+    <fieldset id="depends_extensions_fieldset">
+        <legend><?=$this->__("Extensions")?></legend>
+        <table class="table-editable" cellspacing="0">
+            <thead>
+                <tr>
+                    <th><?=$this->__("Extension")?></th>
+                    <th><?=$this->__("Min")?></th>
+                    <th><?=$this->__("Max")?></th>
+                    <th><?=$this->__("Recommended")?></th>
+                    <th><?=$this->__("Exclude")?></th>
+                    <th><?=$this->__("Type")?></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <tr id="depends_extensions_template" style="display:none">
+<?function showDependsExtensionsTemplate($self, $_i=0) {?>
+                    <td class="field-row">
+                        <select name="depends[extension][name][]">
+                        <?foreach ($self->getExtensions() as $_value=>$_label):?>
+                            <option value="<?=$_value?>" <?=$self->getSelected('depends/extension/name/'.$_i, $_value)?>><?=$_label?></option>
+                        <?endforeach?>
+                        </select>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:50px;" name="depends[extension][min][]" value="<?=$self->getValue('depends/extension/min/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:50px;" name="depends[extension][max][]" value="<?=$self->getValue('depends/extension/max/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="depends[extension][recommended][]" value="<?=$self->getValue('depends/extension/recommended/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="depends[extension][exclude][]" <?=$self->getChecked('depends/extension/exclude/'.$_i)?>/>
+                    </td><td class="field-row">
+                        <select name="depends[extension][type][]">
+                            <?foreach ($self->getDependTypes() as $_value=>$_label):?>
+                                <option value="<?=$_value?>" <?=$self->getSelected('depends/extension/type/'.$_i, $_value)?>><?=$_label?></option>
+                            <?endforeach?>
+                        </select>
+                    </td><td class="field-row">
+                        <?=$self->getRemoveRowButtonHtml('tr')?>
+                    </td>
+<?}?>
+<?showDependsExtensionsTemplate($this)?>
+                </tr>
+            </thead>
+            <tbody id="depends_extensions_container">
+            <?if ($this->getData('depends/extension/name')):?>
+            <?foreach ($this->getData('depends/extension/name') as $_i=>$_dbField):?>
+                <?if (0===$_i) continue;?>
+                <tr>
+<?showDependsExtensionsTemplate($this, $_i)?>
+                </tr>
+            <?endforeach?>
+            <?endif?>
+            </tbody>
+        </table>
+        <?=$this->getAddRowButtonHtml('depends_extensions_container', 'depends_extensions_template', 'Add PHP Extension dependency')?>
+    </fieldset>
+
+</div>

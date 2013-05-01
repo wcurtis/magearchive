@@ -1,0 +1,69 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Catalog advanced search form
+ * 
+ * @see Mage_CatalogSearch_Block_Advanced_Form
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Catalog Advanced Search')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<form action="<?=$this->getSearchPostUrl()?>" method="get" id="form-validate">
+<fieldset class="advanced-search">
+    <h4 class="legend"><?=$this->__('Search Settings')?></h4>
+    <ul id="advanced-search-list">
+        <?foreach ($this->getSearchableAttributes() as $_attribute):?>
+        <?$_code = $_attribute->getAttributeCode()?>
+        <li>
+            <label for="<?=$_code?>_search_field"><?=$this->getAttributeLabel($_attribute)?></label>
+            <?switch($this->getAttributeInputType($_attribute)):
+                case 'number':?>
+                <div class="range field-row">
+                    <input name="<?=$_code?>[from]" value="<?=$this->getAttributeValue($_attribute, 'from')?>" id="<?=$_code?>_from" title="<?=$this->getAttributeLabel($_attribute)?>"  class="input-text validate-number" type="text"/>
+                    -
+                    <input name="<?=$_code?>[to]" value="<?=$this->getAttributeValue($_attribute, 'to')?>" id="<?=$_code?>_to" title="<?=$this->getAttributeLabel($_attribute)?>"  class="input-text validate-number" type="text"/>
+                </div>
+                <?break;
+                case 'select':?>
+                    <?=$this->getAttributeSelectElement($_attribute)?>
+                <?break;
+                case 'date':?>
+                <?break;
+                default:?>
+                <input name="<?=$_code?>" id="<?=$_code?>_search_field" value="<?=$this->getAttributeValue($_attribute)?>" title="<?=$this->getAttributeLabel($_attribute)?>"  class="input-text <?=$this->getAttributeValidationClass($_attribute)?>" type="text"/>
+            <?endswitch;?>
+        </li>
+        <?endforeach;?>
+    </ul>
+    <script type="text/javascript">decorateList('advanced-search-list')</script>
+</fieldset>
+<div class="form-buttons">
+    <p class="required">* <?=$this->__('Required Fields')?></p>
+    <button type="submit" class="form-button"><span><?=$this->__('Search')?></span></button>
+</div>
+</form>
+<script type="text/javascript">
+    var dataForm = new VarienForm('form-validate', true);
+</script>
+<br/>

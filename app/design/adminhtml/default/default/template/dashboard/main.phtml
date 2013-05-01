@@ -1,0 +1,160 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<script language="JavaScript" type="text/javascript" src="<?=$this->getSkinUrl('js/scrollbar.js')?>"></script>
+<script language="JavaScript" type="text/javascript">
+	var db_but_top = '<?=$this->getSkinUrl('images/db-scroll-but-top.png')?>';
+	var db_but_bot = '<?=$this->getSkinUrl('images/db-scroll-but-bot.png')?>';
+	var db_but_rol = '<?=$this->getSkinUrl('images/db-scroll-roller.png')?>';
+</script>
+<script type="text/javascript">
+<!--
+function showTab(tab, set, tabQty){
+	var tabOn = $(set+tab+'Tab');
+	var conOn = $(set+'-'+tab+'-tab');
+	tabOn.className = 'hover';
+	conOn.show();
+	for(t=1;t<tabQty+1;t++){
+		if(t!=tab){
+			$(set+t+'Tab').className = '';
+			$(set+'-'+t+'-tab').hide();
+		}
+	}
+}
+
+function submitForm(element)
+{
+    var parents = $(element).ancestors();
+    parents.each(function(node){
+             if(node.tagName.toUpperCase() == 'FORM') {
+                 node.submit();
+                 throw $break;
+             }
+        });
+}
+
+function handlePeriodSelect(selectId)
+{
+    Event.observe($(selectId), 'change', function(evt) {
+       var elmnt = Event.element(evt);
+       if (elmnt.value!='custom'){
+           $(elmnt.id + '_custom').hide();
+       } else {
+           $(elmnt.id + '_custom').show();
+       }
+    });
+
+    Calendar.setup({
+                inputField : selectId + '_custom_date_from',
+                ifFormat : '<?=$this->getFieldFormat()?>',
+                button : selectId + '_custom_date_from_trig',
+                align : 'Bl',
+                singleClick : true
+    });
+    Calendar.setup({
+                inputField : selectId + '_custom_date_to',
+                ifFormat : '<?=$this->getFieldFormat()?>',
+                button : selectId + '_custom_date_to_trig',
+                align : 'Bl',
+                singleClick : true
+    });
+}
+//-->
+</script>
+<h3 class="content-header"><?=$this->__('Dashboard')?></h3>
+<ul class="graph-container">
+	<li class="section">
+		<dl class="db-top">
+			<dt><?=$this->__('Orders')?></dt>
+			<dd>
+				<form action="<?=$this->getConfigureAction('order')?>" method="POST">
+			    <?=$this->__('View report for')?>
+				<select name="store">
+    			    <?$_stores = $this->helper('adminhtml/dashboard_data')->getStores()?>
+    			        <option value="0" ><?=$this->__('All Stores')?></option>
+                        <?foreach ($_stores as $_store):?>
+                            <option value="<?=$_store->getId()?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'store')==$_store->getId()):?> selected<?endif;?>><?=$_store->getName()?></option>
+                        <?endforeach;?>
+                </select>
+				&nbsp; <?=$this->__('for')?> &nbsp;
+				<select name="period" id="order_period">
+				    <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
+				        <?if(in_array($_value, array('custom'))) continue;?>
+				        <option value="<?=$_value?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'period')==$_value):?> selected<?endif;?>><?=$_label?></option>
+				    <?endforeach;?>
+				    <option value="2y" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'period')=='2y'):?> selected<?endif;?>><?=$this->__('Last 2 years')?></option>
+				 </select>
+				 <span id="order_period_custom" class="range" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'period')!='custom'):?>style="display:none"<?endif;?>>
+                    <?=$this->__('From')?>:<input class="input-text no-changes" type="text" id="order_period_custom_date_from" name="custom_from" value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('from','order')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>" id="order_period_custom_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <?=$this->__('To')?>:<input  class="input-text no-changes" type="text" id="order_period_custom_date_to" name="custom_to"  value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('to','order')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>"id="order_period_custom_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <input type="hidden" name="locale" value="<?=$this->getLocaleCode()?>"  />
+                </span>
+                <?=$this->getChildHtml('button_submit')?>
+
+                <script type="text/javascript">
+                <!--
+                handlePeriodSelect('order_period');
+                //-->
+                </script>
+				</form>
+			</dd>
+		</dl><div class="clear"></div>
+		<?=$this->getChildHtml('order')?>
+	</li>
+    <li class="section">
+		<dl class="db-top">
+			<dt><?=$this->__('Analytics')?></dt>
+			<dd>
+				<form action="<?=$this->getConfigureAction('visitor')?>" method="POST">
+			    <?=$this->__('View report for')?>
+				<select name="store">
+				    <option value="0" ><?=$this->__('All Stores')?></option>
+    			    <?$_stores = $this->helper('adminhtml/dashboard_data')->getStores()?>
+                        <?/*foreach ($_stores as $_store):?>
+                            <option value="<?=$_store->getId()?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'store')==$_store->getId()):?> selected<?endif;?>><?=$_store->getName()?></option>
+                        <?endforeach;*/?>
+                </select>
+				&nbsp; <?=$this->__('for')?> &nbsp;
+				<select name="period" id="visitor_period">
+				    <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
+    				    <?if(in_array($_value, array('1y','custom'))) continue;?>
+				        <option value="<?=$_value?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'period')==$_value):?> selected<?endif;?>><?=$_label?></option>
+				    <?endforeach;?>
+				        <option value="2m" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'period')=='2m'):?> selected<?endif;?>><?=$this->__('Last 2 months')?></option>
+				 </select>
+				 <span id="visitor_period_custom" class="range" <?if($this->helper('adminhtml/dashboard_data')->getConfig('product', 'period')!='custom'):?>style="display:none"<?endif;?>>
+                    <?=$this->__('From')?>:<input class="input-text no-changes" type="text" id="visitor_period_custom_date_from" name="custom_from" value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('from','visitor')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>" id="visitor_period_custom_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <?=$this->__('To')?>:<input  class="input-text no-changes" type="text" id="visitor_period_custom_date_to" name="custom_to"  value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('to','visitor')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>"id="visitor_period_custom_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <input type="hidden" name="locale" value="<?=$this->getLocaleCode()?>"  />
+                </span>
+                <?=$this->getChildHtml('button_submit')?>
+
+                <script type="text/javascript">
+                <!--
+                handlePeriodSelect('visitor_period');
+                //-->
+                </script>
+				</form>
+			</dd>
+		</dl><div class="clear"></div>
+		<?=$this->getChildHtml('visitor')?>
+	</li>
+</ul>
+<div class="clear"></div>

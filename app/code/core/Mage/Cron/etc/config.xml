@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Cron
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <Mage_Cron>
+            <version>0.7.0</version>
+        </Mage_Cron>
+    </modules>
+    <global>
+        <resources>
+            <cron_setup>
+                <setup>
+                    <module>Mage_Cron</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </cron_setup>
+            <cron_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </cron_write>
+            <cron_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </cron_read>
+        </resources>
+        <models>
+            <cron>
+                <class>Mage_Cron_Model_Mysql4</class>
+            </cron>
+        </models>
+        <cron>
+            <jobs>
+                <test1>
+                    <schedule>
+                        <min>0</min>
+                        <hour>5</hour>
+                        <dow>Sun</dow>
+                    </schedule>
+                    <type>php_file</type>
+                    <cmd>cronjobs/test.php</cmd>
+                </test1>
+                <test2>
+                    <schedule>
+                        <min>40</min>
+                        <hour>5</hour>
+                        <day>2</day>
+                    </schedule>
+                    <type>php_callback</type>
+                    <callback>
+                        <class>Mage_Cron_Test</class>
+                        <method>runCron</method>
+                        <args>
+                            <test>23</test>
+                        </args>
+                    </callback>
+                </test2>
+                <test3>
+                    <schedule>
+                        <min>*/15</min>
+                        <hour>8-19</hour>
+                        <dow>Mon-Fri</dow>
+                    </schedule>
+                    <type>shell</type>
+                    <cmd>mysqldump ...</cmd>
+                </test3>
+            </jobs>
+        </cron>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Mage_Cron>
+                    <files>
+                        <default>Mage_Cron.csv</default>
+                    </files>
+                </Mage_Cron>
+            </modules>
+        </translate>
+    </adminhtml>
+</config>

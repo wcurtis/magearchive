@@ -1,0 +1,49 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<table cellspacing="0" class="data-table" id="checkout-review-table">
+    <thead>
+        <tr>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-right"><?=$this->__('Price')?></th>
+            <th class="a-center"><?=$this->__('Qty')?></th>
+            <th class="a-right"><?=$this->__('Subtotal')?></th>
+        </tr>
+    </thead>
+    <tfoot>
+<?$l=sizeof($this->getTotals()); $i=0; foreach($this->getTotals() as $total): $i++?>
+        <tr>
+            <td style="<?=$total->getStyle()?>" class="a-right" colspan="3"><?=$total->getTitle()?></td>
+            <td style="<?=$total->getStyle()?>" class="a-right"><?=$this->helper('checkout')->formatPrice($total->getValue())?></td>
+        </tr>
+<?endforeach?>
+    </tfoot>
+    <tbody>
+<?$l=sizeof($this->getItems()); $i=0; foreach($this->getItems() as $item): $i++?>
+        <tr>
+            <td><?=$item->getName()?></td>
+            <td class="a-right"><?=$this->helper('checkout')->formatPrice($item->getCalculationPrice())?></td>
+            <td class="a-center"><?=$item->getQty()*1?></td>
+            <td class="a-right"><?=$this->helper('checkout')->formatPrice($item->getRowTotal())?></td>
+        </tr>
+<?endforeach?>
+    </tbody>
+</table>
+<script type="text/javascript">decorateTable('checkout-review-table')</script>

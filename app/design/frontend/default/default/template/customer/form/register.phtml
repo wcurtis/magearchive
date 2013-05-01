@@ -1,0 +1,137 @@
+<?php
+/** 
+ * Magento 
+ * 
+ * NOTICE OF LICENSE 
+ * 
+ * This source file is subject to the Open Software License (OSL 3.0) 
+ * that is bundled with this package in the file LICENSE.txt. 
+ * It is also available through the world-wide-web at this URL: 
+ * http://opensource.org/licenses/osl-3.0.php 
+ * If you did not receive a copy of the license and are unable to 
+ * obtain it through the world-wide-web, please send an email 
+ * to license@magentocommerce.com so we can send you a copy immediately. 
+ * 
+ * @category   design_default
+ * @package    Mage 
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com) 
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0) 
+ */
+?>
+<?
+/**
+ * Create account form template
+ * 
+ * @see Mage_Customer_Block_Form_Register
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Create an Account')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<form action="<?=$this->getPostActionUrl()?>" method="post" id="form-validate">
+    <input type="hidden" name="success_url" value="<?=$this->getSuccessUrl()?>"/>
+    <input type="hidden" name="error_url" value="<?=$this->getErrorUrl()?>"/>
+    <fieldset class="group-select wide">
+        <h4 class="legend"><?=$this->__('Personal Information')?></h4>
+        <ul>
+            <li>
+                <div class="input-box">
+                    <label for="firstname"><?=$this->__('First Name')?> <span class="required">*</span></label><br/>
+                    <input type="text" name="firstname" id="firstname" value="<?=$this->htmlEscape($this->getFormData()->getFirstname())?>" title="<?=$this->__('First Name')?>" class="required-entry input-text"/>
+                </div>
+                <div class="input-box">
+                    <label for="lastname"><?=$this->__('Last Name')?> <span class="required">*</span></label><br/>
+                    <input type="text" name="lastname" id="lastname" value="<?=$this->htmlEscape($this->getFormData()->getLastname())?>" title="<?=$this->__('Last Name')?>" class="required-entry input-text"/>
+                </div>
+            </li>
+            <li>
+                <div class="input-box">
+                    <label for="email_address"><?=$this->__('Email Address')?> <span class="required">*</span></label><br/>
+                    <input type="text" name="email" id="email_address" value="<?=$this->htmlEscape($this->getFormData()->getEmail())?>" title="<?=$this->__('Email Address')?>" class="validate-email required-entry input-text"/>
+                </div>
+            </li>
+            <li>
+                <input type="checkbox" name="is_subscribed" title="<?=$this->__('Sign Up for Newsletter')?>" value="1" id="is_subscribed" <?if($this->getFormData()->getIsSubscribed()):?> checked<?endif?>/>
+                <label for="is_subscribed"><?=$this->__('Sign Up for Newsletter')?></label>
+            </li>
+        </ul>
+    </fieldset>
+<?if($this->getShowAddressFields()):?>
+    <input type="hidden" name="create_address" value="1"/>
+    <fieldset class="group-select wide">
+        <h4 class="legend"><?=$this->__('Address Information')?></h4>
+        <ul>
+            <li>
+                <div class="input-box">
+                    <label for="company"><?=$this->__('Company')?></label><br/>
+                    <input type="text" name="company" id="company" value="<?=$this->htmlEscape($this->getFormData()->getCompany())?>" title="<?=$this->__('Company')?>" class="input-text"/>
+                </div>
+                <div class="input-box">
+                    <label for="lastname"><?=$this->__('Telephone')?> <span class="required">*</span></label><br/>
+                    <input type="text" name="telephone" id="telephone" value="<?=$this->htmlEscape($this->getFormData()->getTelephone())?>" title="<?=$this->__('Telephone')?>" class="required-entry input-text"/>
+                </div>
+            </li>
+            <li>
+                <label for="street_1"><?=$this->__('Street Address')?> <span class="required">*</span></label><br/>
+                <input type="text" name="street[]" value="<?=$this->htmlEscape($this->getFormData()->getStreet(0))?>" title="<?=$this->__('Street Address')?>" id="street_1" class="required-entry input-text"/>
+            </li>
+            <li>
+                <input type="text" name="street[]" value="<?=$this->htmlEscape($this->getFormData()->getStreet(1))?>" title="<?=$this->__('Street Address 2')?>" id="street_2" class="input-text"/>
+            </li>
+            <li>
+                <div class="input-box">
+                    <label for="city"><?=$this->__('City')?> <span class="required">*</span></label><br/>
+                    <input type="text" name="city" value="<?=$this->htmlEscape($this->getFormData()->getCity())?>"  title="<?=$this->__('City')?>" class="required-entry input-text" id="city"/>
+                </div>
+                <div class="input-box">
+                    <label for="state"><?=$this->__('State/Province')?> <span class="required">*</span></label><br/>
+                    <select id="region_id" name="region_id" title="<?=$this->__('State/Province')?>" class="validate-select" style="display:none" defaultValue="<?=$this->getFormData()->getRegionId()?>">
+                        <option value=""><?=$this->__('Please select region, state or province')?></option>
+                    </select>
+                    <input type="text" id="region" name="region" value="<?=$this->htmlEscape($this->getRegion())?>"  title="<?=$this->__('State/Province')?>" class="input-text" style="display:none"/>
+                </div>
+            </li>
+            <li>
+                <div class="input-box">
+                    <label for="zip"><?=$this->__('Zip/Postal Code')?> <span class="required">*</span></label><br/>
+                    <input type="text" name="postcode" value="<?=$this->htmlEscape($this->getFormData()->getPostcode())?>" title="<?=$this->__('Zip/Postal Code')?>" id="zip" class="validate-zip-international required-entry input-text"/>
+                </div>
+                <div class="input-box">
+                    <label for="country"><?=$this->__('Country')?> <span class="required">*</span></label><br/>
+                    <?=$this->getCountryHtmlSelect()?>
+                </div>
+            </li>
+        </ul>
+    </fieldset>
+    <input type="hidden" name="default_billing" value="1"/>
+    <input type="hidden" name="default_shipping" value="1"/>
+<?endif;?>
+    <fieldset class="group-select wide">
+        <h4 class="legend"><?=$this->__('Login Information')?></h4>
+        <ul>
+            <li>
+                <div class="input-box">
+                    <label for="password"><?=$this->__('Password')?> <span class="required">*</span></label><br/>
+                    <input type="password" name="password" id="password" title="<?=$this->__('Password')?>"  class="required-entry validate-password input-text"/>
+                </div>
+                <div class="input-box">
+                    <label for="confirmation"><?=$this->__('Confirm Password')?> <span class="required">*</span></label><br/>
+                    <input type="password" name="confirmation" title="<?=$this->__('Confirm Password')?>" id="confirmation" class="required-entry validate-cpassword input-text"/>
+                </div>
+            </li>
+        </ul>
+    </fieldset>
+    <div class="form-buttons">
+        <p class="required"><?=$this->__('* Required Fields')?></p>
+        <a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back')?></a>
+        <button class="form-button" type="submit"><span><?=$this->__('Submit')?></span></button>
+    </div>
+</form>
+<script type="text/javascript">
+    var dataForm = new VarienForm('form-validate', true);
+    <?if($this->getShowAddressFields()):?>
+    //dataForm.setElementsRelation('country', 'state', '<?=$this->getLoadrRegionUrl()?>');
+    new RegionUpdater('country', 'region', 'region_id', <?=$this->helper('directory')->getRegionJson()?>);
+    <?endif?>
+</script>

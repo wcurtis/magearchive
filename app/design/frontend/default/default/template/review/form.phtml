@@ -1,0 +1,117 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Write Your Own Review')?></h3>
+</div>
+<h4><?=$this->__("You're reviewing: %s", $this->getProductInfo()->getName())?></h4>
+<form action="<?=$this->getAction()?>" method="post" id="review-form">
+<div>
+    <?if( $this->getRatings() && $this->getRatings()->getSize()):?>
+    <strong><?=$this->__('How do you rate this product?')?><span class="required">*</span></strong><br>
+    <span id="input-message-box"></span>
+    <table class="data-table product-review-box field-row" id="product-review-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th><?=$this->__('1 star')?></th>
+                <th><?=$this->__('2 stars')?></th>
+                <th><?=$this->__('3 stars')?></th>
+                <th><?=$this->__('4 stars')?></th>
+                <th><?=$this->__('5 stars')?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?$_oddIterator = 1;?>
+        <?foreach ($this->getRatings() as $_rating):?>
+            <tr class="odd<?if($_oddIterator == $this->getRatings()->getSize()): $_oddIterator = 0;?> last<?endif;?>">
+                <td class="label"><?=$_rating->getRatingCode()?></td>
+            <?$_iterator = 1;?>
+            <?foreach ($_rating->getOptions() as $_option):?>
+                <!--<td <?if($_iterator == 5):?>class="last"<?endif;?> style="width:60px;"><input type="radio" <?if($_iterator == 5): $_iterator=0;?>class="validate-one-required-by-name"<?endif;?> name="ratings[<?=$_rating->getId()?>]" id="<?=$_rating->getRatingCode()?>_<?=$_option->getValue()?>" value="<?=$_option->getId()?>"/></td>-->
+                <td <?if($_iterator == 5):?>class="last"<?endif;?> style="width:60px;"><input type="radio" name="ratings[<?=$_rating->getId()?>]" id="<?=$_rating->getRatingCode()?>_<?=$_option->getValue()?>" value="<?=$_option->getId()?>"/></td>
+            <?$_iterator++?>
+            <?endforeach;?>
+            </tr>
+        <?$_oddIterator ++;?>
+        <?endforeach;?>
+        </tbody>
+    </table>
+    <input type="hidden" name="validate_rating" class="validate-rating" value="" />
+    <script type="text/javascript">decorateTable('product-review-table')</script>
+    <?endif;?>
+    <p>
+        <?// do not remove div - some problem whith validator in IE?>
+        <div>
+        <label for="nickname_field"><?=$this->__('Nickname')?><span class="required">*</span></label><br>
+        <input class="input-text required-entry" name="nickname" id="nickname_field" style="width: 450px;" type="text" value="<?=$data->getNickname()?>"/>
+        </div>
+    </p>
+
+    <p>
+        <div>
+        <label for="summary_field"><?=$this->__('Summary of Your Review')?><span class="required">*</span></label><br>
+        <input name="title" class="input-text  required-entry" id="summary_field" style="width: 450px;" type="text" value="<?=$data->getTitle()?>"/>
+        </div>
+    </p>
+    <p>
+        <div>
+        <label for="review_field"><?=$this->__('Review')?><span class="required">*</span></label><br>
+        <textarea class="required-entry" name="detail" id="review_field" cols="53" rows="10" style="width: 450px;"><?=$data->getDetail()?></textarea>
+        </div>
+    </p>
+    <div class="form-buttons">
+        <button class="form-button right" type="submit"><span><?=$this->__('Submit Review')?></span></button>
+    </div>
+</div>
+</form>
+<script type="text/javascript">
+    var dataForm = new VarienForm('review-form');
+
+    Validation.addAllThese(
+    [
+           ['validate-rating', '<?=$this->__('Please select one of each of the ratings above')?>', function(v) {
+                var trs = $('product-review-table').getElementsBySelector('tr');
+                var inputs;
+                var error = 1;
+
+                for( var j=0; j < trs.length; j++ ) {
+                    var tr = trs[j];
+                    if( j > 0 ) {
+                        inputs = tr.getElementsBySelector('input');
+
+                        for( i in inputs ) {
+                            if( inputs[i].checked == true ) {
+                                error = 0;
+                            }
+                        }
+
+                        if( error == 1 ) {
+                            return false;
+                        } else {
+                            error = 1;
+                        }
+                    }
+                }
+                return true;
+            }]
+    ]
+    );
+</script>

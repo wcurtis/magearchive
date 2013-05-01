@@ -1,0 +1,76 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="entry-edit">
+    <?=$this->getFormHtml()?>
+
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Maintainers")?></h4>
+    <fieldset id="maintainers_fieldset">
+        <legend><?=$this->__("Maintainers")?></legend>
+        <table class="table-editable" cellspacing="0">
+            <thead>
+                <tr>
+                    <th><?=$this->__("Level")?></th>
+                    <th><?=$this->__("Name")?></th>
+                    <th><?=$this->__("User")?></th>
+                    <th><?=$this->__("Email")?></th>
+                    <th><?=$this->__("Status")?></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <tr id="maintainers_template" style="display:none">
+<?function showMaintainersTemplate($self, $_i=0) {?>
+                    <td class="field-row">
+                        <select name="maintainers[role][]">
+                        <?foreach ($self->getMaintainerRoles() as $_value=>$_label):?>
+                            <option value="<?=$_value?>" <?=$self->getSelected('maintainers/role/'.$_i, $_value)?>><?=$_label?></option>
+                        <?endforeach?>
+                        </select>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:150px;" name="maintainers[name][]" value="<?=$self->getValue('maintainers/name/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:100px;" name="maintainers[handle][]" value="<?=$self->getValue('maintainers/handle/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <input class="input-text" style="width:150px;" name="maintainers[email][]" value="<?=$self->getValue('maintainers/email/'.$_i)?>"/>
+                    </td><td class="field-row">
+                        <select name="maintainers[active][]"/>
+                            <option value="1" <?=$self->getSelected('maintainers/active/'.$_i, 1)?>><?=$self->__("Active")?></option>
+                            <option value="0" <?=$self->getSelected('maintainers/active/'.$_i, 0)?>><?=$self->__("Inactive")?></option>
+                        </select>
+                    </td><td class="field-row">
+                        <?=$self->getRemoveRowButtonHtml('tr')?>
+                    </td>
+<?}?>
+<?showMaintainersTemplate($this)?>
+                </tr>
+            </thead>
+            <tbody id="maintainers_container">
+            <?if ($this->getData('maintainers/role')):?>
+            <?foreach ($this->getData('maintainers/role') as $_i=>$_dbField):?>
+                <?if (0===$_i) continue;?>
+                <tr>
+<?showMaintainersTemplate($this, $_i)?>
+                </tr>
+            <?endforeach?>
+            <?endif?>
+            </tbody>
+        </table>
+        <?=$this->getAddRowButtonHtml('maintainers_container', 'maintainers_template', 'Add Maintainer')?>
+    </fieldset>
+</div>

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm -f cache/*
+rm -rf docs/*
+rm -rf download/*
+rm -rf php/.*
+rm -rf temp/*

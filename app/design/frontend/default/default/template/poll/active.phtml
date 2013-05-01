@@ -1,0 +1,46 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if(isset($poll)) :?>
+<div class="box base-mini mini-poll">
+    <div class="head">
+        <h4><span><?=$this->__('Community Poll')?></span></h4>
+    </div>
+        <div class="content">
+    <h5><?=$poll->getPollTitle();?></h5>
+
+                         <form name="pollForm" action="<?=$action?>" method="post">
+                    <?if( $poll_answers ):?>
+                            <table cellspacing="2">
+                                <tbody>
+                                    <?foreach( $poll_answers as $answer ):?>
+                                    <tr>
+                                        <td><input type="radio" name="vote" id="vote_<?=$answer->getId()?>" value="<?=$answer->getAnswerId()?>" /></td>
+                                        <td><label for="vote_<?=$answer->getId()?>"><?=$answer->getAnswerTitle()?></label>&nbsp;</td>
+                                    </tr>
+                                    <?endforeach;?>
+                                </tbody>
+                            </table>
+                    <?endif;?>
+                    </form>
+                </div>
+                    <div class="actions"><button class="form-button-alt right" onclick="pollForm.submit()"><span><?=$this->__('Vote')?></span></button></div>
+                </div>
+<?endif;?>

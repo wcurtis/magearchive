@@ -1,0 +1,94 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<form id="co-shipping-form">
+<?if ($this->customerHasAddresses()):?>
+   <p><?=$this->__('Select a shipping address from your address book or enter a new address.')?></p>
+   <p><?=$this->getAddressesHtmlSelect('shipping')?></p>
+<?endif?>
+
+<fieldset class="group-select" id="shipping-new-address-form" <?if ($this->customerHasAddresses()):?>style="display:none"<?endif?>>
+    <input type="hidden" name="shipping[address_id]" value="<?=$this->getAddress()->getId()?>" id="shipping:address_id"/>
+    <ul>
+        <li><div class="input-box">
+            <label for="shipping:firstname"><?=$this->__('First Name')?> <span class="required">*</span></label><br/>
+            <input type="text" id="shipping:firstname" name="shipping[firstname]" value="<?=$this->getAddress()->getFirstname()?>" title="<?=$this->__('First Name')?>" class="required-entry input-text" onchange="shipping.setSameAsBilling(false);"/></div>
+            <div class="input-box">
+            <label for="shipping:lastname"><?=$this->__('Last Name')?> <span class="required">*</span></label><br/>
+            <input type="text" id="shipping:lastname" name="shipping[lastname]" value="<?=$this->getAddress()->getLastname()?>" title="<?=$this->__('Last Name')?>" class="required-entry input-text" onchange="shipping.setSameAsBilling(false);"/></div></li>
+        <li><div class="input-box">
+            <label for="shipping:company"><?=$this->__('Company')?></label><br/>
+            <input type="text" id="shipping:company" name="shipping[company]" value="<?=$this->getAddress()->getCompany()?>" title="<?=$this->__('Company')?>" class="input-text" onchange="shipping.setSameAsBilling(false);"/></div>
+<?if(false):?>
+            <div class="input-box">
+            <label for="shipping:email"><?=$this->__('Email Address')?> <span class="required">*</span></label><br/>
+            <input type="text" name="shipping[email]" id="shipping:email" value="<?=$this->getAddress()->getEmail()?>" title="<?=$this->__('Email Address')?>" class="validate-email required-entry input-text"/></div>
+<?endif?>
+            </li>
+        <li><label for="shipping:address"><?=$this->__('Address')?> <span class="required">*</span></label><br/>
+            <input type="text" title="<?=$this->__('Street Address')?>" name="shipping[street][1]" id="shipping:street1" value="<?=$this->getAddress()->getStreet(1)?>" class="required-entry input-text" onchange="shipping.setSameAsBilling(false);"/></li>
+        <li><input type="text" title="<?=$this->__('Street Address 2')?>" name="shipping[street][2]" id="shipping:street2" value="<?=$this->getAddress()->getStreet(2)?>" class="input-text" onchange="shipping.setSameAsBilling(false);"/></li>
+        <li><div class="input-box">
+            <label for="shipping:city"><?=$this->__('City')?> <span class="required">*</span></label><br/>
+            <input type="text" title="<?=$this->__('City')?>" name="shipping[city]" value="<?=$this->getAddress()->getCity()?>" class="required-entry input-text" id="shipping:city" onchange="shipping.setSameAsBilling(false);"/></div>
+            <div class="input-box">
+            <label for="shipping:region"><?=$this->__('State/Province')?> <span class="required">*</span></label><br/>
+            <select id="shipping:region_id" name="shipping[region_id]" title="<?=$this->__('State/Province')?>" class="validate-select" style="display:none" defaultValue="<?=$this->getAddress()->getRegionId()?>">
+                <option value=""><?=$this->__('Please select region, state or province')?></option>
+            </select>
+            <input type="text" id="shipping:region" name="shipping[region]" value="<?=$this->getAddress()->getRegion()?>"  title="<?=$this->__('State/Province')?>" class="input-text" style="display:none"/></div></li>
+        <li><div class="input-box">
+            <label for="shipping:postcode"><?=$this->__('Zip/Postal Code')?> <span class="required">*</span></label><br/>
+            <input type="text" title="<?=$this->__('Zip/Postal Code')?>" name="shipping[postcode]" id="shipping:postcode" value="<?=$this->getAddress()->getPostcode()?>" class="validate-zip-international required-entry input-text" onchange="shipping.setSameAsBilling(false);"/></div>
+            <div class="input-box">
+            <label for="shipping:country_id"><?=$this->__('Country')?> <span class="required">*</span></label><br/>
+            <?=$this->getCountryHtmlSelect('shipping')?>
+            </div></li>
+        <li><div class="input-box">
+            <label for="shipping:telephone"><?=$this->__('Telephone')?> <span class="required">*</span></label><br/>
+            <input type="text" name="shipping[telephone]" value="<?=$this->getAddress()->getTelephone()?>" title="<?=$this->__('Telephone')?>" class="required-entry input-text" id="shipping:telephone" onchange="shipping.setSameAsBilling(false);"/></div>
+            <div class="input-box">
+            <label for="shipping:fax"><?=$this->__('Fax')?></label><br/>
+            <input type="text" name="shipping[fax]" value="<?=$this->getAddress()->getFax()?>" title="<?=$this->__('Fax')?>" class="input-text" id="shipping:fax" onchange="shipping.setSameAsBilling(false);"/></div></li>
+    </ul>
+</fieldset>
+    <p><input type="checkbox" name="shipping[same_as_billing]" id="shipping:same_as_billing" value="1" <?if($this->getAddress()->getSameAsBilling()):?>checked<?endif?> onclick="shipping.setSameAsBilling(this.checked)"/> &nbsp;<label for="shipping:same_as_billing"><?=$this->__('Use Billing Address')?></label></p>
+</form>
+<div class="form-buttons">
+    <p class="required"><?=$this->__('* Required Fields')?></p>
+    <span id="shipping-buttons-container">
+        <a href="#" class="back left" onclick="checkout.back(); return false;"><?=$this->__('Back')?></a>
+        <button class="form-button right" onclick="shipping.save()"><span><?=$this->__('Continue')?></span></button>
+        <span id="shipping-please-wait" style="display:none;" class="opc-please-wait">
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp; 
+        </span>
+    </span>
+</div>
+
+<script type="text/javascript">
+    var shipping = new Shipping('co-shipping-form', '<?=$this->getUrl('checkout/onepage/getAddress')?>address/', '<?=$this->getUrl('checkout/onepage/saveShipping')?>',
+        '<?=$this->getUrl('checkout/onepage/shippingMethod')?>');
+    var shippingForm = new VarienForm('co-shipping-form');
+    shippingForm.extraChildParams = ' onchange="shipping.setSameAsBilling(false);"';
+    //shippingForm.setElementsRelation('shipping:country_id', 'shipping:region', '<?=$this->getUrl('directory/json/childRegion')?>', '<?=$this->__('Select State/Province...')?>');
+    $('shipping-address-select') && shipping.newAddress(!$('shipping-address-select').value);
+
+    var shippingRegionUpdater = new RegionUpdater('shipping:country_id', 'shipping:region', 'shipping:region_id', countryRegions);
+</script>

@@ -1,0 +1,148 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Shopping cart template
+ *
+ * @see Mage_Checkout_Block_Cart
+ */
+?>
+<div class="page-head-alt button-level">
+    <h3><?=$this->__('Shopping Cart')?></h3>
+    <?if(!$this->hasError()):?>
+    <a href="<?=$this->getCheckoutUrl()?>">
+        <img src="<?=$this->getSkinUrl('images/btn_proceed_to_checkout.gif')?>" alt="<?=$this->__('Proceed to Checkout')?>"/>
+    </a>
+    <?endif;?>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<form action="<?=$this->getUrl('checkout/cart/updatePost')?>" method="post">
+<table cellspacing="0" id="shopping-cart-table" class="data-table box-table shopping-cart">
+    <col width="75"/>
+    <col/>
+    <col width="80"/>
+    <col width="140"/>
+    <col width="120"/>
+    <col width="140"/>
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-center"><?=$this->__('Remove Product')?></th>
+            <?if($this->isWishlistActive()):?>
+            <th class="a-center"><?=$this->__('Move to Wishlist')?></th>
+            <?endif?>
+            <th class="a-right"><?=$this->__('Unit Price')?></th>
+            <th class="a-center"><?=$this->__('Qty')?></th>
+            <th class="a-right"><?=$this->__('Subtotal')?></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td colspan="100" class="a-right">
+                <button class="form-button-alt" type="submit"><span><?=$this->__('Update Shopping Cart')?></span></button>
+            </td>
+        </tr>
+    </tfoot>
+    <tbody>
+    <?foreach($this->getItems() as $_item):?>
+        <tr>
+            <td>
+                <a href="<?=$this->getItemUrl($_item)?>">
+                    <img src="<?=$this->getItemImageUrl($_item)?>" alt="<?=$this->htmlEscape($this->getItemName($_item))?>" width="75"/>
+                </a>
+            </td>
+            <td class="attributes-col">
+                <a href="<?=$this->getItemUrl($_item)?>"><strong><?=$this->getItemName($_item)?></strong></a>
+                <?=$this->getItemDescription($_item)?>
+                <?if($_item->getMessage()):?>
+                <div style="font-size:95%;margin-top:6px;" class="shopping-cart-item-message <?if($_item->getHasError()):?>error<?else:?>notice<?endif;?>">
+                    * <?=$_item->getMessage()?>
+                </div>
+                <?endif;?>
+            </td>
+            <td class="a-center">
+                <a href="<?=$this->getItemDeleteUrl($_item)?>">
+                    <img src="<?=$this->getSkinUrl('images/btn_trash.gif')?>" width="16" height="16" alt="Remove item"/>
+                </a>
+            </td>
+            <?if($this->isWishlistActive()):?>
+            <td class="a-center">
+                <input type="checkbox" value="1" name="cart[<?=$_item->getId()?>][wishlist]"/>
+            </td>
+            <?endif?>
+            <td class="a-right">
+                <?=$this->helper('checkout')->formatPrice($_item->getCalculationPrice())?>
+            </td>
+            <td class="a-center">
+                <input name="cart[<?=$_item->getId()?>][qty]" value="<?=$this->getItemQty($_item)?>" size="2" class="input-text qty" maxlength="12"/>
+            </td>
+            <td class="a-right">
+                <?=$this->helper('checkout')->formatPrice($_item->getRowTotal())?>
+            </td>
+        </tr>
+    <?endforeach?>
+    </tbody>
+</table>
+<script type="text/javascript">decorateTable('shopping-cart-table')</script>
+</form>
+
+<div class="shopping-cart-collaterals">
+    <div class="col2-set">
+        <?=$this->getChildHtml('crosssell')?>
+        <div class="col-2">
+            <?=$this->getChildHtml('coupon')?>
+            <?=$this->getChildHtml('shipping')?>
+        </div>
+    </div>
+</div>
+
+<div class="shopping-cart-totals">
+    <table cellspacing="0" id="shoping-cart-totals-table">
+        <tbody>
+        <?foreach($this->getTotals() as $total):?>
+            <?if(!$total->getArea()):?>
+            <tr>
+                <td style="<?=$total->getStyle()?>"><?=$total->getTitle()?></td>
+                <td style="<?=$total->getStyle()?>"><?=$this->helper('checkout')->formatPrice($total->getValue())?></td>
+            </tr>
+            <?endif?>
+        <?endforeach?>
+        </tbody>
+        <tfoot>
+        <?foreach($this->getTotals() as $total):?>
+            <?if($total->getArea()=='footer'):?>
+            <tr>
+                <td><strong><?=$total->getTitle()?></strong></td>
+                <td class="nowrap"><strong><?=$this->helper('checkout')->formatPrice($total->getValue())?></strong></td>
+            </tr>
+            <?endif?>
+        <?endforeach?>
+        </tfoot>
+    </table>
+    <script type="text/javascript">decorateTable('shoping-cart-totals-table')</script>
+    <?if(!$this->hasError()):?>
+    <ul class="checkout-types">
+        <?=$this->getChildHtml('methods')?>
+    </ul>
+    <?endif;?>
+</div>
+<div class="clear"></div>

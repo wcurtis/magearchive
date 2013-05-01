@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Newsletter
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <Mage_Newsletter>
+            <version>0.7.0</version>
+            <depends>
+                <Mage_Core />
+                <Mage_Customer />
+                <Mage_Eav />
+            </depends>
+        </Mage_Newsletter>
+    </modules>
+    <global>
+        <blocks>
+            <newsletter><class>Mage_Newsletter_Block</class></newsletter>
+        </blocks>
+        <models>
+            <newsletter>
+                <class>Mage_Newsletter_Model</class>
+                <resourceModel>newsletter_mysql4</resourceModel>
+            </newsletter>
+            <newsletter_mysql4>
+                <class>Mage_Newsletter_Model_Mysql4</class>
+                <entities>
+                    <subscriber>
+                        <table>newsletter_subscriber</table>
+                    </subscriber>
+                    <queue>
+                        <table>newsletter_queue</table>
+                    </queue>
+                    <queue_link>
+                        <table>newsletter_queue_link</table>
+                    </queue_link>
+                    <queue_store_link>
+                        <table>newsletter_queue_store_link</table>
+                    </queue_store_link>
+                    <template>
+                        <table>newsletter_template</table>
+                    </template>
+                    <problem>
+                        <table>newsletter_problem</table>
+                    </problem>
+                </entities>
+            </newsletter_mysql4>
+        </models>
+        <resources>
+            <newsletter_setup>
+                <setup>
+                    <module>Mage_Newsletter</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </newsletter_setup>
+            <newsletter_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </newsletter_write>
+            <newsletter_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </newsletter_read>
+        </resources>
+    </global>
+    <adminhtml>
+        <events>
+            <customer_model_after_save>
+                <observers>
+                    <newsletter_subscribe_observer>
+                        <type>singleton</type>
+                        <class>newsletter/observer</class>
+                        <method>subscribeCustomer</method>
+                    </newsletter_subscribe_observer>
+                </observers>
+            </customer_model_after_save>
+            <customer_model_delete>
+                <observers>
+                    <newsletter_subscribe_observer>
+                        <type>singleton</type>
+                        <class>newsletter/observer</class>
+                        <method>customerDeleted</method>
+                    </newsletter_subscribe_observer>
+                </observers>
+            </customer_model_delete>
+        </events>
+        <menu>
+            <newsletter translate="title" module="newsletter">
+                <title>Newsletter</title>
+                <sort_order>60</sort_order>
+                <children>
+                    <template translate="title" module="newsletter">
+                        <title>Newsletter Templates</title>
+                        <action>*/newsletter_template/</action>
+                        <resource>admin/newsletter/template</resource>
+                    </template>
+                    <queue translate="title" module="newsletter">
+                        <title>Newsletter Queue</title>
+                        <action>*/newsletter_queue/</action>
+                        <resource>admin/newsletter/queue</resource>
+                    </queue>
+                    <problem translate="title" module="newsletter">
+                        <title>Newsletter Problem Reports</title>
+                        <action>*/newsletter_problem/</action>
+                        <resource>admin/newsletter/problem</resource>
+                    </problem>
+                </children>
+            </newsletter>
+        </menu>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <newsletter>
+                                            <title>Newsletter Section</title>
+                                        </newsletter>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                        <newsletter>
+                            <title>Newsletter</title>
+                            <sort_order>60</sort_order>
+                            <children>
+                                <problem>
+                                    <title>Newsletter Problem Reports</title>
+                                </problem>
+                                <queue>
+                                    <title>Newsletter Queue</title>
+                                </queue>
+                                <template>
+                                    <title>Newsletter Templates</title>
+                                </template>
+                            </children>
+                       </newsletter>
+                   </children>
+               </admin>
+           </resources>
+        </acl>
+        <translate>
+            <modules>
+                <Mage_Newsletter>
+                    <files>
+                        <default>Mage_Newsletter.csv</default>
+                    </files>
+                </Mage_Newsletter>
+            </modules>
+        </translate>
+    </adminhtml>
+    <frontend>
+        <events>
+            <customer_model_after_save>
+                <observers>
+                    <newsletter_subscribe_observer>
+                        <type>singleton</type>
+                        <class>newsletter/observer</class>
+                        <method>subscribeCustomer</method>
+                    </newsletter_subscribe_observer>
+                </observers>
+            </customer_model_after_save>
+            <customer_model_delete>
+                <observers>
+                    <newsletter_subscribe_observer>
+                        <type>singleton</type>
+                        <class>newsletter/observer</class>
+                        <method>customerDeleted</method>
+                    </newsletter_subscribe_observer>
+                </observers>
+            </customer_model_delete>
+        </events>
+        <routers>
+            <newsletter>
+                <use>standard</use>
+                <args>
+                    <module>Mage_Newsletter</module>
+                    <frontName>newsletter</frontName>
+                </args>
+            </newsletter>
+        </routers>
+        <translate>
+            <modules>
+                <Mage_Newsletter>
+                    <files>
+                        <default>Mage_Newsletter.csv</default>
+                    </files>
+                </Mage_Newsletter>
+            </modules>
+        </translate>
+          <layout>
+              <updates>
+                  <newsletter>
+                      <file>newsletter.xml</file>
+                  </newsletter>
+              </updates>
+          </layout>
+    </frontend>
+</config>

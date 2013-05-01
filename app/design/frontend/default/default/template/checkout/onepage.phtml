@@ -1,0 +1,50 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<script type="text/javascript" src="<?=$this->getJsUrl('varien/accordion.js')?>"></script>
+<script type="text/javascript" src="<?=$this->getSkinUrl('js/opcheckout.js')?>"></script>
+<script type="text/javascript">countryRegions = <?=$this->helper('directory')->getRegionJson()?></script>
+
+<ol id="checkoutSteps" class="one-page-checkout">
+<?$i=0; foreach($this->getSteps() as $_stepId => $_stepInfo): $i++?>
+    <li id="opc-<?=$_stepId?>" class="section <?=!empty($_stepInfo['allow'])?'allow':''?> <?=!empty($_stepInfo['complete'])?'saved':''?>">
+        <div class="head">
+            <h3><span class="step-count"><?=$i?></span> &nbsp;<?=$_stepInfo['label']?></h3><a href="#"><?=$this->__('Edit')?></a>
+        </div>
+        <div id="checkout-step-<?=$_stepId?>" class="box<?if($_stepId=='shipping_method'):?>-no-padding<?endif;?> a-item" style="display:none;">
+            <?=$this->getChildHtml($_stepId)?>
+        </div>
+    </li>
+<?endforeach?>
+</ol>
+
+<script type="text/javascript">
+    var accordion = new Accordion('checkoutSteps', '.head', true);
+    <?if($this->getActiveStep()):?>
+    accordion.openSection('opc-<?=$this->getActiveStep()?>');
+    <?endif?>
+
+    var checkout = new Checkout(accordion,
+        '<?=$this->getUrl('checkout/onepage/progress')?>',
+        '<?=$this->getUrl('checkout/onepage/review')?>',
+        '<?=$this->getUrl('checkout/onepage/saveMethod')?>',
+        '<?=$this->getUrl('checkout/cart')?>'
+    );
+</script>

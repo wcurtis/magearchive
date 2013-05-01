@@ -1,0 +1,76 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+
+<?if($this->getCount()):?>
+<table cellpadding="0" cellspacing="0" border="0" align="left" id="<?=$this->getHtmlId()?>" style="width:910px;">
+<tr>
+	<td align="center" valign="middle" width="10"><?=$this->getHeader()?></td>
+    <?foreach($this->getCollection() as $_item ):?>
+	<td class="g" rowspan="<?=$this->getVerticalAxis()->getSpan()?>">
+	<?$_maximum=$this->getVerticalAxis()->getPixelMaximum($_item)?>
+		<div class="bottom-bg" style="height:<?=$_maximum?>px;">
+			<dl class="gr1">
+			<?foreach ($this->getAllSeries() as $_key=>$_series):?>
+			<?$_value=$this->getVerticalAxis()->getPixelPosition($_item, $_series)?>
+				<dt <?if(($_key+1)%2):?>class="odd"<?endif;?> style="<?if($_value == 0):?>display:none;<?endif?>height:<?=$_value?>px;margin-top:<?=($_maximum-$_value)?>px;"></dt>
+			<?endforeach;?>
+			</dl>
+		</div>
+	</td>
+	<?endforeach;?>
+	<td width="100%" class="g" valign="bottom" rowspan="<?=$this->getVerticalAxis()->getSpan()?>"><div class="bottom-bg">&nbsp;</div></td>
+</tr>
+<?if($this->getCount()):?>
+<tr>
+	<td style="color:#bfbfbf;" class="y"  style="white-space:nowrap;"><?=$this->getVerticalAxis()->getTitle()?></td>
+</tr>
+<?foreach($this->getVerticalAxis()->getLabels() as $_label):?>
+<tr>
+	<td class="y" style="white-space:nowrap;"><?=$_label?></td>
+</tr>
+<?endforeach;?>
+<?else:?>
+<tr>
+	<td style="color:#bfbfbf;" class="y"><?=$this->getVerticalAxis()->getTitle()?></td>
+</tr>
+<?foreach($this->getVerticalAxis()->getLabels() as $_label):?>
+<tr>
+	<td class="y">&nbsp;</td>
+</tr>
+<?endforeach;?>
+
+<?endif;?>
+
+<tr>
+	<td>&nbsp;</td>
+	<?if($this->getCount()):?>
+	<?foreach($this->getHorizontalAxis()->getLabels() as $_label):?>
+	<td class="x" align="center"><?=$_label?></td>
+	<?endforeach;?>
+	<?else:?>
+	<td class="x" align="center">&nbsp;</td>
+	<?endif;?>
+	<td valign="bottom" align="right" style="color:#bfbfbf;">&nbsp;&nbsp;<?=$this->getHorizontalAxis()->getTitle()?></td>
+</tr>
+</table>
+<?else:?>
+<div align="center" style="margin-top:180px;"><?=$this->__('No Data Found')?></div>
+<?endif;?>

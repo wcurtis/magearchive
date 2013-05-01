@@ -1,0 +1,59 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<script type="text/javascript">
+    var ruleForm = new varienForm('rule_edit_form');
+    
+<?if($_gridJsObject=$this->getLayout()->getBlock('promo.quote.grid')->getJsObjectName()):?>
+    function registerRuleProduct(grid, element, checked){
+    	var product_ids = $('rule_product_ids');
+    	var ids_arr = product_ids.value!='' ? product_ids.value.split(',') : [];
+    	var id = element.value;
+
+        if (checked){
+        	ids_arr[ids_arr.length] = id;
+        	//console.log(ids_arr);
+        	ids_arr = ids_arr.uniq();
+        } else {
+			ids_arr = ids_arr.without(id);
+        }
+        //console.log(ids_arr);
+        product_ids.value = ids_arr.join(',');
+        //console.log(product_ids.value);
+        grid.reloadParams = {'selected_products':product_ids.value}; // add ids to request
+    }
+    
+    function ruleProductRowClick(grid, event){
+        var trElement = Event.findElement(event, 'tr');
+        var isInput   = Event.element(event).tagName == 'INPUT';
+        if(trElement){
+            var checkbox = Element.getElementsBySelector(trElement, 'input');
+            if(checkbox[0]){
+                var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
+                <?=$_gridJsObject?>.setCheckboxChecked(checkbox[0], checked);
+            }
+        }
+    }
+
+    <?=$_gridJsObject?>.rowClickCallback = ruleProductRowClick;
+    //<?=$_gridJsObject?>.initRowCallback = ruleProductRowInit;
+    <?=$_gridJsObject?>.checkboxCheckCallback = registerRuleProduct;
+<?endif;?>
+</script>

@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Catalog
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+   <sections>
+        <catalog translate="label" module="catalog">
+            <label>Catalog</label>
+            <frontend_type>text</frontend_type>
+            <sort_order>40</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <category translate="label">
+                    <label>Category</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <root_id translate="label">
+                            <label>Root category</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_class>required-entry</frontend_class>
+                            <backend_model>adminhtml/system_config_backend_category</backend_model>
+                            <source_model>adminhtml/system_config_source_category</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </root_id>
+                    </fields>
+                </category>
+                <frontend translate="label">
+                    <label>Frontend</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <list_mode translate="label">
+                            <label>List Mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_catalog_listMode</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[grid-list]]></default_value>
+                        </list_mode>
+                    </fields>
+                </frontend>
+                <images translate="label">
+                    <label>Images Configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>3</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <category_upload_path translate="label">
+                            <label>Category upload directory</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[{{root_dir}}/media/catalog/category/]]></default_value>
+                        </category_upload_path>
+                        <category_upload_url translate="label">
+                            <label>Category upload url</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[/media/catalog/category/]]></default_value>
+                        </category_upload_url>
+                        <product_upload_path translate="label">
+                            <label>Product upload directory</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[{{root_dir}}/media/catalog/product/]]></default_value>
+                        </product_upload_path>
+                        <product_upload_url translate="label">
+                            <label>Product upload url</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[/media/catalog/product/]]></default_value>
+                        </product_upload_url>
+                    </fields>
+                </images>
+                <product translate="label">
+                    <label>Product options</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <default_tax_group translate="label">
+                            <label>Default tax class</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tax/class_source_product</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[2]]></default_value>
+                        </default_tax_group>
+                    </fields>
+                </product>
+                <seo translate="label">
+                    <label>Search Engine Optimizations</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <product_url_suffix translate="label">
+                            <label>Product URL Suffix (cache refresh needed)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[.html]]></default_value>
+                        </product_url_suffix>
+                        <product_use_categories translate="label">
+                            <label>Use categories path for product URLs</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </product_use_categories>
+                        <title_separator translate="label">
+                            <label>Page Title Separator</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[-]]></default_value>
+                        </title_separator>
+                    </fields>
+                </seo>
+            </groups>
+        </catalog>
+        <sendfriend translate="label">
+            <label>Email to a Friend</label>
+            <frontend_type>text</frontend_type>
+            <sort_order>31</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>0</show_in_store>
+            <groups>
+                <email translate="label">
+                    <label>Email templates</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </enabled>
+                        <template translate="label">
+                            <label>Select email template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>catalog/sendfriend</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[10]]></default_value>
+                        </template>
+                        <allow_guest translate="label">
+                            <label>Allow for Guests</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </allow_guest>
+                        <max_recipients translate="label">
+                            <label>Max Recipients</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[5]]></default_value>
+                        </max_recipients>
+                        <max_per_hour translate="label">
+                            <label>Max Products Sent in 1 Hour</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[5]]></default_value>
+                        </max_per_hour>
+                        <check_by translate="label">
+                            <label>Limit Sending By</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_checktype</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </check_by>
+                    </fields>
+                </email>
+            </groups>
+        </sendfriend>
+    </sections>
+</config>

@@ -1,0 +1,97 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Template for Mage_Page_Block_Html
+ */
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <?=$this->getChildHtml('head')?>
+    <link rel="icon" href="<?=$this->getBaseUrl()?>favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="<?=$this->getBaseUrl()?>favicon.ico" type="image/x-icon"/>
+    <?=$this->helper('core/js')->includeScript('varien/js.js')?>
+    <?=$this->helper('core/js')->includeScript('varien/form.js')?>
+    <?=$this->helper('core/js')->includeScript('varien/menu.js')?>
+    <?=$this->helper('core/js')->includeScript('mage/translate.js')?>
+    <?=$this->helper('core/js')->includeScript('mage/cookies.js')?>
+    <?=$this->helper('core/js')->getTranslatorScript()?>
+    <script type="text/javascript">
+        var BLANK_URL = '<?=$this->getJsUrl()?>blank.html';
+    </script>
+    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/styles.css')?>" type="text/css" media="all"/>
+    <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('css/iestyles.css')?>" type="text/css" media="all"/> <![endif]-->
+    <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7.css')?>" type="text/css" media="all"/> <![endif]-->
+    <!--[if lt IE 7]>
+        <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7minus.css')?>" type="text/css" media="all"/>
+        <?=$this->helper('core/js')->includeScript('lib/ds-sleight.js')?>
+        <?=$this->helper('core/js')->includeScript('varien/iehover-fix.js')?>
+    <![endif]-->
+
+    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/print.css')?>" type="text/css" media="print" />
+</head>
+
+<body>
+
+<!-- [start] header -->
+    <div class="header">
+        <?=$this->getChildHtml('header')?>
+    </div>
+<!-- [end] header -->
+
+        <!-- [start] middle -->
+       <?=$this->getChildHtml('store')?>
+    <div class="middle-container">
+        <div class="middle col-2-left-layout">
+            <?=$this->getChildHtml('breadcrumbs')?>
+
+
+
+            <!-- [start] left -->
+            <div class="col-left side-col">
+                <?=$this->getChildHtml('left')?>&nbsp;
+            </div>
+            <div id="main" class="col-main">
+            <!-- [start] global messages -->
+                <?=$this->getChildHtml('global_messages')?>
+            <!-- [end] global messages -->
+            <!-- [start] content -->
+                <?=$this->getChildHtml('content')?>
+            <!-- [end] content -->
+            </div>
+        </div>
+            <!-- [end] center -->
+    </div>
+        <!-- [end] middle -->
+
+        <!-- [start] footer -->
+    <div class="footer-container">
+        <div class="footer">
+        <?=$this->getChildHtml('footer')?>
+        </div>
+    </div>
+        <!-- [end] footer -->
+
+<?=$this->getChildHtml('before_body_end')?>
+    </body>
+</html>

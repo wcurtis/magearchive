@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+
+Supported layout update handles (action):
+
+
+Supported layout update handles (special):
+- adminhtml
+- default
+- admin_noroute
+- admin_denied
+- preview
+- systemPreview
+
+-->
+
+<layout>
+
+<!--
+Default layout, loads most of the pages (?)
+-->
+
+    <adminhtml>
+        <block type="core/template" name="root" output="toHtml" template="layout.phtml">
+            <action method="assign"><var>baseUrl</var><value>{{baseUrl}}</value></action>
+        </block>
+    </adminhtml>
+
+<!--
+Default layout, loads most of the pages
+-->
+
+    <default>
+        <block type="adminhtml/page" name="root" output="toHtml">
+            <block type="adminhtml/page_header" name="header" as="header"></block>
+            <block type="page/js_translate" name="js_translate" as="js_translate" template="page/js/translate.phtml"/>
+            <block type="adminhtml/page_menu" name="menu" as="menu"></block>
+            <block type="adminhtml/widget_breadcrumbs" name="breadcrumbs" as="breadcrumbs"></block>
+            <block type="core/text_list" name="left" as="left"/>
+            <block type="core/text_list" name="content" as="content"/>
+            <block type="core/messages" name="messages" as="messages"/>
+            <block type="core/text_list" name="js" as="js"/>
+            <block type="adminhtml/page_footer" name="footer" as="footer"/>
+            <block type="core/profiler" name="profiler" as="profiler"/>
+        </block>
+    </default>
+
+<!--
+Layout for pop up windows
+-->
+    <popup>
+        <block type="adminhtml/page" name="root" output="toHtml" template="popup.phtml">
+            <block type="page/js_translate" name="js_translate" as="js_translate" template="page/js/translate.phtml"/>
+            <block type="core/text_list" name="left" as="left"/>
+            <block type="core/text_list" name="content" as="content"/>
+            <block type="core/messages" name="messages" as="messages"/>
+            <block type="core/text_list" name="js" as="js"/>
+            <block type="adminhtml/page_footer" name="footer" as="footer"/>
+            <block type="core/profiler" name="profiler" as="profiler"/>
+        </block>
+    </popup>
+
+<!--
+No page found
+-->
+
+    <admin_noroute>
+        <reference name="content">
+            <block type="core/text" name="content.noRoute">
+                <action method="setText" translate="text"><text><![CDATA[<h1 class="page-heading">404 Error</h1><p>Page not found.</p>]]></text></action>
+            </block>
+        </reference>
+    </admin_noroute>
+
+<!--
+Access denied
+-->
+
+    <admin_denied>
+        <reference name="content">
+            <block type="core/text" name="content.denied">
+                <action method="setText" translate="text"><text><![CDATA[<h1 class="page-heading">Access denied</h1><p>Access denied.</p>]]></text></action>
+            </block>
+        </reference>
+    </admin_denied>
+
+<!--
+Base preview layout (?)
+-->
+
+    <preview>
+        <block type="core/template" name="root" output="toHtml" template="newsletter/template/preview.phtml">
+            <block type="adminhtml/newsletter_template_preview" name="content" as="content"></block>
+        </block>
+    </preview>
+
+<!--
+Base customer alerts preview layout (?)
+-->
+
+    <alert_preview>
+        <block type="core/template" name="root" output="toHtml" template="alert/template/preview.phtml">
+            <block type="adminhtml/alert_template_preview" name="content" as="content"></block>
+        </block>
+    </alert_preview>
+<!--
+Base preview layout
+-->
+
+    <systemPreview>
+        <block type="core/template" name="root" output="toHtml" template="system/email/template/preview.phtml">
+            <block type="adminhtml/system_email_template_preview" name="content" as="content"></block>
+        </block>
+    </systemPreview>
+
+</layout>

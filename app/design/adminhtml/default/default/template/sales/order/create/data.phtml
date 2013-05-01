@@ -1,0 +1,69 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    default_default
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<p class="switcher">
+<label for="currency_switcher"><?=Mage::helper('sales')->__('Order Currency:')?></label>
+<select id="currency_switcher" name="order[currency]" class="left-col-block" onchange="order.setCurrencyId(this.value)">
+    <?foreach ($this->getAvailableCurrencies() as $_code):?>
+    <option value="<?=$_code?>"<?if($_code==$this->getCurrentCurrencyCode()):?> selected<?endif;?>><?=$this->getCurrencyName($_code)?></option>
+    <?endforeach;?>
+</select>
+</p>
+
+<br/>
+
+<table cellspacing="0" cellpadding="0" width="100%">
+<tr>
+    <?if($this->getCustomerId()):?>
+    <td class="order-sidebar-column">
+        <div id="order:sidebar"><?=$this->getChildHtml('sidebar')?></div>
+    </td>
+    <?endif;?>
+    <td <?if($this->getCustomerId()):?>class="order-main-column"<?endif;?>>
+       <div id="order:search" style="display:none" class="order-search-items"><?=$this->getChildHtml('search')?></div>
+        <div id="order:items"><?=$this->getChildHtml('items')?></div>
+        <div id="order:form_account"><?=$this->getChildHtml('form_account')?></div>
+        <div id="order:addresses">
+            <div id="order:billing_address" class="box-left"><?=$this->getChildHtml('billing_address')?></div>
+            <div id="order:shipping_address" class="box-right"><?=$this->getChildHtml('shipping_address')?></div>
+        </div>
+        <div class="clear"></div>
+        <div id="order:methods">
+            <div id="order:billing_method" class="box-left payments"><?=$this->getChildHtml('billing_method')?></div>
+            <div id="order:shipping_method" class="box-right"><?=$this->getChildHtml('shipping_method')?></div>
+        </div>
+        <div id="order:giftmessage">
+        <?=$this->getChildHtml('giftmessage')?>
+        </div>
+        <div class="clear"></div>
+		<h4><?=Mage::helper('sales')->__('Order Total')?></h4>
+		<div class="entry-edit">
+			<fieldset class="create-order-totals">
+				<div class="box-left">
+					<div id="order:coupons" class="order-coupons"><?=$this->getChildHtml('coupons')?></div>
+					<div id="order:comment"><?=$this->getChildHtml('comment')?></div>
+				</div>
+				<div id="order:totals" class="box-right"><?=$this->getChildHtml('totals')?></div>
+			</fieldset>
+		</div>
+
+    </td>
+</tr>
+</table>

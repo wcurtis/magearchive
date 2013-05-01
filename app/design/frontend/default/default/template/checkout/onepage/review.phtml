@@ -1,0 +1,40 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div id="checkout-review-load" class="default-box">
+    <?=$this->getChildHtml('info')?>
+</div>
+
+<div class="content form-buttons">
+    <p class="left"><?=$this->__('Forgot an Item?')?> <a href="<?=$this->getUrl('checkout/cart', array('_secure'=>false))?>"><?=$this->__('Edit Your Cart')?></a></p>
+    <p>
+        <span id="review-please-wait" style="display:none;" class="opc-please-wait">
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Submitting order information...')?> &nbsp;
+        </span>
+
+        <span id="review-buttons-container" class="a-center">
+            <input type="image" src="<?=$this->getSkinUrl('images/btn_place_order.gif')?>" onclick="review.save();" value="<?=$this->__('Place Order')?>"/>
+        </span>
+    </p>
+</div>
+
+<script type="text/javascript">
+    var review = new Review('<?=$this->getUrl('checkout/onepage/saveOrder')?>', '<?=$this->getUrl('checkout/onepage/success', array('_secure'=>false))?>');
+</script>

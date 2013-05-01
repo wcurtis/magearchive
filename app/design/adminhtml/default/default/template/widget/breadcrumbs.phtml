@@ -1,0 +1,41 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if(!empty($links)):?>
+<ul class="breadcrumbs">
+    <?$_size=count($links);?>
+    <?foreach ($links as $_index=>$_link):?>
+    <li>
+        <?if(empty($_link['url'])):?>
+            <?if($_index!=$_size-1):?>
+                <span><?=$_link['label']?></span>
+            <?else:?>
+                <strong><?=$_link['label']?></strong>
+            <?endif;?>
+        <?else:?>
+            <a href="<?=$_link['url']?>" title="<?=$_link['title']?>"><?=$_link['label']?></a>
+        <?endif;?>
+        <?if($_index!=$_size-1):?>
+            &raquo;
+        <?endif;?>
+    </li>
+    <?endforeach;?>
+</ul>
+<?endif;?>

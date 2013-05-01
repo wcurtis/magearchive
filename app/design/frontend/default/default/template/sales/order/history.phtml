@@ -1,0 +1,56 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_orders = $this->getOrders();?>
+<div class="page-head">
+    <h3><?=$this->__('My Orders')?></h3>
+</div>
+<?=$this->getPagerHtml();?>
+<?if($_orders->getSize()):?>
+<table cellspacing="0" class="data-table" id="my-orders-table">
+    <thead>
+        <tr>
+            <th><?=$this->__('Order #')?></th>
+            <th><?=$this->__('Date')?></th>
+            <th><?=$this->__('Ship to')?></th>
+            <th><?=$this->__('Order Total')?></th>
+            <th><?=$this->__('Order Status')?></th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?$_odd = '';?>
+        <?foreach ($_orders as $_order):?>
+            <tr>
+                <td><?=$_order->getRealOrderId()?></td>
+                <td><?=$this->formatDate($_order->getCreatedAt())?></td>
+                <td><?=$_order->getShippingAddress()->getFirstname()?> <?=$_order->getShippingAddress()->getLastname()?></td>
+                <td><?=$_order->formatPrice($_order->getGrandTotal())?></td>
+                <td><em><?=$_order->getStatusLabel()?></em></td>
+                <td class="a-center"><a href="<?=$this->getViewUrl($_order)?>"><?=$this->__('View Order')?></a><?/*<span class="separator">|</span><a href="<?=$this->getTrackUrl($_order)?>"><?=$this->__('Track Order')?></a>*/?></td>
+            </tr>
+        <?endforeach;?>
+    </tbody>
+</table>
+<script type="text/javascript">decorateTable('my-orders-table')</script>
+<?=$this->getPagerHtml();?>
+<?else:?>
+    <p><?=$this->__('You have placed no orders.');?></p>
+<?endif?>

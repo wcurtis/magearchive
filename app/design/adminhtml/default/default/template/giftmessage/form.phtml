@@ -1,0 +1,51 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<script type="text/javascript" src="<?=$this->getSkinUrl('js/giftmessage.js')?>"></script>
+<?if(!$this->getSaveMode()):?>
+<form action="<?=$this->getSaveUrl()?>" id="message-form" method="post" class="a-left">
+
+    <?=$this->getFormHtml();?>
+    <?=$this->getSaveButtonHtml()?>
+    <?=$this->getCancelButtonHtml()?>
+    <?if($this->getMessage()->getGiftMessageId()):?>
+    <?=$this->getRemoveButtonHtml()?>
+    <?endif;?>
+</form>
+<?elseif($this->getSaveMode()=='save'):?>
+<h3><?=Mage::helper('giftmessage')->__('Your gift message successfully saved')?></h3>
+<br /><?=$this->getCloseButtonHtml()?>
+<?else:?>
+<h3><?=Mage::helper('giftmessage')->__('Your gift message successfully removed')?></h3>
+<br /><?=$this->getCloseButtonHtml()?>
+<?endif;?>
+<script type="text/javascript">
+<!--
+<?if(!$this->getSaveMode()):?>
+    var giftMessageWindowObject = new GiftMessageWindow('<?=$this->getUniqueId()?>','message-form', '<?=$this->getRemoveUrl()?>');
+    giftMessageWindowObject.confirmMessage = '<?=$this->getEscapedForJs(Mage::helper('giftmessage')->__('Are you sure?'))?>';
+<?else:?>
+    var giftMessageWindowObject = new GiftMessageWindow('<?=$this->getUniqueId()?>', null, '<?=$this->getRemoveUrl()?>');
+    Event.observe(window, 'load', function(evt) {
+        giftMessageWindowObject.updateParent('<?=$this->getEditUrl()?>', '<?=$this->getButtonUrl()?>');
+    });
+<?endif;?>
+//-->
+</script>

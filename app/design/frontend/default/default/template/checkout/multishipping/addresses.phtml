@@ -1,0 +1,73 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Ship to multiple address template
+ * 
+ * @see Mage_Checkout_Block_Multishipping_Addresses
+ */
+?>
+<div class="page-head button-level">
+    <h3><?=$this->__('Ship to Multiple Addresses')?></h3>
+    <button class="form-button-alt" type="button" onclick="setLocation('<?=$this->getNewAddressUrl()?>')"><span><?=$this->__('Enter a New Address')?></span></button>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<form action="<?=$this->getPostActionUrl()?>" method="post">
+    <input type="hidden" name="continue" value="0" id="can_continue_flag"/>
+    <table cellspacing="0" id="multiship-addresses-table" class="data-table box-table">
+        <col width="300"/>
+        <col width="30"/>
+        <col/>
+        <col width="30"/>
+        <thead>
+            <tr>
+                <th><?=$this->__('Product')?></th>
+                <th class="a-center"><?=$this->__('Qty')?></th>
+                <th><?=$this->__('Send to')?></th>
+                <th><?=$this->__('Remove')?></th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td colspan="100" class="a-right"><button class="form-button-alt" type="submit" onclick="$('can_continue_flag').value=0"><span><?=$this->__('Update Qty &amp; Addresses')?></span></button></td>
+            </tr>
+        <tbody>
+        <?foreach ($this->getItems() as $_index => $_item):?>
+            <tr>
+                <td class="attributes-col">
+                    <a href="<?=$this->helper('checkout')->getQuoteItemProductUrl($_item)?>">
+                        <strong><?=$this->helper('checkout')->getQuoteItemProductName($_item)?></strong>
+                    </a>
+                    <?=$this->helper('checkout')->getQuoteItemProductDescription($_item)?>
+                </td>
+                <td class="a-center"><input name="ship[<?=$_index?>][<?=$_item->getQuoteItemId()?>][qty]" value="<?=$_item->getQty()?>" size="2" class="input-text qty"/></td>
+                <td><?=$this->getAddressesHtmlSelect($_item, $_index)?></td>
+                <td class="a-center"><a href="<?=$this->getItemDeleteUrl($_item)?>"><img src="<?=$this->getSkinUrl('images/btn_trash.gif')?>" width="16" height="16" alt="<?=$this->__('Remove Item')?>"/></td>
+            </tr>
+        <?endforeach;?>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('multiship-addresses-table')</script>
+<div class="form-buttons">
+    <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Shopping Cart')?></a>
+    <button class="form-button" type="submit" onclick="$('can_continue_flag').value=1"><span><?=$this->__('Continue to Shipping Information')?></span></button>
+</div>
+</form>

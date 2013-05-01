@@ -1,0 +1,36 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_width=$this->getImageWidth()?>
+<p><img <?if($_width):?>width="<?=$_width?>"<?endif;?> src="<?=$this->getImageUrl()?>?<?=time()?>" alt="<?=$this->htmlEscape($this->getProduct()->getName())?>" id="product-gallery-image"/></p>
+
+<?if($_prevUrl = $this->getPreviusImageUrl()):?>
+<a href="<?=$_prevUrl?>" class="product-gallery-nav"><strong>&laquo; <?=$this->__('Prev')?></strong></a>
+<?endif;?>
+<?if($_nextUrl = $this->getNextImageUrl()):?>
+<a href="<?=$_nextUrl?>" class="product-gallery-nav"><strong><?=$this->__('Next')?> &raquo;</strong></a>
+<?endif;?>
+
+<script type="text/javascript">
+Event.observe(window, 'load', function(){
+    var demensions = $('product-gallery-image').getDimensions();
+    window.resizeTo(demensions.width+100, demensions.height+160);
+});
+</script>

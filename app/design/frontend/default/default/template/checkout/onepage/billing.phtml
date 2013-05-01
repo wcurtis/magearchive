@@ -1,0 +1,112 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<form id="co-billing-form">
+<?if ($this->customerHasAddresses()):?>
+    <p><?=$this->__('Select a billing address from your address book or enter a new address.')?></p>
+    <ul><li><p><?=$this->getAddressesHtmlSelect('billing')?></p></li></ul>
+
+<?endif?>
+    <fieldset class="group-select" id="billing-new-address-form" <?if ($this->customerHasAddresses()):?>style="display:none"<?endif?>>
+        <input type="hidden" name="billing[address_id]" value="<?=$this->getAddress()->getId()?>" id="billing:address_id"/>
+        <ul>
+            <li><div class="input-box">
+                <label for="billing:firstname"><?=$this->__('First Name')?> <span class="required">*</span></label><br/>
+                <input type="text" id="billing:firstname" name="billing[firstname]" value="<?=$this->getAddress()->getFirstname()?>" title="<?=$this->__('First Name')?>" class="required-entry input-text"/></div>
+                <div class="input-box">
+                <label for="billing:lastname"><?=$this->__('Last Name')?> <span class="required">*</span></label><br/>
+                <input type="text" id="billing:lastname" name="billing[lastname]" value="<?=$this->getAddress()->getLastname()?>" title="<?=$this->__('Last Name')?>" class="required-entry input-text"/></div></li>
+            <li><div class="input-box">
+                <label for="billing:company"><?=$this->__('Company')?></label><br/>
+                <input type="text" id="billing:company" name="billing[company]" value="<?=$this->getAddress()->getCompany()?>" title="<?=$this->__('Company')?>" class="input-text"/></div>
+    <?if(!$this->isCustomerLoggedIn()):?>
+                <div class="input-box">
+                <label for="billing:email"><?=$this->__('Email Address')?> <span class="required">*</span></label><br/>
+                <input type="text" name="billing[email]" id="billing:email" value="<?=$this->getAddress()->getEmail()?>" title="<?=$this->__('Email Address')?>" class="validate-email required-entry input-text"/></div>
+    <?endif?>
+                </li>
+            <li><label for="billing:address"><?=$this->__('Address')?> <span class="required">*</span></label><br/>
+                <input type="text" title="<?=$this->__('Street Address')?>" name="billing[street][1]" id="billing:street1" value="<?=$this->getAddress()->getStreet(1)?>" class="required-entry input-text"/></li>
+            <li><input type="text" title="<?=$this->__('Street Address 2')?>" name="billing[street][2]" id="billing:street2" value="<?=$this->getAddress()->getStreet(2)?>" class="input-text"/></li>
+            <li><div class="input-box">
+                <label for="billing:city"><?=$this->__('City')?> <span class="required">*</span></label><br/>
+                <input type="text" title="<?=$this->__('City')?>" name="billing[city]" value="<?=$this->getAddress()->getCity()?>" class="required-entry input-text" id="billing:city"/></div>
+                <div class="input-box">
+                <label for="billing:region"><?=$this->__('State/Province')?> <span class="required">*</span></label><br/>
+                <select id="billing:region_id" name="billing[region_id]" title="<?=$this->__('State/Province')?>" class="validate-select" style="display:none" defaultValue="<?=$this->getAddress()->getRegionId()?>">
+                    <option value=""><?=$this->__('Please select region, state or province')?></option>
+                </select>
+                <input type="text" id="billing:region" name="billing[region]" value="<?=$this->getAddress()->getRegion()?>"  title="<?=$this->__('State/Province')?>" class="input-text" style="display:none"/>
+                </div></li>
+            <li><div class="input-box">
+                <label for="billing:postcode"><?=$this->__('Zip/Postal Code')?> <span class="required">*</span></label><br/>
+                <input type="text" title="<?=$this->__('Zip/Postal Code')?>" name="billing[postcode]" id="billing:postcode" value="<?=$this->getAddress()->getPostcode()?>" class="validate-zip-international required-entry input-text"/></div>
+                <div class="input-box">
+                    <label for="billing:country_id"><?=$this->__('Country')?> <span class="required">*</span></label><br/>
+                    <?=$this->getCountryHtmlSelect('billing')?></div></li>
+            <li><div class="input-box">
+                <label for="billing:telephone"><?=$this->__('Telephone')?> <span class="required">*</span></label><br/>
+                <input type="text" name="billing[telephone]" value="<?=$this->getAddress()->getTelephone()?>" title="<?=$this->__('Telephone')?>" class="required-entry input-text" id="billing:telephone"/></div>
+                <div class="input-box">
+                <label for="billing:fax"><?=$this->__('Fax')?></label><br/>
+                <input type="text" name="billing[fax]" value="<?=$this->getAddress()->getFax()?>" title="<?=$this->__('Fax')?>" class="input-text" id="billing:fax"/></div></li>
+            <?if(!$this->isCustomerLoggedIn()):?>
+                <li id="register-customer-password">
+                <div class="input-box">
+                <label for="password"><?=$this->__('Password')?> <span class="required">*</span></label><br/>
+                <input type="password" name="billing[customer_password]" id="billing:customer_password" title="<?=$this->__('Password')?>" class="required-entry validate-password input-text"/></div>
+                <div class="input-box">
+                <label for="confirmation"><?=$this->__('Confirm Password')?> <span class="required">*</span></label><br/>
+                <input type="password" name="billing[confirm_password]" title="<?=$this->__('Confirm Password')?>" id="billing:confirm_password" class="required-entry validate-password input-text"/></div></li>
+            <?endif?>
+        </ul>
+    </fieldset>
+    <!--<p><input type="checkbox" name="billing[use_for_shipping]" id="billing:use_for_shipping" value="1" <?if($this->getUseForShipping()):?>checked<?endif?> onclick="billing.setUseForShipping(this.checked)"/> &nbsp;<label for="billing:use_for_shipping"><?=$this->__('Ship to this address')?></label></p>-->
+    <!--
+		TO DO:
+		- After making sure the new code works, remove the line above and add onclick action to radio buttons below
+		- Add PHP to show current values of radio buttons (old: $this->getUseForShipping()) - CHECK with Moshe / Mischa
+		- Create the JS setPickupOrUseForShipping method in billing
+	-->
+    <p>
+    	<input type="radio" name="billing[pickup_or_use_for_shipping]" id="billing:pickup_or_use_for_shipping_yes" value="1" <? if(($this->getPickupOrUseForShipping() === 1) || ($this->getPickupOrUseForShipping() === false)): ?>checked <? endif ?>onclick="billing.setPickupOrUseForShipping(1);" />&nbsp;<label for="billing:pickup_or_use_for_shipping_yes"><?= $this->__('Ship to this address') ?></label>&nbsp;&nbsp;&nbsp;&nbsp;
+    	<input type="radio" name="billing[pickup_or_use_for_shipping]" id="billing:pickup_or_use_for_shipping_no" value="0" <? if($this->getPickupOrUseForShipping() === 0): ?>checked <? endif ?>onclick="billing.setPickupOrUseForShipping(0);" />&nbsp;<label for="billing:pickup_or_use_for_shipping_no"><?= $this->__('Ship to different address') ?></label>&nbsp;&nbsp;&nbsp;&nbsp;
+    	<? if(Mage::getStoreConfig('carriers/pickup/active')) : ?><input type="radio" name="billing[pickup_or_use_for_shipping]" id="billing:pickup_or_use_for_shipping_pickup" value="2" <? if($this->getPickupOrUseForShipping() === 2): ?>checked <? endif ?>onclick="billing.setPickupOrUseForShipping(2);" />&nbsp;<label for="billing:pickup_or_use_for_shipping_pickup"><?= $this->__('Store Pickup') ?></label><? endif ?>
+    </p>
+</form>
+<div class="form-buttons">
+    <p class="required"><?=$this->__('* Required Fields')?></p>
+    <span id="billing-buttons-container" >
+        <button class="form-button right" onclick="billing.save()"><span><?=$this->__('Continue')?></span></button>
+        <span id="billing-please-wait" style="display:none;" class="opc-please-wait">
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
+        </span>
+    </span>
+</div>
+
+<script type="text/javascript">
+    var billing = new Billing('co-billing-form', '<?=$this->getUrl('checkout/onepage/getAddress')?>address/', '<?=$this->getUrl('checkout/onepage/saveBilling')?>');
+    var billingForm = new VarienForm('co-billing-form');
+
+    //billingForm.setElementsRelation('billing:country_id', 'billing:region', '<?=$this->getUrl('directory/json/childRegion')?>', '<?=$this->__('Select State/Province...')?>');
+    $('billing-address-select') && billing.newAddress(!$('billing-address-select').value);
+
+    var billingRegionUpdater = new RegionUpdater('billing:country_id', 'billing:region', 'billing:region_id', countryRegions);
+</script>

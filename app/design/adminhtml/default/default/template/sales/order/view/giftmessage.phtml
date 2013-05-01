@@ -1,0 +1,48 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if($this->canDisplayGiftmessage()):?>
+<div id="<?=$this->getHtmlId()?>" class="giftmessage-whole-order-container box-left">
+    <div class="entry-edit">
+        <h4><?=Mage::helper('sales')->__('Gift Message for Entire Order')?></h4>
+        <fieldset>
+            <form id="<?=$this->getFieldId('form')?>" action="<?=$this->getSaveUrl()?>">
+            <input type="hidden" id="<?=$this->getFieldId('type')?>" name="<?=$this->getFieldName('type')?>" value="order"/>
+            <span class="field-row">
+                <label><?=Mage::helper('sales')->__('From Name')?></label>
+                <input class="input-text" type="text" id="<?=$this->getFieldId('sender')?>" name="<?=$this->getFieldName('sender')?>" value="<?=$this->htmlEscape($this->getMessage()->getSender())?>"/>
+            </span>
+            <span class="field-row">
+                <label><?=Mage::helper('sales')->__('To Name')?></label>
+                <input class="input-text" type="text" id="<?=$this->getFieldId('recipient')?>" name="<?=$this->getFieldName('recipient')?>"  value="<?=$this->htmlEscape($this->getMessage()->getRecipient())?>"/>
+            </span>
+            <span class="field-row">
+                <label><?=Mage::helper('sales')->__('Gift Message')?></label>
+                <textarea class="input-text" id="<?=$this->getFieldId('message')?>" onchange="giftMessagesController.toogleRequired('<?=$this->getFieldId('message')?>', ['<?=$this->getFieldId('sender')?>','<?=$this->getFieldId('recipient')?>']);" name="<?=$this->getFieldName('message')?>"><?=$this->htmlEscape($this->getMessage()->getMessage())?></textarea>
+            </span>
+            </form>
+            <span class="field-row">
+                <label>&nbsp;</label>
+                <?=$this->getSaveButtonHtml()?>
+            </span>
+        </fieldset>
+    </div>
+</div>
+<?endif?>

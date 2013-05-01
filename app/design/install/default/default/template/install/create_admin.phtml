@@ -1,0 +1,91 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Administrator account installation
+ * 
+ * @see Mage_Install_Block_Admin
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Create Admin Account')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<form action="<?=$this->getPostUrl()?>" method="post" id="form-validate">
+<fieldset class="group-select wide">
+ <legend><?=$this->__('Personal Information')?></legend>
+    <h4 class="legend"><?=$this->__('Personal Information')?></h4>
+    <ul>
+        <li>
+            <div class="input-box">
+                <label for="firstname"><?=$this->__('First Name')?> <span class="required">*</span></label><br/>
+                <input type="text" name="admin[firstname]" id="firstname" value="<?=$this->getFormData()->getFirstname()?>" title="<?=$this->__('First Name')?>" class="required-entry input-text"/>
+            </div>
+            <div class="input-box">
+                <label for="lastname"><?=$this->__('Last Name')?> <span class="required">*</span></label><br/>
+                <input type="text" name="admin[lastname]" id="lastname" value="<?=$this->getFormData()->getLastname()?>" title="<?=$this->__('Last Name')?>" class="required-entry input-text"/>
+            </div>
+        </li>
+        <li>
+            <label for="email_address"><?=$this->__('Email')?> <span class="required">*</span></label><br/>
+            <input type="text" name="admin[email]" id="email_address" value="<?=$this->getFormData()->getEmail()?>" title="<?=$this->__('Email Address')?>" class="validate-email required-entry input-text"/>
+        </li>
+    </ul>
+</fieldset>
+<fieldset class="group-select wide">
+    <legend><?=$this->__('Login Information')?></legend>
+    <h4 class="legend"><?=$this->__('Login Information')?></h4>
+    <ul>
+        <li>
+            <label for="username"><?=$this->__('Username')?> <span class="required">*</span></label><br/>
+            <input type="text" name="admin[username]" id="username" value="<?=$this->getFormData()->getUsername()?>" title="<?=$this->__('Username')?>" class="required-entry input-text"/>
+        </li>
+        <li>
+            <div class="input-box">
+                <label for="password"><?=$this->__('Password')?> <span class="required">*</span></label><br/>
+                <input type="password" name="admin[password]" id="password" title="<?=$this->__('Password')?>"  class="required-entry validate-password input-text"/>
+            </div>
+            <div class="input-box">
+                <label for="confirmation"><?=$this->__('Confirm Password')?> <span class="required">*</span></label><br/>
+                <input type="password" name="admin[confirmation]" title="<?=$this->__('Password Confirmation')?>" id="confirmation" class="required-entry validate-cpassword input-text"/>
+            </div>
+        </li>
+    </ul>
+</fieldset>
+<fieldset class="group-select wide">
+    <legend><?=$this->__('Encryption Key')?></legend>
+    <h4 class="legend"><?=$this->__('Encryption Key')?></h4>
+    <ul>
+        <li>
+            <input type="text" name="encryption_key" id="encryption_key" value="<?=$this->getFormData()->getEncryptionKey()?>" title="<?=$this->__('Encryption Key')?>" class="input-text"/>
+            <p style="margin-top:4px; line-height:1.3em; color:#666;">
+                <small><?=$this->__('Magento uses this key to encrypt passwords, credit cards and more. If this field is left empty the system will create an encription key for you and will display it on the next page.')?></small>
+            </p>
+        </li>
+    </ul>
+</fieldset>
+<div class="form-buttons">
+    <p class="required">* <?=$this->__('Required Fields')?></p>
+    <button class="form-button" type="submit"><span><?=$this->__('Continue')?></span></button>
+</div>
+</form>
+<script type="text/javascript">
+    var dataForm = new VarienForm('form-validate');
+</script>

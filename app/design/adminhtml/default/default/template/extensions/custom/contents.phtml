@@ -1,0 +1,84 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+
+<div class="entry-edit">
+    <?=$this->getFormHtml()?>
+
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__("Contents")?></h4>
+    <fieldset id="contents_fieldset">
+        <legend><?=$this->__("Contents")?></legend>
+        <table class="table-editable" cellspacing="0">
+            <thead class="table-editable">
+                <tr>
+                    <th><?=$this->__("Role")?></th>
+                    <th><?=$this->__("Path")?></th>
+                    <th><?=$this->__("Type")?></th>
+                    <th><?=$this->__("Include")?></th>
+                    <th><?=$this->__("Ignore")?></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <tr id="contents_template" style="display:none">
+<?function showContentsTemplate($self, $_i=0) {?>
+                    <td class="field-row">
+                        <select name="contents[role][]">
+                            <optgroup label="Magento">
+                            <?foreach ($self->getMageRoles() as $_value=>$_label):?>
+                                <option value="<?=$_value?>" <?=$self->getSelected('contents/role/'.$_i, $_value)?>><?=$_label?></option>
+                            <?endforeach?>
+                            </optgroup>
+                            <optgroup label="PEAR">
+                            <?foreach ($self->getPearRoles() as $_value=>$_label):?>
+                                <option value="<?=$_value?>" <?=$self->getSelected('contents/role/'.$_i, $_value)?>><?=$_label?></option>
+                            <?endforeach?>
+                            </optgroup>
+                        </select>
+                     </td><td class="field-row">
+                        <input class="input-text" style="width:150px" name="contents[path][]" value="<?=$self->getValue('contents/path/'.$_i)?>"/>
+                     </td><td class="field-row">
+                        <select name="contents[type][]">
+                            <option value="file" <?=$self->getSelected('contents/type/'.$_i, 'file')?>><?=$self->__("File")?></option>
+                            <option value="dir" <?=$self->getSelected('contents/type/'.$_i, 'dir')?>><?=$self->__("Recursive Dir")?></option>
+                        </select>
+                     </td><td class="field-row">
+                        <input class="input-text" style="width:100px" name="contents[include][]" value="<?=$self->getValue('contents/include/'.$_i)?>"/>
+                     </td><td class="field-row">
+                        <input class="input-text" style="width:100px"  name="contents[ignore][]" value="<?=$self->getValue('contents/ignore/'.$_i)?>"/>
+                     </td><td class="field-row">
+                        <?=$self->getRemoveRowButtonHtml('tr')?>
+                     </td>
+<?}?>
+<?showContentsTemplate($this)?>
+                </tr>
+            </thead>
+            <tbody id="contents_container">
+            <?if ($this->getData('contents/role')):?>
+                <?foreach ($this->getData('contents/role') as $_i=>$_dbField):?>
+                    <?if (0===$_i) continue;?>
+                <tr>
+<?showContentsTemplate($this, $_i)?>
+                </tr>
+                <?endforeach?>
+            <?endif?>
+            </tbody>
+        </table>
+        <?=$this->getAddRowButtonHtml('contents_container', 'contents_template', 'Add Contents Path')?>
+    </fieldset>
+</div>

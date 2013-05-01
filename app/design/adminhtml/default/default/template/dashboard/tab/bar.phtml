@@ -1,0 +1,55 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+
+<?
+// here goes flag - if data exist
+$_dataFlag = TRUE;
+?>
+
+<div class="graph-block" <?if($_dataFlag == FALSE):?>style="min-height:150px;height:150px;"<?endif;?>>
+	<div class="db-menu">
+		<ul style="">
+			<?$_index=0;?>
+			<?foreach ($this->getTabs() as $_tab):?>
+			<?$_index++?>
+			<li <?if($_index==$this->getCountTabs()):?> class="last"<?endif?>><a id="<?=$this->getHtmlId().$_index?>Tab" href="javascript:void(0);" onclick="showTab('<?=$_index?>', '<?=$this->getHtmlId()?>', <?=$this->getCountTabs()?>);"><?=$_tab->getTitle()?></a></li>
+			<?endforeach;?>
+		</ul>
+	</div><div class="clear"></div>
+	<?$_index=0;?>
+	<?foreach ($this->getTabs() as $_tab):?>
+	<?$_index++?>
+	<div class="<?=$this->getTabClassName($_tab)?>-cont" id="<?=$this->getHtmlId()?>-<?=$_index?>-tab" <?if($_index!=$this->getCountTabs()):?> style="display:none;"<?endif?>>
+  	
+	<?if($_dataFlag):?>
+	   <?=$_tab->toHtml()?>
+	<?else:?>
+		<div class="graph-no-data">There is no data available for this period.</div>
+	<?endif;?>
+
+	</div>
+	<?endforeach;?>
+	<script type="text/javascript">
+	<!--
+	showTab(1, '<?=$this->getHtmlId()?>',  <?=$this->getCountTabs()?>);
+	//-->
+	</script>
+</div>

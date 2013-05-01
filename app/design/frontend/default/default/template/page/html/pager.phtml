@@ -1,0 +1,75 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Pager template
+ *
+ * @see Mage_Page_Block_Html_Pager
+ */
+?>
+<?if($this->getCollection()->getSize()):?>
+<table class="pager" cellspacing="0">
+    <tr>
+        <td>
+        <?if($this->getLastPageNum()>1):?>
+            <?=$this->__('Items %s to %s of %s total', $this->getFirstNum(), $this->getLastNum(), $this->getTotalNum())?>
+        <?else:?>
+            <strong><?=$this->__('%s Item(s)', $this->getTotalNum())?></strong>
+        <?endif;?>
+        </td>
+        <?if($this->getLastPageNum()>1):?>
+        <td>
+            <strong><?=$this->__('Page:')?></strong>
+            <ol>
+            <?if (!$this->isFirstPage()):?>
+                <li>
+                    <a href="<?=$this->getPreviousPageUrl()?>"><img src="<?=$this->getSkinUrl('images/pager_arrow_left.gif')?>" alt="<?=$this->__('Previous Page')?>"/></a>
+                </li>
+            <?endif?>
+            <?foreach ($this->getPages() as $_page):?>
+                <?if ($this->isPageCurrent($_page)):?>
+                    <li><span class="on"><?=$_page?></span></li>
+                <?else:?>
+                    <li><a href="<?=$this->getPageUrl($_page)?>"><?=$_page?></a></li>
+                <?endif?>
+            <?endforeach;;?>
+            <?if (!$this->isLastPage()):?>
+                <li>
+                    <a href="<?=$this->getNextPageUrl()?>"><img src="<?=$this->getSkinUrl('images/pager_arrow_right.gif')?>" alt="<?=$this->__('Next Page')?>"/></a>
+                </li>
+            <?endif?>
+            </ol>
+        </td>
+        <?endif;?>
+        <?if($this->getShowPerPage()):?>
+        <td class="a-right">
+            <?=$this->__('Show')?> <select onchange="setLocation(this.value)">
+            <?foreach ($this->getAvailableLimit() as  $_key=>$_limit):?>
+                <option value="<?=$this->getLimitUrl($_key)?>"<?if($this->isLimitCurrent($_key)):?> selected<?endif?>>
+                    <?=$_limit?>
+                </option>
+            <?endforeach;?>
+            </select> <?=$this->__('per page')?>
+        </td>
+        <?endif?>
+    </tr>
+</table>
+<?endif?>

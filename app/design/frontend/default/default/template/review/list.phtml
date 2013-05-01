@@ -1,0 +1,56 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if(!empty($collection) && $collection->getSize()):?>
+    <div class="head">
+        <h4><?=$this->__('Customer Reviews')?></h4>
+        <?if($reviewCount):?>
+            <?if( $this->getUseBackLink() ):?>
+            <small>&laquo; <a href="<?=$backLink?>"><?=$this->__('Back')?></a></small>
+            <?else:?>
+            <a href="<?=$reviewLink?>"><small><?=$this->__('View All Reviews')?></small></a><?endif;?><?endif;?><span class="pipe">|</span><a href="<?=$this->getAddLink()?>#review-form"><small><?=$this->__('Add Your Review')?></small></a>
+    </div>
+    <?if( $this->getUseBackLink() ):?>
+    <?=$this->getToolbarHtml()?>
+    <?endif;?>
+    <ol id="customer-reviews">
+    <?foreach ($this->getCollection() as $_review):?>
+        <li>
+        <?if( is_array($_review->getRatingVotes()->getItems()) && $this->getAverage($_review->getRatingVotes()) ):?>
+
+            <div class="rating-box">
+                <div class="rating" style="width:<?=$this->getAverage($_review->getRatingVotes())?>%;"></div>
+            </div>
+
+        <?endif;?>
+            <a href="<?=$_review->getReviewUrl()?>" name="<?=$_review->getTitle()?>"><strong><?=$_review->getTitle()?></strong></a> <?=$this->__('Review by %s', $_review->getNickname())?>
+            <p class="no-padding"><?=nl2br($_review->getDetail())?></p>
+        </li>
+    <?endforeach;?>
+    </ol>
+    <?if( $this->getUseBackLink() ):?>
+    <?=$this->getToolbarHtml()?>
+    <?endif;?>
+<?else:?>
+    <div class="head">
+        <h4><?=$this->__('Customer Reviews')?></h4>
+    </div>
+    <p><a href="<?=$reviewLink?>#review-form"><?=$this->__('Be the first to review this product')?></a></p>
+<?endif;?>

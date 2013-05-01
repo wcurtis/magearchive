@@ -1,0 +1,71 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_code=$this->getMethodCode()?>
+<ul id="payment_form_<?=$_code?>" style="display:none">
+    <li>
+        <div class="input-box">
+            <label for="<?=$_code?>_cc_owner"><?=Mage::helper('payment')->__('Name on Card')?> <span class="required">*</span></label><br/>
+            <input type="text" title="<?=Mage::helper('payment')->__('Name on Card')?>" class="required-entry input-text" id="<?=$_code?>_cc_owner" name="payment[cc_owner]" value="<?=$this->getInfoData('cc_owner')?>"/>
+        </div>
+    </li>
+    <li>
+        <div class="input-box">
+            <label for="<?=$_code?>_cc_type"><?=Mage::helper('payment')->__('Credit Card Type')?> <span class="required">*</span></label><br/>
+            <select id="<?=$_code?>_cc_type" name="payment[cc_type]" class="required-entry validate-cc-type-select">
+            <?$_ccType = $this->getInfoData('cc_type')?>
+            <?foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName):?>
+                <option value="<?=$_typeCode?>" <?if($_typeCode==$_ccType):?>selected<?endif?>><?=$_typeName?></option>
+            <?endforeach?>
+            </select>
+        </div>
+    </li>
+    <li>
+        <div class="input-box">
+            <label for="<?=$_code?>_cc_number"><?=Mage::helper('payment')->__('Credit Card Number')?> <span class="required">*</span></label><br/>
+            <input type="text" id="<?=$_code?>_cc_number" name="payment[cc_number]" title="<?=Mage::helper('payment')->__('Credit Card Number')?>" class="input-text validate-cc-number" value=""/>
+        </div>
+    </li>
+    <li>
+        <div class="input-box">
+            <label for="<?=$_code?>_expiration"><?=Mage::helper('payment')->__('Expiration Date')?> <span class="required">*</span></label><br/>
+            <select id="<?=$_code?>_expiration" style="width:140px;" name="payment[cc_exp_month]" class="required-entry">
+            <?$_ccExpMonth = $this->getInfoData('cc_exp_month')?>
+            <?foreach ($this->getCcMonths() as $k=>$v):?>
+                <option value="<?=$k?>" <?if($k==$_ccExpMonth):?>selected<?endif?>><?=$v?></option>
+            <?endforeach?>
+            </select>
+            <?$_ccExpYear = $this->getInfoData('cc_exp_year')?>
+            <select id="<?=$_code?>_expiration_yr" style="width:103px;" name="payment[cc_exp_year]" class="required-entry">
+            <?foreach ($this->getCcYears() as $k=>$v):?>
+                <option value="<?=$k ? $k : ''?>" <?if($k==$_ccExpYear):?>selected<?endif?>><?=$v?></option>
+            <?endforeach?>
+            </select>
+        </div>
+    </li>
+    <?if($this->hasVerification()):?>
+    <li>
+        <div class="input-box">
+            <label for="<?=$_code?>_cc_cid"><?=Mage::helper('payment')->__('Card Verification Number')?> <span class="required">*</span></label><br/>
+            <input type="text" title="<?=Mage::helper('payment')->__('Card Verification Number')?>" class="required-entry input-text" id="<?=$_code?>_cc_cid" name="payment[cc_cid]" style="width:3em;" value=""/>
+        </div>
+    </li>
+    <?endif;?>
+</ul>

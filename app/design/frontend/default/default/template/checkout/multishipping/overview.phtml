@@ -1,0 +1,131 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Review Order')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<div class="multi-address-checkout-box">
+<form action="<?=$this->getPostActionUrl()?>" method="post">
+    <div class="box">
+        <h4 class="legend"><?=$this->__('Billing Information')?></h4>
+        <div class="clear"></div>
+        <div class="content col2-set">
+            <div class="col-1">
+                <?$_address=$this->getBillingAddress()?>
+                <div class="head">
+                    <h4><?=$this->__('Billing Address')?><span class="separator">|</span><a href="<?=$this->getEditBillingAddressUrl($_address)?>"><?=$this->__('Change Billing Address')?></a></h4>
+                </div>
+                <address>
+                    <?=$_address->getFormated(true)?>
+                </address>
+            </div>
+            <div class="col-2">
+                <div class="head">
+                    <h4><?=$this->__('Payment Method')?><span class="separator">|</span><a href="<?=$this->getEditBillingUrl()?>"><?=$this->__('Change Payment Method')?></a></h4>
+                </div>
+                <?=$this->getPaymentHtml()?>
+            </div>
+        </div>
+     </div>
+
+    <div class="box">
+        <h4 class="legend"><?=$this->__('Shipping Information')?></h4>
+        <div class="clear"></div>
+<?foreach ($this->getShippingAddresses() as $_index => $_address):?>
+    <div class="content col2-alt-set"><h4><?=$this->__('Address %s of %s', ($_index+1), $this->getShippingAddressCount())?></h4>
+        <div class="col-1">
+            <div class="head">
+                <h4><?=$this->__('Shipping to')?><span class="separator">|</span><a href="<?=$this->getEditShippingAddressUrl($_address)?>"><?=$this->__('Change Shipping Address')?></a></h4>
+            </div>
+            <address>
+                <?=$_address->getFormated(true)?>
+            </address>
+            <br/>
+            <div class="head">
+                <h4><?=$this->__('Shipping Method')?><span class="separator">|</span><a href="<?=$this->getEditShippingUrl()?>"><?=$this->__('Change Shipping Method')?></a></h4>
+            </div>
+            <?if($_rate=$this->getShippingAddressRate($_address)):?>
+            <p><?=$_rate->getCarrierTitle()?> (<?=$_rate->getMethodDescription()?>) - <?=$_rate->getPrice()?></p>
+            <?endif;?>
+        </div>
+        <div class="col-2">
+            <div class="head">
+                <h4><?=$this->__('Items')?><span class="separator">|</span><a href="<?=$this->getAddressesEditUrl()?>"><?=$this->__('Edit Items')?></a></h4>
+            </div>
+            <table cellspacing="0" id="overview-table-<?=$_address->getId()?>" class="data-table nested-data-table">
+                <col/>
+                <col width="70"/>
+                <col width="30"/>
+                <col width="70"/>
+                <thead>
+                    <tr>
+                        <th><?=$this->__('Product Name')?></th>
+
+                        <th class="a-right"><?=$this->__('Price')?></th>
+                        <th class="a-center"><?=$this->__('Qty')?></th>
+                        <th class="a-right"><?=$this->__('Subtotal')?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?foreach ($this->getShippingAddressItems($_address) as $_item):?>
+                    <tr>
+                        <td>
+                            <?=$this->helper('checkout')->getQuoteItemProductName($_item)?>
+                            <?=$this->helper('checkout')->getQuoteItemProductDescription($_item)?>
+                        </td>
+
+                        <td class="a-right"><?=$this->helper('checkout')->formatPrice($_item->getCalculationPrice())?></td>
+                        <td class="a-center"><?=$_item->getQty()*1?></td>
+                        <td class="a-right"><?=$this->helper('checkout')->formatPrice($_item->getRowTotal())?></td>
+                    </tr>
+                <?endforeach;?>
+                </tbody>
+                <tfoot>
+                <?foreach ($this->getShippingAddressTotals($_address) as $_total):?>
+                    <tr>
+                        <td colspan="3" class="a-right"><?=$_total->getTitle()?></td>
+                        <td class="a-right"><?=$this->helper('checkout')->formatPrice($_total->getValue())?></td>
+                    </tr>
+                <?endforeach;?>
+                </tfoot>
+            </table>
+            <script type="text/javascript">decorateTable('overview-table-<?=$_address->getId()?>')</script>
+        </div>
+    </div>
+    <?if($this->getShippingAddressCount()!=$_index+1):?>
+    <div class="divider"></div>
+    <?endif;?>
+<?endforeach;?>
+</div>
+</div>
+<table class="place-order-box" cellspacing="0">
+    <tr>
+        <td class="left-radius">&nbsp;</td>
+        <td class="main-radius"><big class="grand-total"><span class="label"><?=$this->__('Grand Total:')?></span> <span class="price"><?=$this->helper('checkout')->formatPrice($this->getTotal())?></span></big>
+            <input type="image" src="<?=$this->getSkinUrl('images/btn_place_order.gif')?>" value="<?=$this->__('Place Order')?>"/></td>
+    </tr>
+</table>
+<div class="clear"></div>
+<div class="form-buttons">
+    <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Billing Information')?></a>
+</div>
+</form>
+</div>

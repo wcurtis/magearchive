@@ -1,0 +1,45 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if($this->getItemCollection()->getSize()):?>
+<div class="collateral-box up-sell">
+    <div class="head"><h4><?=$this->__('You may also be interested in the following product(s)')?></h4></div>
+    <table cellspacing="0" class="generic-product-grid catalog-listing" id="upsell-product-table">
+    <?$this->resetItemsIterator()?>
+    <?for($_i=0;$_i<$this->getRowCount();$_i++):?>
+        <tr>
+        <?for($_j=0;$_j<$this->getColumnCount();$_j++):?>
+            <?if($_link=$this->getIterableItem()):?>
+            <td>
+                <p class="product-image"><a href="<?=$_link->getProductUrl()?>"><img src="<?=$_link->getSmallImageUrl()?>" width="125" height="125" alt="<?=$_link->getName()?>"/></a></p>
+                <h5><a href="<?=$_link->getProductUrl()?>"><?=$_link->getName()?></a></h5>
+                <?=$this->helper('catalog/product')->getPriceHtml($_link)?>
+                <?=$this->helper('review/product')->getSummaryHtml($_link)?>
+            </td>
+            <?else:?>
+            <td class="empty-product">&nbsp;</td>
+            <?endif;?>
+        <?endfor;?>
+        </tr>
+    <?endfor;?>
+    </table>
+    <script type="text/javascript">decorateTable('upsell-product-table')</script>
+</div>
+<?endif?><!--  -->

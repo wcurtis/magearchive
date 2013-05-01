@@ -1,0 +1,280 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?=$this->getAddButtonHtml()?>
+<div>&nbsp;</div>
+<span id="<?=$this->getElement()->getHtmlId()?>_container"></span>
+<span id="<?=$this->getElement()->getHtmlId()?>_delete_button" style="display:none"></span>
+<div id="<?=$this->getElement()->getHtmlId()?>_add_template" style="display:none">
+<div class="tier-price-input" id="<?=$this->getElement()->getHtmlId()?>_row___index__">
+    <div class="tier-container">
+        <div class="qty-div">
+            <strong><?=('Qty')?></strong>&nbsp;
+            <span>
+              <input id="'<?=$this->getElement()->getHtmlId()?>_row___index__price_qty'" disabled="no-template" class="<?=$this->getElement()->getClass()?> qty required-entry validate-number validate-greater-than-zero" type="text" name="'<?=$this->getElement()->getName()?>[__index__][price_qty]'" value="'#{qty}'"><strong><?=Mage::helper('catalog')->__(' and above.')?></strong>
+            </span>
+        </div>
+        <div class="price-div">
+            <strong><?=('Price')?></strong>&nbsp;
+            <span>
+              <input id="'<?=$this->getElement()->getHtmlId()?>_row___index__price'" disabled="no-template" class="<?=$this->getElement()->getClass()?> price required-entry validate-number validate-greater-than-zero" type="text" name="'<?=$this->getElement()->getName()?>[__index__][price]'" value="'#{price}'">
+            </span>
+            <input id="'<?=$this->getElement()->getHtmlId()?>_row___index__delete'" type="hidden" name="'<?=$this->getElement()->getName()?>[__index__][delete]'" value="">
+            <?=$this->getDeleteButtonHtml()?>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+<!--
+    var tierPriceControl = {
+        template : new Template($('<?=$this->getElement()->getHtmlId()?>_add_template').innerHTML.replace(/__index__/g, '#{index}').replace(/ disabled="?no-template"?/g, '').replace(/ disabled/g, '').replace(/="'([^']*)'"/g, '="$1"')),
+        itemsCount : 0,
+        deleteButton: false,
+        addItem  : function () {
+            var data = {};
+            data.qty = '';
+            data.price = '';
+            data.index = this.itemsCount++;
+            if(arguments.length == 2) {
+                data.price = arguments[1];
+                data.qty   = arguments[0];
+            }
+
+            new Insertion.Bottom(
+                $('<?=$this->getElement()->getHtmlId()?>_container'),
+                this.template.evaluate(data)
+            );
+        },
+        deleteItem : function(item) {
+            $('<?=$this->getElement()->getHtmlId()?>_row_' + item).hide();
+            $('<?=$this->getElement()->getHtmlId()?>_row_' + item).addClassName('no-display template');
+            if($('<?=$this->getElement()->getHtmlId()?>_row_'+item+'delete')){
+                $('<?=$this->getElement()->getHtmlId()?>_row_'+item+'delete').value=1;
+            }
+        }
+    }
+    <?foreach ($this->getValues() as $_item):?>
+    tierPriceControl.addItem('<?=$_item['price_qty']?>','<?=$_item['price']?>');
+    <?endforeach;?>
+//-->
+</script>
+<?/*
+<?=$this->getAddGroupButtonHtml()?>
+<div>&nbsp;</div>
+
+<span id="<?=$this->getElement()->getHtmlId()?>_delete_button" style="display:none"></span>
+<div id="<?=$this->getElement()->getHtmlId()?>_add_template" style="display:none">
+    <div class="tier-price-input" id="<?=$this->getElement()->getHtmlId()?>_row___index__">
+        <div class="tier-container">
+            <div class="qty-div">
+                <label for="<?=$this->getElement()->getHtmlId()?>_row___index__price_qty"><strong><?=('Qty')?></strong></label>&nbsp;
+        		<span>
+        		  <input id="'<?=$this->getElement()->getHtmlId()?>_row___index__price_qty'" disabled="no-template" class="<?=$this->getElement()->getClass()?> qty required-entry validate-number validate-greater-than-zero tier-element" type="text" name="'<?=$this->getElement()->getName()?>[__group_index__][__index__][price_qty]'" value="'#{qty}'"><strong><?=Mage::helper('catalog')->__(' and above.')?></strong>
+        		</span>
+            </div>
+
+            <div class="price-div">
+            	<label for="<?=$this->getElement()->getHtmlId()?>_row___index__value"><strong><?=('Value')?></strong></label>&nbsp;
+        		<span>
+        		  <input id="'<?=$this->getElement()->getHtmlId()?>_row___index__value'" disabled="no-template" class="<?=$this->getElement()->getClass()?> price required-entry validate-number validate-greater-than-zero tier-element" type="text" name="'<?=$this->getElement()->getName()?>[__group_index__][__index__][value]'" value="'#{value}'">
+        		</span>
+            </div>
+
+            <div class="price-div">
+            	<label for="<?=$this->getElement()->getHtmlId()?>_row___index__type"><strong><?=('Type')?></strong></label>&nbsp;
+        		<span>
+        		  <select name="'<?=$this->getElement()->getName()?>[__group_index__][__index__][type]'" id="'<?=$this->getElement()->getHtmlId()?>_row___index__type'" disabled="no-template" style="width:100px;" class="tier-element">
+                    <option value="fixed"><?=Mage::helper('catalog')->__('Fixed Price')?></option>
+                    <option value="percent"><?=Mage::helper('catalog')->__('Percent')?></option>
+        		  </select>
+        		</span>
+            </div>
+        	<?=$this->getDeleteButtonHtml()?>
+        </div>
+    </div>
+</div>
+
+<span id="<?=$this->getElement()->getHtmlId()?>_group_container"></span>
+
+<div id="<?=$this->getElement()->getHtmlId()?>_group_template">
+    <fieldset id="<?=$this->getElement()->getHtmlId()?>_group_fieldset" style="display:none;position:relative;">
+        <label style="width:100px;" for="customer_groups___group_index__"><strong><?=Mage::helper('catalog')->__('Customer Group')?></strong></label><?=$this->getCustomerGroupsHtml()?>
+        <div style="position:absolute;float:right;top:0;right:25px;"><?=$this->getDeleteGroupButtonHtml()?></div>
+        <div>&nbsp;</div>
+        <span id="<?=$this->getElement()->getHtmlId()?>_container"></span>
+        <?=$this->getAddButtonHtml()?>
+    </fieldset>
+</div>
+
+<script type="text/javascript">
+<!--
+	var tierPriceControl = {
+		template : new Template($('<?=$this->getElement()->getHtmlId()?>_add_template').innerHTML
+		                             .replace(/__index__/g, '#{index}')
+		                             .replace(/__group_index__/g, '#{group_index}')
+		                             .replace(/ disabled="?no-template"?/g, '')
+		                             .replace(/ disabled/g, '')
+		                             .replace(/="'([^']*)'"/g, '="$1"')
+        ),
+
+		groupTemplate : new Template($('<?=$this->getElement()->getHtmlId()?>_group_template').innerHTML
+		                             .replace(/__group_index__/g, '#{group_index}')
+		                             .replace(/<?=$this->getElement()->getHtmlId()?>_container/g, "<?=$this->getElement()->getHtmlId()?>_container__#{group_index}")
+		                             .replace(/<?=$this->getElement()->getHtmlId()?>_group_fieldset/g, "<?=$this->getElement()->getHtmlId()?>_group_fieldset__#{group_index}")
+		                             .replace(/ disabled="?no-template"?/g, '').replace(/ disabled/g, '')
+		                             .replace(/="'([^']*)'"/g, '="$1"').replace(/display: none/gi, '')
+        ),
+
+		itemsCount : 0,
+		groupsCount : 0,
+		deleteButton: false,
+
+		addItem	 : function (item) {
+		    if( this.groupIsSelected(item) == false ) {
+		        alert("<?=Mage::helper('catalog')->__("You can't do this.\\nPlease, select some groups first")?>");
+		        return false;
+		    }
+
+			var data = {};
+			data.qty         = '';
+			data.price       = '';
+			data.index       = this.itemsCount++;
+			data.group_index = item;
+
+			if(arguments.length == 2) {
+				data.price  = arguments[1];
+				data.qty    = arguments[0];
+			}
+
+			new Insertion.Bottom(
+				$('<?=$this->getElement()->getHtmlId()?>_container__'+item),
+				this.template.evaluate(data)
+			);
+		},
+
+		addGroup : function() {
+		    this.validateGroups();
+		    data = {group_index : this.groupsCount++};
+			new Insertion.Bottom(
+				$('<?=$this->getElement()->getHtmlId()?>_group_container'),
+				this.groupTemplate.evaluate(data)
+			);
+		},
+
+		delGroup : function(index) {
+		    if( !this.confirm() ) {
+                return;
+		    }
+            $('<?=$this->getElement()->getHtmlId()?>_group_fieldset__'+index).remove();
+		},
+
+		deleteItem : function(item) {
+		    if( !this.confirm() ) {
+                return;
+		    }
+			$('<?=$this->getElement()->getHtmlId()?>_row_' + item).remove();
+		},
+
+		confirm : function() {
+		    return confirm("<?=Mage::helper('catalog')->__('Are you sure you want to do this?')?>");
+		},
+
+		validateGroups : function(obj) {
+		    if( !obj ) {
+		        return;
+		    }
+
+            var list = $$('select.select');
+            var errors = 0;
+            for( var select = 0; select < list.length; select ++ ) {
+                if( list[select].id && list[select].id.match('^customer_groups_([0-9]*?)$') && list[select] != obj ) {
+                    options = list[select].options;
+                    for( var option = 0; option < options.length; option++ ) {
+                        if( options[option].selected == true ) {
+                            for( var o = 0; o < obj.options.length; o++ ) {
+                                if( obj.options[o].selected == true && obj.options[o].value == options[option].value ) {
+                                    errors++;
+                                    obj.options[o].selected = false;
+                                }
+                            }
+                        }
+                    }
+
+                    if( errors > 0 ) {
+                        alert("<?=Mage::helper('catalog')->__("You can't do this.\\nSome of selected groups are already in use.")?>");
+                    }
+                }
+            }
+
+            if( this.groupIsSelected(obj) == false ) {
+                this.disablePrices(obj);
+            } else {
+                this.enablePrices(obj);
+            }
+
+		},
+
+		groupIsSelected : function(item) {
+		    if( !item.id ) {
+		        var o = $('customer_groups_'+item);
+		        var obj = ( o ) ? o : $(item);
+		    } else {
+		        var obj = item;
+		    }
+
+		    if( obj ) {
+                var options = obj.options;
+                var cnt = 0;
+                for( var option = 0; option < options.length; option++ ) {
+                    if( options[option].selected == true ) {
+                        cnt++;
+                    }
+                }
+
+                return ( cnt > 0 ) ? true : false;
+		    } else {
+		        return false;
+		    }
+		},
+
+		disablePrices : function(obj) {
+            var fieldsetId = obj.id.replace(/^customer_groups_([0-9]*?)$/g, 'tier_price_group_fieldset__$1');
+            var elements = $$('#'+fieldsetId+' .tier-element');
+            if( elements.length > 0 ) {
+                for( element in elements ) {
+                    elements[element].disabled = true;
+                }
+            }
+		},
+
+		enablePrices : function(obj) {
+            var fieldsetId = obj.id.replace(/^customer_groups_([0-9]*?)$/g, 'tier_price_group_fieldset__$1');
+            var elements = $$('#'+fieldsetId+' .tier-element');
+            if( elements.length > 0 ) {
+                for( element in elements ) {
+                    elements[element].disabled = false;
+                }
+            }
+		}
+	}
+-->
+</script>
+*/?>

@@ -1,0 +1,54 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('My Product Reviews')?></h3>
+</div>
+<?if( $this->getCollection() && $this->count()):?>
+    <?=$this->getToolbarHtml()?>
+        <table class="data-table box-table" id="my-reviews-table" cellspacing="0">
+            <col width="60"/>
+            <col width="200"/>
+            <col width="80"/>
+            <col/>
+            <col width="100"/>
+            <tbody>
+                <?foreach ($this->getCollection() as $_review):?>
+                <tr>
+                    <td><?=$this->dateFormat($_review->getCreatedAt())?></td>
+                    <td><a href="<?=$this->getProductLink()?>id/<?=$_review->getEntityPkValue()?>"><?=$_review->getName()?></a></td>
+                    <td>
+                    <?if($_review->getSum()):?>
+                        <div class="rating-box">
+                            <div class="rating" style="width:<?=( $_review->getSum() / $_review->getCount() )?>%;"></div>
+                        </div>
+                    <?endif;?>
+                    </td>
+                    <td><?=$this->helper('review')->getDetail($_review->getDetail())?></td>
+                    <td class="last a-center"><a href="<?=$this->getReviewLink()?>id/<?=$_review->getReviewId()?>"><?=$this->__('View Details')?></a></td>
+                </tr>
+                <?endforeach;?>
+            </tbody>
+        </table>
+<script type="text/javascript">decorateTable('my-reviews-table')</script>
+    <?=$this->getToolbarHtml()?>
+<?else:?>
+    <p><?=$this->__('You have submitted no reviews.')?></p>
+<?endif;?>

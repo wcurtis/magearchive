@@ -1,0 +1,96 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="entry-edit">
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('catalog')->__('Product In Stores')?></h4>
+    <fieldset id="grop_fields">
+    <?if($this->getProductId()):?>
+<ul class="messages">
+    <li class="notice-msg">
+        <ul>
+            <li><?=Mage::helper('catalog')->__("Items that you don't want to show in the catalog or search results should have status 'Disabled' in the desired store.")?></li>
+        </ul>
+    </li>
+</ul>
+    <?endif;?>
+    <?if($this->getStoreId()):?>
+        <span class="field-row">
+            <input name="stores[<?=$this->getStoreId()?>]" type="checkbox" value="<?=$this->getStoreId()?>" id="store_<?=$this->getStoreId()?>" checked/>
+            <label for="store_<?=$this->getStoreId()?>" class="normal"><?=$this->getStoreName($this->getStoreId())?></label>
+        </span>
+    <?else:?>
+        <?foreach ($this->getWebsiteCollection() as $_website):?>
+            <h3><?=$_website->getName()?></h3>
+            <?$_storesCollection=$_website->getStoreCollection()->load()?>
+            <?foreach ($_storesCollection as $_store):?>
+                <?if($this->isProductInStore($_store->getId())):?>
+                <span class="field-row">
+                    <input name="stores[<?=$_store->getId()?>]" type="checkbox" value="<?=$_store->getId()?>" id="store_<?=$_store->getId()?>" checked="true"/>
+                    <label for="store_<?=$_store->getId()?>" class="normal"><?=$_store->getName()?></label>
+                </span>
+                <?else:?>
+                <span class="field-row">
+                    <input name="stores[<?=$_store->getId()?>]" type="checkbox" value="0" id="store_<?=$_store->getId()?>" class="new-store"/>
+                    <label for="store_<?=$_store->getId()?>" class="normal"><?=$_store->getName()?></label>
+                    <span id="store_<?=$_store->getId()?>_from" style="display:none">
+                        <?=Mage::helper('catalog')->__('(Copy data from: %s)', $this->getChooseFromStoreHtml())?>
+                    </span>
+                </span>
+                <?endif;?>
+            <?endforeach;?>
+        <?endforeach;?>
+    <?endif;?>
+    </fieldset>
+</div>
+<script type="text/javascript">
+    var newStoreCheckboxes = $$('.new-store');
+
+    for(var i=0;i<newStoreCheckboxes.length;i++){
+        Event.observe(newStoreCheckboxes[i], 'change', toggleStoreFromChooser);
+        if($(newStoreCheckboxes[i].id+'_from')){
+            var selects = $(newStoreCheckboxes[i].id+'_from').getElementsBySelector('select');
+            if(selects[0]){
+                selects[0].checkboxElement = newStoreCheckboxes[i];
+                Event.observe(selects[0], 'change', chooseStoreFrom);
+            }
+        }
+    }
+
+    function toggleStoreFromChooser(event){
+        var element = Event.element(event);
+        if(!$(element.id+'_from')){
+            return;
+        }
+
+        if(element.checked) {
+            $(element.id+'_from').show();
+        }
+        else {
+            $(element.id+'_from').hide();
+        }
+    }
+
+    function chooseStoreFrom(event){
+        var element = Event.element(event);
+        if(element && element.checkboxElement){
+            element.checkboxElement.value = element.value;
+        }
+    }
+</script>

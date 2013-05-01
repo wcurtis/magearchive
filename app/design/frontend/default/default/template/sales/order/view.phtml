@@ -1,0 +1,237 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $this->getOrder())):?>
+<script type="text/javascript">
+function giftMessageToogle(giftMessageIdentifier)
+{
+    var link = $('order-item-gift-message-link-'+giftMessageIdentifier);
+    var container = $('order-item-gift-message-'+giftMessageIdentifier);
+    var row = $('order-item-row-'+giftMessageIdentifier);
+
+
+    if(link.expanded) {
+        link.expanded = false;
+        link.removeClassName('collapse');
+        link.addClassName('expand');
+        if(container.hasClassName('last')) {
+            row.addClassName('last');
+        }
+        container.hide();
+    } else {
+        link.expanded = true;
+        link.addClassName('collapse');
+        link.removeClassName('expand');
+        if(container.hasClassName('last')) {
+            row.removeClassName('last');
+        }
+        container.show();
+    }
+
+    return false;
+}
+</script>
+<?endif;?>
+<? $_order = $this->getOrder() ?>
+<div class="page-head button-level">
+    <h3><?=$this->__('Order #%s - %s', $_order->getRealOrderId(), $_order->getStatusLabel())?></h3>
+    <?/*<a href="#"><?=$this->__('View Invoices')?></a>*/?>
+</div>
+<p><?=$this->__('Order Date: %s', $this->formatDate($_order->getCreatedAt(), 'long'))?></p>
+<div class="col2-set generic-box">
+    <div class="col-1">
+        <h4><?=$this->__('Shipping Address')?></h4>
+        <address><?=$_order->getShippingAddress()->getFormated(true)?></address>
+    </div>
+    <div class="col-2">
+        <h4><?=$this->__('Shipping Method')?><?/* | <a href="#"><?=$this->__('Track Order')?></a>*/?></h4>
+        <?=$_order->getShippingDescription()?>
+    </div>
+</div>
+<div class="col2-set generic-box">
+    <div class="col-1">
+        <h4><?=$this->__('Billing Address')?></h4>
+        <address><?=$_order->getBillingAddress()->getFormated(true)?></address>
+    </div>
+    <div class="col-2">
+        <h4><?=$this->__('Payment Method')?></h4>
+        <?=$this->getPaymentInfoHtml()?>
+    </div>
+</div>
+<h4><?=$this->__('Items Ordered')?></h4>
+<table cellspacing="0" class="data-table" id="my-orders-table">
+    <thead>
+        <tr>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-right"><?=$this->__('Price')?></th>
+            <th class="a-center"><?=$this->__('Qty Ordered')?></th>
+            <th class="a-center"><?=$this->__('Qty Shipped')?></th>
+            <th class="a-right"><?=$this->__('Subtotal')?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?$_items = $_order->getItemsCollection();?>
+        <?$_count = $_items->count();?>
+        <?$_index = 0;?>
+        <?foreach ($_items as $_item):?>
+            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-row-<?=$_item->getId()?>">
+            <td><?=$_item->getName()?>
+            <?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()):?>
+            <br /><a href="#" id="order-item-gift-message-link-<?=$_item->getId()?>" class="giftmessage-preview-link expand" onclick="return giftMessageToogle('<?=$_item->getId()?>')"><?=$this->__('Gift Message')?></a>
+            <?endif;?>
+            </td>
+                <td class="a-right nowrap"><?=$_order->formatPrice($_item->getPrice())?> </td>
+                <td class="a-center"><?=$_item->getQtyOrdered()*1?> </td>
+                <td class="a-center"><?=$_item->getQtyShipped()*1?> </td>
+                <td class="last a-right nowrap"><?=$_order->formatPrice($_item->getRowTotal())?> </td>
+            </tr>
+            <?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()):?>
+            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-gift-message-<?=$_item->getId()?>" style="display:none;">
+                <?$_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_item);?>
+                <td class="giftmessage-row last" colspan="5">
+                <div class="left">
+                     <ul>
+                        <li>
+                            <label><?=$this->__('From')?></label> <?=$this->htmlEscape($_giftMessage->getRecipient())?>
+                        </li>
+                        <li>
+                            <label><?=$this->__('To')?></label> <?=$this->htmlEscape($_giftMessage->getSender())?>
+                        </li>
+                        <li><?=$this->helper('giftmessage/message')->getEscapedGiftMessage($_item)?></li>
+                     </ul>
+
+                </div>
+                <div class="right"><a href="#" onclick="return giftMessageToogle('<?=$_item->getId()?>')"><img src="<?=$this->getSkinUrl('images/gift-message-close.gif')?>"></a></div>
+                </td>
+            </tr>
+            <?endif?>
+        <?endforeach;?>
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" class="a-right"><?=$this->__('Order Subtotal')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_order->getSubtotal())?></td>
+        </tr>
+        <?if ($_order->getTaxAmount()):?>
+            <tr>
+                <td colspan="4" class="a-right"><?=$this->__('Tax Amount')?></td>
+                <td class="last a-right"><?=$_order->formatPrice($_order->getTaxAmount())?></td>
+            </tr>
+        <?endif;?>
+        <?if ($_order->getShippingAmount()):?>
+            <tr>
+                <td colspan="4" class="a-right"><?=$this->__('Shipping Amount')?></td>
+                <td class="last a-right"><?=$_order->formatPrice($_order->getShippingAmount())?></td>
+            </tr>
+        <?endif;?>
+        <tr>
+            <td colspan="4" class="a-right"><?=$this->__('Grand Total')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_order->getGrandTotal())?></td>
+        </tr>
+    </tfoot>
+</table>
+<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $_order) && $_order->getGiftMessageId()):?>
+<div class="giftmessage">
+    <?$_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_order);?>
+    <strong><?=$this->__('Gift Message for this Order')?></strong>
+     <ul>
+        <li>
+            <label><?=$this->__('From')?></label> <?=$this->htmlEscape($_giftMessage->getRecipient())?>
+        </li>
+        <li>
+            <label><?=$this->__('To')?></label> <?=$this->htmlEscape($_giftMessage->getSender())?>
+        </li>
+        <li><?=$this->helper('giftmessage/message')->getEscapedGiftMessage($_order)?></li>
+     </ul>
+</div>
+<?endif;?>
+<?$_history = $this->getOrder()->getVisibleStatusHistory()?>
+<?if (count($_history)):?>
+    <div class="clear">&nbsp;</div>
+    <h4><?=$this->__('About Your Order')?></h4>
+    <div>
+        <dl>
+            <?foreach ($_history as $_historyItem):?>
+                <dt><?=$this->formatDate($_historyItem->getCreatedAt(), 'medium', true)?></dt>
+                <dd><?=$_historyItem->getComment()?></dd>
+            <?endforeach;?>
+        </dl>
+    </div>
+<?endif;?>
+
+<? if ($this->helper('shipping')->isShipped($_order)) : ?>
+<br />
+<script type="text/javascript">
+
+
+var Shipping = Class.create();
+Shipping.prototype = {
+    initialize: function(shipping){
+        this.shipping = shipping;
+        this.onShippingLoad = this.showShipping.bindAsEventListener(this);
+        this.onShippingError = this.showError.bindAsEventListener(this);
+
+    },
+
+    getShipping: function(){
+        $('shipping-method-please-wait').show();
+        params = this.prepareParams();
+        request = new Ajax.Request('<?=$this->helper('shipping')->getTrackingAjaxUrl()?>',{
+            method:     'post',
+            parameters: params,
+            onSuccess:  this.onShippingLoad,
+            onFailure:  this.onShippingError,
+            onComplete: function (transport){
+                $('shipping-method-please-wait').hide();
+            }
+        });
+    },
+    showShipping: function (transport){
+        if (transport && transport.responseText){
+            $('shipping').update(transport.responseText)
+        } else {
+            $('shipping').update('<?=$this->__('Error in response.')?>');
+        }
+    },
+    showError: function (){
+        $('shipping').update("<?=$this->__('Can\'t get shipping information.')?>");
+    },
+    prepareParams : function(){
+        params = new Hash();
+        params.order_id = '<?=$_order->getId()?>'
+        params['tracking_ids[]'] =  [<?=$this->helper('shipping')->getTrackingNumbers($_order)?>];
+        return params;
+    },
+}
+
+var shipping = new Shipping();
+</script>
+
+    <a href="#" id="linkId" onclick="shipping.getShipping();return false;"><?=$this->__('Shipping tracking information')?></a>
+    <span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
+        <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading...')?> &nbsp;
+    </span>
+<div id="shipping"></div>
+<?endif;?>
+<script type="text/javascript">decorateTable('my-orders-table')</script>
+<div class="form-buttons">
+    <a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back to My Orders')?></a>
+</div>

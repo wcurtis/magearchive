@@ -1,0 +1,101 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_order = $this->getOrder()?>
+<div class="page-head button-level">
+    <h2><?=$this->__('My Orders - Details')?></h2>
+    <button class="form-button"><span><?=$this->__('Print All Invoices')?></span></button>
+</div>
+<h3><?=$this->__('Order #%s', $_order->getRealOrderId())?></h3>
+<?foreach ($this->getInvoices() as $_invoice):?>
+    <div class="divider"></div>
+    <div class="head">
+        <h3><?=$this->__('Invoice #%s', $_invoice->getIncrementId())?></h3>
+        <a href="#"><?=$this->__('Print Invoice')?></a>
+    </div>
+    <div class="col2-set">
+        <div class="col-1">
+            <h4><?=$this->__('Shipping Address')?></h4>
+            <?$_shipping = $_invoice->getShippingAddress()?>
+            <address><?=$_shipping->getFirstname()?> <?=$_shipping->getLastname()?><br/>
+            <?=$_shipping->getCompany()?><br/>
+            <?=$_shipping->getStreet()?><br/>
+            <?=$_shipping->getCity()?>, <?=$_shipping->getRegion()?> <?=$_shipping->getPostcode()?><br/>
+            <strong>T</strong> | <?=$_shipping->getTelephone();
+            if ($_shipping->getFax()):?><br /><strong>F</strong> | <?=$_shipping->getFax()?><?endif;?></address>
+        </div>
+        <div class="col-2">
+            <h4><?=$this->__('Billing Address')?></h4>
+            <?$_billing = $_invoice->getbillingAddress()?>
+            <address><?=$_billing->getFirstname()?> <?=$_billing->getLastname()?><br/>
+            <?=$_billing->getCompany()?><br/>
+            <?=$_billing->getStreet()?><br/>
+            <?=$_billing->getCity()?>, <?=$_billing->getRegion()?> <?=$_billing->getPostcode()?><br/>
+            <strong>T</strong> | <?=$_billing->getTelephone();
+            if ($_billing->getFax()):?><br /><strong>F</strong> | <?=$_billing->getFax()?><?endif;?></address>
+        </div>
+    </div>
+    <br/>
+    <div class="col2-set">
+        <div class="col-1">
+            <h4><?=$this->__('Shipping Method')?></h4>
+            <?=$_order->getShippingMethod()?> <?=$_order->getShippingDescription()?>
+        </div>
+        <div class="col-2">
+            <h4><?=$this->__('Payment Method')?></h4>
+            <?$_payment = $_order->getPayment()?>
+            <?=$_payment->getMethod()?>: <?=$_payment->getCcType()?> xxxx<?=$_payment->getCcLast4()?>
+        </div>
+    </div>
+    <br/>
+    <h4><?=$this->__('Items Ordered')?></h4>
+    <table cellspacing="0" class="data-table">
+        <thead>
+            <tr>
+                <th><?=$this->__('Product Name')?></th>
+                <th class="a-right"><?=$this->__('Price')?></th>
+                <th class="a-center"><?=$this->__('Qty Ordered')?></th>
+                <th class="a-center"><?=$this->__('Qty Shipped')?></th>
+                <th class="a-right"><?=$this->__('Subtotal')?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?$_items = $_invoice->getItemsCollection();?>
+            <?$_count = $_items->count();?>
+            <?$_index = 0;?>
+            <?foreach ($_items as $_item):?>
+                <tr<?=($_index++ > $_count ? ' class="last"' : '')?>>
+                <td><?=$_item->getProductName()?></td>
+                <td class="a-right nowrap"><?=$_order->formatPrice($_item->getPrice()*1)?></td>
+                <td class="a-center"><?=$_item->getQty()*1?></td>
+                <td class="a-center"><?=$_item->getQty()*1?></td>
+                <td class="last a-right nowrap"><?=$_order->formatPrice($_item->getRowTotal()*1)?></td>
+            <?endforeach;?>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="a-right"><?=$this->__('Order Subtotal')?></td>
+                <td class="last a-right"><?=$_order->formatPrice($_invoice->getSubtotal())?></td>
+            </tr>
+        </tfoot>
+    </table>
+    <br/>
+<?endforeach;?>

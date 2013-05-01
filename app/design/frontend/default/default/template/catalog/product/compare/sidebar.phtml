@@ -1,0 +1,43 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="box base-mini  mini-compare-products">
+    <div class="head">
+        <h4><?=$this->__('Compare Products - %d Items', $this->helper('catalog/product_compare')->getItemCount())?></h4>
+    </div>
+    <?if($this->helper('catalog/product_compare')->getItemCount()>0):?>
+        <ol id="compare-items">
+        <?foreach($this->helper('catalog/product_compare')->getItemCollection() as $_index=>$_item):?>
+            <li class="block-compare-item">
+                <input type="hidden" class="compare-item-id" value="<?=$_item->getId()?>"/>
+                <a href="<?=$this->helper('catalog/product_compare')->getRemoveUrl($_item)?>" class="widget-btn"><img src="<?=$this->getSkinUrl('images/list_remove_btn.gif')?>" alt="<?=$this->__('Remove This Item')?>"/></a>
+                <a href="<?=$_item->getProductUrl()?>"><?=$_item->getName()?></a>
+            </li>
+        <?endforeach;?>
+        </ol>
+        <script type="text/javascript">decorateList('compare-items')</script>
+        <div class="actions">
+            <a href="<?=$this->helper('catalog/product_compare')->getClearListUrl()?>" class="left"><?=$this->__('Clear All Items')?></a>
+            <button class="form-button-alt" onclick="popWin('<?=$this->helper('catalog/product_compare')->getListUrl()?>','compare','width=800,height=600,resizable=yes,scrollbars=yes')"><span><?=$this->__('Compare Items')?></span></button>
+        </div>
+    <?else:?>
+        <div class="content"><p><?=$this->__('You have no items to compare.')?></p></div>
+    <?endif;?>
+</div>

@@ -1,0 +1,116 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Multishipping checkout shipping template
+ *
+ * @see Mage_Checkout_Block_Multishipping_Shipping
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Select Shipping Method')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<form action="<?=$this->getPostActionUrl()?>" method="post" id="shipping_method_form">
+<div class="multi-address-checkout-box">
+<?foreach ($this->getAddresses() as $_index => $_address):?>
+  <div class="box">
+    <div class="count-head">
+        <h4><?=$this->__('Address %s of %s', ($_index+1), $this->getAddressCount())?></h4>
+    </div>
+    <div class="content col2-alt-set">
+        <div class="col-1">
+            <div class="head">
+                <h5><?=$this->__('Shipping to')?><span class="pipe">|</span><a href="<?=$this->getAddressEditUrl($_address)?>"><?=$this->__('Change Shipping Address')?></a></h5>
+            </div>
+            <address>
+                <?=$_address->getFormated(true)?>
+            </address>
+            <br/>
+            <div class="shipping-method-pointer">
+                <img src="<?=$this->getSkinUrl('images/shipping_method_pointer.gif')?>" class="pointer">
+                <div class="head">
+                    <h5><?=$this->__('Shipping Method')?></h5>
+                </div>
+                <?if (!($_shippingRateGroups = $this->getShippingRates($_address))):?>
+                    <strong><?=$this->__('Sorry, no quotes are available for this order at this time.')?></strong>
+                <?else:?>
+                <dl class="shipment-methods">
+                    <?foreach ($_shippingRateGroups as $code => $_rates):?>
+                        <dt><?=$this->getCarrierName($code)?></dt>
+                        <dd>
+                            <ul>
+                            <?foreach ($_rates as $_rate):?>
+                                <li>
+                                   <?if ($_rate->getErrorMessage()):?>
+                                        <strong><?=$_rate->getCarrierTitle()?>: <?=$_rate->getErrorMessage()?></strong>
+                                   <?else:?>
+                                        <input name="shipping_method[<?=$_address->getId()?>]" type="radio" value="<?=$_rate->getCode()?>" id="s_method_<?=$_address->getId()?>_<?=$_rate->getCode()?>"<?if($_rate->getCode()===$this->getAddressShippingMethod($_address)) echo ' checked'?>/>
+                                        <label for="s_method_<?=$_address->getId()?>_<?=$_rate->getCode()?>"><?=$_rate->getMethodDescription()?> - <strong><?=$_rate->getPrice()?></strong></label>
+                                   <?endif?>
+                                </li>
+                            <?endforeach;?>
+                            </ul>
+                        </dd>
+                    <?endforeach;?>
+                </dl>
+                <?endif;?>
+            </div>
+        </div>
+        <div class="col-2">
+            <?=$this->helper('giftmessage/message')->getInline('multishipping_adress_checkbox', $_address);?>
+            <div class="head">
+                <h5><?=$this->__('Items')?><span class="pipe">|</span><a href="<?=$this->getItemsEditUrl($_address)?>"><?=$this->__('Edit Items')?></a></h5>
+            </div>
+            <table cellspacing="0" id="shipping-table-<?=$_address->getId()?>" class="data-table nested-table">
+                <col/>
+                <col width="30"/>
+                <thead>
+                    <tr>
+                        <th><?=$this->__('Product Name')?></th>
+                        <th class="a-center"><?=$this->__('Qty')?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?foreach ($this->getAddressItems($_address) as $_item):?>
+                    <tr>
+                        <td>
+                            <?=$this->helper('checkout')->getQuoteItemProductName($_item)?>
+                            <?=$this->helper('checkout')->getQuoteItemProductDescription($_item)?>
+                        </td>
+                        <td class="a-center"><?=$_item->getQty()?></td>
+                    </tr>
+                <?endforeach;?>
+                </tbody>
+            </table>
+            <script type="text/javascript">decorateTable('shipping-table-<?=$_address->getId()?>')</script>
+        </div>
+        <div class="clear"></div>
+        <?=$this->helper('giftmessage/message')->getInline('multishipping_adress', $_address);?>
+    </div>
+    </div>
+<?endforeach;?>
+</div>
+<div class="form-buttons">
+    <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Select Addresses')?></a>
+    <button class="form-button" type="submit"><span><?=$this->__('Continue to Billing Information')?></span></button>
+</div>
+</form>

@@ -1,0 +1,45 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+
+<!-- menu start -->
+<?drawMenuLevel($this->getMenuArray());?>
+<!-- menu end -->
+
+<?function drawMenuLevel($_menu, $_level=0) {?>
+
+    <ul <?if(!$_level):?>id="nav"<?endif?>>
+        <?foreach ($_menu as $_item):?>
+        <li <?if(!empty($_item['children'])):?>onmouseover="Element.addClassName(this,'over')" onmouseout="Element.removeClassName(this,'over')"<?endif?> class="<?=(!$_level && !empty($_item['active']))?'active':''?> <?=!empty($_item['children'])?' parent':''?><?=(!empty($_level) && !empty($_item['last']))?' last':''?> level<?=$_level?>">
+            
+            <a href="<?=$_item['url']?>" title="<?=$_item['title']?>" <?if(!empty($_item['click'])):?>onclick="<?=$_item['click'];?>"<?endif?> class="<?=($_level===0 && !empty($_item['active']))?'active':''?>">
+                
+                <span><?=$_item['label']?><?if(!$_level):?><em></em><?endif?></span>
+            </a>
+            
+            <?if(!empty($_item['children'])):?>
+                <?drawMenuLevel($_item['children'], $_level+1);?>
+            <?endif;?>
+        </li>
+        <?endforeach;?>
+    </ul>
+    
+<?}//function?>
+

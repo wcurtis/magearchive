@@ -1,0 +1,140 @@
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+.tier-price-input
+{
+
+}
+.tier-price-input INPUT.price
+{
+    width: 80px;
+    margin-right:10px;
+}
+.tier-price-input INPUT.qty
+{
+    width: 80px;
+}
+
+.tier-price-input .tier-container {
+    position:relative;
+    clear:both;
+}
+
+.tier-price-input .tier-container div {
+    float:left;
+}
+
+.tier-price-input .tier-container label {
+    width:30px;
+    margin:0;
+    padding:0;
+}
+
+.tier-price-input .validation-advice {
+    margin:0 0 0 0px;
+    height:25px;
+}
+
+.tier-price-input .price-div {
+    padding-left:30px;
+}
+
+.tier-price-input .qty-div {
+    width:200px;
+}
+
+.tier-price-input .price-div .validation-advice {
+    margin:0;
+}
+
+.btn-remove-tier-group { float:right; right:24px; top:5px; }
+
+.super-attributes {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+
+.super-attributes li.attribute
+{
+   border: 1px solid #dfdfdf;
+   background-color: #ededed;
+   margin: 1px 0;
+}
+
+.super-attributes li.attribute ul.attribute-values {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+
+.super-attributes li.attribute div.values-container {
+    float: right;
+    display:block;
+    width: 80%;
+    margin-top:2px;
+    margin-bottom:2px;
+}
+
+.super-attributes li.attribute-value{
+    display:block;
+    margin:1px 0;
+}
+
+.super-attributes li.attribute-value .validation-advice {
+    margin: 0px 0px 0px 0px;
+    white-space: wrap;
+}
+
+.super-attributes li.attribute-value .attribute-value-label-container {
+    display:block;
+    float: left;
+    width: 200px;
+}
+
+.super-attributes li.attribute-value .attribute-values-container-main {
+    display:block;
+    float: left;
+}
+
+.super-attributes li.attribute-value .attribute-values-container {
+    display:block;
+    float: left;
+}
+
+
+.super-attributes li.attribute-value .attribute-price {
+    width: 70px;
+}
+
+
+
+.super-attributes  div.attribute-name-container {
+    float: left;
+    display:block;
+    cursor:move;
+    background-image: url(images/arrow_sort_move.gif);
+    background-repeat: no-repeat;
+    background-position: 4px 50%;
+    font-weight:bold;
+    padding-left:15px;
+    margin-top:2px;
+    margin-bottom:2px;
+}
+
+.grid .invalid {
+    background-color: #d3a5ba !important;
+}

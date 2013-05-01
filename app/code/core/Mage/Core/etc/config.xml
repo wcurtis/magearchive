@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Core
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <Mage_Core>
+             <version>0.7.0</version>
+        </Mage_Core>
+    </modules>
+
+    <global>
+        <models>
+            <core_mysql4>
+                <entities>
+                    <config_field>
+                        <table>core_config_field</table>
+                    </config_field>
+                    <email_template>
+                        <table>core_email_template</table>
+                    </email_template>
+                    <language>
+                        <table>core_language</table>
+                    </language>
+                    <translate>
+                        <table>core_translate</table>
+                    </translate>
+                    <session>
+                        <table>core_session</table>
+                    </session>
+                    <layout_update>
+                        <table>core_layout_update</table>
+                    </layout_update>
+                    <layout_link>
+                        <table>core_layout_link</table>
+                    </layout_link>
+                    <url_rewrite>
+                        <table>core_url_rewrite</table>
+                    </url_rewrite>
+                    <url_rewrite_tag>
+                        <table>core_url_rewrite_tag</table>
+                    </url_rewrite_tag>
+                    <convert_profile>
+                        <table>core_convert_profile</table>
+                    </convert_profile>
+                    <convert_history>
+                        <table>core_convert_history</table>
+                    </convert_history>
+
+                </entities>
+            </core_mysql4>
+        </models>
+
+        <blocks>
+            <core><class>Mage_Core_Block</class></core>
+        </blocks>
+    </global>
+    <frontend>
+        <routers>
+            <core>
+                <use>standard</use>
+                <args>
+                    <module>Mage_Core</module>
+                    <frontName>core</frontName>
+                </args>
+            </core>
+        </routers>
+        <translate>
+            <modules>
+                <Mage_Core>
+                    <files>
+                        <default>Mage_Core.csv</default>
+                    </files>
+                </Mage_Core>
+            </modules>
+        </translate>
+      <layout>
+          <updates>
+              <core>
+                  <file>core.xml</file>
+              </core>
+          </updates>
+      </layout>
+    </frontend>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Mage_Core>
+                    <files>
+                        <default>Mage_Core.csv</default>
+                    </files>
+                </Mage_Core>
+            </modules>
+        </translate>
+    </adminhtml>
+</config>

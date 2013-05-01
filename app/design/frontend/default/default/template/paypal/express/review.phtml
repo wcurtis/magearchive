@@ -1,0 +1,134 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="page-head">
+    <h3><?=$this->__('Review Order')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+<div class="multi-address-checkout-box">
+
+    <div class="box">
+        <h4 class="legend"><?=$this->__('Shipping Information')?></h4>
+        <div class="clear"></div>
+        <div class="content col2-set">
+            <div class="col-1">
+                <div class="head">
+                    <h4><?=$this->__('Shipping Address')?><span class="separator">|</span><a href="<?=$this->getUrl('paypal/express/edit')?>"><?=$this->__('Change Shipping Address')?></a></h4>
+                </div>
+                <address>
+                    <?=$this->getShippingAddress()->getFormated(true)?>
+                </address>
+            </div>
+            <div class="col-2">
+                <div class="head">
+                    <h4><?=$this->__('Shipping Method')?></h4>
+                </div>
+
+                <?if (!($_shippingRateGroups = $this->getShippingRates())):?>
+                    <strong><?=$this->__('Sorry, no quotes are available for this order at this time.')?></strong>
+                <?else:?>
+
+                <form method="post" action="<?=$this->getUrl('paypal/express/saveShippingMethod')?>">
+                    <select name="shipping_method" id="shipping_method" style="width:250px" onchange="saveShippingMethod(this.value)">
+                    <?if(!$this->getAddressShippingMethod()):?>
+                        <option value=""><?=$this->__('Please select a shipping method...')?></option>
+                    <?endif?>
+                    <?foreach ($_shippingRateGroups as $code => $_rates):?>
+                        <optgroup label="<?=$this->getCarrierName($code)?>" style="font-style:normal;">
+                        <?foreach ($_rates as $_rate):?>
+                           <?if ($_rate->getErrorMessage()):?>
+                                <option value="">
+                                    <?=$_rate->getErrorMessage()?>
+                                </option>
+                           <?else:?>
+                               <option value="<?=$_rate->getCode()?>" <?if($_rate->getCode()===$this->getAddressShippingMethod()):?>selected<?endif?>  style="margin-left:16px">
+                                    <?=$_rate->getMethodDescription()?> - <?=$_rate->getPrice()?>
+                               </option>
+                           <?endif?>
+                        <?endforeach;?>
+                        </optgroup>
+                    <?endforeach;?>
+                    </select>
+                    <br/><br>
+                    <button id="update_shipping_method" class="form-button" type="submit"><span><?=$this->__('Update Shipping Method')?></span></button>
+                </form>
+
+                <?endif;?>
+
+            </div>
+        </div>
+     </div>
+
+    <div class="box">
+        <h4 class="legend"><?=$this->__('Billing Information')?></h4>
+        <div class="clear"></div>
+
+        <div class="content">
+            <div class="head">
+                <h4><?=$this->__('Payment Method')?><span class="separator">|</span><a href="<?=$this->getUrl('paypal/express/edit')?>"><?=$this->__('Change Payment Method')?></a></h4>
+            </div>
+            <?=$this->__('PayPal Account')?><br/>
+            <?=$this->getBillingAddress()->getEmail()?>
+
+        </div>
+    </div>
+
+    <div class="head" style="margin-top:-11px">
+        <h4><?=$this->__('Items in Your Shopping Cart')?><span class="separator">|</span><a href="<?=$this->getUrl('checkout/cart')?>"><?=$this->__('Edit Shopping Cart')?></a></h4>
+    </div>
+
+    <div id='details-reload'>
+        <?=$this->getChildHtml('details')?>
+    </div>
+    <script type="text/javascript">decorateTable('details-table')</script>
+
+    <br/>
+
+    <form method="post" action="<?=$this->getUrl('paypal/express/saveOrder')?>">
+        <p class="a-right">
+            <input type="image" src="<?=$this->getSkinUrl('images/btn_place_order.gif')?>" value="<?=$this->__('Place an Order')?>" onclick="return saveOrder();"/>
+        </p>
+    </form>
+
+    <div class="clear"></div>
+
+    </form>
+</div>
+
+<script type="text/javascript">
+    $('update_shipping_method') && $('update_shipping_method').hide();
+
+    function saveShippingMethod(value)
+    {
+        new Ajax.Updater('details-reload', '<?=$this->getUrl('paypal/express/saveShippingMethod')?>', {
+            parameters: { ajax:true, shipping_method:value },
+            onComplete: function(){decorateTable('details-table')}
+        });
+    }
+
+    function saveOrder()
+    {
+        if ($('shipping_method').value=='') {
+            alert('Please select a valid shipping method before submitting the order.');
+            return false;
+        }
+        return true;
+    }
+</script>

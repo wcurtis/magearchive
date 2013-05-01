@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+-->
+<layout version="0.1.0">
+
+<!--
+Customer account pages, rendered for all tabs in dashboard
+-->
+
+    <customer_account>
+        
+        <!-- Mage_Sales -->
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label"><name>orders</name><path>sales/order/history/</path><label>My Orders</label></action>
+        </reference>
+
+    </customer_account>
+
+<!--
+Customer account home dashboard layout
+-->
+
+    <customer_account_index>
+        <!-- Mage_Sales -->
+        <reference name="customer_account_dashboard">
+            <action method="unsetChild"><name>top</name></action>
+            <block type="sales/order_recent" name="customer_account_dashboard_top" as="top" template="sales/order/recent.phtml"/>
+        </reference>
+
+    </customer_account_index>
+
+    <sales_order_history>
+        <update handle="customer_account"/>
+        <reference name="content">
+            <block type="sales/order_history" name="sales.order.history"/>
+        </reference>
+    </sales_order_history>
+
+    <sales_order_view>
+        <update handle="customer_account"/>
+        <reference name="content">
+            <block type="sales/order_view" name="sales.order.view"/>
+        </reference>
+    </sales_order_view>
+
+    <sales_order_details>
+        <update handle="customer_account"/>
+        <reference name="content">
+            <block type="sales/order_details" name="sales.order.details"/>
+        </reference>
+    </sales_order_details>
+
+    <sales_order_print>
+        <reference name="content">
+            <block type="sales/order_details" name="sales.order.details"/>
+        </reference>
+    </sales_order_print>
+
+</layout>

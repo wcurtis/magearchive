@@ -1,0 +1,767 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Usa
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <sections>
+        <carriers>
+            <groups>
+                <dhl translate="label" module="usa">
+                    <label>DHL</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>13</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <account translate="label">
+                            <label>Account number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </account>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </active>
+                        <allowed_methods translate="label">
+                            <label>Allowed methods</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>usa/shipping_carrier_dhl_source_method</source_model>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[E,N,S,G]]></default_value>
+                        </allowed_methods>
+                        <contentdesc translate="label">
+                            <label>Package Description</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[Big Box]]></default_value>
+                        </contentdesc>
+                        <cutoff_cost translate="label">
+                            <label>Minimum order amount for free shipping</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cutoff_cost>
+                        <dutiable translate="label">
+                            <label>Shipment Dutiable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </dutiable>
+                        <dutypaymenttype translate="label">
+                            <label>Shipment Duty Payment Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_dhl_source_dutypaymenttype</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[R]]></default_value>
+                        </dutypaymenttype>
+                        <free_method translate="label">
+                            <label>Free method</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_class>free-method</frontend_class>
+                            <source_model>usa/shipping_carrier_dhl_source_freemethod</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[G]]></default_value>
+                        </free_method>
+                        <gateway_url translate="label">
+                            <label>Gateway URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[https://eCommerce.airborne.com/ApiLandingTest.asp]]></default_value>
+                        </gateway_url>
+                        <handling translate="label">
+                            <label>Handling fee</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </handling>
+                        <id translate="label">
+                            <label>Access ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </id>
+                        <password translate="label">
+                            <label>Password</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </password>
+                        <shipment_type translate="label">
+                            <label>Shipment type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_dhl_source_shipmenttype</source_model>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[P]]></default_value>
+                        </shipment_type>
+                        <shipping_intlkey translate="label">
+                            <label>Shipping key (International)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_intlkey>
+                        <shipping_key translate="label">
+                            <label>Shipping key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_key>
+                        <sort_order translate="label">
+                            <label>Sort order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[DHL]]></default_value>
+                        </title>
+                        <allowall translate="label">
+                            <label>Ship to applicable countries</label>
+                            <frontend_type>allowall</frontend_type>
+                            <sort_order>90</sort_order>
+                            <frontend_class>shipping-applicable-country</frontend_class>
+                            <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </allowall>
+                        <specificcountry translate="label">
+                            <label>Ship to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>91</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificcountry>
+                        <showmethod translate="label">
+                            <label>Show method if not applicable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>92</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </showmethod>
+                        <specificerrmsg translate="label">
+                            <label>Displayed Error Message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>93</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificerrmsg>
+                    </fields>
+                </dhl>
+                <fedex translate="label" module="usa">
+                    <label>FedEx</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>12</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <account translate="label">
+                            <label>Account ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </account>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </active>
+                        <allowed_methods translate="label">
+                            <label>Allowed methods</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>usa/shipping_carrier_fedex_source_method</source_model>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[PRIORITYOVERNIGHT,STANDARDOVERNIGHT,FIRSTOVERNIGHT,FEDEX2DAY,FEDEXEXPRESSSAVER,INTERNATIONALPRIORITY,INTERNATIONALECONOMY,INTERNATIONALFIRST,FEDEX1DAYFREIGHT,FEDEX2DAYFREIGHT,FEDEX3DAYFREIGHT,FEDEXGROUND,GROUNDHOMEDELIVERY,INTERNATIONALPRIORITY FREIGHT,INTERNATIONALECONOMY FREIGHT,EUROPEFIRSTINTERNATIONALPRIORITY]]></default_value>
+                        </allowed_methods>
+                        <cutoff_cost translate="label">
+                            <label>Minimum order amount for free shipping</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cutoff_cost>
+                        <dropoff translate="label">
+                            <label>Dropoff</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_fedex_source_dropoff</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[REGULARPICKUP]]></default_value>
+                        </dropoff>
+                        <free_method translate="label">
+                            <label>Free method</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_class>free-method</frontend_class>
+                            <source_model>usa/shipping_carrier_fedex_source_freemethod</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[FEDEXGROUND]]></default_value>
+                        </free_method>
+                        <gateway_url translate="label">
+                            <label>Gateway URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[https://gateway.fedex.com/GatewayDC]]></default_value>
+                        </gateway_url>
+                        <handling translate="label">
+                            <label>Handling fee</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </handling>
+                        <packaging translate="label">
+                            <label>Packaging</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_fedex_source_packaging</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[YOURPACKAGING]]></default_value>
+                        </packaging>
+                        <sort_order translate="label">
+                            <label>Sort order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[Federal Express]]></default_value>
+                        </title>
+                        <allowall translate="label">
+                            <label>Ship to applicable countries</label>
+                            <frontend_type>allowall</frontend_type>
+                            <sort_order>90</sort_order>
+                            <frontend_class>shipping-applicable-country</frontend_class>
+                            <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </allowall>
+                        <specificcountry translate="label">
+                            <label>Ship to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>91</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificcountry>
+                        <showmethod translate="label">
+                            <label>Show method if not applicable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>92</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </showmethod>
+                        <specificerrmsg translate="label">
+                            <label>Displayed Error Message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>93</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificerrmsg>
+                    </fields>
+                </fedex>
+                <ups translate="label" module="usa">
+                    <label>UPS</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <access_license_number translate="label">
+                            <label>Access license number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </access_license_number>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </active>
+                        <allowed_methods translate="label">
+                            <label>Allowed methods</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_method</source_model>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1DM,1DML,1DA,1DAL,1DAPI,1DP,1DPL,2DM,2DML,2DA,2DAL,3DS,GND,GNDCOM,GNDRES,STD,XPR,WXS,XPRL,XDM,XDML,XPD]]></default_value>
+                        </allowed_methods>
+                        <container translate="label">
+                            <label>Container</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_container</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[CP]]></default_value>
+                        </container>
+                        <cutoff_cost translate="label">
+                            <label>Minimum order amount for free shipping</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cutoff_cost>
+                        <dest_type translate="label">
+                            <label>Destination type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_destType</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[RES]]></default_value>
+                        </dest_type>
+                        <free_method translate="label">
+                            <label>Free method</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_class>free-method</frontend_class>
+                            <source_model>usa/shipping_carrier_ups_source_freemethod</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[GND]]></default_value>
+                        </free_method>
+                        <gateway_url translate="label">
+                            <label>Gateway URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[http://www.ups.com:80/using/services/rave/qcostcgi.cgi]]></default_value>
+                        </gateway_url>
+                        <gateway_xml_url translate="label">
+                            <label>Gateway XML URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[https://www.ups.com/ups.app/xml/Rate]]></default_value>
+                        </gateway_xml_url>
+                        <handling translate="label">
+                            <label>Handling fee</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </handling>
+                        <origin_shipment translate="label">
+                            <label>Origin of the shipment</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_originShipment</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </origin_shipment>
+                        <password translate="label">
+                            <label>Password</label>
+                            <frontend_type>password</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </password>
+                        <pickup translate="label">
+                            <label>Pickup method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_pickup</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[CC]]></default_value>
+                        </pickup>
+                        <sort_order translate="label">
+                            <label>Sort order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[United Parcel Service]]></default_value>
+                        </title>
+                        <tracking_xml_url translate="label">
+                            <label>Tracking XML URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[https://www.ups.com/ups.app/xml/Track]]></default_value>
+                        </tracking_xml_url>
+                        <type translate="label">
+                            <label>UPS type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_type</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </type>
+                        <unit_of_measure translate="label">
+                            <label>Weight Unit</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_ups_source_unitofmeasure</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[LBS]]></default_value>
+                        </unit_of_measure>
+                        <username translate="label">
+                            <label>UserId</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </username>
+                        <allowall translate="label">
+                            <label>Ship to applicable countries</label>
+                            <frontend_type>allowall</frontend_type>
+                            <sort_order>90</sort_order>
+                            <frontend_class>shipping-applicable-country</frontend_class>
+                            <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </allowall>
+                        <specificcountry translate="label">
+                            <label>Ship to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>91</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificcountry>
+                        <showmethod translate="label">
+                            <label>Show method if not applicable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>92</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </showmethod>
+                        <specificerrmsg translate="label">
+                            <label>Displayed Error Message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>93</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificerrmsg>
+                    </fields>
+                </ups>
+                <usps translate="label" module="usa">
+                    <label>USPS</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>11</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[0]]></default_value>
+                        </active>
+                        <allowed_methods translate="label">
+                            <label>Allowed methods</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>usa/shipping_carrier_usps_source_method</source_model>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[First-Class,Express Mail,Express Mail PO to PO,Priority Mail,Parcel Post,Express Mail Flat-Rate Envelope,Priority Mail Flat-Rate Box,Bound Printed Matter,Media Mail,Library Mail,Priority Mail Flat-Rate Envelope,Global Express Guaranteed,Global Express Guaranteed Non-Document Rectangular,Global Express Guaranteed Non-Document Non-Rectangular,Express Mail International (EMS),Express Mail International (EMS) Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box]]></default_value>
+                        </allowed_methods>
+                        <container translate="label">
+                            <label>Container</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_usps_source_container</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[VARIABLE]]></default_value>
+                        </container>
+                        <cutoff_cost translate="label">
+                            <label>Minimum order amount for free shipping</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cutoff_cost>
+                        <free_method translate="label">
+                            <label>Free method</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_class>free-method</frontend_class>
+                            <source_model>usa/shipping_carrier_usps_source_freemethod</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </free_method>
+                        <gateway_url translate="label">
+                            <label>Gateway URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </gateway_url>
+                        <handling translate="label">
+                            <label>Handling fee</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </handling>
+                        <machinable translate="label">
+                            <label>Machinable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_usps_source_machinable</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[true]]></default_value>
+                        </machinable>
+                        <size translate="label">
+                            <label>Size</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>usa/shipping_carrier_usps_source_size</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[REGULAR]]></default_value>
+                        </size>
+                        <sort_order translate="label">
+                            <label>Sort order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <userid translate="label">
+                            <label>User ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </userid>
+                        <allowall translate="label">
+                            <label>Ship to applicable countries</label>
+                            <frontend_type>allowall</frontend_type>
+                            <sort_order>90</sort_order>
+                            <frontend_class>shipping-applicable-country</frontend_class>
+                            <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[1]]></default_value>
+                        </allowall>
+                        <specificcountry translate="label">
+                            <label>Ship to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>91</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificcountry>
+                        <showmethod translate="label">
+                            <label>Show method if not applicable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>92</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </showmethod>
+                        <specificerrmsg translate="label">
+                            <label>Displayed Error Message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>93</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <default_value><![CDATA[]]></default_value>
+                        </specificerrmsg>
+                    </fields>
+                </usps>
+            </groups>
+        </carriers>
+    </sections>
+</config>

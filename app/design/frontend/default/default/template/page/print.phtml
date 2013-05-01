@@ -1,0 +1,53 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Template for Mage_Page_Block_Html
+ */
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="EN">
+    <head>
+        <script type="text/javascript" src="<?=$this->getJsUrl()?>prototype/prototype.js"></script>
+        <style type="text/css" media="all">
+        /*<![CDATA[*/ @import "<?=$this->getSkinUrl('css/styles.css')?>"; /*]]>*/
+        </style>
+        <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('css/iestyles.css')?>" type="text/css" media="all"/> <![endif]-->
+        <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7.css')?>" type="text/css" media="all"/> <![endif]-->
+        <!--[if lt IE 7]>
+            <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7minus.css')?>" type="text/css" media="all"/>
+            <script type="text/javascript" src="<?=$this->getJsUrl()?>lib/ds-sleight.js" ></script>
+            <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/iehover-fix.js" ></script>
+        <![endif]-->
+        <?=$this->getChildHtml('head')?>
+        <link rel="stylesheet" href="<?=$this->getSkinUrl('css/print.css')?>" type="text/css" media="print" />
+    </head>
+    <body class="page-popup">
+        <h1 id="logo"><a href="<?=$this->getBaseUrl()?>"><img src="<?=$this->getSkinUrl('images/logo-print.gif')?>" alt="<?=$this->__('Magento Commerce Demo Store')?>"/></a></h1>
+        <div class="clear"></div>
+        <?=$this->getChildHtml('content')?>
+        <div class="clear"></div>
+        <div class="form-buttons">
+            <button class="form-button" onclick="window.close();"><span><?=$this->__('Close Window')?></span></button>
+        </div>
+    </body>
+</html>

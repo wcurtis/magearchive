@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Sales
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <Mage_Sales>
+            <version>0.7.0</version>
+            <depends>
+                <Mage_Catalog />
+                <Mage_Customer />
+            </depends>
+        </Mage_Sales>
+    </modules>
+    <global>
+        <models>
+            <sales>
+                <class>Mage_Sales_Model</class>
+                <resourceModel>sales_entity</resourceModel>
+            </sales>
+            <sales_entity>
+                <class>Mage_Sales_Model_Entity</class>
+                <entities>
+                    <quote><table>sales_quote_entity</table></quote>
+                    <quote_temp><table>sales_quote_temp</table></quote_temp>
+                    <order><table>sales_order_entity</table></order>
+                    <invoice><table>sales_invoice_entity</table></invoice>
+                    <order_status><table>sales_order_status</table></order_status>
+                </entities>
+            </sales_entity>
+        </models>
+        <resources>
+            <sales_setup>
+                <setup>
+                    <module>Mage_Sales</module>
+                    <class>Mage_Sales_Model_Entity_Setup</class>
+                </setup>
+                <connection><use>core_setup</use></connection>
+            </sales_setup>
+            <sales_write>
+                <connection><use>core_write</use></connection>
+            </sales_write>
+            <sales_read>
+                <connection><use>core_read</use></connection>
+            </sales_read>
+        </resources>
+        <blocks>
+            <sales><class>Mage_Sales_Block</class></sales>
+        </blocks>
+        <sales>
+            <order>
+                <statuses>
+                    <pending><label>Pending</label></pending>
+                    <processing><label>Processing</label></processing>
+                    <complete><label>Complete</label></complete>
+                    <canceled><label>Canceled</label></canceled>
+                </statuses>
+                <states>
+                    <new>
+                        <statuses>
+                            <pending/>
+                            <processing/>
+                        </statuses>
+                    </new>
+                    <processing>
+                        <statuses>
+                            <pending default="true"/>
+                            <processing/>
+                        </statuses>
+                    </processing>
+                    <complete>
+                        <statuses>
+                            <complete/>
+                        </statuses>
+                    </complete>
+                    <closed>
+                        <statuses>
+                            <complete/>
+                        </statuses>
+                    </closed>
+                    <canceled>
+                        <statuses>
+                            <canceled/>
+                        </statuses>
+                    </canceled>
+                </states>
+            </order>
+            <quote>
+                <totals>
+                    <subtotal>
+                        <class>sales/quote_address_total_subtotal</class>
+                        <before>grand_total</before>
+                    </subtotal>
+                    <discount>
+                        <class>sales/quote_address_total_discount</class>
+                        <after>subtotal</after>
+                        <before>grand_total,shipping</before>
+                    </discount>
+                    <shipping>
+                        <class>sales/quote_address_total_shipping</class>
+                        <after>subtotal,discount</after>
+                        <before>grand_total</before>
+                    </shipping>
+                    <tax>
+                        <class>sales/quote_address_total_tax</class>
+                        <after>subtotal</after>
+                        <before>grand_total</before>
+                    </tax>
+                    <grand_total>
+                        <class>sales/quote_address_total_grand</class>
+                        <after>subtotal</after>
+                    </grand_total>
+                </totals>
+            </quote>
+        </sales>
+    </global>
+
+    <frontend>
+        <secure_url>
+            <sales>/sales/</sales>
+        </secure_url>
+        <routers>
+            <sales>
+                <use>standard</use>
+                <args>
+                    <module>Mage_Sales</module>
+                    <frontName>sales</frontName>
+                </args>
+            </sales>
+        </routers>
+        <translate>
+            <modules>
+                <Mage_Sales>
+                    <files>
+                        <default>Mage_Sales.csv</default>
+                    </files>
+                </Mage_Sales>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <sales>
+                    <file>sales.xml</file>
+                </sales>
+            </updates>
+        </layout>
+    </frontend>
+    <adminhtml>
+        <menu>
+             <sales translate="title" module="sales">
+                <title>Sales</title>
+                <sort_order>20</sort_order>
+                <depends><module>Mage_Sales</module></depends>
+                <children>
+                    <order translate="title" module="sales">
+                        <title>Orders</title>
+                        <action>*/sales_order</action>
+                        <sort_order>0</sort_order>
+                    </order>
+                </children>
+             </sales>
+        </menu>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <sales translate="title">
+                            <title>Sales</title>
+                            <children>
+                                <order>
+                                    <title>Orders</title>
+                                    <children>
+                                        <actions>
+                                            <title>Actions</title>
+                                            <children>
+                                                <create><title>Create</title></create>
+                                                <view><title>View</title></view>
+                                                <edit><title>Edit</title></edit>
+                                                <cancel><title>Cancel</title></cancel>
+                                                <authorize><title>Authorize</title></authorize>
+                                                <capture><title>Capture</title></capture>
+                                                <invoice><title>Invoice</title></invoice>
+                                                <creditmemo><title>Creditmemo</title></creditmemo>
+                                                <hold><title>Hold</title></hold>
+                                                <unhold><title>Unhold</title></unhold>
+                                                <ship><title>Ship</title></ship>
+                                                <comment><title>Comment</title></comment>
+                                                <reorder><title>Reorder</title></reorder>
+                                            </children>
+                                        </actions>
+                                    </children>
+                                </order>
+                            </children>
+                        </sales>
+                        <report>
+                            <children>
+                                <sales translate="title"><title>Sales Report</title></sales>
+                            </children>
+                        </report>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <translate>
+            <modules>
+                <Mage_Sales>
+                    <files>
+                        <default>Mage_Sales.csv</default>
+                    </files>
+                </Mage_Sales>
+            </modules>
+        </translate>
+    </adminhtml>
+
+</config>

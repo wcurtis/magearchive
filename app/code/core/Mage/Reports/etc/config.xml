@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_Reports
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+   <modules>
+      <Mage_Reports>
+         <version>0.7.0</version>
+         <depends>
+            <Mage_Customer />
+            <Mage_Catalog />
+            <Mage_Sales />
+         </depends>
+      </Mage_Reports>
+   </modules>
+   <global>
+        <models>
+            <reports>
+                <class>Mage_Reports_Model</class>
+                <resourceModel>reports_mysql4</resourceModel>
+            </reports>    
+            <reports_mysql4>
+                <class>Mage_Reports_Model_Mysql4</class>
+                <entities>
+                </entities>
+            </reports_mysql4>
+        </models>
+        <resources>
+            <reports_write>
+                <connection><use>core_write</use></connection>
+            </reports_write>
+    
+            <reports_read>
+                <connection><use>core_read</use></connection>
+            </reports_read>
+        </resources>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Mage_Reports>
+                    <files>
+                        <default>Mage_Reports.csv</default>
+                    </files>
+                </Mage_Reports>
+            </modules>
+        </translate>
+       <menu>
+            <report translate="title" module="reports">
+                <title>Reports</title>
+                <sort_order>80</sort_order>
+                <children>
+                <!--
+                    <sales translate="title" module="reports">
+                        <title>Sales Report</title>
+                        <action>*/report/sales</action>
+                    </sales>
+                -->
+                    <shopcart translate="title" module="reports">
+                        <title>Shopping Cart Report</title>
+                        <children>
+                            <product translate="title" module="reports">
+                                <title>Products</title>
+                                <action>*/report_shopcart/product</action>
+                            </product>
+                            <!--
+                            <customer translate="title" module="reports">
+                                <title>Customers</title>
+                                <action>*/report_shopcart/customer</action>
+                            </customer>
+                            -->
+                        </children>
+                    </shopcart>
+                    <!--
+                    <products translate="title" module="reports">
+                        <title>Products Report</title>
+                        <action>*/report/products</action>
+                    </products>
+
+                    <coupons translate="title" module="reports">
+                        <title>Coupons Reports</title>
+                        <action>*/report/coupons</action>
+                    </coupons>
+
+                    <wishlist translate="title" module="reports">
+                        <title>Wishlist Report</title>
+                        <action>*/report/wishlist</action>
+                    </wishlist>
+                    -->
+                   
+
+                    <search translate="title" module="reports">
+                        <title>Search Report</title>
+                        <action>*/report/search</action>
+                    </search>
+                    <!--
+                    <customers translate="title" module="reports">
+                        <title>Best Customers</title>
+                        <action>*/report/customers</action>
+                    </customers>
+                    <orders translate="title" module="reports">
+                        <title>Recent Orders</title>
+                        <action>*/report/orders</action>
+                    </orders>
+                    <totals translate="title" module="reports">
+                        <title>Order Totals</title>
+                        <action>*/report/totals</action>
+                    </totals>
+                    -->
+                </children>
+             </report>
+        </menu>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <report>
+                            <title>Reports</title>
+                            <sort_order>80</sort_order>
+                            <children>
+                                <coupons>
+                                    <title>Coupons Reports</title>
+                                </coupons>
+                                <customers>
+                                    <title>Best Customers</title>
+                                </customers>
+                                <orders>
+                                    <title>Recent Orders</title>
+                                </orders>
+                                <products>
+                                    <title>Products Report</title>
+                                </products>
+                                
+                                
+                                <search>
+                                    <title>Search Report</title>
+                                </search>
+                                <shopcart>
+                                    <title>Shopping Cart Report</title>
+                                    <children>
+                                        <customer>
+                                            <title>Customers</title>
+                                        </customer>
+                                        <product>
+                                            <title>Products</title>
+                                        </product>
+                                    </children>
+                                </shopcart>
+
+                                <totals>
+                                    <title>Order Totals</title>
+                                </totals>
+                               
+                            </children>
+                        </report>
+                    </children>
+                </admin>
+            </resources>    
+        </acl>
+    </adminhtml>
+    
+</config>

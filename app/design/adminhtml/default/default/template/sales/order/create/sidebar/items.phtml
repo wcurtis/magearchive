@@ -1,0 +1,62 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="sidebar-block" id="sidebar_data_<?=$this->getDataId()?>">
+	<div class="head">
+		<h5><?=$this->getHeaderText()?> <span class="normal">(<?=$this->getItemCount()?>)</span></h5>
+		<a href="#" title="<?=Mage::helper('sales')->__('Refresh')?>" onclick="order.loadArea('sidebar_<?=$this->getDataId()?>', 'sidebar_data_<?=$this->getDataId()?>');return false;">
+            <img src="<?=$this->getSkinUrl('images/fam_refresh.gif')?>" alt="<?=Mage::helper('sales')->__('Refresh')?>" width="16" height="16"/>
+        </a>
+	</div>
+	<div class="content">
+		<div class="auto-scroll">
+		<?if($this->getItemCount()):?>
+		<table width="100%">
+			<tr>
+				<th><?=Mage::helper('sales')->__('Item')?></th>
+				<?if ($this->canDisplayItemQty()):?>
+				<th width="20" class="a-center"><?=Mage::helper('sales')->__('Qty')?></th>
+				<?endif;?>
+				<th width="60"><?=Mage::helper('sales')->__('Price')?></th>
+				<?if($this->canRemoveItems()):?>
+				<th width="16" class="a-center"><img src="<?=$this->getSkinUrl('images/fam_bin.gif')?>" alt="<?=Mage::helper('sales')->__('Remove')?>" width="16" height="16"/></th>
+				<?endif;?>
+				<th width="16" class="a-center"><img src="<?=$this->getSkinUrl('images/fam_package_go.gif')?>" alt="<?=Mage::helper('sales')->__('Add To Order')?>" width="16" height="16"/></th>
+			</tr>
+			<?foreach ($this->getItems() as $_item):?>
+			<tr>
+				<td><?=$_item->getName()?></td>
+				<?if ($this->canDisplayItemQty()):?>
+				<td class="a-center"><?=$_item->getQty()*1?></td>
+				<?endif;?>
+				<td><?=$this->convertPrice($_item->getPrice())?></td>
+				<?if($this->canRemoveItems()):?>
+				<td class="a-center"><input type="checkbox" name="sidebar[remove][<?=$this->getItemId($_item)?>]" value="<?=$this->getDataId()?>" title="<?=Mage::helper('sales')->__('Remove')?>"/></td>
+				<?endif;?>
+				<td class="a-center"><input type="checkbox" name="sidebar[add][<?=$this->getProductId($_item)?>]" value="<?=$this->canDisplayItemQty() ? $_item->getQty()*1 : 1?>" title="<?=Mage::helper('sales')->__('Add To Order')?>"/></td>
+			</tr>
+			<?endforeach;?>
+		</table>
+		<?else:?>
+			<center><?=Mage::helper('sales')->__('No items')?></center>
+		<?endif?>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<layout version="0.1.0">
+<!--
+Default layout, loads most of the pages
+-->
+
+    <default>
+        <block type="page/html" name="root" output="toHtml" template="page/3columns.phtml">
+            <block type="core/store" name="store" as="store"/>
+
+            <block type="page/html_head" name="head" as="head">
+                <action method="addJs"><script>prototype/prototype.js</script></action>
+                <action method="addJs"><script>prototype/validation.js</script></action>
+                <action method="addJs"><script>scriptaculous/scriptaculous.js</script></action>
+            </block>
+
+            <block type="page/html_header" name="header" as="header">
+                <block type="page/html_toplinks" name="top.left.links" as="topLeftLinks"/>
+                <block type="page/html_toplinks" name="top.right.links" as="topRightLinks"/>
+
+                <block type="core/text_list" name="top.menu" as="topMenu"/>
+            </block>
+
+            <block type="page/html_breadcrumbs" name="breadcrumbs" as="breadcrumbs"/>
+
+            <block type="core/text_list" name="left" as="left"/>
+
+            <block type="core/messages" name="global_messages" as="global_messages"/>
+            <block type="core/messages" name="messages" as="messages"/>
+
+            <block type="core/text_list" name="content" as="content"/>
+
+            <block type="core/text_list" name="right" as="right"/>
+
+            <block type="page/html_footer" name="footer" as="footer" template="page/html/footer.phtml">
+                <block type="core/store_switcher" name="store_switcher" template="core/stores.phtml"/>
+                <block type="cms/block" name="footer_links">
+                    <action method="setBlockId"><block_id>footer_links</block_id></action>
+                </block>
+            </block>
+
+            <block type="core/text_list" name="before_body_end" as="before_body_end"/>
+        </block>
+
+        <block type="core/profiler" output="toHtml"/>
+    </default>
+
+    <print>
+        <!-- Mage_Page -->
+        <block type="page/html" name="root" output="toHtml" template="page/print.phtml">
+
+            <block type="core/store" name="store" as="store"/>
+
+            <block type="page/html_head" name="head" as="head"/>
+
+            <block type="core/text_list" name="content" as="content"/>
+
+        </block>
+    </print>
+</layout>

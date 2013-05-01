@@ -1,0 +1,177 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Template for Mage_Block_Adminhtml_Widget_Grid
+ *
+ *  getId()
+ *  getCollection()
+ *  getColumns()
+ *  getPagerVisibility()
+ *  getVarNamePage()
+ */
+$numColumns = sizeof($this->getColumns());
+?>
+<?if($this->getCollection()):?>
+    <?if($this->canDisplayContainer()):?>
+        <?if($this->getGridHeader()):?>
+        <div class="content-header">
+            <table cellspacing="0" class="grid-header">
+                <tr>
+                    <td style="width:50%;"><h2><?=$this->getGridHeader();?></h2></td>
+                </tr>
+            </table>
+        </div>
+        <?endif?>
+
+        <div id="<?=$this->getId()?>">
+    <?else:?>
+        <?=$this->getMessagesBlock()->getGroupedHtml()?>
+    <?endif;?>
+<?if($this->getPagerVisibility() || $this->getExportTypes() || $this->getFilterVisibility()):?>
+    <table cellspacing="0" class="actions">
+        <tr>
+        <?if($this->getPagerVisibility()):?>
+            <td class="pager">
+            <?=$this->__('Page')?>
+
+            <?$_curPage  = $this->getCollection()->getCurPage()?>
+            <?$_lastPage = $this->getCollection()->getLastPageNumber()?>
+            <?if($_curPage>1):?>
+                <a href="#" title="<?=$this->__('Previous page')?>" onclick="<?=$this->getId()?>JsObject.setPage('<?=($_curPage-1)?>');return false;"><img src="<?=$this->getSkinUrl('images/pager_arrow_left.gif')?>" alt="Go to Previous page" class="arrow"/></a>
+            <?else:?>
+                <img src="<?=$this->getSkinUrl('images/pager_arrow_left_off.gif')?>" alt="Go to Previous page" class="arrow"/>
+            <?endif;?>
+
+            <input type="text" name="<?=$this->getVarNamePage()?>" value="<?=$_curPage?>" class="input-text page" onkeypress="<?=$this->getId()?>JsObject.inputPage(event, '<?=$_lastPage?>')"/>
+
+            <?if($_curPage < $_lastPage):?>
+                <a href="#" title="<?=$this->__('Next page')?>" onclick="<?=$this->getId()?>JsObject.setPage('<?=($_curPage+1)?>');return false;"><img src="<?=$this->getSkinUrl('images/pager_arrow_right.gif')?>" alt="Go to Next page" class="arrow"/></a>
+            <?else:?>
+                <img src="<?=$this->getSkinUrl('images/pager_arrow_right_off.gif')?>" alt="Go to Previous page" class="arrow"/>
+            <?endif;?>
+
+            <?=$this->__('of %s pages', $this->getCollection()->getLastPageNumber())?>
+            <span class="spacer">|</span>
+            <?=$this->__('View')?>
+            <select name="<?=$this->getVarNameLimit()?>" onchange="<?=$this->getId()?>JsObject.loadByElement(this)">
+                <option value="20"<?if($this->getCollection()->getPageSize()==20):?> selected<?endif;?>>20</option>
+                <option value="30"<?if($this->getCollection()->getPageSize()==30):?> selected<?endif;?>>30</option>
+                <option value="50"<?if($this->getCollection()->getPageSize()==50):?> selected<?endif;?>>50</option>
+                <option value="100"<?if($this->getCollection()->getPageSize()==100):?> selected<?endif;?>>100</option>
+                <option value="200"<?if($this->getCollection()->getPageSize()==200):?> selected<?endif;?>>200</option>
+            </select>
+            <?=$this->__('per page')?><span class="spacer">|</span>
+            <?=$this->__('Total %d records found', $this->getCollection()->getSize())?>
+            <span id="<?=$this->getHtmlId()?>-total-count" class="no-display"><?=$this->getCollection()->getSize()?></span>
+        </td>
+    <?endif?>
+    <?if($this->getExportTypes()):?>
+        <td class="export a-right">
+            <img src="<?=$this->getSkinUrl('images/icon_export.gif')?>" alt="" class="v-middle"/>&nbsp; <?=$this->__('Export to:')?>
+            <select name="<?=$this->getId()?>_export" id="<?=$this->getId()?>_export" style="width:8em;">
+            <?foreach ($this->getExportTypes() as $_type):?>
+                <option value="<?=$_type->getUrl()?>"><?=$_type->getLabel()?></option>
+            <?endforeach;?>
+            </select>
+            <?=$this->getExportButtonHtml()?>
+        </td>
+    <?endif;?>
+        <td class="filter-actions a-right">
+            <?=$this->getMainButtonsHtml()?>
+        </td>
+        </tr>
+    </table>
+<?endif;?>
+<?if($this->getMassactionBlock()->isAvailable()):?>
+<?=$this->getMassactionBlockHtml()?>
+<?endif?>
+<div class="grid">
+<table cellspacing="0" class="data" id="<?=$this->getId()?>_table">
+    <?foreach ($this->getColumns() as $_column):?>
+    <col <?=$_column->getHtmlProperty()?>></col>
+    <?endforeach;?>
+    <col/>
+    <?if ($this->getHeadersVisibility() || $this->getFilterVisibility()):?>
+        <thead>
+            <?if ($this->getHeadersVisibility()):?>
+                <tr class="headings">
+                <?foreach ($this->getColumns() as $_column):?>
+                    <th <?=$_column->getHeaderHtmlProperty()?>><nobr><?=$_column->getHeaderHtml()?></nobr></th>
+                <?endforeach;?>
+                </tr>
+            <?endif;?>
+            <?if ($this->getFilterVisibility()):?>
+                <tr class="filter">
+                <?$i=0;foreach ($this->getColumns() as $_column):?>
+                    <th <?=$_column->getHeaderHtmlProperty()?>><?=$_column->getFilterHtml()?></th>
+                <?endforeach;?>
+                </tr>
+            <?endif?>
+        </thead>
+    <?endif;?>
+    <?if ($this->getCountTotals()):?>
+        <tfoot>
+            <tr>
+            <?foreach ($this->getColumns() as $_column):?>
+                <th class="<?=$_column->getCssClass()?>"><?=$_column->getRowField($_column->getGrid()->getTotals())?>&nbsp;</th>
+            <?endforeach;?>
+            </tr>
+         </tfoot>
+    <?endif;?>
+    <tbody>
+    <?if (($this->getCollection()->getSize()>0) && (!$this->getIsCollapsed())):?>
+    <?foreach ($this->getCollection() as $_index=>$_item):?>
+        <tr id="<?=$this->getRowId($_item)?>">
+        <?$i=0;foreach ($this->getColumns() as $_column):?>
+            <td class="<?=$_column->getCssClass()?> <?=++$i==$numColumns?'last':''?>"><?=(($_html = $_column->getRowField($_item)) ? $_html : '&nbsp')?></td>
+        <?endforeach;?>
+        </tr>
+    <?endforeach;?>
+    <?elseif ($this->getEmptyText()):?>
+    	<tr>
+    		<td class="empty-text <?=$this->getEmptyTextClass()?>" colspan="100"><?=$this->getEmptyText()?></td>
+    	</tr>
+    <?endif;?>
+    </tbody>
+</table>
+</div>
+<?if($this->canDisplayContainer()):?>
+</div>
+<script type="text/javascript" language="javascript">
+    <?=$this->getJsObjectName()?> = new varienGrid('<?=$this->getId()?>', '<?=$this->getGridUrl()?>', '<?=$this->getVarNamePage()?>', '<?=$this->getVarNameSort()?>', '<?=$this->getVarNameDir()?>', '<?=$this->getVarNameFilter()?>');
+    <?=$this->getJsObjectName()?>.useAjax = '<?=$this->getUseAjax()?>';
+    <?if($this->getRowClickCallback()):?>
+        <?=$this->getJsObjectName()?>.rowClickCallback = <?=$this->getRowClickCallback()?>;
+    <?endif;?>
+    <?if($this->getCheckboxCheckCallback()):?>
+        <?=$this->getJsObjectName()?>.checkboxCheckCallback = <?=$this->getCheckboxCheckCallback()?>;
+    <?endif;?>
+    <?if($this->getRowInitCallback()):?>
+        <?=$this->getJsObjectName()?>.initRowCallback = <?=$this->getRowInitCallback()?>;
+        <?=$this->getJsObjectName()?>.rows.each(function(row){<?=$this->getRowInitCallback()?>(<?=$this->getJsObjectName()?>, row)});
+    <?endif;?>
+    <?if($this->getMassactionBlock()->isAvailable()):?>
+    <?=$this->getMassactionBlock()->getJavaScript()?>
+    <?endif?>
+</script>
+<?endif;?>
+<?endif?>

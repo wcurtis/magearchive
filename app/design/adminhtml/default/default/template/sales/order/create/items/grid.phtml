@@ -1,0 +1,117 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_items = $this->getItems()?>
+<?if (empty($_items)):?>
+    <div class="a-center"><?=Mage::helper('sales')->__('No ordered items')?></div>
+<?else:?>
+    <div id="order:items_grid">
+    <?if(count($_items)>10):?>
+        <div class="a-right"><?=$this->getButtonHtml(Mage::helper('sales')->__('Update Items and Qty\'s'),'order.itemsUpdate()');?></div>
+    <?endif;?>
+        <div class="grid">
+            <table cellspacing="0" class="data" id="invoice_items_grid_table">
+                <!--col width="70"/-->
+                <col width="80"/>
+                <col/>
+                <?/*if($this->helper('giftmessage/message')->getAvailableForQuoteItems($this->getQuote(), $this->getStoreId())):?>
+                <col width="90"/>
+                <?endif;*/?>
+                <col width="90"/>
+                <col width="90"/>
+                <col width="50"/>
+                <col width="100"/>
+                <col width="100"/>
+                <thead>
+                    <tr class="headings">
+                        <!--th class="no-link"><nobr><?=Mage::helper('sales')->__('Product ID')?></nobr></th-->
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('SKU')?></nobr></th>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Product Name')?></nobr></th>
+                        <?/*if($this->helper('giftmessage/message')->getAvailableForQuoteItems($this->getQuote(), $this->getStoreId())):?>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Gift Message')?></nobr></th>
+                        <?endif;*/?>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Orig. Price')?></nobr></th>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Price')?></nobr></th>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Qty')?></nobr></th>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Subtotal')?></nobr></th>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Action')?></nobr></th>
+                        <?if($this->isGiftMessagesAvailable()):?>
+                        <th class="no-link"><nobr><?=Mage::helper('sales')->__('Gift')?></nobr></th>
+                        <?endif?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?$i=0?>
+                    <?foreach ($_items as $_item):$i++?>
+                        <tr class="<?=($i%2)?'even':'odd'?>">
+                            <!--td class="a-center"><?=$_item->getProductId()?></td-->
+                            <td><?=$_item->getSku()?></td>
+                            <td>
+                                <?=$_item->getName()?>
+                                <?if($_item->getMessage()):?>
+                                <div class="<?if($_item->getHasError()):?>error<?else:?>notice<?endif;?>">
+                                    <div style="font-size:95%"><?=$_item->getMessage()?></div>
+                                </div>
+                                <?endif;?>
+                            </td>
+                            <td><nobr><?=$this->getItemOrigPrice($_item)?></nobr></td>
+                            <td>
+                                <input name="item[<?=$_item->getId()?>][custom_price]" class="input-text item-price" value="<?=$this->getItemEditablePrice($_item)?>"/>
+                            </td>
+                            <td>
+                                <input name="item[<?=$_item->getId()?>][qty]" class="input-text item-qty" value="<?=$_item->getQty()*1?>" maxlength="12"/>
+                            </td>
+                            <td><nobr><?=$this->formatPrice($_item->getRowTotal())?></nobr></td>
+                            <td><nobr>
+                                <select name="item[<?=$_item->getId()?>][action]" style="width:100px">
+                                    <option value=""></option>
+                                    <option value="remove"><?=Mage::helper('sales')->__('Remove')?></option>
+                                    <?if($this->getCustomerId()):?>
+                                    <option value="cart"><?=Mage::helper('sales')->__('Move to Shopping Cart')?></option>
+                                    <option value="wishlist"><?=Mage::helper('sales')->__('Move to Wishlist')?></option>
+                                    <?endif;?>
+                                </select>
+                            </nobr></td>
+                            <?if($this->isGiftMessagesAvailable()):?>
+                            <td><input type="checkbox" name="item[<?=$_item->getId()?>][giftmessage]"<?if($this->isAllowedForGiftMessage($_item)):?> checked<?endif;?><?if(!$this->isGiftMessagesAvailable($_item)):?> disabled<?endif;?>/></td>
+                            <?endif?>
+                            </td>
+                        </tr>
+                    <?endforeach;?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="a-left">
+                            <?=Mage::helper('sales')->__('Total %d product(s)', count($_items))?>
+                        </td>
+                        <td colspan="2" class="a-right">
+                            <?=Mage::helper('sales')->__('Subtotal:')?>
+                        </td>
+                        <td colspan="<?if($this->isGiftMessagesAvailable()):?>3<?else:?>2<?endif;?>" >
+                            <strong><?=$this->formatPrice($this->getSubtotal())?></strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="a-right"><?=$this->getButtonHtml(Mage::helper('sales')->__('Update Items and Qty\'s'),'order.itemsUpdate()');?></div>
+        <script type="text/javascript">order.itemsOnchangeBind()</script>
+    </div>
+<?endif;?>

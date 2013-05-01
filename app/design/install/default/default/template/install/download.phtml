@@ -1,0 +1,119 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Install download choice template
+ *
+ * @see Mage_Install_Block_Download
+ */
+?>
+<script type="text/javascript">
+function startInstall(state)
+{
+    $$('button').each(function(el) {
+        el.disabled = true;
+        el.addClassName('disabled');
+    });
+    var install = $('install_iframe');
+    install.setStyle({'display':'block', 'width':'100%', 'height':'300px'});
+    install.src = '<?=$this->getUrl('*/*/install')?>do/start/state/'+state;
+}
+
+function installSuccess()
+{
+    alert("<?=$this->__("All packages were installed successfully, click 'Ok' to continue with installation")?>");
+    location.href = "<?=$this->getNextUrl()?>";
+    $$('button').each(function(el) {
+        el.disabled = true;
+        el.removeClassName('disabled');
+    });
+}
+
+function installFailure()
+{
+    alert("<?=$this->__("There was a problem installing Magento packages. Please read the log, correct errors and retry again.")?>\n<?=$this->__("Alternatively you could try the 'Manual Downloads and Upgrades' method.")?>");
+    $$('button').each(function(el) {
+        el.disabled = true;
+        el.removeClassName('disabled');
+    });
+}
+
+</script>
+<div class="page-head">
+    <h3><?=$this->__('Download Magento Core Modules and Updates')?></h3>
+</div>
+<?=$this->getMessagesBlock()->getGroupedHtml()?>
+
+<form action="<?=$this->getPostUrl()?>" method="post" id="form-validate">
+
+<fieldset class="group-select">
+    <legend><?=$this->__('SVN Installation')?></legend>
+    <h4 class="legend"><?=$this->__('SVN Installation')?></h4>
+
+    <p><?=$this->__("If you have installed Magento through SVN, you should skip packages installation and validation by clicking the button below.")?></p>
+
+    <p><button class="form-button" type="submit" name="continue" value="svn"><span><?=$this->__('Continue SVN Installation')?></span></button></p>
+</fieldset>
+
+<fieldset class="group-select">
+    <legend><?=$this->__('Package Management through the Web')?></legend>
+    <h4 class="legend"><?=$this->__('Package Management through the Web')?></h4>
+
+    <p><?=$this->__("If you wish to manage Magento packages through the web admin interface, you will need to have web writeable permissions applied to all Magento folders and files.")?></p>
+    <p><?=$this->__("If your server is running on MS Windows, most probably you will not need to change anything.")?></p>
+    <p><?=$this->__("If you are running PHP as CGI, your PHP processes may run under the same user as the user you used when uploading Magento files.")?></p>
+    <p><?=$this->__("In other cases you will need to make Magento files writeable for the user that the web server process is running under.")?></p>
+
+        <h4><?=$this->__("Preferred stability: %s", $this->__("BETA"))?></h4>
+        <p><?=$this->__("Currently this is the most stable state available for Magento packages.")?><br/><?=$this->__("Choose this if you would like to test frontend and backend functionality.")?></p>
+        <p><button class="form-button" type="button" name="continue" value="auto" onclick="startInstall('beta')"><span><?=$this->__('Proceed With Automatic Download (%s)', $this->__('Beta'))?></span></button></p>
+<br/>
+        <h4><?=$this->__("Preferred stability: %s", $this->__("ALPHA"))?></h4>
+        <p><?=$this->__("If you are a developer and would like to have the latest public updates, choose this option.")?><br/><?=$this->__("Please note that it is much less stable than beta.")?></p>
+        <p><button class="form-button" type="button" name="continue" value="auto" onclick="startInstall('alpha')"><span><?=$this->__('Proceed With Automatic Download (%s)', $this->__('Alpha'))?></span></button></p>
+<br/>
+    <iframe id="install_iframe" src="<?=$this->getUrl('*/*/install')?>" style="display:none" frameborder="no"></iframe>
+</fieldset>
+
+<fieldset class="group-select">
+    <legend><?=$this->__('Manual Downloads and Upgrades')?></legend>
+    <h4 class="legend"><?=$this->__('Manual Downloads and Upgrades')?></h4>
+
+    <p><?=$this->__("If you are running install wizard over previously downloaded and installed Magento installation, proceed with this method.")?></p>
+    <p><?=$this->__("If you do not wish or are not able to have Magento folders writeable for the web process, you could use PEAR executable located in the root of Magento installation.")?></p>
+    <p><?=$this->__("Please note that only UNIX, Linux and Mac OSX shells are currently supported. For Windows use the '%s' option.", $this->__('Package Management through the Web'))?></p>
+    <p><?=$this->__("Run this in your shell from Magento root folder:")?></p>
+    <pre>
+./pear mage-setup
+./pear install mage-core/Mage_Pear_Helpers mage-core/Mage_Lib mage-core/Varien_Lib
+./pear install mage-core/Mage_All
+./pear install mage-core/Interface_Frontend_Default mage-core/Interface_Adminhtml_Default
+
+</pre>
+    <p><?=$this->__("After successfull installation please click the button below.")?></p>
+
+    <p><button class="form-button" type="submit" name="continue" value="manual"><span><?=$this->__('Continue After Manual Download')?></span></button></p>
+</fieldset>
+
+</form>
+
+<script type="text/javascript">
+var tabs = new Varien.Tabs('.tabs');
+</script>
