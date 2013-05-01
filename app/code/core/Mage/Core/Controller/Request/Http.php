@@ -84,10 +84,24 @@ class Mage_Core_Controller_Request_Http extends Zend_Controller_Request_Http
         return $this;
     }
 
-    function getOriginalRequest()
+    public function getOriginalRequest()
     {
         $request = new Zend_Controller_Request_Http();
         $request->setPathInfo($this->getOriginalPathInfo());
         return $request;
+    }
+
+    public function getBasePath()
+    {
+        $path = parent::getBasePath();
+        $path = str_replace('\\', '/', $path);
+        return $path;
+    }
+
+    public function getBaseUrl()
+    {
+        $url = parent::getBaseUrl();
+        $url = str_replace('\\', '/', $url);
+        return $url;
     }
 }

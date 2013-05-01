@@ -24,13 +24,13 @@
  * @category   Mage
  * @package    Mage_Log
  */
-class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract 
+class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
 {
     protected function _construct()
     {
         $this->_init('log/visitor', 'visitor_id');
     }
-    
+
     protected function _prepareDataForSave(Mage_Core_Model_Abstract $visitor)
     {
         return array(
@@ -38,9 +38,10 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
             'first_visit_at'=> $visitor->getFirstVisitAt(),
             'last_visit_at' => $visitor->getLastVisitAt(),
             'last_url_id'   => $visitor->getLastUrlId() ? $visitor->getLastUrlId() : 0,
+            'store_id'      => Mage::app()->getStore()->getId(),
         );
     }
-    
+
     /**
      * Saving information about url
      *
@@ -56,7 +57,7 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
         $visitor->setLastUrlId($this->_getWriteAdapter()->lastInsertId());
         return $this;
     }
-    
+
     protected function _beforeSave(Mage_Core_Model_Abstract $visitor)
     {
         if (!$visitor->getIsNewVisitor()) {
@@ -64,7 +65,7 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
         }
         return $this;
     }
-    
+
     protected function _afterSave(Mage_Core_Model_Abstract $visitor)
     {
         if ($visitor->getIsNewVisitor()) {
@@ -82,7 +83,7 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
         }
         return $this;
     }
-    
+
     /**
      * Saving visitor information
      *
@@ -101,11 +102,11 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
             'server_addr'       => $visitor->getServerAddr(),
             'remote_addr'       => $visitor->getRemoteAddr(),
         );
-        
+
         $write->insert($this->getTable('log/visitor_info'), $data);
         return $this;
     }
-    
+
     /**
      * Saving visitor and url relation
      *
@@ -122,7 +123,7 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
         ));
         return $this;
     }
-    
+
     /**
      * Saving information about customer
      *
@@ -132,20 +133,24 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
     protected function _saveCustomerInfo($visitor)
     {
         $write = $this->_getWriteAdapter();
-        
+
         if ($visitor->getDoCustomerLogin()) {
             $write->insert($this->getTable('log/customer'), array(
                 'visitor_id'    => $visitor->getVisitorId(),
                 'customer_id'   => $visitor->getCustomerId(),
-                'login_at'      => now()
+                'login_at'      => now(),
+                'store_id'      => Mage::app()->getStore()->getId(),
             ));
             $visitor->setCustomerLogId($write->lastInsertId());
             $visitor->setDoCustomerLogin(false);
         }
-        
+
         if ($visitor->getDoCustomerLogout() && $logId = $visitor->getCustomerLogId()) {
-            $write->update($this->getTable('log/customer'), 
-                array('logout_at'=>now()),
+            $write->update($this->getTable('log/customer'),
+                array(
+                    'logout_at' => now(),
+                    'store_id'  => Mage::app()->getStore()->getId(),
+                ),
                 $write->quoteInto('log_id=?', $logId)
             );
             $visitor->setDoCustomerLogout(false);
@@ -154,7 +159,7 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
         }
         return $this;
     }
-    
+
     /**
      * Saving information about quote
      *
@@ -172,9 +177,9 @@ class Mage_Log_Model_Mysql4_Visitor extends Mage_Core_Model_Mysql4_Abstract
             ));
             $visitor->setDoQuoteCreate(false);
         }
-        
+
         if ($visitor->getDoQuoteDestroy()) {
-            $write->update($this->getTable('log/quote_table'), 
+            $write->update($this->getTable('log/quote_table'),
                 array('deleted_at'=> now()),
                 $write->quoteInto('quote_id=?', $visitor->getQuoteId())
             );

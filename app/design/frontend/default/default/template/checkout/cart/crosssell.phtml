@@ -36,7 +36,9 @@
                 <h5><a href="<?=$_item->getProductUrl()?>"><?=$_item->getName()?></a></h5>
                 <?=$this->helper('catalog/product')->getPriceHtml($_item)?>
                 <button class="form-button" onclick="setLocation('<?=$this->getAddToCartUrl($_item)?>')" type="button"><span><?=$this->__('Add to Cart')?></span></button><br/>
+                <?if ($this->helper('wishlist')->isAllow()) :?>
                 <small><a href="<?=$this->getAddToWishlistUrl($_item)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a></small>
+                <?endif;?>
             </div>
         </li>
     <?endforeach;?>

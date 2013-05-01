@@ -91,12 +91,12 @@
     	<? if(Mage::getStoreConfig('carriers/pickup/active')) : ?><input type="radio" name="billing[pickup_or_use_for_shipping]" id="billing:pickup_or_use_for_shipping_pickup" value="2" <? if($this->getPickupOrUseForShipping() === 2): ?>checked <? endif ?>onclick="billing.setPickupOrUseForShipping(2);" />&nbsp;<label for="billing:pickup_or_use_for_shipping_pickup"><?= $this->__('Store Pickup') ?></label><? endif ?>
     </p>
 </form>
-<div class="form-buttons">
+<div class="button-set">
     <p class="required"><?=$this->__('* Required Fields')?></p>
     <span id="billing-buttons-container" >
         <button class="form-button right" onclick="billing.save()"><span><?=$this->__('Continue')?></span></button>
         <span id="billing-please-wait" style="display:none;" class="opc-please-wait">
-            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
         </span>
     </span>
 </div>

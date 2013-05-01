@@ -24,23 +24,23 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Entity_Category_Collection extends Mage_Eav_Model_Entity_Collection_Abstract
+class Mage_Catalog_Model_Entity_Category_Collection extends Mage_Catalog_Model_Entity_Collection_Abstract
 {
     protected $_productTable;
     protected $_productStoreId;
     protected $_storeTable;
-    
+
     protected $_loadWithProductCount = false;
-    
-    public function __construct() 
+
+    public function __construct()
     {
         $this->setEntity(Mage::getResourceSingleton('catalog/category'));
         $this->setObject('catalog/category');
-        
+
         $this->_storeTable   = Mage::getSingleton('core/resource')->getTableName('catalog/product_store');
         $this->_productTable = Mage::getSingleton('core/resource')->getTableName('catalog/category_product');
     }
-    
+
     public function addIdFilter($categoryIds)
     {
         if (is_array($categoryIds)) {
@@ -58,23 +58,23 @@ class Mage_Catalog_Model_Entity_Category_Collection extends Mage_Eav_Model_Entit
         	    $condition = array('in' => $ids);
         	}
         }
-        
+
         $this->addFieldToFilter('entity_id', $condition);
         return $this;
     }
-    
+
     public function setLoadProductCount($flag)
     {
         $this->_loadWithProductCount = $flag;
         return $this;
     }
-    
+
     public function setProductStoreId($storeId)
     {
         $this->_productStoreId = $storeId;
         return $this;
     }
-    
+
     public function getProductStoreId()
     {
         if (is_null($this->_productStoreId)) {
@@ -82,23 +82,23 @@ class Mage_Catalog_Model_Entity_Category_Collection extends Mage_Eav_Model_Entit
         }
         return $this->_productStoreId;
     }
-    
+
     public function load($printQuery = false, $logQuery = false)
     {
         if ($this->_loadWithProductCount) {
             $this->addAttributeToSelect('all_children');
             $this->addAttributeToSelect('is_anchor');
         }
-        
+
         parent::load($printQuery, $logQuery);
 
         if ($this->_loadWithProductCount) {
             $this->_loadProductCount();
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Load categories product count
      *
@@ -116,12 +116,12 @@ class Mage_Catalog_Model_Entity_Category_Collection extends Mage_Eav_Model_Entit
         	    $regular[$item->getId()] = $item;
         	}
         }
-        
+
         // Retrieve regular categories product counts
         $regularIds = array_keys($regular);
         if (!empty($regularIds)) {
             $select = $this->_read->select();
-            $select->from($this->_productTable, 
+            $select->from($this->_productTable,
                     array('category_id', new Zend_Db_Expr('COUNT('.$this->_productTable.'.product_id)'))
                 )
                 ->join($this->_storeTable, $this->_storeTable.'.product_id='.$this->_productTable.'.product_id')

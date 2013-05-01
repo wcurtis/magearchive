@@ -255,21 +255,32 @@ class Mage_Core_Model_Layout_Update
 
         if (empty($layoutStr)) {
             $updatesRoot = Mage::app()->getConfig()->getNode($area.'/layout/updates');
-            $layoutStr = '';
-            #$layoutXml = new $elementClass('<layouts/>');
+            $updateFiles = array();
             foreach ($updatesRoot->children() as $updateNode) {
                 if ($updateNode->file) {
-                    $filename = $design->getLayoutFilename((string)$updateNode->file);
-                    if (!is_readable($filename)) {
-                        continue;
-                    }
-                    $fileStr = file_get_contents($filename);
-                    $fileStr = str_replace($this->_subst['from'], $this->_subst['to'], $fileStr);
-                    $fileXml = simplexml_load_string($fileStr, $elementClass);
-                    $layoutStr .= $fileXml->innerXml();
-
-                    #$layoutXml->appendChild($fileXml);
+                    $updateFiles[] = (string)$updateNode->file;
                 }
+            }
+
+            // custom local layout updates file - load always last
+            $updateFiles[] = 'local.xml';
+
+            $layoutStr = '';
+            #$layoutXml = new $elementClass('<layouts/>');
+            foreach ($updateFiles as $file) {
+                $filename = $design->getLayoutFilename($file);
+                if (!is_readable($filename)) {
+                    continue;
+                }
+                $fileStr = file_get_contents($filename);
+                $fileStr = str_replace($this->_subst['from'], $this->_subst['to'], $fileStr);
+                $fileXml = simplexml_load_string($fileStr, $elementClass);
+                if (!$fileXml instanceof SimpleXMLElement) {
+                    continue;
+                }
+                $layoutStr .= $fileXml->innerXml();
+
+                #$layoutXml->appendChild($fileXml);
             }
             $layoutXml = simplexml_load_string('<layouts>'.$layoutStr.'</layouts>', $elementClass);
 

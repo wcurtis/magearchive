@@ -86,29 +86,29 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                         $data['attribute_set_id'])
                 );
                 $write->delete($backendTable, $clearCondition);
-            }            
+            }
         }
-        
+
         $write->delete($this->getTable('entity_attribute'), $condition);
         return $this;
     }
-    
+
     protected function _beforeSave(Mage_Core_Model_Abstract $object)
     {
         $frontendLabel = $object->getFrontendLabel();
         if (is_array($frontendLabel)) {
-            if (empty($frontendLabel[0])) {
+            if (!isset($frontendLabel[0]) || is_null($frontendLabel[0]) || $frontendLabel[0]=='') {
                 Mage::throwException(Mage::helper('eav')->__('Frontend label is not defined'));
             }
             $object->setFrontendLabel($frontendLabel[0]);
-            
+
             Mage::getModel('core/translate_string')
                 ->setString($frontendLabel[0])
                 ->setTranslate($frontendLabel[0])
                 ->setStoreTranslations($frontendLabel)
                 ->save();
         }
-        
+
         /**
          * @todo need use default source model of entity type !!!
          */
@@ -117,28 +117,28 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 $object->setSourceModel('eav/entity_attribute_source_table');
             }
         }
-        
+
         return parent::_beforeSave($object);
     }
-    
+
     protected function _afterSave(Mage_Core_Model_Abstract $object)
     {
         $this->_saveInSetIncluding($object)
             ->_saveOption($object);
         return parent::_afterSave($object);
     }
-    
+
     protected function _saveInSetIncluding(Mage_Core_Model_Abstract $object)
     {
         $attrId = $object->getId();
         $setId  = (int) $object->getAttributeSetId();
         $groupId= (int) $object->getAttributeGroupId();
-        
+
         if ($setId && $groupId && $object->getEntityTypeId()) {
             $write = $this->_getWriteAdapter();
             $table = $this->getTable('entity_attribute');
-            
-    
+
+
             $data = array(
                 'entity_type_id' => $object->getEntityTypeId(),
                 'attribute_set_id' => $setId,
@@ -146,15 +146,15 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 'attribute_id' => $attrId,
                 'sort_order' => (($object->getSortOrder()) ? $object->getSortOrder() : $this->_getMaxSortOrder($object) + 1),
             );
-    
-            $condition = "$table.attribute_id = '$attrId' 
+
+            $condition = "$table.attribute_id = '$attrId'
                 AND $table.attribute_set_id = '$setId'";
             $write->delete($table, $condition);
             $write->insert($table, $data);
         }
         return $this;
     }
-    
+
     protected function _saveOption(Mage_Core_Model_Abstract $object)
     {
         $option = $object->getOption();
@@ -166,7 +166,7 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 ->getResourceCollection()
                 ->setLoadDefault(true)
                 ->load();
-            
+
             if (isset($option['value'])) {
                 foreach ($option['value'] as $optionId => $values) {
                     $intOptionId = (int) $optionId;
@@ -175,10 +175,10 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                             $condition = $write->quoteInto('option_id=?', $intOptionId);
                             $write->delete($optionTable, $condition);
                         }
-                        
+
                         continue;
                     }
-                    
+
                     if (!$intOptionId) {
                         $data = array(
                            'attribute_id'  => $object->getId(),
@@ -193,12 +193,12 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                         );
                         $write->update($optionTable, $data, $write->quoteInto('option_id=?', $intOptionId));
                     }
-                    
+
                     // Default value
                     if (!isset($values[0])) {
                         Mage::throwException(Mage::helper('eav')->__('Default option value is not defined'));
                     }
-                    
+
                     $defaultValue = $values[0];
                     $write->delete($optionValueTable, $write->quoteInto('option_id=?', $intOptionId));
                     foreach ($stores as $store) {

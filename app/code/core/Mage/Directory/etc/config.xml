@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Directory>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <depends>
                 <Mage_Core />
             </depends>
@@ -53,6 +53,9 @@
                     <country>
                         <table>directory_country</table>
                     </country>
+                    <country_format>
+                        <table>directory_country_format</table>
+                    </country_format>
                     <country_region>
                         <table>directory_country_region</table>
                     </country_region>
@@ -120,4 +123,46 @@
             </modules>
         </translate>
     </adminhtml>
+
+    <default>
+        <allow>
+            <currency>
+                <code>ADP,AED,AFN,ALL,AMD,ANG,AOA,ARA,ARS,ATS,AUD,AWG,AZN,BAD,BAM,BBD,BDT,BEF,BGN,BHD,BIF,BMD,BND,BOB,BOP,BOV,BRC,BRL,BRN,BRR,BSD,BTN,BUK,BWP,BYR,BZD,CAD,CDF,CHE,CHF,CHW,CLF,CLP,CNY,COP,COU,CRC,CUP,CVE,CYP,CZK,DEM,DJF,DKK,DOP,DZD,ECS,EEK,EGP,EQE,ERN,ESP,ETB,EUR,FIM,FJD,FKP,FRF,GBP,GEK,GHS,GIP,GMD,GNF,GNS,GQE,GRD,GTQ,GWE,GWP,GYD,HKD,HNL,HRD,HRK,HTG,HUF,IDR,IEP,ILS,INR,IQD,INR,IQD,IRR,ISK,ITL,JMD,JOD,JPY,KES,KGS,KHR,KMF,KPW,KRW,KWD,KYD,KZT,LAK,LBP,LKR,LRD,LSL,LSM,LTL,LTT,LUF,LVL,LYD,MAD,MAF,MDL,MGA,MGF,MKD,MLF,MMK,MNT,MOP,MRO,MTL,MTP,MUR,MVR,MWK,MXN,MYR,MZE,MZN,NAD,NGN,NIC,NLG,NOK,NPR,NZD,OMR,PAB,PEI,PES,PGK,PHP,PKR,PLN,PTE,PYG,QAR,RHD,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SIT,SKK,SLL,SOS,SRD,SRG,STD,SVC,SYP,SZL,THB,TJR,TJS,TMM,TND,TOP,TPE,TRY,TTD,TWD,TZS,UAH,UGX,USD,UYU,UZS,VEB,VND,VUV,WST,XCD,YER,ZAR,ZMK,ZRN,ZRZ,ZWD</code>
+            </currency>
+        </allow>
+
+        <currency>
+            <options>
+                <allow>USD,EUR</allow>
+                <base>USD</base>
+                <default>USD</default>
+            </options>
+        </currency>
+
+        <general>
+            <country>
+                <allow>AF,AL,DZ,AS,AD,AO,AI,AQ,AG,AR,AM,AW,AU,AT,AZ,BS,BH,BD,BB,BY,BE,BZ,BJ,BM,BT,BO,BA,BW,BV,BR,IO,VG,BN,BG,BF,BI,KH,CM,CA,CV,KY,CF,TD,CL,CN,CX,CC,CO,KM,CG,CK,CR,HR,CU,CY,CZ,DK,DJ,DM,DO,EC,EG,SV,GQ,ER,EE,ET,FK,FO,FJ,FI,FR,GF,PF,TF,GA,GM,GE,DE,GH,GI,GR,GL,GD,GP,GU,GT,GN,GW,GY,HT,HM,HN,HK,HU,IS,IN,ID,IR,IQ,IE,IL,IT,CI,JM,JP,JO,KZ,KE,KI,KW,KG,LA,LV,LB,LS,LR,LY,LI,LT,LU,MO,MK,MG,MW,MY,MV,ML,MT,MH,MQ,MR,MU,YT,FX,MX,FM,MD,MC,MN,MS,MA,MZ,MM,NA,NR,NP,NL,AN,NC,NZ,NI,NE,NG,NU,NF,KP,MP,NO,OM,PK,PW,PA,PG,PY,PE,PH,PN,PL,PT,PR,QA,RE,RO,RU,RW,SH,KN,LC,PM,VC,WS,SM,ST,SA,SN,SC,SL,SG,SK,SI,SB,SO,ZA,GS,KR,ES,LK,SD,SR,SJ,SZ,SE,CH,SY,TW,TJ,TZ,TH,TG,TK,TO,TT,TN,TR,TM,TC,TV,VI,UG,UA,AE,GB,US,UM,UY,UZ,VU,VA,VE,VN,WF,EH,YE,ZM,ZW</allow>
+                <default>US</default>
+            </country>
+
+            <local>
+                <datetime_format_long>%A, %B %e %Y [%I:%M %p]</datetime_format_long>
+                <datetime_format_medium>%a, %b %e %Y [%I:%M %p]</datetime_format_medium>
+                <datetime_format_short>%m/%d/%y [%I:%M %p]</datetime_format_short>
+                <date_format_long>%A, %B %e %Y</date_format_long>
+                <date_format_medium>%a, %b %e %Y</date_format_medium>
+                <date_format_short>%m/%d/%y</date_format_short>
+                <language>en</language>
+            </local>
+        </general>
+    </default>
+
+    <crontab>
+        <jobs>
+            <newsletter_send_all>
+                <schedule><cron_expr>0 0 * * *</cron_expr></schedule>
+                <run><model>directory/observer::scheduledUpdateCurrencyRates</model></run>
+            </newsletter_send_all>
+        </jobs>
+    </crontab>
 </config>

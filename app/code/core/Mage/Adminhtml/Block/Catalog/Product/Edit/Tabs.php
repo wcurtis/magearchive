@@ -1,4 +1,4 @@
-    <?php
+<?php
 /**
  * Magento
  *
@@ -54,6 +54,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tabs extends Mage_Adminhtml_Bloc
             foreach ($groupCollection as $group) {
                 $attributes = $product->getAttributes($group->getId(), true);
                 // do not add grops without attributes
+
+                foreach ($attributes as $key => $attribute) {
+                    if( !$attribute->getIsVisible() ) {
+                        unset($attributes[$key]);
+                    }
+                }
+
                 if (count($attributes)==0) {
                     continue;
                 }
@@ -67,15 +74,15 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tabs extends Mage_Adminhtml_Bloc
                 ));
             }
 
-            if (!$product->isSuperConfig()) {
-                $this->addTab('inventory', array(
-                    'label'     => Mage::helper('catalog')->__('Inventory'),
-                    'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_inventory')->toHtml(),
-                ));
-            }
+            //if (!$product->isSuperConfig()) {
+            $this->addTab('inventory', array(
+                'label'     => Mage::helper('catalog')->__('Inventory'),
+                'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_inventory')->toHtml(),
+            ));
+            //}
 
             $this->addTab('stores', array(
-                'label'     => Mage::helper('catalog')->__('Stores'),
+                'label'     => Mage::helper('catalog')->__('Store Views'),
                 'content'   => $this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_stores')->toHtml(),
             ));
 

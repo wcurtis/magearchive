@@ -28,31 +28,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <?=$this->getChildHtml('head')?>
-    <link rel="icon" href="<?=$this->getBaseUrl()?>favicon.ico" type="image/x-icon"/>
-    <link rel="shortcut icon" href="<?=$this->getBaseUrl()?>favicon.ico" type="image/x-icon"/>
-    <?=$this->helper('core/js')->includeScript('varien/js.js')?>
-    <?=$this->helper('core/js')->includeScript('varien/form.js')?>
-    <?=$this->helper('core/js')->includeScript('varien/menu.js')?>
-    <?=$this->helper('core/js')->includeScript('mage/translate.js')?>
-    <?=$this->helper('core/js')->includeScript('mage/cookies.js')?>
-    <?=$this->helper('core/js')->getTranslatorScript()?>
-    <script type="text/javascript">
-        var BLANK_URL = '<?=$this->getJsUrl()?>blank.html';
-    </script>
-    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/styles.css')?>" type="text/css" media="all"/>
-    <!--[if IE]> <link rel="stylesheet" href="<?=$this->getSkinUrl('css/iestyles.css')?>" type="text/css" media="all"/> <![endif]-->
-    <!--[if IE 7]> <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7.css')?>" type="text/css" media="all"/> <![endif]-->
-    <!--[if lt IE 7]>
-        <link rel="stylesheet" href="<?=$this->getSkinUrl('css/ie7minus.css')?>" type="text/css" media="all"/>
-        <script type="text/javascript" src="<?=$this->getJsUrl()?>lib/ds-sleight.js" ></script>
-        <script type="text/javascript" src="<?=$this->getJsUrl()?>varien/iehover-fix.js" ></script>
-    <![endif]-->
-
-    <link rel="stylesheet" href="<?=$this->getSkinUrl('css/print.css')?>" type="text/css" media="print" />
 </head>
 
-<body>
+<body <?=$this->getBodyClass()?'class="'.$this->getBodyClass().'"':''?>>
 
+    <!--<p class="demo-notice"><span><?=$this->__('This is a demo store. Any orders placed through this store will not be honored or fulfilled.')?></span></p>-->
         <!-- [start] header -->
         <div class="header">
             <?=$this->getChildHtml('header')?>

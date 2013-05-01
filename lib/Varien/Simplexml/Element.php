@@ -141,13 +141,20 @@ class Varien_Simplexml_Element extends SimpleXMLElement
 	 * Makes nicely formatted XML from the node
 	 *
 	 * @param string $filename
-	 * @param int $level
+	 * @param int|boolean $level if false
 	 * @return string
 	 */
 	public function asNiceXml($filename='', $level=0)
 	{
-	    $pad = str_pad('', $level*3, ' ', STR_PAD_LEFT);
-	    $out = $pad."<".$this->getName();
+	    if (is_numeric($level)) {
+    	    $pad = str_pad('', $level*3, ' ', STR_PAD_LEFT);
+    	    $nl = "\n";
+	    } else {
+	        $pad = '';
+	        $nl = '';
+	    }
+
+	    $out = $pad.'<'.$this->getName();
 
 	    if ($attributes = $this->attributes()) {
 	        foreach ($attributes as $key=>$value) {
@@ -156,32 +163,32 @@ class Varien_Simplexml_Element extends SimpleXMLElement
 	    }
 
 	    if ($children = $this->children()) {
-	        $out .= ">\n";
+	        $out .= '>'.$nl;
 	        foreach ($children as $child) {
-	            $out .= $child->asNiceXml('', $level+1);
+	            $out .= $child->asNiceXml('', is_numeric($level) ? $level+1 : true);
 	        }
-	        $out .= $pad."</".$this->getName().">\n";
+	        $out .= $pad.'</'.$this->getName().'>'.$nl;
 	    } else {
 	        $value = (string)$this;
 	        if (empty($value)) {
-	            $out .= " />\n";
+	            $out .= '/>'.$nl;
 	        } else {
-	            $out .= ">".$this->xmlentities($value)."</".$this->getName().">\n";
+	            $out .= '>'.$this->xmlentities($value).'</'.$this->getName().'>'.$nl;
 	        }
 	    }
 
-	    if (0===$level && !empty($filename)) {
+	    if ((0===$level || false===$level) && !empty($filename)) {
 	        file_put_contents($filename, $out);
 	    }
 
 	    return $out;
 	}
 
-	public function innerXml()
+	public function innerXml($level=0)
 	{
 	    $out = '';
 	    foreach ($this->children() as $child) {
-	        $out .= $child->asNiceXml();
+	        $out .= $child->asNiceXml($level);
 	    }
 	    return $out;
 	}
@@ -198,7 +205,9 @@ class Varien_Simplexml_Element extends SimpleXMLElement
 	        $value = (string)$this;
 	    }
 
-	    return str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), $value);
+        $value = str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), $value);
+
+	    return $value;
 	}
 
 	/**
@@ -281,7 +290,9 @@ class Varien_Simplexml_Element extends SimpleXMLElement
                     return $this;
                 }
             }
-            $targetChild = $this->addChild($sourceName, (string)$source);
+
+            $targetChild = $this->addChild($sourceName, (string)$source->xmlentities());
+
             $targetChild->setParent($this);
             foreach ($source->attributes() as $key=>$value) {
                 $targetChild->addAttribute($key, $value);

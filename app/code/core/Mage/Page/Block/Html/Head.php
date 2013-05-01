@@ -24,82 +24,84 @@
  * @category   Mage
  * @package    Mage_Page
  */
-class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
+class Mage_Page_Block_Html_Head extends Mage_Core_Block_Template
 {
     protected $_additionalCssJs = array();
 
-    public function toHtml()
+    protected function _construct()
     {
-        $this->addText('<title>'.$this->getTitle().'</title>'."\n\t");
-        $this->addText('<meta http-equiv="Content-Type" content="'.$this->getContentType().'"/>'."\n\t");
-        $this->addText('<meta name="description" content="'.$this->getDescription().'"/>'."\n\t");
-        $this->addText('<meta name="keywords" content="'.$this->getKeywords().'"/>'."\n\t");
-        $this->addText('<meta name="robots" content="'.$this->getRobots().'"/>'."\n");
-        $this->addText($this->getAdditionalCssJs());
-        $this->addText($this->getChildHtml());
-
-        return parent::toHtml();
+        $this->setTemplate('page/html/head.phtml');
     }
 
-    public function addCss($name)
+    public function addCss($name, $params="")
     {
-        $this->_additionalCssJs['css'][] = $name;
+        $this->addItem('css', $name, $params);
         return $this;
     }
 
-    public function addJs($name)
+    public function addJs($name, $params="")
     {
-        $this->_additionalCssJs['js'][] = $name;
+        $this->addItem('js', $name, $params);
         return $this;
     }
 
-    public function addCssIe($name)
+    public function addCssIe($name, $params="")
     {
-        $this->_additionalCssJs['cssIe'][] = $name;
+        $this->addItem('css', $name, $params, 'IE');
         return $this;
     }
 
-    public function addJsIe($name)
+    public function addJsIe($name, $params="")
     {
-        $this->_additionalCssJs['jsIe'][] = $name;
+        $this->addItem('js', $name, $params, 'IE');
+        return $this;
+    }
+
+    public function addItem($type, $name, $params=null, $if=null)
+    {
+        if ($type==='css' && empty($params)) {
+            $params = 'media="all"';
+        }
+        $this->_additionalCssJs[$type.'/'.$name] = array(
+            'type'   => $type,
+            'name'   => $name,
+            'params' => $params,
+            'if'     => $if
+       );
         return $this;
     }
 
 	public function removeItem($type, $name)
 	{
-		if (!isset($this->_additionalCssJs[$type])) {
-			return $this;
-		}
-		$key = array_search($name, $this->_additionalCssJs[$type]);
-		if (false===$key) {
-			return $this;
-		}
-		unset($this->_additionalCssJs[$type][$key]);
+		unset($this->_additionalCssJs[$type.'/'.$name]);
 		return $this;
 	}
 
     public function getAdditionalCssJs()
     {
         $lines = '';
-        if (isset($this->_additionalCssJs['css']) && is_array($this->_additionalCssJs['css'])) {
-            foreach ($this->_additionalCssJs['css'] as $item) {
-                $lines .= '<link rel="stylesheet" type="text/css" media="all" href="' . $this->getSkinUrl('css/' . $item) . '" ></link>' . "\n";
+
+        foreach ($this->_additionalCssJs as $item) {
+            if (!empty($item['if'])) {
+                $lines .= '<!--[if '.$item['if'].']>';
             }
-        }
-        if (isset($this->_additionalCssJs['cssIe']) && is_array($this->_additionalCssJs['cssIe'])) {
-            foreach ($this->_additionalCssJs['cssIe'] as $item) {
-                $lines .= '<!--[if IE]> <link rel="stylesheet" type="text/css" media="all" href="' . $this->getSkinUrl('css/' . $item) . '" ></link> <![endif]-->' . "\n";
+
+            switch ($item['type']) {
+                case 'js':
+                    $lines .= '<script type="text/javascript" src="'.Mage::getBaseUrl('js').$item['name'].'" '.$item['params'].'></script>';
+                    break;
+
+                case 'skinJs':
+                    $lines .= '<script type="text/javascript" src="'.$this->getSkinUrl('js/'.$item['name']).'" '.$item['params'].'></script>';
+
+                case 'css':
+                    $lines .= '<link type="text/css" rel="stylesheet" href="'.$this->getSkinUrl('css/'.$item['name']).'" '.$item['params'].'></link>';
+                    break;
             }
-        }
-        if (isset($this->_additionalCssJs['js']) && is_array($this->_additionalCssJs['js'])) {
-            foreach ($this->_additionalCssJs['js'] as $item) {
-                $lines .= '<script type="text/javascript" src="' . Mage::getBaseUrl(array('_type'=>'js')) . $item . '" ></script>' . "\n";
+            if (!empty($item['if'])) {
+                $lines .= '<![endif]-->';
             }
-        }
-        if (isset($this->_additionalCssJs['jsIe']) && is_array($this->_additionalCssJs['jsIe'])) {
-            foreach ($this->_additionalCssJs['jsIe'] as $item) {
-                $lines .= '<!--[if IE]> <script type="text/javascript" src="' . Mage::getBaseUrl(array('_type'=>'js')) . $item . '" ></script> <![endif]-->' . "\n";
-            }
+            $lines .= "\n";
         }
         return $lines;
     }
@@ -129,7 +131,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
     public function getMediaType()
     {
         if (!$this->_mediaType) {
-            return $this->getDesignConfig('page/head/media_type');
+            return Mage::getStoreConfig('design/head/default_media_type');
         }
         else {
             return $this->_mediaType;
@@ -145,7 +147,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
     public function getCharset()
     {
         if (!$this->_charset) {
-            return $this->getDesignConfig('page/head/charset');
+            return Mage::getStoreConfig('design/head/default_charset');
         }
         else {
             return $this->_charset;
@@ -154,7 +156,8 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
 
     public function setTitle($title)
     {
-        $this->_title = $title;
+        $this->_title = Mage::getStoreConfig('design/head/title_prefix').' '.$title
+            .' '.Mage::getStoreConfig('design/head/title_suffix');
         return $this;
     }
 
@@ -165,10 +168,10 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
         }
         return $this->_title;
     }
-    
+
     public function getDefaultTitle()
     {
-        return $this->getDesignConfig('page/head/title');
+        return Mage::getStoreConfig('design/head/default_title');
     }
 
     public function setDescription($description)
@@ -180,7 +183,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
     public function getDescription()
     {
         if (!$this->_description) {
-            $this->_description = $this->getDesignConfig('page/head/description');
+            $this->_description = Mage::getStoreConfig('design/head/default_description');
         }
         return $this->_description;
     }
@@ -194,7 +197,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
     public function getKeywords()
     {
         if (!$this->_keywords) {
-            $this->_keywords = $this->getDesignConfig('page/head/keywords');
+            $this->_keywords = Mage::getStoreConfig('design/head/default_keywords');
         }
         return $this->_keywords;
     }
@@ -208,7 +211,7 @@ class Mage_Page_Block_Html_Head extends Mage_Core_Block_Text
     public function getRobots()
     {
         if (!$this->_robots) {
-            $this->_robots = $this->getDesignConfig('page/head/robots');
+            $this->_robots = Mage::getStoreConfig('design/head/default_robots');
         }
         return $this->_robots;
     }

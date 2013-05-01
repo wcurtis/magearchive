@@ -167,7 +167,7 @@ class Mage_Core_Model_Locale
         $options    = array();
         $locales    = $this->getLocale()->getLocaleList();
         $languages  = $this->getLocale()->getLanguageTranslationList();
-        $countries  = $this->getLocale()->getTranslationList('country');
+        $countries  = $this->getLocale()->getCountryTranslationList();
 
         $allowed    = $this->getAllowLocales();
         foreach ($locales as $code=>$active) {
@@ -196,7 +196,7 @@ class Mage_Core_Model_Locale
     public function getOptionTimezones()
     {
         $options= array();
-        $zones  = $this->getLocale()->getTranslationList('timezone');
+        $zones  = $this->getLocale()->getTranslationList('windowstotimezone');
         ksort($zones);
         foreach ($zones as $code=>$name) {
             $name = trim($name);
@@ -216,7 +216,7 @@ class Mage_Core_Model_Locale
     public function getOptionCountries()
     {
         $options    = array();
-        $countries  = $this->getLocale()->getTranslationList('country');
+        $countries  = $this->getLocale()->getCountryTranslationList();
 
         foreach ($countries as $code=>$name) {
             $options[] = array(
@@ -234,14 +234,15 @@ class Mage_Core_Model_Locale
      */
     public function getOptionCurrencies()
     {
-        $currencies = $this->getLocale()->getTranslationList('currency');
+        $currencies = $this->getLocale()->getTranslationList('currencytoname');
         $options = array();
         $allowed = $this->getAllowCurrencies();
-        foreach ($currencies as $code=>$name) {
+
+        foreach ($currencies as $name=>$code) {
             if (!in_array($code, $allowed)) {
                 continue;
             }
-            
+
             $options[] = array(
                'label' => $name,
                'value' => $code,
@@ -257,9 +258,9 @@ class Mage_Core_Model_Locale
      */
     public function getOptionAllCurrencies()
     {
-        $currencies = $this->getLocale()->getTranslationList('currency');
+        $currencies = $this->getLocale()->getTranslationList('currencytoname');
         $options = array();
-        foreach ($currencies as $code=>$name) {
+        foreach ($currencies as $name=>$code) {
             $options[] = array(
                'label' => $name,
                'value' => $code,
@@ -267,7 +268,7 @@ class Mage_Core_Model_Locale
         }
         return $this->_sortOptionArray($options);
     }
-    
+
     protected function _sortOptionArray($option)
     {
         $data = array();
@@ -328,7 +329,7 @@ class Mage_Core_Model_Locale
      */
     public function getDateFormat($type=null)
     {
-        return $this->getLocale()->getTranslation($type, 'dateformat');
+        return $this->getLocale()->getTranslation($type, 'date');
     }
 
     /**
@@ -339,7 +340,7 @@ class Mage_Core_Model_Locale
      */
     public function getTimeFormat($type=null)
     {
-        return $this->getLocale()->getTranslation($type, 'timeformat');
+        return $this->getLocale()->getTranslation($type, 'time');
     }
 
     /**
@@ -395,7 +396,7 @@ class Mage_Core_Model_Locale
      * @param   string $part
      * @return  Zend_Date
      */
-    public function date($date=null, $part=null, $locale=null)
+    public function date($date=null, $part=null, $locale=null, $useTimezone=true)
     {
         if (is_null($locale)) {
             $locale = $this->getLocale();
@@ -403,9 +404,12 @@ class Mage_Core_Model_Locale
 
         try {
             $date = new Zend_Date($date, $part, $locale);
-            if ($timezone = Mage::app()->getStore()->getConfig(self::XML_PATH_DEFAULT_TIMEZONE)) {
-                $date->setTimezone($timezone);
+            if ($useTimezone) {
+                if ($timezone = Mage::app()->getStore()->getConfig(self::XML_PATH_DEFAULT_TIMEZONE)) {
+                    $date->setTimezone($timezone);
+                }
             }
+            $date->add(-(substr($date->get(Zend_Date::GMT_DIFF), 0,3)), Zend_Date::HOUR);
         }
         catch (Exception $e){
             return null;

@@ -30,7 +30,10 @@ class Mage_Adminhtml_Block_Tax_Rule_Grid extends Mage_Adminhtml_Block_Widget_Gri
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('tax/rule_collection');
+        $collection = Mage::getModel('tax/rule')
+            ->getCollection()
+            ->joinClassTable()
+            ->joinRateTypeTable();
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -51,8 +54,8 @@ class Mage_Adminhtml_Block_Tax_Rule_Grid extends Mage_Adminhtml_Block_Widget_Gri
             array(
                 'header'=>Mage::helper('tax')->__('Customer Tax Class'),
                 'align' =>'left',
-                'index' => 'customer_class',
-                'filter_index' => 'cct.class_name',
+                'index' => 'class_customer_name',
+                'filter_index' => 'class_customer_name',
             )
         );
 
@@ -60,8 +63,8 @@ class Mage_Adminhtml_Block_Tax_Rule_Grid extends Mage_Adminhtml_Block_Widget_Gri
             array(
                 'header'=>Mage::helper('tax')->__('Product Tax Class'),
                 'align' =>'left',
-                'index' => 'product_class',
-                'filter_index' => 'pct.class_name',
+                'index' => 'class_product_name',
+                'filter_index' => 'class_product_name',
             )
         );
 
@@ -69,7 +72,7 @@ class Mage_Adminhtml_Block_Tax_Rule_Grid extends Mage_Adminhtml_Block_Widget_Gri
             array(
                 'header'=>Mage::helper('tax')->__('Tax Rate'),
                 'align' =>'left',
-                'index' => 'type_name'
+                'index' => 'rate_type_name'
             )
         );
 

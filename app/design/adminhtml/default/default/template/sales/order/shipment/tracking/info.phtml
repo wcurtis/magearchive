@@ -1,0 +1,56 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<span class="field-row grid" id="shipment_tracking_info">
+<?if($this->trackingInfo):?>
+    <?if ($this->trackingInfo->getErrorMessage()):?>
+        <?=$this->trackingInfo->getErrorMessage()?>
+    <?else:?>
+        <?if ($this->trackingInfo->getUrl()):?>
+            Please, visit for more info: <a href="<?=$this->trackingInfo->getUrl()?>" target="_blank"><?=$this->trackingInfo->getCarrierTitle()?></a><br>
+        <?endif;?>
+
+        <?if ($this->trackingInfo->getStatus()):?>
+            Status: <?=$this->trackingInfo->getStatus() ?><br>
+        <?endif;?>
+
+        <?if ($this->trackingInfo->getDeliverydate()):?>
+            Delivery Date: <?=$this->trackingInfo->getDeliverydate() ?><br>
+        <?endif;?>
+
+        <?if ($this->trackingInfo->getDeliverytime()):?>
+            Delivery Time: <?=$this->trackingInfo->getDeliverytime() ?><br>
+        <?endif;?>
+
+        <?if ($this->trackingInfo->getDeliverylocation()):?>
+            Delivery Location: <?=$this->trackingInfo->getDeliverylocation() ?><br>
+        <?endif;?>
+
+        <?if ($this->trackingInfo->getSignedby()):?>
+            Signed by: <?=$this->trackingInfo->getSignedby() ?><br>
+        <?endif;?>
+
+        <?if ($this->trackingInfo->getTrackSummary()):?>
+            Tracking summary: <?=$this->trackingInfo->getTrackSummary() ?><br>
+        <?endif;?>
+
+    <?endif;?>
+<?endif;?>
+</span>

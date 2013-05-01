@@ -230,7 +230,7 @@ class Zend_Controller_Front
      * to the directory specified.
      *
      * @param string $directory
-     * @param string $module Optional argument; module with which to associate directory. If none provided, assumes 'defualt'
+     * @param string $module Optional argument; module with which to associate directory. If none provided, assumes 'default'
      * @return Zend_Controller_Front
      * @throws Zend_Controller_Exception if directory not found or readable
      */
@@ -491,7 +491,7 @@ class Zend_Controller_Front
      *
      * Instantiates a Zend_Controller_Router_Rewrite object if no router currently set.
      *
-     * @return null|Zend_Controller_Router_Interface
+     * @return Zend_Controller_Router_Interface
      */
     public function getRouter()
     {

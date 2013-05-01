@@ -34,9 +34,10 @@ class Mage_Install_Model_Observer
         return $this;
     }
 
-    public function installFailure()
+    public function installFailure($observer)
     {
         echo "<h2>There was a problem proceeding with Magento installation.</h2>";
-        echo "Please contact developers with following information:";
+        echo "<p>Please contact developers with error messages on this page.</p>";
+        echo Mage::printException($observer->getEvent()->getException());
     }
 }

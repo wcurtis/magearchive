@@ -71,4 +71,9 @@ class Mage_Sales_Block_Order_History extends Mage_Core_Block_Template
     {
         return $this->getUrl('*/*/track', array('order_id' => $order->getId()));
     }
+
+    public function getReorderUrl($order)
+    {
+        return $this->getUrl('*/*/reorder', array('order_id' => $order->getId()));
+    }
 }

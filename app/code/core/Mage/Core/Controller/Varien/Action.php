@@ -277,6 +277,10 @@ abstract class Mage_Core_Controller_Varien_Action
         $this->getLayout()->generateBlocks();
         Varien_Profiler::stop("$_profilerKey/blocks");
 
+        if(!$this->getFlag('', self::FLAG_NO_DISPATCH_BLOCK_EVENT)) {
+            Mage::dispatchEvent('controller_action_layout_generate_blocks_after', array('action'=>$this, 'layout'=>$this->getLayout()));
+        }
+
         return $this;
     }
 

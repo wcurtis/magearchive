@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Controller
- * @subpackage Zend_Controller_Action
+ * @subpackage Action_Helper
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Url.php 6901 2007-11-22 14:16:26Z martel $
+ * @version    $Id: Url.php 7385 2008-01-11 12:02:23Z martel $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 

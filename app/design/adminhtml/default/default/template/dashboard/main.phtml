@@ -84,11 +84,11 @@ function handlePeriodSelect(selectId)
 		<dl class="db-top">
 			<dt><?=$this->__('Orders')?></dt>
 			<dd>
-				<form action="<?=$this->getConfigureAction('order')?>" method="POST">
+				<form action="<?=$this->getConfigureAction('order')?>" method="post">
 			    <?=$this->__('View report for')?>
 				<select name="store">
     			    <?$_stores = $this->helper('adminhtml/dashboard_data')->getStores()?>
-    			        <option value="0" ><?=$this->__('All Stores')?></option>
+    			        <option value="0" ><?=$this->__('All Store Views')?></option>
                         <?foreach ($_stores as $_store):?>
                             <option value="<?=$_store->getId()?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'store')==$_store->getId()):?> selected<?endif;?>><?=$_store->getName()?></option>
                         <?endforeach;?>
@@ -102,8 +102,8 @@ function handlePeriodSelect(selectId)
 				    <option value="2y" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'period')=='2y'):?> selected<?endif;?>><?=$this->__('Last 2 years')?></option>
 				 </select>
 				 <span id="order_period_custom" class="range" <?if($this->helper('adminhtml/dashboard_data')->getConfig('order', 'period')!='custom'):?>style="display:none"<?endif;?>>
-                    <?=$this->__('From')?>:<input class="input-text no-changes" type="text" id="order_period_custom_date_from" name="custom_from" value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('from','order')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>" id="order_period_custom_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
-                    <?=$this->__('To')?>:<input  class="input-text no-changes" type="text" id="order_period_custom_date_to" name="custom_to"  value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('to','order')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>"id="order_period_custom_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <?=$this->__('From')?>:<input class="input-text no-changes" type="text" id="order_period_custom_date_from" name="custom_from" value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('from','order')?>" /> <img title="<?=$this->__('Select Date')?>" id="order_period_custom_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>" class="v-middle"/>
+                    <?=$this->__('To')?>:<input  class="input-text no-changes" type="text" id="order_period_custom_date_to" name="custom_to"  value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('to','order')?>" /> <img class="v-middle" title="<?=$this->__('Select Date')?>"id="order_period_custom_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
                     <input type="hidden" name="locale" value="<?=$this->getLocaleCode()?>"  />
                 </span>
                 <?=$this->getChildHtml('button_submit')?>
@@ -122,26 +122,26 @@ function handlePeriodSelect(selectId)
 		<dl class="db-top">
 			<dt><?=$this->__('Analytics')?></dt>
 			<dd>
-				<form action="<?=$this->getConfigureAction('visitor')?>" method="POST">
+				<form action="<?=$this->getConfigureAction('visitor')?>" method="post">
 			    <?=$this->__('View report for')?>
 				<select name="store">
-				    <option value="0" ><?=$this->__('All Stores')?></option>
+				    <option value="0" ><?=$this->__('All Store Views')?></option>
     			    <?$_stores = $this->helper('adminhtml/dashboard_data')->getStores()?>
-                        <?/*foreach ($_stores as $_store):?>
+                        <?foreach ($_stores as $_store):?>
                             <option value="<?=$_store->getId()?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'store')==$_store->getId()):?> selected<?endif;?>><?=$_store->getName()?></option>
-                        <?endforeach;*/?>
+                        <?endforeach;?>
                 </select>
 				&nbsp; <?=$this->__('for')?> &nbsp;
 				<select name="period" id="visitor_period">
 				    <?foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value=>$_label):?>
-    				    <?if(in_array($_value, array('1y','custom'))) continue;?>
+    				    <?if(in_array($_value, array('1y','custom','2m'))) continue;?>
 				        <option value="<?=$_value?>" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'period')==$_value):?> selected<?endif;?>><?=$_label?></option>
 				    <?endforeach;?>
-				        <option value="2m" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'period')=='2m'):?> selected<?endif;?>><?=$this->__('Last 2 months')?></option>
+				        <!-- option value="2m" <?if($this->helper('adminhtml/dashboard_data')->getConfig('visitor', 'period')=='2m'):?> selected<?endif;?>><?=$this->__('Last 2 months')?></option -->
 				 </select>
 				 <span id="visitor_period_custom" class="range" <?if($this->helper('adminhtml/dashboard_data')->getConfig('product', 'period')!='custom'):?>style="display:none"<?endif;?>>
-                    <?=$this->__('From')?>:<input class="input-text no-changes" type="text" id="visitor_period_custom_date_from" name="custom_from" value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('from','visitor')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>" id="visitor_period_custom_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
-                    <?=$this->__('To')?>:<input  class="input-text no-changes" type="text" id="visitor_period_custom_date_to" name="custom_to"  value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('to','visitor')?>" /> <img align="absmiddle" title="<?=$this->__('Select Date')?>"id="visitor_period_custom_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <?=$this->__('From')?>:<input class="input-text no-changes" type="text" id="visitor_period_custom_date_from" name="custom_from" value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('from','visitor')?>" /> <img class="v-middle" title="<?=$this->__('Select Date')?>" id="visitor_period_custom_date_from_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
+                    <?=$this->__('To')?>:<input  class="input-text no-changes" type="text" id="visitor_period_custom_date_to" name="custom_to"  value="<?=$this->helper('adminhtml/dashboard_data')->getDateCustomValueEscaped('to','visitor')?>" /> <img class="v-middle" title="<?=$this->__('Select Date')?>"id="visitor_period_custom_date_to_trig" alt="<?=$this->__('Select Date')?>" src="<?=$this->getSkinUrl('images/grid-cal.gif')?>"/>
                     <input type="hidden" name="locale" value="<?=$this->getLocaleCode()?>"  />
                 </span>
                 <?=$this->getChildHtml('button_submit')?>

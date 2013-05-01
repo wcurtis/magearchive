@@ -91,11 +91,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'width'     => '90px',
             'index'     => 'status',
             'type'      => 'options',
-            'options'    => array(
-                Mage_Tag_Model_Tag::STATUS_DISABLED => Mage::helper('tag')->__('Disabled'),
-                Mage_Tag_Model_Tag::STATUS_PENDING  => Mage::helper('tag')->__('Pending'),
-                Mage_Tag_Model_Tag::STATUS_APPROVED => Mage::helper('tag')->__('Approved'),
-            ),
+            'options'    => $this->helper('tag/data')->getStatusesArray(),
         ));
 
 
@@ -119,9 +115,14 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'header'    => Mage::helper('tag')->__('Actions'),
             'width'     => '100px',
             'type'      => 'action',
+            'getter'     => 'getId',
             'sortable'  => false,
             'filter'    => false,
             'actions'    => array(
+                array(
+                    'caption'   => Mage::helper('tag')->__('Edit Tag'),
+                    'url'       => Mage::getUrl('*/*/edit', array('ret' => 'all', 'tag_id'=>'$tag_id')),
+                ),
                 array(
                     'caption'   => Mage::helper('tag')->__('View Products'),
                     'url'       => Mage::getUrl('*/*/product', array('ret' => 'all', 'tag_id'=>'$tag_id')),
@@ -154,5 +155,37 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
          }
 
          return $this;
+    }
+
+    protected function _prepareMassaction()
+    {
+        $this->setMassactionIdField('entity_id');
+        $this->getMassactionBlock()->setFormFieldName('tag');
+
+        $this->getMassactionBlock()->addItem('delete', array(
+             'label'=> Mage::helper('tag')->__('Delete'),
+             'url'  => $this->getUrl('*/*/massDelete'),
+             'confirm' => Mage::helper('tag')->__('Are you sure?')
+        ));
+
+        $statuses = $this->helper('tag/data')->getStatusesOptionsArray();
+
+        array_unshift($statuses, array('label'=>'', 'value'=>''));
+
+        $this->getMassactionBlock()->addItem('status', array(
+             'label'=> Mage::helper('tag')->__('Change status'),
+             'url'  => $this->getUrl('*/*/massStatus', array('_current'=>true)),
+             'additional' => array(
+                    'visibility' => array(
+                         'name' => 'status',
+                         'type' => 'select',
+                         'class' => 'required-entry',
+                         'label' => Mage::helper('tag')->__('Status'),
+                         'values' => $statuses
+                     )
+             )
+        ));
+
+        return $this;
     }
 }

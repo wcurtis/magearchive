@@ -69,7 +69,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Frontend_Abstract implements Mage
     public function getLabel()
     {
         $label = $this->getAttribute()->getFrontendLabel();
-        if (empty($label)) {
+        if (is_null($label) || $label=='') {
             $label = $this->getAttribute()->getAttributeCode();
         }
         return $label;
@@ -79,7 +79,18 @@ abstract class Mage_Eav_Model_Entity_Attribute_Frontend_Abstract implements Mage
     {
         $value = $object->getData($this->getAttribute()->getAttributeCode());
         if (in_array($this->getConfigField('input'), array('select','boolean'))) {
-            $value = $this->getOption($value);
+            $valueOption = $this->getOption($value);
+            if (!$valueOption) {
+                $opt = new Mage_Eav_Model_Entity_Attribute_Source_Boolean();
+                if ($options = $opt->getAllOptions()) {
+                    foreach ($options as $option) {
+                        if ($option['value'] == $value) {
+                            $valueOption = $option['label'];
+                        }
+                    }
+                }
+            }
+            $value = $valueOption;
         }
         elseif ($this->getConfigField('input')=='multiselect') {
             $value = $this->getOption($value);

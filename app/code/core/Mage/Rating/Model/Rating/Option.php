@@ -75,4 +75,9 @@ class Mage_Rating_Model_Rating_Option extends Varien_Object
     {
         return $this->getOptionId();
     }
+
+    public function getCollection()
+    {
+        return Mage::getResourceModel('rating/rating_option_collection');
+    }
 }

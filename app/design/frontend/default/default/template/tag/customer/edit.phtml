@@ -23,7 +23,7 @@
         <h3><?=$this->__('Edit Tag')?></h3>
     </div>
     <p>
-        <form name="addTagForm" id="addTagForm" action="<?=$this->getFormAction();?>"  method="POST">
+        <form name="addTagForm" id="addTagForm" action="<?=$this->getFormAction();?>"  method="post">
             <input type="text" class="input-text required-entry" style="width:300px;" name="tagName" value="<?=$this->getTag()->getName()?>" />
             <button class="form-button-alt" onclick="tagForm.submit();"><span><?=$this->__('Save Tag')?></span></button>
         </form>

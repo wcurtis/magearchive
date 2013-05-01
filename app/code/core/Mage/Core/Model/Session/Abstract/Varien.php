@@ -59,7 +59,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
         Varien_Profiler::start(__METHOD__.'/start');
         session_start();
         Varien_Profiler::stop(__METHOD__.'/start');
-
         return $this;
     }
 
@@ -92,7 +91,7 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
 
     public function setSessionId($id=null)
     {
-        if (!is_null($id)) {
+        if (!is_null($id) && preg_match('#^[0-9a-zA-Z,-]+$#', $id)) {
             session_id($id);
         }
         return $this;

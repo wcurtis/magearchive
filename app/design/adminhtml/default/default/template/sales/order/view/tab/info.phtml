@@ -1,0 +1,74 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_order = $this->getOrder()?>
+<div>
+    <div id="order:messages">
+        <?=$this->getChildHtml('messages')?>
+    </div>
+    <?=$this->getChildHtml('info')?>
+    <input type="hidden" name="order_id" value="<?=$_order->getId()?>"/>
+    <div class="box-left">
+        <!--Payment Method-->
+        <div class="entry-edit">
+            <h4 class="icon-head head-payment-method"><?=Mage::helper('sales')->__('Payment Information')?></h4>
+            <fieldset>
+                <?=$this->getPaymentHtml()?>
+            </fieldset>
+        </div>
+    </div>
+    <div class="box-right">
+        <!--Shipping Method-->
+        <div class="entry-edit">
+            <h4 class="icon-head head-shipping-method"><?=Mage::helper('sales')->__('Shipping Information')?></h4>
+            <fieldset>
+                <strong><?=$_order->getShippingDescription()?></strong>
+                (<?=$_order->formatPrice($_order->getShippingAmount())?>)
+            </fieldset>
+        </div>
+    </div>
+    <div class="clear"></div>
+
+    <div class="entry-view">
+        <h4 class="icon-head head-products"><?=Mage::helper('sales')->__('Items Ordered')?></h4>
+    </div>
+    <div>
+        <?=$this->getItemsHtml()?>
+    </div>
+    <div class="clear"></div>
+    <br/>
+
+    <?=$this->getGiftmessageHtml()?>
+    <div class="box-right">
+        <table cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td width="60%" style="padding-right:20px">
+                    <div><?=$this->getChildHtml('history')?></div>
+                </td>
+                <td>
+                    <div class="box order-totals">
+                        <?=$this->getChildHtml('totals')?>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="clear"></div>
+</div>

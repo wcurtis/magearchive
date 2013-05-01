@@ -20,9 +20,9 @@
 
 class Mage_Admin_Model_Mysql4_Permissions_Roles_User_Collection extends Varien_Data_Collection_Db
 {
-	protected $_roleTable;
-	protected $_userTable;
-	
+    protected $_roleTable;
+    protected $_userTable;
+
     public function __construct()
     {
         parent::__construct(Mage::getSingleton('core/resource')->getConnection('tag_read'));
@@ -31,7 +31,7 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles_User_Collection extends Varien_D
 
         $this->_sqlSelect->from($this->_userTable, array('*'))->where("user_id > 0");
         $this->_setIdFieldName('user_id');
-       
+
         /*$this->_sqlSelect->from($this->_roleTable, array('role_id', 'role_name', 'tree_level', 'sort_order', 'role_type'))
                             ->joinLeft(array('usr' => $this->_userTable), "(usr.user_id = `{$this->_roleTable}`.user_id)", array('*'));
         $this->_sqlSelect->where("{$this->_roleTable}.role_type='U'");*/
@@ -49,4 +49,3 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles_User_Collection extends Varien_D
         return $this;
     }
 }
-?>

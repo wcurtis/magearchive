@@ -137,7 +137,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
 
 
         $r->setWeight($shipping_weight)
-            ->setValue($request->getPackageValue())
+            ->setValue(round($request->getPackageValue(),2))
             ->setDestStreet($request->getDestStreet())
             ->setDestCity($request->getDestCity())
             ->setDestCountryId($request->getDestCountryId())
@@ -277,15 +277,21 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         $costArr = array();
         $priceArr = array();
         $errorTitle = 'Unable to retrieve quotes';
+
+        $tr = get_html_translation_table(HTML_ENTITIES);
+        unset($tr['<'], $tr['>'], $tr['"']);
+        $response = str_replace(array_keys($tr), array_values($tr), $response);
+
+
         if (strlen(trim($response))>0) {
             if (strpos(trim($response), '<?xml')===0) {
                 $xml = simplexml_load_string($response);
 
-                /*
-                echo "<pre>DEBUG:\n";
+
+                /*echo "<pre>DEBUG:\n";
                 print_r($xml);
-                echo "</pre>";
-                */
+                echo "</pre>";*/
+
 
                 if (is_object($xml)) {
                     $shipXml=(($r->getDestCountryId() == self::USA_COUNTRY_ID)?$xml->Shipment:$xml->IntlShipment);
@@ -418,6 +424,8 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
             $trackings=array($trackings);
         }
        $this->_getXMLTracking($trackings);
+
+       return $this->_result;
     }
 
     protected function setTrackingReqeust()
@@ -487,10 +495,10 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
             $responseBody = '';
         }
 #echo "<xmp>".$responseBody."</xmp>";
-        $this->_parseXmlTrackingResponse($trackings,$responseBody);
+        $this->_parseXmlTrackingResponse($trackings, $responseBody);
     }
 
-    protected function _parseXmlTrackingResponse($trackings,$response)
+    protected function _parseXmlTrackingResponse($trackings, $response)
     {
          $errorTitle = 'Unable to retrieve tracking';
          $resultArr=array();
@@ -595,7 +603,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
 
               }
           }
-        $this->_result=$result;
+        $this->_result = $result;
 //echo "<pre>";print_r($result);
 
     }

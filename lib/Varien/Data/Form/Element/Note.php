@@ -35,6 +35,8 @@ class Varien_Data_Form_Element_Note extends Varien_Data_Form_Element_Abstract
 
     public function getElementHtml()
     {
-        return '<span id="' . $this->getId() . '">' . $this->getText() . '</span>';
+        $html = '<span id="' . $this->getId() . '">' . $this->getText() . '</span>';
+        $html.= $this->getAfterElementHtml();
+        return $html;
     }
 }

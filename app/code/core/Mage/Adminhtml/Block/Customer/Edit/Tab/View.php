@@ -116,7 +116,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_View extends Mage_Core_Block_Templa
 
     public function getCreatedInStore()
     {
-        return Mage::getModel('core/store')->load($this->getCustomer()->getStoreId())->getName();
+        return Mage::app()->getStore($this->getCustomer()->getStoreId())->getName();
     }
 
     public function getBillingAddressHtml()

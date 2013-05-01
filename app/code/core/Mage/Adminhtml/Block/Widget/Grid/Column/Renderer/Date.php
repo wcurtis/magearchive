@@ -31,7 +31,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date extends Mage_Adminht
 	 * Date format string
 	 */
 	protected static $_format = null;
-    
+
 	/**
 	 * Retrieve date format
 	 *
@@ -48,7 +48,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date extends Mage_Adminht
                     );
                 }
                 catch (Exception $e) {
-                    
+
                 }
 			}
 			$format = self::$_format;
@@ -67,21 +67,21 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date extends Mage_Adminht
         if ($data = $row->getData($this->getColumn()->getIndex())) {
 			$format = $this->_getFormat();
             try {
-                $data = Mage::getSingleton('core/locale')->date($data, Zend_Date::ISO_8601)->toString($format);
+                $data = Mage::getSingleton('core/locale')->date($data, Zend_Date::ISO_8601, null, false)->toString($format);
             }
             catch (Exception $e)
             {
-                $data = Mage::getSingleton('core/locale')->date($data)->toString($format);
+                $data = Mage::getSingleton('core/locale')->date($data, null, null, false)->toString($format);
             }
             return $data;
         }
         return $this->getColumn()->getDefault();
     }
-    
+
     public function renderProperty()
     {
         $out = parent::renderProperty();
-        $out.= ' width="160px" ';
+        $out.= ' width="160" ';
         return $out;
     }
 }

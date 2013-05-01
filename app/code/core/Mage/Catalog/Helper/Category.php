@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Catalog category helper
  *
@@ -59,7 +59,7 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
         $parent = Mage::app()->getStore()->getConfig('catalog/category/root_id');
         return $this->_getChildCategories($parent, $maxChildLevel);
     }
-    
+
     /**
      * Retrieve category url
      *
@@ -72,4 +72,34 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
 			->setData($category->getData())
 			->getCategoryUrl();
     }
+
+    /**
+     * Check if a category can be shown
+     *
+     * @param  Mage_Catalog_Model_Category|int $category
+     * @return boolean
+     */
+    public function canShow($category)
+    {
+        if (is_int($category)) {
+            $category = Mage::getModel('catalog/category')->load($category);
+        }
+
+        if (!$category->getId()) {
+            return false;
+        }
+
+        if (!$category->getIsActive()) {
+            return false;
+        }
+
+        $rootCategory = Mage::getModel('catalog/category')
+            ->load(Mage::app()->getStore()->getConfig('catalog/category/root_id'));
+
+        if (!in_array($category->getId(), explode(',', $rootCategory->getAllChildren()))) {
+            return false;
+        }
+        return true;
+    }
+
 }

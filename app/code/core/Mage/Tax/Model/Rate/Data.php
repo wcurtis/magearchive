@@ -29,35 +29,36 @@
  * - county_id
  * - postcode
  */
-class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract 
+class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
 {
     protected $_cache = array();
-    
+
     protected function _construct()
     {
         $this->_init('tax/rate_data');
     }
-    
+
     public function getRate()
     {
         if (!$this->getPostcode()
             || !$this->getRegionId()
-            || !$this->getCustomerClassId()
-            || !$this->getProductClassId()) {
+            //|| !$this->getCustomerClassId()
+            //|| !$this->getProductClassId()
+            ) {
             return 0;
             #throw Mage::exception('Mage_Tax', Mage::helper('tax')->__('Invalid data for tax rate calculation'));
         }
-        
+
         $cacheKey = $this->getCustomerClassId()
             .'|'.$this->getProductClassId()
             .'|'.$this->getRegionId()
             .'|'.$this->getPostcode()
             .'|'.$this->getCountyId();
-            
+
         if (!isset($this->_cache[$cacheKey])) {
             $this->_cache[$cacheKey] = $this->_getResource()->fetchRate($this);
         }
-        
+
         return $this->_cache[$cacheKey];
     }
 
@@ -71,7 +72,7 @@ class Mage_Tax_Model_Rate_Data extends Mage_Core_Model_Abstract
         }
         return $this->getData('region_id');
     }
-    
+
     public function getCustomerClassId()
     {
         if (!$this->getData('customer_class_id')) {

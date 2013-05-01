@@ -112,7 +112,7 @@
                 <dashboard translate="title" module="adminhtml">
                      <title>Dashboard</title>
                      <sort_order>10</sort_order>
-                     <action>*/dashboard</action>
+                     <action>adminhtml/dashboard</action>
                  </dashboard>
                  <system translate="title" module="adminhtml">
                      <title>System</title>
@@ -121,42 +121,46 @@
                      <children>
                           <myaccount translate="title" module="adminhtml">
                                 <title>My Account</title>
-                                <action>*/system_account</action>
+                                <action>adminhtml/system_account</action>
                           </myaccount>
                           <tools translate="title" module="adminhtml">
                                 <title>Tools</title>
                           </tools>
+                          <design translate="title" module="adminhtml">
+                                <title>Design</title>
+                                <action>adminhtml/system_design</action>
+                          </design>
                           <convert translate="title" module="adminhtml">
                                 <title>Import/Export</title>
                                 <children>
                                      <gui translate="title" module="adminhtml">
                                           <title>Profiles</title>
-                                          <action>*/system_convert_gui</action>
+                                          <action>adminhtml/system_convert_gui</action>
                                      </gui>
                                      <profiles translate="title" module="adminhtml">
                                           <title>Advanced Profiles</title>
-                                          <action>*/system_convert_profile</action>
+                                          <action>adminhtml/system_convert_profile</action>
                                      </profiles>
                                 </children>
                           </convert>
                           <currency translate="title" module="adminhtml">
                                 <title>Manage Currency</title>
-                                <action>*/system_currency</action>
+                                <action>adminhtml/system_currency</action>
                           </currency>
                           <email_template translate="title" module="adminhtml">
                                 <title>Transactional Emails</title>
-                                <action>*/system_email_template</action>
+                                <action>adminhtml/system_email_template</action>
                           </email_template>
                           <acl translate="title" module="adminhtml">
                                 <title>Permissions</title>
                                 <children>
                                      <users translate="title" module="adminhtml">
                                           <title>Users</title>
-                                          <action>*/permissions_user</action>
+                                          <action>adminhtml/permissions_user</action>
                                      </users>
                                      <roles translate="title" module="adminhtml">
                                           <title>Roles</title>
-                                          <action>*/permissions_role</action>
+                                          <action>adminhtml/permissions_role</action>
                                      </roles>
                                 </children>
                           </acl>
@@ -165,35 +169,38 @@
                                 <children>
                                      <local translate="title" module="adminhtml">
                                           <title>Locally Installed</title>
-                                          <action>*/extensions_local</action>
+                                          <action>adminhtml/extensions_local</action>
                                      </local>
                                      <remote translate="title" module="adminhtml">
                                           <title>Available Remote</title>
-                                          <action>*/extensions_remote</action>
+                                          <action>adminhtml/extensions_remote</action>
                                      </remote>
                                      <custom translate="title" module="adminhtml">
                                           <title>Custom Local</title>
-                                          <action>*/extensions_custom</action>
+                                          <action>adminhtml/extensions_custom</action>
                                      </custom>
                                      <config translate="title" module="adminhtml">
                                           <title>PEAR Configuration</title>
-                                          <action>*/extensions_config</action>
+                                          <action>adminhtml/extensions_config</action>
                                      </config>
                                 </children>
                           </extensions>
                           <cache translate="title" module="adminhtml">
                                 <title>Cache management</title>
-                                <action>*/system_cache</action>
+                                <action>adminhtml/system_cache</action>
                           </cache>
                           <config translate="title" module="adminhtml">
                                 <title>Configuration</title>
-                                <action>*/system_config</action>
+                                <action>adminhtml/system_config</action>
                           </config>
                      </children>
                  </system>
           </menu>
           <acl>
                 <resources>
+                    <all>
+                        <title>Allow everything</title>
+                    </all>
                      <admin>
                           <title>Magento Admin</title>
                           <children>
@@ -219,6 +226,10 @@
                                                      </users>
                                                 </children>
                                           </acl>
+                                         <design>
+                                            <title>Design</title>
+                                            <sort_order>25</sort_order>
+                                         </design>
                                           <config>
                                                 <title>Configuration</title>
 									<sort_order>20</sort_order>

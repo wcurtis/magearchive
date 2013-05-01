@@ -70,7 +70,7 @@
                 <!--
                     <sales translate="title" module="reports">
                         <title>Sales Report</title>
-                        <action>*/report/sales</action>
+                        <action>adminhtml/report/sales</action>
                     </sales>
                 -->
                     <shopcart translate="title" module="reports">
@@ -78,12 +78,12 @@
                         <children>
                             <product translate="title" module="reports">
                                 <title>Products</title>
-                                <action>*/report_shopcart/product</action>
+                                <action>adminhtml/report_shopcart/product</action>
                             </product>
                             <!--
                             <customer translate="title" module="reports">
                                 <title>Customers</title>
-                                <action>*/report_shopcart/customer</action>
+                                <action>adminhtml/report_shopcart/customer</action>
                             </customer>
                             -->
                         </children>
@@ -91,37 +91,37 @@
                     <!--
                     <products translate="title" module="reports">
                         <title>Products Report</title>
-                        <action>*/report/products</action>
+                        <action>adminhtml/report/products</action>
                     </products>
 
                     <coupons translate="title" module="reports">
                         <title>Coupons Reports</title>
-                        <action>*/report/coupons</action>
+                        <action>adminhtml/report/coupons</action>
                     </coupons>
 
                     <wishlist translate="title" module="reports">
                         <title>Wishlist Report</title>
-                        <action>*/report/wishlist</action>
+                        <action>adminhtml/report/wishlist</action>
                     </wishlist>
                     -->
                    
 
                     <search translate="title" module="reports">
                         <title>Search Report</title>
-                        <action>*/report/search</action>
+                        <action>adminhtml/report/search</action>
                     </search>
                     <!--
                     <customers translate="title" module="reports">
                         <title>Best Customers</title>
-                        <action>*/report/customers</action>
+                        <action>adminhtml/report/customers</action>
                     </customers>
                     <orders translate="title" module="reports">
                         <title>Recent Orders</title>
-                        <action>*/report/orders</action>
+                        <action>adminhtml/report/orders</action>
                     </orders>
                     <totals translate="title" module="reports">
                         <title>Order Totals</title>
-                        <action>*/report/totals</action>
+                        <action>adminhtml/report/totals</action>
                     </totals>
                     -->
                 </children>

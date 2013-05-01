@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Front extends Mage
     {
         $model = Mage::registry('entity_attribute');
 
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'POST'));
+        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
 
         $fieldset = $form->addFieldset('base_fieldset', array('legend'=>Mage::helper('catalog')->__('Frontend Properties')));
 
@@ -49,8 +49,15 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Front extends Mage
 
         $fieldset->addField('is_searchable', 'select', array(
             'name' => 'is_searchable',
-            'label' => Mage::helper('catalog')->__('Searchable on Front-end'),
-            'title' => Mage::helper('catalog')->__('Searchable on Front-end'),
+            'label' => Mage::helper('catalog')->__('Use in quick search'),
+            'title' => Mage::helper('catalog')->__('Use in quick search'),
+            'values' => $yesno,
+        ));
+
+        $fieldset->addField('is_visible_in_advanced_search', 'select', array(
+            'name' => 'is_visible_in_advanced_search',
+            'label' => Mage::helper('catalog')->__('Use in advanced search'),
+            'title' => Mage::helper('catalog')->__('Use in advanced search'),
             'values' => $yesno,
         ));
 

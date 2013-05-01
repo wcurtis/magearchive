@@ -30,7 +30,7 @@ class Mage_Adminhtml_Block_Extensions_Console_Edit_Form extends Mage_Adminhtml_B
     protected function _prepareForm()
     {
         $this->setTemplate('extensions/console/form.phtml');
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'POST'));
+        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
 
         $form->setUseContainer(true);
         $this->setForm($form);

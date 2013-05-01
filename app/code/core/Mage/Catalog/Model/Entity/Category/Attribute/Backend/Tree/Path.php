@@ -29,6 +29,11 @@ class Mage_Catalog_Model_Entity_Category_Attribute_Backend_Tree_Path extends Mag
     public function afterSave($object)
     {
         parent::afterSave($object);
+
+        if ($object->getNotUpdateDepends()) {
+            return $this;
+        }
+
         $tree = $object->getTreeModel()
             ->load();
 
@@ -44,7 +49,7 @@ class Mage_Catalog_Model_Entity_Category_Attribute_Backend_Tree_Path extends Mag
             }
             $nodeIds[] = $node->getId();
         }
-        
+
         $object->setData($this->getAttribute()->getAttributeCode(), implode(',', $nodeIds));
         $this->getAttribute()->getEntity()
             ->saveAttribute($object, $this->getAttribute()->getAttributeCode());

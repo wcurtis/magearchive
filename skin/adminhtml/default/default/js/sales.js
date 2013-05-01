@@ -51,8 +51,8 @@ AdminOrder.prototype = {
         this.storeSelectorHide();
         this.sidebarShow();
         //this.loadArea(['header', 'sidebar','data'], true);
-        this.loadArea(['header', 'data'], true);
         this.dataShow();
+        this.loadArea(['header', 'data'], true);
     },
 
     setCurrencyId : function(id){
@@ -245,7 +245,7 @@ AdminOrder.prototype = {
             for(var i=0;i<fields.length;i++){
                 data[fields[i].name] = fields[i].getValue();
             }
-            if (!data['payment[cc_type]'] || !data['payment[cc_number]']) {
+            if ((typeof data['payment[cc_type]']) != 'undefined' && (!data['payment[cc_type]'] || !data['payment[cc_number]'])) {
                 return;
             }
             this.saveData(data);
@@ -253,7 +253,7 @@ AdminOrder.prototype = {
     },
 
     applyCoupon : function(code){
-        this.loadArea(['coupons', 'shipping_method', 'totals'], true, {'order[coupon][code]':code});
+        this.loadArea(['items', 'shipping_method', 'totals'], true, {'order[coupon][code]':code});
     },
 
     addProduct : function(id){
@@ -502,27 +502,33 @@ AdminOrder.prototype = {
         if(indicator === true) indicator = 'html-body';
         params = this.prepareParams(params);
         params.json = true;
-        this.loadingAreas = area;
-        new Ajax.Request(url, {
-            parameters:params,
-            loaderArea: indicator,
-            onSuccess: function(transport) {
-                var response = transport.responseText.evalJSON();
-                if(!this.loadingAreas){
-                    this.loadingAreas = [];
-                }
-                if(typeof this.loadingAreas == 'string'){
-                    this.loadingAreas = [this.loadingAreas];
-                }
-                if(this.loadingAreas.indexOf('messages'==-1)) this.loadingAreas.push('messages');
-                for(var i=0; i<this.loadingAreas.length; i++){
-                    var id = this.loadingAreas[i];
-                    if($(this.getAreaId(id))){
-                        $(this.getAreaId(id)).update(response[id] ? response[id] : '');
+        if(!this.loadingAreas) this.loadingAreas = [];
+        if (indicator) {
+            this.loadingAreas = area;
+            new Ajax.Request(url, {
+                parameters:params,
+                loaderArea: indicator,
+                onSuccess: function(transport) {
+                    var response = transport.responseText.evalJSON();
+                    if(!this.loadingAreas){
+                        this.loadingAreas = [];
                     }
-                }
-            }.bind(this)
-        });
+                    if(typeof this.loadingAreas == 'string'){
+                        this.loadingAreas = [this.loadingAreas];
+                    }
+                    if(this.loadingAreas.indexOf('messages'==-1)) this.loadingAreas.push('messages');
+                    for(var i=0; i<this.loadingAreas.length; i++){
+                        var id = this.loadingAreas[i];
+                        if($(this.getAreaId(id))){
+                            $(this.getAreaId(id)).update(response[id] ? response[id] : '');
+                        }
+                    }
+                }.bind(this)
+            });
+        }
+        else {
+            new Ajax.Request(url, {parameters:params,loaderArea: indicator});
+        }
     },
 
     saveData : function(data){

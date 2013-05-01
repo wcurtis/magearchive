@@ -24,68 +24,14 @@
  * @category   Mage
  * @package    Mage_Tax
  */
-class Mage_Tax_Model_Mysql4_Rule
+class Mage_Tax_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
 {
-
-    /**
-     * resource tables
-     */
-    protected $_ruleTable;
-
-    /**
-     * resources
-     */
-    protected $_write;
-
-    protected $_read;
-
-
-    public function __construct()
+    protected function _construct()
     {
-        $this->_ruleTable = Mage::getSingleton('core/resource')->getTableName('tax/tax_rule');
-
-        $this->_read = Mage::getSingleton('core/resource')->getConnection('tax_read');
-        $this->_write = Mage::getSingleton('core/resource')->getConnection('tax_write');
-    }
-
-    public function getIdFieldName()
-    {
-        return 'tax_rule_id';
-    }
-
-    public function load($model, $ruleId)
-    {
-        if( intval($ruleId) <= 0 ) {
-            return;
-        }
-        $select = $this->_read->select();
-        $select->from($this->_ruleTable);
-        $select->where("{$this->_ruleTable}.tax_rule_id = ?", $ruleId);
-
-        $ruleData = $this->_read->fetchRow($select);
-        $model->setData($ruleData);
-    }
-
-    public function save($ruleObject)
-    {
-        $ruleArray = array(
-            'tax_customer_class_id' => $ruleObject->getTaxCustomerClassId(),
-            'tax_product_class_id' => $ruleObject->getTaxProductClassId(),
-            'tax_rate_type_id' => $ruleObject->getTaxRateTypeId()
-        );
-
-        if( $ruleObject->getTaxRuleId() > 0 ) {
-            $condition = $this->_write->quoteInto("{$this->_ruleTable}.tax_rule_id = ?", $ruleObject->getTaxRuleId());
-            $this->_write->update($this->_ruleTable, $ruleArray, $condition);
-        } else {
-            $this->_write->insert($this->_ruleTable, $ruleArray);
-        }
-
-    }
-
-    public function delete($ruleObject)
-    {
-        $condition = $this->_write->quoteInto("{$this->_ruleTable}.tax_rule_id=?", $ruleObject->getTaxRuleId());
-        $this->_write->delete($this->_ruleTable, $condition);
+        $this->_init('tax/tax_rule', 'tax_rule_id');
+        $this->_uniqueFields = array(array(
+            'field' => array('tax_customer_class_id', 'tax_product_class_id'),
+            'title' => Mage::helper('tax')->__('Error while saving this tax rule. This product tax class and customer tax class combination'),
+        ));
     }
 }

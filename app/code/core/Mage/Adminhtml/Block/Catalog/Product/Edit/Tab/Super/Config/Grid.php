@@ -61,14 +61,16 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
     protected function _prepareCollection()
     {
         $product =  Mage::registry('product');
-        $collection = Mage::getResourceModel('catalog/product_collection')
+        $collection = Mage::getModel('catalog/product')->getCollection()
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('attribute_set_id')
             ->addAttributeToSelect('type_id')
             ->addAttributeToSelect('price')
             ->addFieldToFilter('attribute_set_id',$product->getAttributeSetId())
-            ->addFieldToFilter('type_id',1);
+            ->addFieldToFilter('type_id', Mage_Catalog_Model_Product::TYPE_SIMPLE);
+
+        Mage::getModel('cataloginventory/stock_item')->addCatalogInventoryToProductCollection($collection);
 
         $oldStoreId = $collection->getEntity()->getStoreId();
         $collection->getEntity()->setStore(0);
@@ -127,7 +129,8 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
             'index'     => 'name'
         ));
 
-        $types = Mage::getResourceModel('catalog/product_type_collection')
+        $types = Mage::getModel('catalog/product_type')->getCollection()
+            ->addFieldToFilter('type_id', array('in'=>Mage_Catalog_Model_Product::TYPE_SIMPLE))
             ->load()
             ->toOptionHash();
 
@@ -140,7 +143,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
                 'options' => $types,
         ));
 
-        $sets = Mage::getResourceModel('eav/entity_attribute_set_collection')
+        $sets = Mage::getModel('eav/entity_attribute_set')->getCollection()
             ->setEntityTypeFilter(Mage::getModel('catalog/product')->getResource()->getConfig()->getId())
             ->load()
             ->toOptionHash();
@@ -164,6 +167,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
             'type'      => 'currency',
             'currency_code' => (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE),
             'index'     => 'price'
+        ));
+
+        $this->addColumn('inventory', array(
+            'header'    => Mage::helper('catalog')->__('Inventory'),
+            'renderer'  => 'adminhtml/catalog_product_edit_tab_super_config_grid_renderer_inventory',
+            'filter'    => 'adminhtml/catalog_product_edit_tab_super_config_grid_filter_inventory',
+            'index'     => 'inventory_in_stock'
         ));
 
 

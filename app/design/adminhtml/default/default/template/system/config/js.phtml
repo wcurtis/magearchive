@@ -43,7 +43,7 @@ freeModel.prototype = {
     initFreeMethod : function(element)
     {
         var freeMethodElement = element;
-        
+
         if (freeMethodElement && freeMethodElement.id) {
             var cutoffElement  = $(freeMethodElement.id.replace(/free_method/, 'cutoff_cost'));
             if (cutoffElement) {
@@ -170,5 +170,56 @@ originModel.prototype = {
 }
 
 originAddress = new originModel();
+
+var perPageModel = Class.create();
+
+perPageModel.prototype = {
+    initialize : function()
+    {
+        this.gridOptions = '<?=Mage::getConfig()->getNode('frontend/catalog/per_page_values/grid')?>';
+        this.listOptions = '<?=Mage::getConfig()->getNode('frontend/catalog/per_page_values/list')?>';
+        this.listModeElement = $('catalog_frontend_list_mode');
+        this.perPageSelect = $('catalog_frontend_product_per_page');
+        if (this.listModeElement) {
+            this.bindListModeChange();
+        }
+    },
+    bindListModeChange : function()
+    {
+        Event.observe(this.listModeElement, 'change', this.refreshPerPageSelect.bind(this));
+    },
+    refreshPerPageSelect : function()
+    {
+        if (this.listModeElement.value != '') {
+            if (this.listModeElement.value == 'grid' || this.listModeElement.value == 'grid-list') {
+                var options = this.gridOptions.split(',');
+            }
+            else if (this.listModeElement.value == 'list' || this.listModeElement.value == 'list-grid') {
+                var options = this.listOptions.split(',');
+            }
+
+            currentValue = this.perPageSelect.value;
+            this.perPageSelect.options.length = 0;
+
+            for (i=0;i<options.length;i++) {
+                var option = document.createElement("OPTION");
+                option.text = options[i];
+                option.value = options[i];
+
+                try {
+                    this.perPageSelect.add(option, null); // doesn't work in IE
+                } catch(e) {
+                    this.perPageSelect.add(option); // works in IE
+                }
+
+                if (options[i] == currentValue) {
+                    this.perPageSelect.selectedIndex = i;
+                }
+            }
+        }
+    }
+}
+
+perPageSelect = new perPageModel();
 
 </script>

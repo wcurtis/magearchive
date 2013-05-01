@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Shopping cart helper
  *
@@ -25,7 +25,7 @@
 class Mage_Checkout_Helper_Cart extends Mage_Core_Helper_Url
 {
     protected $_itemCount;
-    
+
     /**
      * Retrieve url for add product to cart
      *
@@ -34,13 +34,35 @@ class Mage_Checkout_Helper_Cart extends Mage_Core_Helper_Url
      */
     public function getAddUrl($product)
     {
-        return $this->_getUrl('checkout/cart/add', array(
-            'product'=>$product->getId(),
-            Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL  
-                => base64_encode($product->getProductUrl())
-        ));
+        // identify continue shopping url
+        if ($currentProduct = Mage::registry('current_product')) {
+            // go to product view page
+            $continueShoppingUrl = $currentProduct->getProductUrl();
+        } elseif ($currentCategory = Mage::registry('current_category')) {
+            // go to category view page
+            $continueShoppingUrl = $currentCategory->getCategoryUrl();
+//        } elseif ($categoryId = Mage::app()->getStore()->getConfig('catalog/category/root_id')) {
+//            // go to store root category
+//            $category = Mage::getModel('catalog/category')->load($categoryId);
+//            $continueShoppingUrl = $category->getCategoryUrl();
+        } else {
+            // go to home
+            $continueShoppingUrl = Mage::getUrl();
+        }
+
+        $params = array(
+            Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL => base64_encode($continueShoppingUrl),
+            'product' => $product->getId()
+        );
+
+        if ($this->_getRequest()->getModuleName() == 'checkout'
+            && $this->_getRequest()->getControllerName() == 'cart') {
+            $params['in_cart'] = 1;
+        }
+
+        return $this->_getUrl('checkout/cart/add', $params);
     }
-    
+
     /**
      * Retrieve url for remove product from cart
      *
@@ -55,20 +77,20 @@ class Mage_Checkout_Helper_Cart extends Mage_Core_Helper_Url
         );
         return $this->_getUrl('checkout/cart/delete', $params);
     }
-    
+
     public function getCartUrl()
     {
         return $this->_getUrl('checkout/cart');
     }
-    
+
     public function getLastItems()
     {
-        
+
     }
-    
+
     public function getItemCollection()
     {
-        
+
     }
 
     public function getItemCount()

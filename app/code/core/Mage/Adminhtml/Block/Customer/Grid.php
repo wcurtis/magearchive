@@ -73,7 +73,7 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
         ));
         $this->addColumn('email', array(
             'header'    =>Mage::helper('customer')->__('Email'),
-            'width'     =>'150px',
+            'width'     =>'150',
             'index'     =>'email'
         ));
 
@@ -84,30 +84,30 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
 
         $this->addColumn('group', array(
             'header'    =>Mage::helper('customer')->__('Group'),
-            'width'     =>'100px',
+            'width'     =>'100',
             'index'     =>'group_id',
             'type'  => 'options',
             'options' => $groups,
         ));
         $this->addColumn('Telephone', array(
             'header'    =>Mage::helper('customer')->__('Telephone'),
-            'width'     =>'100px',
+            'width'     =>'100',
             'index'     =>'billing_telephone'
         ));
         $this->addColumn('billing_postcode', array(
             'header'    =>Mage::helper('customer')->__('ZIP/Postal Code'),
-            'width'     =>'90px',
+            'width'     =>'90',
             'index'     =>'billing_postcode',
         ));
         $this->addColumn('billing_country_id', array(
             'header'    =>Mage::helper('customer')->__('Country'),
-            'width'     =>'100px',
+            'width'     =>'100',
             'type'      =>'country',
             'index'     =>'billing_country_id',
         ));
         $this->addColumn('billing_regione', array(
             'header'    =>Mage::helper('customer')->__('State/Province'),
-            'width'     =>'100px',
+            'width'     =>'100',
             #'filter'    => 'adminhtml/customer_grid_filter_country',
             'index'     =>'billing_regione',
         ));
@@ -127,7 +127,7 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
         $this->addColumn('action',
             array(
                 'header'    => Mage::helper('customer')->__('Action'),
-                'width'     => '100px',
+                'width'     => '100',
                 'type'      => 'action',
                 'getter'     => 'getId',
                 'actions'   => array(

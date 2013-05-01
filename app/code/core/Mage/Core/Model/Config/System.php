@@ -21,6 +21,8 @@
 /**
  * Model for working with system.xml module files
  *
+ * @category   Mage
+ * @package    Mage_Core
  */
 class Mage_Core_Model_Config_System extends Mage_Core_Model_Config_Base
 {

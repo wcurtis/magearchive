@@ -18,8 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-$this->installModuleSystemDefaults();
-
 $installer = $this;
 /* @var $installer Mage_Core_Model_Resource_Setup */
 
@@ -66,6 +64,3 @@ insert into `cms_page`(`page_id`,`title`,`root_template`,`meta_keywords`,`meta_d
     ");
 
 $installer->endSetup();
-
-$installer->setConfigData('web/default/cms_home_page', 'home');
-$installer->setConfigData('web/default/cms_no_route', 'no-route');

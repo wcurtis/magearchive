@@ -49,9 +49,7 @@ class Mage_Adminhtml_Sales_Order_View_GiftmessageController extends Mage_Adminht
 
         if($this->getRequest()->getParam('type')=='order_item') {
             $this->getResponse()->setBody(
-                $this->getLayout()->createBlock(
-                    'adminhtml/sales_order_view_items_grid_renderer_name_giftmessage'
-                )->toHtml()
+                $this->getLayout()->createBlock('adminhtml/sales_order_view_items_info')->toHtml()
             );
         } else {
             $this->getResponse()->setBody(

@@ -104,6 +104,10 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
                     $address->removeItem($item->getId());
                 }
 
+                if (count($address->getAllItems()) == 0) {
+                    $address->isDeleted(true);
+                }
+
                 if ($quoteItem = $this->getQuote()->getItemById($item->getQuoteItemId())) {
                     $newItemQty = $quoteItem->getQty()-1;
                     if ($newItemQty>0) {

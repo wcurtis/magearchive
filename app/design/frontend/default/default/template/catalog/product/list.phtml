@@ -59,7 +59,9 @@
                 <a href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>"><small><?=$this->__('Learn More')?></small></a>
             </div>
             <p class="add-to">
+                <?if ($this->helper('wishlist')->isAllow()) :?>
                 <a href="<?=$this->getAddToWishlistUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
+                <?endif;?>
                 <?if($_compareUrl=$this->getAddToCompareUrl($_product)):?>
                 <span class="pipe">|</span>
                 <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
@@ -95,7 +97,9 @@
             <?endif;?>
             <div class="clear"></div>
             <p class="add-to">
+                <?if ($this->helper('wishlist')->isAllow()) :?>
                 <a href="<?=$this->getAddToWishlistUrl($_product)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
+                <?endif;?>
                 <?if($_compareUrl=$this->getAddToCompareUrl($_product)):?><br/>
                 <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
                 <?endif;?>

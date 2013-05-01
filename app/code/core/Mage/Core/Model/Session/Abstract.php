@@ -27,6 +27,10 @@ class Mage_Core_Model_Session_Abstract extends Mage_Core_Model_Session_Abstract_
 
     const SESSION_ID_QUERY_PARAM = 'SID';
 
+    protected static $_urlHostCache = array();
+
+    protected static $_encryptedSessionId;
+
 	public function init($namespace, $sessionName=null)
 	{
 		parent::init($namespace, $sessionName);
@@ -36,22 +40,6 @@ class Mage_Core_Model_Session_Abstract extends Mage_Core_Model_Session_Abstract_
 		}
 		return $this;
 	}
-
-    public function isValidForHost($host)
-    {
-    	$hostArr = explode(':', $host);
-    	$hosts = $this->getSessionHosts();
-    	return (!empty($hosts[$hostArr[0]]));
-    }
-
-    public function addHost($host)
-    {
-    	$hostArr = explode(':', $host);
-    	$hosts = $this->getSessionHosts();
-    	$hosts[$hostArr[0]] = true;
-    	$this->setSessionHosts($hosts);
-    	return $this;
-    }
 
     public function getCookieDomain()
     {
@@ -205,4 +193,70 @@ class Mage_Core_Model_Session_Abstract extends Mage_Core_Model_Session_Abstract_
 		}
         parent::setSessionId($id);
     }
+
+    public function getEncryptedSessionId()
+    {
+        if (!self::$_encryptedSessionId) {
+            $helper = Mage::helper('core');
+            if (!$helper) {
+                return $this;
+            }
+            self::$_encryptedSessionId = $helper->encrypt($this->getSessionId());
+        }
+        return self::$_encryptedSessionId;
+    }
+
+    public function getSessionIdQueryParam()
+    {
+        return self::SESSION_ID_QUERY_PARAM;
+    }
+
+    /**
+     * If the host was switched but session cookie won't recognize it - add session id to query
+     *
+     * @param string $urlHost can be host or url
+     * @return string {session_id_key}={session_id_encrypted}
+     */
+    public function getSessionIdForHost($urlHost)
+    {
+        if (empty($_SERVER['HTTP_HOST'])) {
+            return '';
+        }
+
+        $urlHostArr = explode('/', $urlHost, 4);
+        if (!empty($urlHostArr[2])) {
+            $urlHost = $urlHostArr[2];
+        }
+
+        if (!isset(self::$_urlHostCache[$urlHost])) {
+            $urlHostArr = explode(':', $urlHost);
+            $urlHost = $urlHostArr[0];
+
+            $curHostArr = explode(':', $_SERVER['HTTP_HOST']);
+            if ($curHostArr[0]!==$urlHost && !$this->isValidForHost($urlHost)) {
+                $sessionId = $this->getEncryptedSessionId();
+            } else {
+                $sessionId = '';
+            }
+            self::$_urlHostCache[$urlHost] = $sessionId;
+        }
+        return self::$_urlHostCache[$urlHost];
+    }
+
+    public function isValidForHost($host)
+    {
+    	$hostArr = explode(':', $host);
+    	$hosts = $this->getSessionHosts();
+    	return (!empty($hosts[$hostArr[0]]));
+    }
+
+    public function addHost($host)
+    {
+    	$hostArr = explode(':', $host);
+    	$hosts = $this->getSessionHosts();
+    	$hosts[$hostArr[0]] = true;
+    	$this->setSessionHosts($hosts);
+    	return $this;
+    }
+
 }

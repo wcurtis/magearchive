@@ -25,61 +25,16 @@
  * @package    Mage_Adminhtml
  */
 
-final class Mage_Adminhtml_Model_System_Config_Backend_Shipping_Tablerate extends Mage_Core_Model_Mysql4_Abstract
+class Mage_Adminhtml_Model_System_Config_Backend_Shipping_Tablerate extends Mage_Core_Model_Mysql4_Abstract
 {
-    /**
-     *
-     */
-    protected $_resourceModel;
-
-    /**
-     * DB connections list
-     *
-     * @var array
-     */
-    protected $_connections = array();
-
-    public function __construct()
-    {
-
-    }
 
     protected function _construct()
     {
-
-    }
-
-    /**
-     * Set connections for entity operations
-     *
-     * @param Zend_Db_Adapter_Abstract $read
-     * @param Zend_Db_Adapter_Abstract $write
-     * @return Mage_Eav_Model_Entity_Abstract
-     */
-    public function setConnection(Zend_Db_Adapter_Abstract $read, Zend_Db_Adapter_Abstract $write=null)
-    {
-        $this->_connections['read'] = $read;
-        $this->_connections['write'] = $write ? $write : $read;
-        return $this;
-    }
-
-    /**
-     * Return DB connection
-     *
-     * @param   string      $type
-     * @return  Zend_Db_Adapter_Abstract
-     */
-    public function getConnection($type)
-    {
-        if (!isset($this->_connections[$type])) {
-            $this->_connections[$type] = Mage::getSingleton('core/resource')->getConnection('shipping_' . $type);
-        }
-        return $this->_connections[$type];
+        $this->_init('shipping/tablerate', 'pk');
     }
 
     public function afterSave($object)
     {
-        // TOFIX, FIXME:
         $csvFile = $_FILES["groups"]["tmp_name"]["tablerate"]["fields"]["import"]["value"];
 
         if (!empty($csvFile)) {
@@ -89,7 +44,7 @@ final class Mage_Adminhtml_Model_System_Config_Backend_Shipping_Tablerate extend
             $table = Mage::getSingleton('core/resource')->getTableName('shipping/tablerate');
 
             $websiteId = $object->getScopeId();
-            $websiteModel = Mage::getModel('core/website')->load($websiteId);
+            $websiteModel = Mage::app()->getWebsite($websiteId);
             $conditionName = $object->getValue();
             if ($conditionName{0} == '_') {
                 $conditionName = substr($conditionName, 1, strpos($conditionName, '/')-1);

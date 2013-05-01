@@ -26,7 +26,7 @@
         <li>
             <h4 class="complete"><?=$this->__('Billing Address')?><span class="separator">|</span><a href="#billing" onclick="checkout.accordion.openSection('opc-billing');return false;"><?=$this->__('Change Billing Address')?></a></h4>
             <div class="content">
-                <address><?=$this->getBilling()->getFormated(true)?></address>
+                <address><?=$this->getBilling()->format('html')?></address>
             </div>
         </li>
     <?else:?>
@@ -39,7 +39,7 @@
         <li>
             <h4 class="complete"><?=$this->__('Shipping Address')?><span class="separator">|</span><a href="#payment" onclick="checkout.accordion.openSection('opc-shipping');return false;"><?=$this->__('Change Shipping Address')?></a></h4>
             <div class="content">
-                <address><?=$this->getShipping()->getFormated(true)?></address>
+                <address><?=$this->getShipping()->format('html')?></address>
             </div>
         </li>
     <?else:?>

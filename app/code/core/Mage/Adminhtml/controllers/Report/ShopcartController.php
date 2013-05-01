@@ -124,5 +124,6 @@ class Mage_Adminhtml_Report_ShopcartController extends Mage_Adminhtml_Controller
         header("Content-Length: ".sizeof($content));
         header("Content-type: application/octet-stream");
         echo $content;
+        exit;
     }
 }

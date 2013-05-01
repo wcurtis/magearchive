@@ -65,6 +65,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
      * - Type of read control (only if read control is enabled). Available values are :
      *   'md5' for a md5 hash control (best but slowest)
      *   'crc32' for a crc32 hash control (lightly less safe but faster, better choice)
+     *   'adler32' for an adler32 hash control (excellent choice too, faster than crc32)
      *   'strlen' for a length only test (fastest)
      *
      * =====> (int) hashed_directory_level :
@@ -280,7 +281,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
      *                     ($tags can be an array of strings or a single string)
      *
      * @param string $mode clean mode
-     * @param tags array $tags array of tags
+     * @param array $tags array of tags
      * @return boolean true if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
@@ -367,7 +368,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
      *
      * @param string $dir directory to clean
      * @param string $mode clean mode
-     * @param tags array $tags array of tags
+     * @param array $tags array of tags
      * @return boolean true if no problem
      */
     private function _clean($dir, $mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
@@ -511,6 +512,8 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
             return sprintf('% 32d', crc32($data));
         case 'strlen':
             return sprintf('% 32d', strlen($data));
+        case 'adler32':
+            return sprintf('%32s', hash('adler32', $data));
         default:
             Zend_Cache::throwException("Incorrect hash function : $controlType");
         }
@@ -545,7 +548,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
      * Transform a cache id into a file name and return it
      *
      * @param string $id cache id
-     * @param int expire timestamp
+     * @param int $expire Expiration timestamp
      * @return string file name
      */
     private function _idToFileName($id, $expire)
@@ -622,7 +625,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
      * (if it fails (no cache files or several cache files for this id, the method returns null)
      *
      * @param string $id cache id
-     * @param int expire timestamp
+     * @param int $expire Expiration timestamp
      * @return string file name (with path)
      */
     private function _file($id, $expire = null)

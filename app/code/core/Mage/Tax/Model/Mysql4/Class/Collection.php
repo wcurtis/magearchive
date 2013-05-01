@@ -25,29 +25,21 @@
  * @package    Mage_Tax
  */
 
-class Mage_Tax_Model_Mysql4_Class_Collection extends Varien_Data_Collection_Db
+class Mage_Tax_Model_Mysql4_Class_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
-    protected $_classTable;
-
-    function __construct()
+    public function _construct()
     {
-        $resource = Mage::getSingleton('core/resource');
-        parent::__construct($resource->getConnection('tax_read'));
-        
-        $this->_setIdFieldName('class_id');
-        $this->_classTable = $resource->getTableName('tax/tax_class');
+        $this->_init('tax/class');
+    }
 
-        $this->_sqlSelect->from($this->_classTable);
+    public function setClassTypeFilter($classTypeId)
+    {
+        $this->_sqlSelect->where('main_table.class_type = ?', $classTypeId);
+        return $this;
     }
 
     public function toOptionArray()
     {
-        return parent::_toOptionArray('class_id', 'class_name');
-    }
-
-    public function setClassTypeFilter($classType)
-    {
-        $this->_sqlSelect->where("{$this->_classTable}.class_type = ?", $classType);
-        return $this;
+        return $this->_toOptionArray('class_id', 'class_name');
     }
 }

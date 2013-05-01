@@ -1,0 +1,65 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="grid">
+    <table cellspacing="0" class="data">
+        <col/>
+        <col width="100"/>
+        <col width="100"/>
+        <thead>
+            <tr class="headings">
+                <th><?=$this->helper('sales')->__('Product')?></th>
+                <th><?=$this->helper('sales')->__('Qty')?></th>
+                <th class="last"><?=$this->helper('sales')->__('Qty to Ship')?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?$_items = $this->getShipment()->getAllItems()?>
+            <?$_i=0;foreach ($_items as $_item):$_i++?>
+                <tr class="<?=$_i%2?'odd':'even'?>">
+                    <td>
+                        <?=$_item->getName()?>
+                        <div><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
+                    </td>
+                    <td><?=$this->getQtyHtml($_item->getOrderItem())?></td>
+                    <td class="last">
+                        <input type="text" class="input-text" name="shipment[items][<?=$_item->getOrderItemId()?>]" value="<?=$_item->getQty()*1?>"/>
+                    </td>
+                </tr>
+            <?endforeach;?>
+        </tbody>
+    </table>
+</div>
+<table cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td>&nbsp;</td>
+        <td width="33%" style="padding-right:30px">
+        <div class="entry-edit">
+            <h4 class=""><?=Mage::helper('sales')->__('Shipment Comment')?></h4>
+            <fieldset>
+                <?=Mage::helper('sales')->__('Add Shipment Comment')?><br/>
+                <textarea style="width:90%; height: 6em;" name="shipment[comment_text]"></textarea><br/>
+                <input type="checkbox" id="notify_customer" name="shipment[comment_customer_notify]" value="1"/>
+                <label for="notify_customer" class="normal"><?=Mage::helper('sales')->__('Notify Customer')?></label>
+            </fieldset>
+        </div>
+        </td>
+    </tr>
+</table>

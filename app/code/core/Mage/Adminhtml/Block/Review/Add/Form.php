@@ -104,7 +104,7 @@ class Mage_Adminhtml_Block_Review_Add_Form extends Mage_Adminhtml_Block_Widget_F
         ));
 
 
-        $form->setMethod('POST');
+        $form->setMethod('post');
         $form->setUseContainer(true);
         $form->setId('edit_form');
         $form->setAction(Mage::getUrl('*/*/post'));

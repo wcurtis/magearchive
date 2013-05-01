@@ -19,28 +19,42 @@
  */
 ?>
 <?if(isset($poll)) :?>
+
+<script type="text/javascript">
+    function validatePollAnswerIsSelected()
+    {
+        var options = $$('input.poll_vote');
+
+        for( i in options ) {
+            if( options[i].checked == true ) {
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+
 <div class="box base-mini mini-poll">
     <div class="head">
         <h4><span><?=$this->__('Community Poll')?></span></h4>
     </div>
+    <form name="pollForm" action="<?=$action?>" method="post" onsubmit="return validatePollAnswerIsSelected();">
         <div class="content">
-    <h5><?=$poll->getPollTitle();?></h5>
-
-                         <form name="pollForm" action="<?=$action?>" method="post">
-                    <?if( $poll_answers ):?>
-                            <table cellspacing="2">
-                                <tbody>
-                                    <?foreach( $poll_answers as $answer ):?>
-                                    <tr>
-                                        <td><input type="radio" name="vote" id="vote_<?=$answer->getId()?>" value="<?=$answer->getAnswerId()?>" /></td>
-                                        <td><label for="vote_<?=$answer->getId()?>"><?=$answer->getAnswerTitle()?></label>&nbsp;</td>
-                                    </tr>
-                                    <?endforeach;?>
-                                </tbody>
-                            </table>
-                    <?endif;?>
-                    </form>
-                </div>
-                    <div class="actions"><button class="form-button-alt right" onclick="pollForm.submit()"><span><?=$this->__('Vote')?></span></button></div>
-                </div>
+            <h5><?=$poll->getPollTitle();?></h5>
+            <?if( $poll_answers ):?>
+                    <table cellspacing="2">
+                        <tbody>
+                            <?foreach( $poll_answers as $answer ):?>
+                            <tr>
+                                <td><input type="radio" name="vote" class="poll_vote" id="vote_<?=$answer->getId()?>" value="<?=$answer->getAnswerId()?>" /></td>
+                                <td><label for="vote_<?=$answer->getId()?>"><?=$answer->getAnswerTitle()?></label>&nbsp;</td>
+                            </tr>
+                            <?endforeach;?>
+                        </tbody>
+                    </table>
+            <?endif;?>
+        </div>
+        <div class="actions"><button class="form-button-alt right" type="submit"><span><?=$this->__('Vote')?></span></button></div>
+    </form>
+</div>
 <?endif;?>

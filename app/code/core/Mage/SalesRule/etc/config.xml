@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_SalesRule>
-            <version>0.7.0</version>
+            <version>0.7.2</version>
         </Mage_SalesRule>
     </modules>
     <global>
@@ -76,15 +76,15 @@
         </resources>
 
         <events>
-            <sales_order_save_after>
+            <sales_order_place_after>
                 <observers>
                     <salesrule>
                         <type>singleton</type>
                         <class>salesrule/observer</class>
-                        <method>sales_order_afterSave</method>
+                        <method>sales_order_afterPlace</method>
                     </salesrule>
                 </observers>
-            </sales_order_save_after>
+            </sales_order_place_after>
         </events>
     </global>
     <adminhtml>
@@ -93,7 +93,7 @@
                 <children>
                     <quote translate="title" module="salesrule">
                         <title>Shopping Cart Price Rules</title>
-                        <action>*/promo_quote/</action>
+                        <action>adminhtml/promo_quote/</action>
                         <resource>promo/quote</resource>
                         <depends><module>Mage_Sales</module></depends>
                     </quote>

@@ -525,8 +525,10 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex extends Mage_Usa_Model_Shipping_Carr
         }
 
         foreach($trackings as $tracking){
-         $this->_getXMLTracking($tracking);
+            $this->_getXMLTracking($tracking);
         }
+
+        return $this->_result;
     }
 
     protected function setTrackingReqeust()
@@ -576,8 +578,8 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex extends Mage_Usa_Model_Shipping_Carr
             $responseBody = '';
         }
 
-#echo "<xmp>".$responseBody."</xmp>";
-		$this->_parseXmlTrackingResponse($tracking,$responseBody);
+        #echo "<xmp>".$responseBody."</xmp>";
+		$this->_parseXmlTrackingResponse($tracking, $responseBody);
     }
 
     protected function _parseXmlTrackingResponse($trackingvalue,$response)
@@ -610,7 +612,9 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex extends Mage_Usa_Model_Shipping_Carr
               }
          }
 
-         $result = Mage::getModel('shipping/tracking_result');
+         if(!$this->_result){
+             $this->_result = Mage::getModel('shipping/tracking_result');
+         }
          $defaults = $this->getDefaults();
 
          if($resultArr){
@@ -626,17 +630,15 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex extends Mage_Usa_Model_Shipping_Carr
              $tracking->setDeliveryLocation($resultArr['deliverylocation']);
              if(isset($resultArr['signedby']))$tracking->setSignedBy($resultArr['signedby']);
              */
-             $result->append($tracking);
+             $this->_result->append($tracking);
          }else{
             $error = Mage::getModel('shipping/tracking_result_error');
             $error->setCarrier('fedex');
             $error->setCarrierTitle(Mage::getStoreConfig('carriers/fedex/title'));
             $error->setTracking($trackingvalue);
             $error->setErrorMessage($errorTitle);
-            $result->append($error);
+            $this->_result->append($error);
          }
-         $this->_result=$result;
-//print_r($result);
     }
 
     public function getResponse()

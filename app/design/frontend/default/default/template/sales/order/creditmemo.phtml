@@ -1,0 +1,183 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $this->getOrder())):?>
+<script type="text/javascript">
+function giftMessageToogle(giftMessageIdentifier)
+{
+    var link = $('order-item-gift-message-link-'+giftMessageIdentifier);
+    var container = $('order-item-gift-message-'+giftMessageIdentifier);
+    var row = $('order-item-row-'+giftMessageIdentifier);
+
+
+    if(link.expanded) {
+        link.expanded = false;
+        link.removeClassName('collapse');
+        link.addClassName('expand');
+        if(container.hasClassName('last')) {
+            row.addClassName('last');
+        }
+        container.hide();
+    } else {
+        link.expanded = true;
+        link.addClassName('collapse');
+        link.removeClassName('expand');
+        if(container.hasClassName('last')) {
+            row.removeClassName('last');
+        }
+        container.show();
+    }
+
+    return false;
+}
+</script>
+<?endif;?>
+<? $_order = $this->getOrder() ?>
+
+<?foreach ($_order->getCreditmemosCollection() as $_creditmemo):?>
+<br />
+<div class="head">
+    <h3>Refund #<?=$_creditmemo->getIncrementId();?></h3>
+    <!--<a href="#">Print Refund</a>-->
+</div>
+<h4><?=$this->__('Items Refunded')?></h4>
+<table cellspacing="0" class="data-table" id="my-orders-table">
+    <thead>
+        <tr>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-right"><?=$this->__('Price')?></th>
+            <th class="a-center"><?=$this->__('Qty')?></th>
+            <th class="a-right"><?=$this->__('Subtotal')?></th>
+            <th class="a-right"><?=$this->__('Tax Amount')?></th>
+            <th class="a-right"><?=$this->__('Discount Amount')?></th>
+            <th class="a-right"><?=$this->__('Row Total')?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?$_items = $_creditmemo->getAllItems();?>
+        <?$_count = count($_items);?>
+        <?$_index = 0;?>
+        <?foreach ($_items as $_item):?>
+            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-row-<?=$_item->getId()?>">
+                <td><?=$_item->getName()?></td>
+                <td class="a-right nowrap"><?=$_order->formatPrice($_item->getPrice())?> </td>
+                <td><?=$_item->getQty()*1?></td>
+                <td class="a-center"><?=$_order->formatPrice($_item->getRowTotal())?></td>
+                <td class="a-center"><?=$_order->formatPrice($_item->getTaxAmount())?></td>
+                <td class="a-center"><?=$_order->formatPrice(-$_item->getDiscountAmount())?></td>
+                <td class="last a-right nowrap">
+                    <?=$_order->formatPrice($_item->getRowTotal()-$_item->getDiscountAmount()+$_item->getTaxAmount())?>
+                </td>
+            </tr>
+        <?endforeach;?>
+
+    </tbody>
+    <tfoot>
+            <?if ((float) $_creditmemo->getSubtotal()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Subtotal')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getSubtotal())?></td>
+        </tr>
+        <?endif;?>
+        <?if ((float) $_creditmemo->getTaxAmount()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Tax')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getTaxAmount())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_creditmemo->getShippingAmount()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Shipping')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getShippingAmount())?></td>
+        </tr>
+        <?endif;?>
+        <?if ((float) $_creditmemo->getDiscountAmount()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Discount')?></td>
+            <td class="last a-right"><?=$_order->formatPrice(-$_creditmemo->getDiscountAmount())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_creditmemo->getGiftcertAmount()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Gift Certificate')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getGiftcertAmount())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_creditmemo->getAdjustmentPositive()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Adjustment Refund')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getAdjustmentPositive())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_creditmemo->getAdjustmentNegative()):?>
+        <tr>
+            <td colspan="6" class="a-right"><?=$this->__('Adjustment Fee')?></td>
+            <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getAdjustmentNegative())?></td>
+        </tr>
+        <?endif;?>
+         <tr>
+            <td colspan="6" class="a-right">
+                <strong><?=$this->__('Grand Total')?></strong>
+            </td>
+            <td class="last a-right">
+                <strong><?=$_order->formatPrice($_creditmemo->getGrandTotal())?></strong>
+            </td>
+        </tr>
+        <?if ($this->getCanDisplayTotalPaid()):?>
+        <tr>
+            <td colspan="6" class="a-right">
+                <strong><?=$this->__('Total Paid')?></strong>
+            </td>
+            <td class="last a-right">
+                <strong><?=$_order->formatPrice($_creditmemo->getTotalPaid())?></strong>
+            </td>
+        </tr>
+        <?endif;?>
+        <?if ($this->getCanDisplayTotalRefunded()):?>
+        <tr>
+            <td colspan="6" class="a-right">
+                <strong><?=$this->__('Total Refunded')?></strong>
+            </td>
+            <td class="last a-right">
+                <strong><?=$_order->formatPrice($_creditmemo->getTotalRefunded())?></strong>
+            </td>
+        </tr>
+        <?endif;?>
+        <?if ($this->getCanDisplayTotalDue()):?>
+        <tr>
+            <td colspan="6" class="a-right">
+                <strong><?=$this->__('Total Due')?></strong>
+            </td>
+            <td class="last a-right">
+                <strong><?=$_order->formatPrice($_creditmemo->getTotalDue())?></strong>
+            </td>
+        </tr>
+        <?endif;?>
+    </tfoot>
+</table>
+<script type="text/javascript">decorateTable('my-orders-table')</script>
+<?endforeach;?>
+<div class="button-set">
+    <a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back to My Orders')?></a>
+</div>

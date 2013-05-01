@@ -116,6 +116,45 @@ class Mage_Core_Model_App
     */
     protected $_useCache;
 
+    /**
+     * Stores cache
+     *
+     * @var array
+     */
+    protected $_stores;
+
+    /**
+     * Default store code
+     *
+     * @var string
+     */
+    protected $_defaultStore;
+
+    /**
+     * Websites cache
+     *
+     * @var array
+     */
+    protected $_websites;
+
+    /**
+     * Request object
+     *
+     * @var Zend_Controller_Request_Http
+     */
+    protected $_request;
+
+    /**
+     * Response object
+     *
+     * @var Zend_Controller_Response_Http
+     */
+    protected $_response;
+
+    /**
+     * Constructor
+     *
+     */
     public function __construct() {}
 
     /**
@@ -132,45 +171,26 @@ class Mage_Core_Model_App
         $this->setErrorHandler(self::DEFAULT_ERROR_HANDLER);
         date_default_timezone_set(Mage_Core_Model_Locale::DEFAULT_TIMEZONE);
 
+        if (!empty($_COOKIE['store'])) {
+            $store = $_COOKIE['store'];
+        }
+
+        $this->_defaultStore = $store;
         $this->_config  = Mage::getConfig()->init($etcDir);
 
-        $this->_initStore($store);
 		Varien_Profiler::stop('app/construct');
 		return $this;
     }
 
     /**
-     * Initialize application store
+     * Set current default store
      *
-     * @param   string $code
-     * @return  Mage_Core_Model_App
+     * @param string $store
+     * @return Mage_Core_Model_App
      */
-    protected function _initStore($code)
+    public function setDefaultStore($store)
     {
-        $this->_store   = Mage::getSingleton('core/store');
-        $this->_website = Mage::getSingleton('core/website');
-
-        #if ($store = $this->getFrontController()->getRequest()->get('store')) {
-        if (!empty($_REQUEST['store'])) {
-            $code = $_REQUEST['store'];
-        }
-
-        /**
-         * Check store code
-         */
-        if (!Mage::getConfig()->getNode('stores/'.$code)) {
-            $code = self::DEFAULT_STORE_CODE;
-        }
-
-        if ($this->isInstalled()) {
-            $this->_store->loadConfig($code);
-            if ($this->_store->getWebsiteId()) {
-                $this->_website->loadConfig($this->_store->getWebsiteId());
-            }
-        }
-        else {
-            $this->_store->setCode($code);
-        }
+        $this->_defaultStore = $store;
         return $this;
     }
 
@@ -243,9 +263,38 @@ class Mage_Core_Model_App
      *
      * @return Mage_Core_Model_Store
      */
-    public function getStore()
+    public function getStore($id=null)
     {
-        return $this->_store;
+        if (is_null($id)) {
+            $id = $this->_defaultStore;
+        } elseif ($id instanceof Mage_Core_Model_Store) {
+            return $id;
+        }
+
+        if (empty($this->_stores[$id])) {
+            $store = Mage::getModel('core/store');
+            if (is_numeric($id)) {
+                $store->load($id);
+                if (!$store->hasStoreId()) {
+                    throw Mage::exception('Mage_Core', 'Invalid store id requested.');
+                }
+            } elseif (is_string($id)) {
+                $storeConfig = Mage::getConfig()->getNode('stores/'.$id);
+                if (!$storeConfig) {
+                    $id = self::DEFAULT_STORE_CODE;
+                }
+                $store->loadConfig($id);
+                /**
+                 * Load store data from resource
+                 */
+                if ($store->getId()) {
+                    $store->load($store->getId());
+                }
+            }
+            $this->_stores[$store->getStoreId()] = $store;
+            $this->_stores[$store->getCode()] = $store;
+        }
+        return $this->_stores[$id];
     }
 
     /**
@@ -253,9 +302,31 @@ class Mage_Core_Model_App
      *
      * @return Mage_Core_Model_Website
      */
-    public function getWebsite()
+    public function getWebsite($id=null)
     {
-        return $this->_website;
+        if (is_null($id)) {
+            $id = $this->getStore()->getWebsiteId();
+        } elseif ($id instanceof Mage_Core_Model_Website) {
+            return $id;
+        }
+        if (empty($this->_websites[$id])) {
+            $website = Mage::getModel('core/website');
+            if (is_numeric($id)) {
+                $website->load($id);
+                if (!$website->hasWebsiteId()) {
+                    throw Mage::exception('Mage_Core', 'Invalid website id requested.');
+                }
+            } elseif (is_string($id)) {
+                $websiteConfig = Mage::getConfig()->getNode('websites/'.$id);
+                if (!$websiteConfig) {
+                    throw Mage::exception('Mage_Core', 'Invalid website code requested: '.$id);
+                }
+                $website->loadConfig($id);
+            }
+            $this->_websites[$website->getWebsiteId()] = $website;
+            $this->_websites[$website->getCode()] = $website;
+        }
+        return $this->_websites[$id];
     }
 
     /**
@@ -491,4 +562,33 @@ class Mage_Core_Model_App
             return isset($this->_useCache[$type]) ? (bool)$this->_useCache[$type] : false;
         }
     }
+
+    /**
+     * Retrieve request object
+     *
+     * @return Mage_Core_Controller_Request_Http
+     */
+    public function getRequest()
+    {
+        if (empty($this->_request)) {
+            $this->_request = new Mage_Core_Controller_Request_Http();
+        }
+        return $this->_request;
+    }
+
+    /**
+     * Retrieve response object
+     *
+     * @return Zend_Controller_Response_Http
+     */
+    public function getResponse()
+    {
+        if (empty($this->_response)) {
+            $this->_response = new Zend_Controller_Response_Http();
+            $this->_response->setHeader("Content-Type", "text/html; charset=UTF-8");
+        }
+        return $this->_response;
+    }
+
+
 }

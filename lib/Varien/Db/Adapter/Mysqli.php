@@ -73,6 +73,9 @@ class Varien_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         }
 
         $this->_connection = $conn;
+
+        /** @link http://bugs.mysql.com/bug.php?id=18551 */
+        $this->_connection->query("SET SQL_MODE=''");
     }
 
     public function raw_query($sql)

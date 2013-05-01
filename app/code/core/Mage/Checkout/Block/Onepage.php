@@ -110,7 +110,7 @@ class Mage_Checkout_Block_Onepage extends Mage_Checkout_Block_Onepage_Abstract
             ->setName($type.'[region]')
             ->setId($type.':region')
             ->setTitle(Mage::helper('checkout')->__('State/Province'))
-            ->setClass('required-entry validate-state input-text')
+            ->setClass('required-entry validate-state')
             ->setValue($address->getRegionId())
             ->setOptions($this->getRegionCollection()->toOptionArray());
 

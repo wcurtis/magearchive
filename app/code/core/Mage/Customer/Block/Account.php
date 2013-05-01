@@ -26,7 +26,7 @@
  */
 class Mage_Customer_Block_Account extends Mage_Core_Block_Template
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('customer/account.phtml');

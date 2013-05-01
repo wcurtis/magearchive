@@ -24,6 +24,9 @@
  */
 abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
 {
+    const ACTION_AUTHORIZE          = 'authorize';
+    const ACTION_AUTHORIZE_CAPTURE  = 'authorize_capture';
+
     const STATUS_UNKNOWN    = 'UNKNOWN';
     const STATUS_APPROVED   = 'APPROVED';
     const STATUS_ERROR      = 'ERROR';
@@ -34,6 +37,131 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     protected $_code;
     protected $_formBlockType = 'payment/form';
     protected $_infoBlockType = 'payment/info';
+
+    /**
+     * Availability options
+     */
+    protected $_isGateway               = false;
+    protected $_canAuthorize            = false;
+    protected $_canCapture              = false;
+    protected $_canCapturePartial       = false;
+    protected $_canRefund               = false;
+    protected $_canVoid                 = false;
+    protected $_canUseInternal          = true;
+    protected $_canUseCheckout          = true;
+    protected $_canUseForMultishipping  = true;
+
+    /**
+     * Check authorise availability
+     *
+     * @return bool
+     */
+    public function canAuthorize()
+    {
+        return $this->_canAuthorize;
+    }
+
+    /**
+     * Check capture availability
+     *
+     * @return bool
+     */
+    public function canCapture()
+    {
+        return $this->_canCapture;
+    }
+
+    /**
+     * Check partial capture availability
+     *
+     * @return bool
+     */
+    public function canCapturePartial()
+    {
+        return $this->_canCapturePartial;
+    }
+
+    /**
+     * Check refund availability
+     *
+     * @return bool
+     */
+    public function canRefund()
+    {
+        return $this->_canRefund;
+    }
+
+    /**
+     * Check void availability
+     *
+     * @param   Varien_Object $invoicePayment
+     * @return  bool
+     */
+    public function canVoid(Varien_Object $payment)
+    {
+        return $this->_canVoid;
+    }
+
+    /**
+     * Using internal pages for input payment data
+     * Can be used in admin
+     *
+     * @return bool
+     */
+    public function canUseInternal()
+    {
+        return $this->_canUseInternal;
+    }
+
+    /**
+     * Can be used in regular checkout
+     *
+     * @return bool
+     */
+    public function canUseCheckout()
+    {
+        return $this->_canUseCheckout;
+    }
+
+    /**
+     * Using for multiple shipping address
+     *
+     * @return bool
+     */
+    public function canUseForMultishipping()
+    {
+        return $this->_canUseForMultishipping;
+    }
+
+    /**
+     * Retrieve payment system relation flag
+     *
+     * @return bool
+     */
+    public function isGateway()
+    {
+        return $this->_isGateway;
+    }
+
+    /**
+     * To check billing country is allowed for the payment method
+     *
+     * @return bool
+     */
+    public function canUseForCountry($country)
+    {
+        /*
+        for specific country, the flag will set up as 1
+        */
+        if($this->getConfigData('allowspecific')==1){
+            $availableCountries = explode(',', $this->getConfigData('specificcountry'));
+            if(!in_array($country, $availableCountries)){
+                return false;
+            }
+
+        }
+        return true;
+    }
 
     /**
      * Retrieve model helper
@@ -93,64 +221,49 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
-     * Assign data to info model instance
-     *
-     * @param   mixed $data
-     * @return  Mage_Payment_Model_Info
-     */
-    public function assignData($data)
-    {
-        if (is_array($data)) {
-            $this->getInfoInstance()->addData($data);
-        }
-        elseif ($data instanceof Varien_Object) {
-            $this->getInfoInstance()->addData($data->getData());
-        }
-        return $this;
-    }
-
-    /**
      * Validate payment method information object
      *
-     * @param   Mage_Payment_Model_Info $info
+     * @param   Varien_Object $info
      * @return  Mage_Payment_Model_Abstract
      */
     public function validate()
     {
+         /**
+          * to validate paymene method is allowed for billing country or not
+          */
+         $paymentInfo = $this->getInfoInstance();
+         if ($paymentInfo instanceof Mage_Sales_Model_Order_Payment) {
+             $billingCountry = $paymentInfo->getOrder()->getBillingAddress()->getCountryId();
+         } else {
+             $billingCountry = $paymentInfo->getQuote()->getBillingAddress()->getCountryId();
+         }
+         if (!$this->canUseForCountry($billingCountry)) {
+             Mage::throwException($this->_getHelper()->__('Selected payment type is not allowed for billing country.'));
+         }
          return $this;
     }
 
     /**
      * Authorize
      *
-     * @param   Mage_Payment_Model_Info $orderPayment
+     * @param   Varien_Object $orderPayment
      * @return  Mage_Payment_Model_Abstract
      */
-    public function authorise()
+    public function authorize(Varien_Object $payment, $amount)
     {
-        if (!$this->canAuthorise()) {
+        if (!$this->canAuthorize()) {
             Mage::throwException($this->_getHelper()->__('Authorize action is not available'));
         }
         return $this;
     }
 
     /**
-     * Check authorise availability
-     *
-     * @return bool
-     */
-    public function canAuthorise()
-    {
-        return false;
-    }
-
-    /**
      * Capture payment
      *
-     * @param   Mage_Payment_Model_Info $orderPayment
+     * @param   Varien_Object $orderPayment
      * @return  Mage_Payment_Model_Abstract
      */
-    public function capture()
+    public function capture(Varien_Object $payment, $amount)
     {
         if (!$this->canCapture()) {
             Mage::throwException($this->_getHelper()->__('Capture action is not available'));
@@ -160,22 +273,13 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
-     * Check capture availability
-     *
-     * @return bool
-     */
-    public function canCapture()
-    {
-        return false;
-    }
-
-    /**
      * Refund money
      *
-     * @param   Mage_Payment_Model_Info $invoicePayment
+     * @param   Varien_Object $invoicePayment
      * @return  Mage_Payment_Model_Abstract
      */
-    public function refund(Mage_Payment_Model_Info $payment)
+    //public function refund(Varien_Object $payment, $amount)
+    public function refund(Varien_Object $payment, $amount)
     {
 
         if (!$this->canRefund()) {
@@ -187,71 +291,17 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
-     * Check refund availability
-     *
-     * @return bool
-     */
-    public function canRefund()
-    {
-        return false;
-    }
-
-    /**
      * Void payment
      *
-     * @param   Mage_Payment_Model_Info $invoicePayment
+     * @param   Varien_Object $invoicePayment
      * @return  Mage_Payment_Model_Abstract
      */
-    public function void(Mage_Payment_Model_Info $payment)
+    public function void(Varien_Object $payment)
     {
-
-        if (!$this->canVoid()) {
+        if (!$this->canVoid($payment)) {
             Mage::throwException($this->_getHelper()->__('Void action is not available'));
         }
-
         return $this;
-    }
-
-    /**
-     * Check void availability
-     *
-     * @param   Mage_Payment_Model_Info $invoicePayment
-     * @return  bool
-     */
-    public function canVoid(Mage_Payment_Model_Info $payment)
-    {
-        return true;
-    }
-
-    /**
-     * Using internal pages for input payment data
-     * Can be used in admin
-     *
-     * @return bool
-     */
-    public function canUseInternal()
-    {
-        return true;
-    }
-
-    /**
-     * Can be used in regular checkout
-     *
-     * @return bool
-     */
-    public function canUseCheckout()
-    {
-        return true;
-    }
-
-    /**
-     * Using for multiple shipping address
-     *
-     * @return bool
-     */
-    public function canUseForMultishipping()
-    {
-        return true;
     }
 
     /**
@@ -277,6 +327,23 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     }
 
     /**
+     * Assign data to info model instance
+     *
+     * @param   mixed $data
+     * @return  Mage_Payment_Model_Info
+     */
+    public function assignData($data)
+    {
+        if (is_array($data)) {
+            $this->getInfoInstance()->addData($data);
+        }
+        elseif ($data instanceof Varien_Object) {
+            $this->getInfoInstance()->addData($data->getData());
+        }
+        return $this;
+    }
+
+   /**
      * Parepare info instance for save
      *
      * @return Mage_Payment_Model_Abstract
@@ -284,10 +351,5 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     public function prepareSave()
     {
         return $this;
-    }
-
-    public function getErrorMessage()
-    {
-        return Mage::helper('payment')->__('There was an error processing your payment. Please check your payment information or contact us if you have any question.');
     }
 }

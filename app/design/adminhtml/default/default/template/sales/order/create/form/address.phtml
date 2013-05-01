@@ -19,19 +19,20 @@ endif;?>
 
     <fieldset class="np">
     <div class="order-choose-address">
-        <?//if($this->getAddressCollection()->getSize()):?>
         <?=Mage::helper('sales')->__('Select from existing customer addresses:')?><br/>
         <?$_id = $this->getForm()->getHtmlIdPrefix() . 'customer_address_id'?>
         <select id="<?=$_id?>" style="width:95%;" onchange="order.selectAddress(this.value, '<?=$_fieldsContainerId?>')">
             <option value=""><?=Mage::helper('sales')->__('Add New Address')?></option>
             <?foreach ($this->getAddressCollection() as $_address):?>
-            <option value="<?=$_address->getId()?>"<?if($_address->getId()==$this->getAddressId()):?> selected<?endif?>>
+            <?//if($this->getAddressAsString($_address)!=$this->getAddressAsString($this->getAddress())):?>
+            <option value="<?=$_address->getId()?>"<?if ($_address->getId()==$this->getAddressId()):?> selected<?endif;?>>
                 <?=$this->getAddressAsString($_address)?>
             </option>
+            <?//endif;?>
             <?endforeach;?>
+
         </select>
         <br/>
-        <?//endif;?>
         <?if($this->getIsShipping()):?>
             <input type="checkbox" id="order:shipping_same_as_billing" name="shipping_same_as_billing" onchange="order.setShippingAsBilling(this.checked)" <?if($this->getIsAsBilling()):?>checked<?endif;?>/>
             <label for="order:shipping_same_as_billing" class="no-float"><?=Mage::helper('sales')->__('Same As Billing Address')?></label>

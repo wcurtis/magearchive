@@ -80,15 +80,15 @@
                 <children>
                     <page translate="title" module="cms">
                         <title>Manage Pages</title>
-                        <action>*/cms_page</action>
+                        <action>adminhtml/cms_page</action>
                     </page>
                     <block translate="title" module="cms">
                         <title>Static Blocks</title>
-                        <action>*/cms_block</action>
+                        <action>adminhtml/cms_block</action>
                     </block>
                     <poll translate="title" module="cms">
                         <title>Poll Manager</title>
-                        <action>*/poll</action>
+                        <action>adminhtml/poll</action>
                     </poll>
                 </children>
              </cms>
@@ -182,4 +182,16 @@
             </controller_front_init_routers>
         </events>
     </global>
+    
+    <default>
+        <web>
+            <default>
+                <cms_home_page>home</cms_home_page>
+                <cms_no_route>no-route</cms_no_route>
+                <front>cms</front>
+                <no_route>cms/index/noRoute</no_route>
+                <show_cms_breadcrumbs>1</show_cms_breadcrumbs>
+            </default>
+        </web>
+    </default>
 </config>

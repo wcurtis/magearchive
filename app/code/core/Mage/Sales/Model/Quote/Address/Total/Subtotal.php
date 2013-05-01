@@ -40,7 +40,7 @@ class Mage_Sales_Model_Quote_Address_Total_Subtotal extends Mage_Sales_Model_Quo
             }
         }
 
-        $address->setGrandTotal($address->getGrandTotal() + $address->getSubtotal());
+        $address->setGrandTotal($address->getSubtotal());
         return $this;
     }
 

@@ -31,16 +31,18 @@ class Mage_Wishlist_Block_Links extends Mage_Core_Block_Template
 
     public function addWishlistLink()
     {
-        $count = $this->helper('wishlist')->getItemCount();
-        #$count = $this->getWishlistItems()->getSize();
-        if( $count > 1 ) {
-            $text = $this->__('My Wishlist (%d items)', $count);
-        } elseif( $count == 1 ) {
-            $text = $this->__('My Wishlist (%d item)', $count);
-        } else {
-            $text = $this->__('My Wishlist');
+        if ($this->helper('wishlist')->isAllow()){
+            
+            $count = $this->helper('wishlist')->getItemCount();
+            #$count = $this->getWishlistItems()->getSize();
+            if( $count > 1 ) {
+                $text = $this->__('My Wishlist (%d items)', $count);
+            } elseif( $count == 1 ) {
+                $text = $this->__('My Wishlist (%d item)', $count);
+            } else {
+                $text = $this->__('My Wishlist');
+            }
+            $this->getParentBlock()->addLink(null, 'class="top-link-wishlist" href="'.Mage::getUrl('wishlist').'"', $text, 1);
         }
-
-        $this->getParentBlock()->addLink(null, 'class="top-link-wishlist" href="'.Mage::getUrl('wishlist').'"', $text, 1);
     }
 }

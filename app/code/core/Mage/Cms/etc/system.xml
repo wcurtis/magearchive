@@ -33,7 +33,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[home]]></default_value>
                         </cms_home_page>
                         <cms_no_route translate="label"  module="cms">
                             <label>CMS No Route Page</label>
@@ -43,7 +42,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[no-route]]></default_value>
                         </cms_no_route>
                         <show_cms_breadcrumbs translate="label" module="cms">
                             <label>Show breadcrumbs for CMS pages</label>
@@ -53,7 +51,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </show_cms_breadcrumbs>
                     </fields>
                 </default>

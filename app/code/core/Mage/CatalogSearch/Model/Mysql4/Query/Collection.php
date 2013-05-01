@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Catalog search query collection
  *
@@ -36,11 +36,11 @@ class Mage_CatalogSearch_Model_Mysql4_Query_Collection extends Mage_Core_Model_M
     			array('main_table'=>$this->getTable('catalogsearch/search_query')),
     			array('query'=>"if(ifnull(synonim_for,'')<>'', synonim_for, query_text)", 'num_results')
     		)
-    		->where('num_results>0 and query_text like ?', $query.'%')
+    		->where('num_results>0 and display_in_terms=1 and query_text like ?', $query.'%')
     		->order('popularity desc');
 		return $this;
     }
-    
+
     public function setPopularQueryFilter()
     {
     	$this->getSelect()->reset(Zend_Db_Select::FROM)->distinct(true)

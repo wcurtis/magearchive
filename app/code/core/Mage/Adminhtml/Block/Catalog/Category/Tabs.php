@@ -50,6 +50,11 @@ class Mage_Adminhtml_Block_Catalog_Category_Tabs extends Mage_Adminhtml_Block_Wi
             'content'   => $this->getLayout()->createBlock('adminhtml/catalog_category_tab_product', 'category.product.grid')->toHtml(),
         ));
 
+        $this->addTab('design', array(
+            'label'     => Mage::helper('catalog')->__('Custom Design'),
+            'content'   => $this->getLayout()->createBlock('adminhtml/catalog_category_tab_design')->toHtml(),
+        ));
+
         /*$this->addTab('features', array(
             'label'     => Mage::helper('catalog')->__('Feature Products'),
             'content'   => 'Feature Products'

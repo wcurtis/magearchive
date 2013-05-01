@@ -29,6 +29,42 @@
         </Mage_Customer>
     </modules>
     <global>
+        <customer>
+            <address>
+                <formats>
+                    <text translate="title" module="customer">
+                        <title>Text</title>
+                        <defaultFormat><![CDATA[
+{{var firstname}} {{var lastname}}
+{{var street}}
+{{var city}}, {{var regionName}} {{var postcode}}
+T: {{var telephone}}
+{{depend fax}}F: {{var fax}}{{/depend}}
+                        ]]></defaultFormat>
+                    </text>
+                    <oneline translate="title" module="customer">
+                        <title>Text One Line</title>
+                        <defaultFormat>
+<![CDATA[{{var firstname}} {{var lastname}}, {{var street}}, {{var city}}, {{var region}} {{var postcode}}, {{var country}}]]>
+                        </defaultFormat>
+                    </oneline>
+                    <html translate="title" module="customer">
+                        <title>HTML</title>
+                        <defaultFormat><![CDATA[
+{{var firstname}} {{var lastname}}<br/>
+{{var street}}<br/>
+{{var city}}, {{var regionName}} {{var postcode}}<br/>
+T: {{var telephone}}
+{{depend fax}}<br/>F: {{var fax}}{{/depend}}
+            ]]></defaultFormat>
+                    </html>
+                    <pdf translate="title" module="customer">
+                        <title>PDF</title>
+                        <defaultFormat><![CDATA[ ]]></defaultFormat>
+                    </pdf>
+                </formats>
+            </address>
+        </customer>
         <blocks>
             <customer><class>Mage_Customer_Block</class></customer>
         </blocks>
@@ -101,17 +137,17 @@
                 <children>
                     <manage translate="title" module="customer">
                         <title>Manage Customers</title>
-                        <action>*/customer/</action>
+                        <action>adminhtml/customer/</action>
                         <acl><resource>admin/customer</resource><privilege>list</privilege></acl>
                     </manage>
                     <group translate="title" module="customer">
                         <title>Customer Groups</title>
-                        <action>*/customer_group/</action>
+                        <action>adminhtml/customer_group/</action>
                         <resource>admin/customer/group</resource>
                     </group>
                     <online translate="title" module="customer">
                         <title>Online Customers</title>
-                        <action>*/customer_online/</action>
+                        <action>adminhtml/customer_online/</action>
                         <resource>admin/customer/online</resource>
                     </online>
                 </children>
@@ -185,4 +221,25 @@
           </updates>
       </layout>
     </frontend>
+
+    <default>
+        <customer>
+            <create_account>
+                <confirm>0</confirm>
+                <default_group>1</default_group>
+                <email_domain>emaildomain.com</email_domain>
+                <email_identity>general</email_identity>
+                <email_template>1</email_template>
+            </create_account>
+
+            <default>
+                <group>1</group>
+            </default>
+
+            <password>
+                <forgot_email_identity>support</forgot_email_identity>
+                <forgot_email_template>3</forgot_email_template>
+            </password>
+        </customer>
+    </default>
 </config>

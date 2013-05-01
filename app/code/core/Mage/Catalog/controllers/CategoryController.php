@@ -33,12 +33,15 @@ class Mage_Catalog_CategoryController extends Mage_Core_Controller_Front_Action
     {
         $category = Mage::getModel('catalog/category')
             ->load($this->getRequest()->getParam('id', false));
-        if (!$this->_canShowCategory($category)) {
+        Mage::getModel('catalog/design')->applyDesign($category, 2);
+
+        if (!Mage::helper('catalog/category')->canShow($category)) {
             $this->_forward('noRoute');
             return;
         }
 
         Mage::register('current_category', $category);
+        Mage::getSingleton('catalog/session')->setLastViewedCategoryId($category->getId());
 
         $update = $this->getLayout()->getUpdate();
         $update->addHandle('default');
@@ -53,23 +56,13 @@ class Mage_Catalog_CategoryController extends Mage_Core_Controller_Front_Action
 
         $this->generateLayoutXml()->generateLayoutBlocks();
 
+        $this->getLayout()->getBlock('root')
+            ->addBodyClass('categorypath-'.$category->getUrlPath())
+            ->addBodyClass('category-'.$category->getUrlKey());
+
         $this->_initLayoutMessages('catalog/session');
         $this->_initLayoutMessages('checkout/session');
         $this->renderLayout();
     }
 
-    protected function _canShowCategory($category)
-    {
-        if (!$category->getIsActive()) {
-            return false;
-        }
-
-        $rootCategory = Mage::getModel('catalog/category')
-            ->load(Mage::app()->getStore()->getConfig('catalog/category/root_id'));
-
-        if (!in_array($category->getId(), explode(',', $rootCategory->getAllChildren()))) {
-            return false;
-        }
-        return true;
-    }
 }

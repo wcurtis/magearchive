@@ -42,7 +42,7 @@ class Mage_Adminhtml_Block_Review_Edit_Form extends Mage_Adminhtml_Block_Widget_
         $form = new Varien_Data_Form(array(
                                         'id' => 'edit_form',
                                         'action' => Mage::getUrl('*/*/save', array('id' => $this->getRequest()->getParam('id'), 'ret' => Mage::registry('ret'))),
-                                        'method' => 'POST',
+                                        'method' => 'post',
                                      )
         );
 

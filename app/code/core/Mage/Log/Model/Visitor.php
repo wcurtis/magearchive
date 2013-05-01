@@ -59,7 +59,7 @@ class Mage_Log_Model_Visitor extends Mage_Core_Model_Abstract
         $this->addData(array(
             'server_addr'       => empty($s['SERVER_ADDR']) ? '' : ip2long($s['SERVER_ADDR']),
             'remote_addr'       => empty($s['REMOTE_ADDR']) ? '' : ip2long($s['REMOTE_ADDR']),
-            'http_secure'       => Mage::getSingleton('core/url')->isCurrentlySecure(),
+            'http_secure'       => Mage::app()->getStore()->isCurrentlySecure(),
             'http_host'         => empty($s['HTTP_HOST']) ? '' : $s['HTTP_HOST'],
             'http_user_agent'   => empty($s['HTTP_USER_AGENT']) ? '' : $s['HTTP_USER_AGENT'],
             'http_accept_language'=> empty($s['HTTP_ACCEPT_LANGUAGE']) ? '' : $s['HTTP_ACCEPT_LANGUAGE'],

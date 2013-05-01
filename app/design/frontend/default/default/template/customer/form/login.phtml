@@ -36,7 +36,7 @@
             <h4><?=$this->__('New Customers')?></h4>
             <p><?=$this->__('By creating an account with our store, you will be able to move through the checkout process faster, store multiple shipping addresses, view and track your orders in your account and more.')?></p>
         </div>
-        <div class="form-buttons">
+        <div class="button-set">
             <button class="form-button right" onclick="window.location='<?=$this->getCreateAccountUrl()?>';" type="button"><span><?=$this->__('Create an Account')?></span></button>
         </div>
     </div>
@@ -56,7 +56,7 @@
                 </ul>
                 <p class="required"><?=$this->__('* Required Fields')?></p>
     </div>
-    <div class="form-buttons">
+    <div class="button-set">
         <a href="<?=$this->getForgotPasswordUrl()?>" class="left"><?=$this->__('Forgot Your Password?')?></a>
         <button class="form-button" type="submit" name="send" id="send2"><span><?=$this->__('Login')?></span></button>
     </div>

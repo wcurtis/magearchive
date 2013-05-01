@@ -33,6 +33,11 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
         $this->_init('sales/quote_item');
     }
 
+    public function __destruct()
+    {
+        unset($this->_quote);
+    }
+
     /**
      * Declare quote model object
      *
@@ -65,7 +70,7 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
         $qty = ($qty > 0) ? $qty : 1;
         return $qty;
     }
-    
+
     /**
      * Adding quantity to quote item
      *
@@ -79,7 +84,7 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
         $this->setQty($oldQty+$qty);
         return $this;
     }
-    
+
     /**
      * Declare quote item quantity
      *
@@ -91,9 +96,9 @@ class Mage_Sales_Model_Quote_Item extends Mage_Sales_Model_Quote_Item_Abstract
         $qty    = $this->_prepareQty($qty);
         $oldQty = $this->getQty();
         $this->setData('qty', $qty);
-        
+
         Mage::dispatchEvent('sales_quote_item_qty_set_after', array('item'=>$this));
-        
+
         if ($this->getQuote() && $this->getQuote()->getIgnoreOldQty()) {
             return $this;
         }

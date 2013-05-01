@@ -31,10 +31,10 @@ class Mage_Adminhtml_Block_Rating_Edit_Tab_Form extends Mage_Adminhtml_Block_Wid
     {
         $form = new Varien_Data_Form();
         $this->setForm($form);
-        $defaultStore = Mage::getModel('core/store')->load(0);
+        $defaultStore = Mage::app()->getStore(0);
         $fieldset = $form->addFieldset('rating_form', array('legend'=>Mage::helper('rating')->__('Rating Title')));
         $fieldset->addField('rating_code', 'text', array(
-                                'label'     => $defaultStore->getName(),
+                                'label'     => Mage::helper('rating')->__('Default Value'),
                                 'class'     => 'required-entry',
                                 'required'  => true,
                                 'name'      => 'rating_code',
@@ -52,9 +52,9 @@ class Mage_Adminhtml_Block_Rating_Edit_Tab_Form extends Mage_Adminhtml_Block_Wid
 
         if( Mage::getSingleton('adminhtml/session')->getRatingData() ) {
             $form->setValues(Mage::getSingleton('adminhtml/session')->getRatingData());
-            $data = Mage::getSingleton('adminhtml/session')->getRatingData()->getRatingCodes();
+            $data = Mage::getSingleton('adminhtml/session')->getRatingData();
             if(isset($data['rating_codes'])) {
-               $this->_setRatingCodes(Mage::getSingleton('adminhtml/session')->getRatingData()->getRatingCodes());
+               $this->_setRatingCodes($data['rating_codes']);
             }
             Mage::getSingleton('adminhtml/session')->setRatingData(null);
         } elseif ( Mage::registry('rating_data') ) {

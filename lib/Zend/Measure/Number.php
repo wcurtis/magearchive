@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Measure
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Number.php 7190 2007-12-18 18:49:46Z thomas $
+ * @version    $Id: Number.php 7319 2008-01-01 11:02:48Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -319,7 +319,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
             $newvalue = "";
             $romanval = array_values( array_reverse(self::$_ROMAN) );
             $romankey = array_keys( array_reverse(self::$_ROMAN) );
-            while(call_user_func(Zend_Locale_Math::$comp, $value, 0) != 0) {
+            while(call_user_func(Zend_Locale_Math::$comp, $value, 0) >= 1) {
 
                 while ($value >= $romanval[$i]) {
                     $value    -= $romanval[$i];

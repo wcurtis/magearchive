@@ -75,7 +75,8 @@ class Mage_CatalogInventory_Model_Observer
     {
         $item->addData($product->getStockData())
             ->setProductId($product->getId())
-            ->setStockId($item->getStockId());
+            ->setStockId($item->getStockId())
+            ->setProduct($product);
         if (is_null($product->getData('stock_data/use_config_min_qty'))) {
             $item->setData('use_config_min_qty', false);
         }

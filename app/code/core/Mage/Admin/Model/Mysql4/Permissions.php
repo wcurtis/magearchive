@@ -21,9 +21,9 @@
 //class Mage_Permissions_Model_Mysql4_Permissions {
 class Mage_Admin_Model_Mysql4_Permissions {
 
-	protected $_usersTable;
-	protected $_roleTable;
-	protected $_ruleTable;
+    protected $_usersTable;
+    protected $_roleTable;
+    protected $_ruleTable;
 
     /**
      * Read connection
@@ -58,4 +58,3 @@ class Mage_Admin_Model_Mysql4_Permissions {
 
     }
 }
-?>

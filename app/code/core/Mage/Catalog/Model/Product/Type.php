@@ -24,11 +24,16 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Product_Type extends Varien_Object 
+class Mage_Catalog_Model_Product_Type extends Varien_Object
 {
     public function __construct()
     {
         parent::__construct();
         $this->setIdFieldName('type_id');
+    }
+
+    public function getCollection()
+    {
+        return Mage::getResourceModel('catalog/product_type_collection');
     }
 }

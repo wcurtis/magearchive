@@ -50,12 +50,31 @@ class Mage_Cms_Model_Mysql4_Block extends Mage_Core_Model_Mysql4_Abstract
         $object->setUpdateTime(now());
         return $this;
     }
-    
+
     public function load(Mage_Core_Model_Abstract $object, $value, $field=null)
     {
+
         if (!intval($value) && is_string($value)) {
             $field = 'identifier';
         }
         return parent::load($object, $value, $field);
+    }
+
+        /**
+     * Retrieve select object for load object data
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return Zend_Db_Select
+     */
+    protected function _getLoadSelect($field, $value, $object)
+    {
+
+        $select = parent::_getLoadSelect($field, $value, $object);
+
+        if ($object->getStoreId()) {
+            $select->where('is_active=1 and (store_id=? OR store_id=0)', $object->getStoreId());
+        }
+        return $select;
     }
 }

@@ -21,6 +21,7 @@
 class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_Varien_Router_Abstract
 {
     protected $_modules = array();
+    protected $_routes = array();
     protected $_dispatchData = array();
 
     public function collectRoutes($configArea, $useRouterName)
@@ -33,9 +34,9 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
         foreach ($routers as $routerName=>$routerConfig) {
             $use = (string)$routerConfig->use;
             if ($use==$useRouterName) {
-                $module = (string)$routerConfig->args->module;
+                $moduleName = (string)$routerConfig->args->module;
                 $frontName = (string)$routerConfig->args->frontName;
-                $this->addModule($frontName, $module);
+                $this->addModule($frontName, $moduleName, $routerName);
             }
         }
     }
@@ -68,7 +69,7 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
 		if (!$module) {
 			return false;
 		}
-        $realModule = $this->getRealModuleName($module);
+        $realModule = $this->getModuleByFrontName($module);
         if (!$realModule) {
             if ($moduleFrontName = array_search($module, $this->_modules)) {
                 $realModule = $module;
@@ -104,14 +105,14 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
         }
 
         if (Mage::app()->isInstalled()) {
-            $shouldBeSecure = Mage::getStoreConfig('web/unsecure/protocol')==='https'
-                || Mage::getStoreConfig('web/secure/protocol')==='https'
-                    && Mage::getConfig()->isUrlSecure('/'.$module.'/'.$controller.'/'.$action);
-            if ($shouldBeSecure!=$this->isCurrentlySecure()) {
-                $url = Mage::getModel('core/url')
-                    ->setSecure($shouldBeSecure)
-                    ->getHostUrl();
-                $url .= $request->getRequestUri();
+            $shouldBeSecure = substr(Mage::getStoreConfig('web/unsecure/base_url'),0,5)==='https'
+                || Mage::getStoreConfig('web/secure/use_in_frontend')
+                && substr(Mage::getStoreConfig('web/secure/base_url'),0,5)==='https'
+                && Mage::getConfig()->shouldUrlBeSecure('/'.$module.'/'.$controller.'/'.$action);
+
+            if ($shouldBeSecure != Mage::app()->getStore()->isCurrentlySecure()) {
+                $url = Mage::getBaseUrl('link', $shouldBeSecure).ltrim($request->getPathInfo(), '/');
+#echo $url; exit;
                 Mage::app()->getFrontController()->getResponse()
                     ->setRedirect($url)
                     ->sendResponse();
@@ -151,18 +152,32 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
         return true;#$request->isDispatched();
     }
 
-    public function addModule($frontName, $moduleName)
+    public function addModule($frontName, $moduleName, $routeName)
     {
         $this->_modules[$frontName] = $moduleName;
+        $this->_routes[$routeName] = $frontName;
         return $this;
     }
 
-    public function getRealModuleName($frontName)
+    public function getModuleByFrontName($frontName)
     {
         if (isset($this->_modules[$frontName])) {
             return $this->_modules[$frontName];
         }
         return false;
+    }
+
+    public function getFrontNameByRoute($routeName)
+    {
+        if (isset($this->_routes[$routeName])) {
+            return $this->_routes[$routeName];
+        }
+        return false;
+    }
+
+    public function getRouteByFrontName($frontName)
+    {
+        return array_search($frontName, $this->_routes);
     }
 
     public function getControllerFileName($realModule, $controller)

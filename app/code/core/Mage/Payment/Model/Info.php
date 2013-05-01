@@ -27,16 +27,6 @@
 class Mage_Payment_Model_Info extends Mage_Core_Model_Abstract
 {
     /**
-     * Retrieve store identifier
-     *
-     * @return int
-     */
-    public function getStoreId()
-    {
-        return $this->getData('store_id');
-    }
-
-    /**
      * Retrieve data
      *
      * @param   string $key

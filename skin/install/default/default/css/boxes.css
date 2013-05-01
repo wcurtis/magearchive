@@ -61,7 +61,7 @@ input.input-text, textarea { padding:2px; }
 input.form-radio { margin-right:3px;}
 .qty { width:2.5em; }
 .group-select label, .form-list label, .payment-methods label { font-weight:bold;}
-.form-buttons { /* Container for form buttons*/
+.button-set { /* Container for form buttons*/
     clear:both;
     margin-top:4em;
     border-top:1px solid #e4e4e4;

@@ -40,22 +40,16 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
     public function editAction()
     {
         $current = $this->getRequest()->getParam('section');
-        $websiteCode = $this->getRequest()->getParam('website');
-        $storeCode = $this->getRequest()->getParam('store');
-
+        $website = $this->getRequest()->getParam('website');
+        $store   = $this->getRequest()->getParam('store');
 
         $configFields = Mage::getSingleton('adminhtml/config');
-        $sections=$configFields->getSections($current);
-
-        //        $sections=(array)$sections;
-
-
-        $section = $sections->$current;
-
-        $hasChildren = $configFields->hasChildren($section, $websiteCode, $storeCode);
+        $sections     = $configFields->getSections($current);
+        $section      = $sections->$current;
+        $hasChildren  = $configFields->hasChildren($section, $website, $store);
 
         if (!$hasChildren && $current) {
-            $this->_redirect('*/*/', array('website'=>$websiteCode, 'store'=>$storeCode));
+            $this->_redirect('*/*/', array('website'=>$website, 'store'=>$store));
         }
 
         $this->loadLayout();
@@ -76,26 +70,34 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
 
     public function saveAction()
     {
+        $session = Mage::getSingleton('adminhtml/session');
+        /* @var $session Mage_Adminhtml_Model_Session */
         try {
             Mage::app()->removeCache('config_global');
-            Mage::getResourceModel('adminhtml/config')->saveSectionPost(
-                $this->getRequest()->getParam('section'),
-                $this->getRequest()->getParam('website'),
-                $this->getRequest()->getParam('store'),
-                $this->getRequest()->getPost('groups')
-            );
-            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('Configuration successfully saved'));
-            $this->_redirect('*/*/edit', array('_current'=>array('section', 'website', 'store')));
-            return;
-        } catch( Exception $e ) {
-            Mage::getSingleton('adminhtml/session')->addError(nl2br($e->getMessage()));
-            $this->_redirect('*/*/edit', array('_current'=>array('section', 'website', 'store')));
+            Mage::getModel('adminhtml/config_data')
+                ->setSection($this->getRequest()->getParam('section'))
+                ->setWebsite($this->getRequest()->getParam('website'))
+                ->setStore($this->getRequest()->getParam('store'))
+                ->setGroups($this->getRequest()->getPost('groups'))
+                ->save();
+
+            $session->addSuccess(Mage::helper('adminhtml')->__('Configuration successfully saved'));
         }
+        catch (Mage_Core_Exception $e) {
+            foreach(split("\n", $e->getMessage()) as $message) {
+                $session->addError($message);
+            }
+        }
+        catch (Exception $e) {
+            $session->addException($e, Mage::helper('adminhtml')->__('Error while saving this configuration. Please try again later.'));
+        }
+
+        $this->_redirect('*/*/edit', array('_current' => array('section', 'website', 'store')));
     }
 
     public function exportTableratesAction()
     {
-        $websiteModel = Mage::getModel('core/website')->load($this->getRequest()->getParam('website'));
+        $websiteModel = Mage::app()->getWebsite($this->getRequest()->getParam('website'));
 
         if ($this->getRequest()->getParam('conditionName')) {
             $conditionName = $this->getRequest()->getParam('conditionName');
@@ -142,6 +144,7 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
 
         header("Content-disposition: attachment; filename=tablerates.csv");
         echo $csv;
+        exit;
     }
 
     protected function _isAllowed()

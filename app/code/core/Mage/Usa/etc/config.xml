@@ -96,7 +96,7 @@
             </modules>
         </translate>
     </adminhtml>
-    <frongend>
+    <frontend>
         <translate>
             <modules>
                 <Mage_Usa>
@@ -106,5 +106,77 @@
                 </Mage_Usa>
             </modules>
         </translate>
-    </frongend>
+    </frontend>
+
+    <default>
+        <carriers>
+            <dhl>
+                <account>MAGENTO</account>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>E,N,S,G</allowed_methods>
+                <contentdesc>Big Box</contentdesc>
+                <cutoff_cost></cutoff_cost>
+                <dutypaymenttype>R</dutypaymenttype>
+                <free_method>G</free_method>
+                <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
+                <id>MAGENTO</id>
+                <model>usa/shipping_carrier_dhl</model>
+                <password>123123</password>
+                <shipment_type>P</shipment_type>
+                <shipping_key></shipping_key>
+                <title>DHL</title>
+            </dhl>
+
+            <fedex>
+                <account>MAGENTO</account>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>PRIORITYOVERNIGHT,STANDARDOVERNIGHT,FIRSTOVERNIGHT,FEDEX2DAY,FEDEXEXPRESSSAVER,INTERNATIONALPRIORITY,INTERNATIONALECONOMY,INTERNATIONALFIRST,FEDEX1DAYFREIGHT,FEDEX2DAYFREIGHT,FEDEX3DAYFREIGHT,FEDEXGROUND,GROUNDHOMEDELIVERY,INTERNATIONALPRIORITY FREIGHT,INTERNATIONALECONOMY FREIGHT,EUROPEFIRSTINTERNATIONALPRIORITY</allowed_methods>
+                <cutoff_cost></cutoff_cost>
+                <dropoff>REGULARPICKUP</dropoff>
+                <free_method>FEDEXGROUND</free_method>
+                <gateway_url>https://gateway.fedex.com/GatewayDC</gateway_url>
+                <handling>0</handling>
+                <model>usa/shipping_carrier_fedex</model>
+                <packaging>YOURPACKAGING</packaging>
+                <title>Federal Express</title>
+            </fedex>
+
+            <ups>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>1DM,1DML,1DA,1DAL,1DAPI,1DP,1DPL,2DM,2DML,2DA,2DAL,3DS,GND,GNDCOM,GNDRES,STD,XPR,WXS,XPRL,XDM,XDML,XPD</allowed_methods>
+                <container>CP</container>
+                <cutoff_cost></cutoff_cost>
+                <dest_type>RES</dest_type>
+                <free_method>GND</free_method>
+                <gateway_url>http://www.ups.com/using/services/rave/qcostcgi.cgi</gateway_url>
+                <gateway_xml_url>https://www.ups.com/ups.app/xml/Rate</gateway_xml_url>
+                <handling>0</handling>
+                <model>usa/shipping_carrier_ups</model>
+                <pickup>CC</pickup>
+                <title>United Parcel Service</title>
+                <tracking_xml_url>https://www.ups.com/ups.app/xml/Track</tracking_xml_url>
+                <unit_of_measure>LBS</unit_of_measure>
+            </ups>
+
+            <usps>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>First-Class,Express Mail,Express Mail PO to PO,Priority Mail,Parcel Post,Express Mail Flat-Rate Envelope,Priority Mail Flat-Rate Box,Bound Printed Matter,Media Mail,Library Mail,Priority Mail Flat-Rate Envelope,Global Express Guaranteed,Global Express Guaranteed Non-Document Rectangular,Global Express Guaranteed Non-Document Non-Rectangular,Express Mail International (EMS),Express Mail International (EMS) Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box</allowed_methods>
+                <container>VARIABLE</container>
+                <cutoff_cost></cutoff_cost>
+                <free_method></free_method>
+                <gateway_url></gateway_url>
+                <handling></handling>
+                <machinable>true</machinable>
+                <methods>First-Class,Express Mail,Express Mail PO to PO,Priority Mail,Parcel Post,Express Mail Flat-Rate Envelope,Priority Mail Flat-Rate Box,Bound Printed Matter,Media Mail,Library Mail,Priority Mail Flat-Rate Envelope,Global Express Guaranteed,Global Express Guaranteed Non-Document Rectangular,Global Express Guaranteed Non-Document Non-Rectangular,Express Mail International (EMS),Express Mail International (EMS) Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box</methods>
+                <model>usa/shipping_carrier_usps</model>
+                <size>REGULAR</size>
+                <title>United States Postal Service</title>
+                <userid></userid>
+            </usps>
+        </carriers>
+    </default>
 </config>

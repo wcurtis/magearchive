@@ -289,37 +289,8 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
      */
     public function setStore($storeId=null)
     {
-        $current = Mage::app()->getStore();
-
-        if (is_null($storeId)) {
-            $this->_store = $current;
-            $this->_storeId = $this->_store->getId();
-        } elseif (is_numeric($storeId)) {
-
-            $this->_storeId = $storeId;
-            if (($current instanceof Mage_Core_Model_Store) && ($storeId===$current->getId())) {
-                $this->_store = $current;
-            } else {
-                $this->_store = Mage::getModel('core/store')->load($storeId);
-            }
-
-        } elseif (is_string($storeId)) {
-
-            if ($storeId===$current->getCode()) {
-                $this->_store = $current;
-            } else {
-                $this->_store = Mage::getModel('core/store')->setCode($storeId);
-            }
-            $this->_storeId = $this->_store->getId();
-
-        } elseif ($storeId instanceof Mage_Core_Model_Store) {
-
-            $this->_store = $storeId;
-            $this->_storeId = $storeId->getId();
-
-        } else {
-            throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('Invalid store id supplied'));
-        }
+        $this->_store = Mage::app()->getStore($storeId);
+        $this->_storeId = $this->_store->getId();
 
         $this->_sharedStoreIds = $this->getUseDataSharing() ? $this->_store->getDatashareStores($this->getConfig()->getDataSharingKey()) : false;
         if (empty($this->_sharedStoreIds)) {
@@ -801,7 +772,6 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
             $object->setParentId(0);
         }
 
-#echo "<pre>".print_r($object->getChildren(),1)."</pre>"; die;
         $this->_write->beginTransaction();
 
         $this->_beforeSave($object);
@@ -835,6 +805,12 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
             $entityIdField=> $object->getData($entityIdField),
         );
         $newValue = $object->getData($attributeCode);
+        if ($newValue==='') {
+            $attrType = $backend->getType();
+            if ($attrType=='int' || $attrType=='decimal' || $attrType=='datetime') {
+                $newValue = null;
+            }
+        }
         $whereArr = array();
         foreach ($row as $f=>$v) {
             $whereArr[] = $this->_read->quoteInto("$f=?", $v);
@@ -971,15 +947,15 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
             //$this->load($origObject, $entityId, array_keys($this->_attributesByCode));
             $this->load($origObject, $entityId);
             $origData = $origObject->getOrigData();
+
             // drop attributes that are unknown in new data
             // not needed after introduction of partial entity loading
             foreach ($origData as $k=>$v) {
-                if (!isset($newData[$k])) {
+                if (!array_key_exists($k, $newData)) {
                     unset($origData[$k]);
                     continue;
                 }
             }
-
         }
 
         foreach ($newData as $k=>$v) {
@@ -993,6 +969,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
                 continue;
             }
 
+            $isGlobal = $attribute->getIsGlobal();
             $attrId = $attribute->getAttributeId();
             // if attribute is static add to entity row and continue
             if ($this->isAttributeStatic($k)) {
@@ -1003,26 +980,35 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
                 }
                 continue;
             }
+            $attrType = $attribute->getBackend()->getType();
+            $isEmpty = is_array($v)
+                || is_null($v)
+                || $v===false && $attrType!='int'
+                || $v==='' && ($attrType=='int' || $attrType=='decimal' || $attrType=='datetime');
 
             if (isset($origData[$k])) {
                 //if (is_null($v) || strlen($v)==0) {
-                if (is_null($v)) {
-                    $delete[$attribute->getBackend()->getTable()][] = $attribute->getBackend()->getValueId();
+                $attrType = $attribute->getBackend()->getType();
+                if ($isEmpty) {
+                    if ($isGlobal) {
+                        $delete[$attribute->getBackend()->getTable()]['attribute_ids'][] = $attrId;
+                    } else {
+                        $delete[$attribute->getBackend()->getTable()]['value_ids'][] = $attribute->getBackend()->getValueId();
+                    }
                 } elseif ($v!==$origData[$k]) {
                     $update[$attrId] = array(
-                    'value_id'=>$attribute->getBackend()->getValueId(),
-                    'value'=>$v
+                        'value_id' => $attribute->getBackend()->getValueId(),
+                        'value'    => $v,
                     );
                 }
             }
             // If value is not empty or value eq 0
-            elseif (!empty($v) || (!is_array($v) && strlen((string)$v)>0) ) {
+            elseif (!$isEmpty) {
                 $insert[$attrId] = $v;
             }
         }
 
         $result = compact('newObject', 'entityRow', 'insert', 'update', 'delete');
-
         return $result;
     }
 
@@ -1081,15 +1067,20 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
 
         // delete empty attribute values
         if (!empty($delete)) {
-            foreach ($delete as $table=>$valueIds) {
-                $this->_write->delete($table, $this->_write->quoteInto('value_id in (?)', $valueIds));
+            foreach ($delete as $table=>$values) {
+                if (!empty($values['value_ids'])) {
+                    $this->_write->delete($table, $this->_write->quoteInto('value_id in (?)', $values['value_ids']));
+                }
+                if (!empty($values['attribute_ids'])) {
+                    $this->_write->delete($table, "entity_id='".$entityId."' and ".$this->_write->quoteInto('attribute_id in (?)', $values['attribute_ids']));
+                }
             }
         }
 
         return $this;
     }
 
-    protected function _insertAttribute($object, $attribute, $value, $storeIds = array())
+    protected function _insertAttribute($object, Mage_Eav_Model_Entity_Attribute_Abstract $attribute, $value, $storeIds = array())
     {
         $entityIdField = $attribute->getBackend()->getEntityIdField();
         $row = array(
@@ -1129,7 +1120,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         return $this;
     }
 
-    protected function _updateAttribute($object, $attribute, $valueId, $value)
+    protected function _updateAttribute($object, Mage_Eav_Model_Entity_Attribute_Abstract $attribute, $valueId, $value)
     {
         if ((bool)$attribute->getIsGlobal()) {
             $this->_write->update($attribute->getBackend()->getTable(),
@@ -1149,7 +1140,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         return $this;
     }
 
-    public function checkAttributeUniqueValue($attribute, $object)
+    public function checkAttributeUniqueValue(Mage_Eav_Model_Entity_Attribute_Abstract $attribute, $object)
     {
         if ($attribute->getBackend()->getType()==='static') {
             $select = $this->_write->select()

@@ -22,14 +22,13 @@
     <a href="<?=$this->getHomeLink()?>"><img src="<?=$this->getSkinUrl($this->__('images/logo.gif'))?>" alt="<?=$this->__('Magento Logo')?>" class="logo"/></a>
     <div class="header-right">
         <p class="super">
-            <?=$this->__("Logged in as %s", $this->getUser()->getUsername())?><span class="separator">|</span><?=$this->__("Today is %s", $this->formatDate(null, 'long'))?><span class="separator">|</span><a href="<?=$this->getLogoutLink()?>" class="link-logout"><?=$this->__('Log Out')?></a><br/>
-            <a href="http://www.magentocommerce.com" target="varien_external"><?=$this->__('Connect with the Magento Community')?></a>
-        </p> 
+            <?=$this->__("Logged in as %s", $this->getUser()->getUsername())?><span class="separator">|</span><?=$this->__("Today is %s", $this->formatDate(null, 'long'))?><span class="separator">|</span><a href="<?=$this->getLogoutLink()?>" class="link-logout"><?=$this->__('Log Out')?></a>
+        </p>
         <?php if ( Mage::getSingleton('admin/session')->isAllowed('admin/global_search') ): ?>
-        <fieldset>                                                                                      
+        <fieldset>
             <legend>Search</legend>
             <span id="global_search_indicator" class="autocomplete-indicator" style="display: none">
-                <img src="<?=$this->getSkinUrl('images/ajax-loader.gif')?>" alt="<?=$this->__('Loading...')?>" align="absmiddle"/>
+                <img src="<?=$this->getSkinUrl('images/ajax-loader.gif')?>" alt="<?=$this->__('Loading...')?>" class="v-middle"/>
             </span>
             <?$defSearch = $this->__('Global Record Search')?>
             <input id="global_search" name="query" type="text" class="input-text" value="<?if(!empty($query)):?><?=$query?><?else:?><?=$defSearch?><?endif?>" onfocus="if(this.value=='<?=$defSearch?>')this.value=''; " onblur="if(this.value=='')this.value='<?=$defSearch?>';" />

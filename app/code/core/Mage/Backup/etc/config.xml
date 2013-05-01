@@ -67,7 +67,7 @@
                         <children>
                             <backup translate="title" module="backup">
                                 <title>Backups</title>
-                                <action>*/system_backup</action>
+                                <action>adminhtml/system_backup</action>
                             </backup>
                         </children>
                     </tools>

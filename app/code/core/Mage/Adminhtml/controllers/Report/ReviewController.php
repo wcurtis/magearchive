@@ -158,5 +158,6 @@ class Mage_Adminhtml_Report_ReviewController extends Mage_Adminhtml_Controller_A
         header("Content-Length: ".sizeof($content));
         header("Content-type: application/octet-stream");
         echo $content;
+        exit;
     }
 }

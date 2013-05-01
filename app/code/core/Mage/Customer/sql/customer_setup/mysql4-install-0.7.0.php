@@ -18,8 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-$this->installModuleSystemDefaults();
-
 $installer = $this;
 /* @var $installer Mage_Customer_Model_Entity_Setup */
 
@@ -267,7 +265,4 @@ CREATE TABLE `customer_address_entity_varchar` (
 $installer->endSetup();
 
 $installer->installEntities();
-
-$installer->removeAttribute('customer', 'customer_group');
-
 

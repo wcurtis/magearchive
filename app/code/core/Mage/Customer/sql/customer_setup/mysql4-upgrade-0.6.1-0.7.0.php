@@ -18,16 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-$this->installModuleSystemDefaults();
-
-$installer = $this;
-/* @var $installer Mage_Customer_Model_Entity_Setup */
-
-$installer->installEntities();
-
-$installer->removeAttribute('customer', 'customer_group');
-
 $this->startSetup()->run("
 alter table `customer_entity` drop foreign key  `FK_CUSTOMER_ENTITY_PARENT_ENTITY` ;
 ")->endSetup();
-

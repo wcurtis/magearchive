@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Entity_Product extends Mage_Eav_Model_Entity_Abstract
+class Mage_Catalog_Model_Entity_Product extends Mage_Catalog_Model_Entity_Abstract
 {
     protected $_productStoreTable;
     protected $_categoryProductTable;
@@ -46,7 +46,7 @@ class Mage_Catalog_Model_Entity_Product extends Mage_Eav_Model_Entity_Abstract
     {
          return $this->_read->fetchOne('select entity_id from '.$this->getEntityTable().' where sku=?', $sku);
     }
-    
+
     protected function _afterLoad(Varien_Object $object)
     {
         Mage::dispatchEvent('catalog_product_load_after', array('product'=>$object));
@@ -78,7 +78,7 @@ class Mage_Catalog_Model_Entity_Product extends Mage_Eav_Model_Entity_Abstract
     	return $this;
     }
 
-    protected function _insertAttribute($object, $attribute, $value, $storeIds = array())
+    protected function _insertAttribute($object, Mage_Eav_Model_Entity_Attribute_Abstract $attribute, $value, $storeIds = array())
     {
         return parent::_insertAttribute($object, $attribute, $value, $this->getStoreIds($object));
     }
@@ -578,6 +578,11 @@ class Mage_Catalog_Model_Entity_Product extends Mage_Eav_Model_Entity_Abstract
         $storeIds = $this->getStoreIds($object);
         $oldId = $object->getId();
 
+        $storeIds = array_combine($storeIds, array_fill(0, sizeof($storeIds), 0));
+        if(!isset($storeIds[0])) {
+            $storeIds[0] = 0;
+        }
+
         $catagoryCollection = $this->getCategoryCollection($object)
             ->load();
         $categories = array();
@@ -590,7 +595,7 @@ class Mage_Catalog_Model_Entity_Product extends Mage_Eav_Model_Entity_Abstract
 
         $newProduct = Mage::getModel('catalog/product')
 	       ->setStoreId(0)
-	       ->setData($object->getData());
+	       ->addData($object->getData());
 
         $this->_prepareCopy($newProduct);
         $newProduct->setPostedStores($storeIds);
@@ -601,12 +606,16 @@ class Mage_Catalog_Model_Entity_Product extends Mage_Eav_Model_Entity_Abstract
 
         foreach ($storeIds as $storeId) {
         	if ($storeId) {
-        	    $newProduct = Mage::getModel('catalog/product')
+        	    $oldProduct = Mage::getModel('catalog/product')
         	       ->setStoreId($storeId)
         	       ->load($oldId);
 
+                $newProduct = Mage::getModel('catalog/product')
+        	       ->setStoreId($storeId)
+        	       ->load($newId)
+        	       ->addData($oldProduct->getData());
+
                 $this->_prepareCopy($newProduct);
-                $newProduct->setPostedCategories($categories);
                 $newProduct->setId($newId);
                 $newProduct->save();
         	}

@@ -32,20 +32,20 @@ class Mage_Adminhtml_Model_System_Config_Backend_Category
             $rootId     = $configData->getValue();
             $oldRootId  = $configData->getOldValue();
             $storeId    = $configData->getScopeId();
-            
+
             $category   = Mage::getSingleton('catalog/category');
             $tree       = $category->getTreeModel();
-            
+
             // Create copy of categories attributes for choosed store
             $tree->load();
             $root = $tree->getNodeById($rootId);
-        	
+
             // Save root
             $category->setStoreId(0)
         	   ->load($root->getId());
             $category->setStoreId($storeId)
                 ->save();
-            
+
             foreach ($root->getAllChildNodes() as $node) {
             	$category->setStoreId(0)
             	   ->load($node->getId());

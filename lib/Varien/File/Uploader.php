@@ -156,7 +156,7 @@ class Varien_File_Uploader
             $char = 0;
             while( ($char < 2) && ($char < strlen($fileName)) ) {
                 if (empty($this->_dispretionPath)) {
-                    $this->_dispretionPath = $fileName[$char];
+                    $this->_dispretionPath = DIRECTORY_SEPARATOR.$fileName[$char];
                 }
                 else {
                     $this->_dispretionPath = $this->_addDirSeparator($this->_dispretionPath) . $fileName[$char];

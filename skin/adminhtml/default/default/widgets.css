@@ -46,11 +46,24 @@
     opacity: 0.6;
     z-index:500;
     }
-#loading-mask .loader{position:absolute;top:40%;left:50%;}
+#loading-mask .loader {
+    position:fixed;
+    top:45%;
+    left:50%;
+    width:120px;
+    margin-left:-60px;
+    padding:15px 60px;
+    background:#fff4e9;
+    border:2px solid #f1af73;
+    color:#d85909;
+    font-weight:bold;
+    text-align:center;
+    z-index:1000;
+}
+
 /* Widget Buttons - Scalable!! */
 button.scalable {
     width:auto;
-    margin-bottom:5px;
     margin-left:4px;
     border:1px solid #ed6502;
     background:url(images/btn_bg.gif) repeat-x 0 100% #ffac47;
@@ -68,7 +81,8 @@ button.back span, button.delete span, button.save span, button.add span { paddin
 
 button.add span         { background-image:url(images/icon_btn_add.gif); }
 button.save span        { background-image:url(images/icon_btn_save.gif); }
-button.back                         { border-color:#ccc; background-image:url(images/btn_back_bg.gif); background-color:#fff; color:#555; }
+button.back { border-color:#ccc; background-image:url(images/btn_back_bg.gif); background-color:#fff; color:#555; }
+button.disabled { border-color:#ccc; background-image:url(images/btn_back_bg.gif); background-color:#fff; color:#AAA;cursor:default }
 button.delete                       { border:1px solid #606060; background-image:url(images/btn_delete_bg.gif); background-color:#c0c0c0; }
 button.cancel {
     border-color:#ea3200;
@@ -77,7 +91,6 @@ button.cancel {
     }
 button.back span                    { background:url(images/icon_btn_back.gif) no-repeat 0 50%; }
 button.delete span                  { background:url(images/icon_btn_delete.gif) no-repeat 0 50%; }
-
 
 
 
@@ -127,13 +140,11 @@ table.actions td {
     width: 100%;
     font-size: 12px;
     height: 26px;
-    background-image: url(images/massaction_bg.gif);
-    background-repeat: repeat-x;
+    background: url(images/massaction_bg.gif) 0 100% repeat-x #ebebeb;
 }
 
 .massaction tr td{
-    vertical-align: bottom;
-    padding-bottom: 3px;
+    vertical-align: middle;
     width: 50%;
     padding-left: 5px;
     padding-right: 5px;
@@ -219,6 +230,22 @@ table.actions td {
 .pager .arrow { margin: 0 3px; vertical-align:middle; }
 
 /* Headings aka Sort By */
+.grid .head {
+    background:url(images/sort_row_bg.gif) repeat-x 0 50%;
+    zoom:1;
+    }
+.grid .head th {
+    border-width:1px;
+    border-color:#f9f9f9 #d1cfcf #d1cfcf #f9f9f9 ;
+    border-style:solid;
+    padding-top:1px;
+    padding-bottom:0;
+    font-size:.95em;
+    color:#67767e;
+    }
+.grid .head .last {
+    border-right:0;
+    }
 .grid tr.headings {
         background:url(images/sort_row_bg.gif) repeat-x 0 50%;
         zoom:1;
@@ -230,6 +257,7 @@ table.actions td {
     padding-top:1px;
     padding-bottom:0;
         font-size:.95em;
+        white-space:nowrap;
     }
 .grid tr.headings th.last { border-right:0; }
 .grid tr.headings th.no-link { /* When the Grid heading does not have sorting functionality */
@@ -344,6 +372,8 @@ table.actions td {
 .grid table td .action-select {
     width: 100%;
 }
+
+.grid table td.price, .grid table th.price { text-align:right; }
 
 /******************************************/
 /*********//* GRID ENDS HERE*//************/
@@ -517,6 +547,11 @@ ul.tabs-horiz li a.active {
     font-weight:bold;
     line-height:1.25em;
     }
+.advice-bg-right .validation-advice {
+    background:url(images/validation_advice_bg.gif) no-repeat right top;
+    padding-right:16px;
+    padding-left:0px;
+}
 
 fieldset .validation-advice{
     margin:2px 0 0 13.2em;
@@ -646,7 +681,7 @@ select.countries option { background-repeat:no-repeat; }
 .order-search-items .entry-edit .grid{height:610px;overflow: auto;}
 .order-search-items .entry-edit .grid table{width:99.9%}
 .grid tr input.qty{width:60px !important;}
-.grid .data .item-qty{width: 30px !important}
+.grid .data .item-qty{width: 22px !important}
 .payments dd {
     outline-color: none !important;
     margin-left: 20px;
@@ -659,3 +694,12 @@ select.countries option { background-repeat:no-repeat; }
 .create-order-totals { background-image:url(images/bg_create_order_totals.gif) !important; background-repeat:repeat-y !important; background-position:50% 0 !important; }
 .grand_total { font-size:1.2em; font-weight:bold; color:#eb4d00 !important;}
 .divider { height:1px; overflow:hidden; background:#ddd; margin:10px 0; }
+
+.order-info-foot {
+    border:1px solid #ccc !important;
+    background:#f8f8f8;
+}
+.order-info-foot .section {padding:15px;}
+.order-info-foot li {list-style-type:none;}
+
+.document-totals {width:220px;background:#FAF9E5;border-left:1px solid #bdbdbd}

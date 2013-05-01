@@ -99,6 +99,7 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
 
     public function preDispatch()
     {
+
         Mage::getDesign()->setArea('adminhtml')
             ->setPackageName('default')
             ->setTheme('default');
@@ -110,6 +111,7 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
         if ($this->getRequest()->isDispatched()
             && $this->getRequest()->getActionName()!=='denied'
             && !$this->_isAllowed()) {
+            $this->getResponse()->setHeader('HTTP/1.1','403 Forbidden');
             $this->_forward('denied');
             $this->setFlag('', self::FLAG_NO_DISPATCH, true);
         }
@@ -119,6 +121,7 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
 
     public function deniedAction()
     {
+
         if (!Mage::getSingleton('admin/session')->isLoggedIn()) {
             $this->_redirect('*/index/login');
             return;
@@ -136,6 +139,8 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
 
     public function norouteAction($coreRoute = null)
     {
+        $this->getResponse()->setHeader('HTTP/1.1','404 Not Found');
+        $this->getResponse()->setHeader('Status','404 File not found');
         $this->loadLayout(array('default', 'admin_noroute'));
         $this->renderLayout();
     }

@@ -42,17 +42,21 @@ class Mage_Core_Model_Mysql4_Store extends Mage_Core_Model_Mysql4_Abstract
     	$this->updateDatasharing();
     }
 
-    public function updateDatasharing()
+    public function updateDatasharing($key='default')
     {
-    	$this->_getWriteAdapter()->delete($this->getTable('config_data'), "path like 'advanced/datashare/%'");
+        $path = 'advanced/datashare/'.$key;
+    	$this->_getWriteAdapter()->delete($this->getTable('config_data'), "path like '$path'");
 
     	$websites = Mage::getResourceModel('core/website_collection')->setLoadDefault(true)->load();
     	$stores = Mage::getResourceModel('core/store_collection')->setLoadDefault(true)->load();
+    	/*
     	$fields = Mage::getResourceModel('core/config_field_collection')
     		->addFieldToFilter('path', array('like'=>'advanced/datashare/%'))
     		->load();
+        */
     	$data = Mage::getModel('core/config_data')
-    		->setScope('websites');
+    		->setScope('websites')
+    		->setPath($path);
 
     	$allStoreIds = array();
     	foreach ($stores as $s) {
@@ -76,12 +80,21 @@ class Mage_Core_Model_Mysql4_Store extends Mage_Core_Model_Mysql4_Abstract
     		}
     		$data->unsConfigId()
     			->setScopeId($w->getId())
-    			->setValue(join(',',$w->getStores()));
-    		foreach ($fields as $f) {
-    			$data->setPath($f->getPath());
-    			$data->save();
-    		}
+    			->setValue(join(',',$w->getStores()))
+    			->save();
     	}
+
+    	Mage::app()->getConfig()->removeCache();
     	return $this;
+    }
+
+    protected function _getLoadSelect($field, $value, $object)
+    {
+	   	$select = $this->_getReadAdapter()->select()
+            ->from($this->getMainTable())
+            ->where($field.'=?', $value)
+            ->order('sort_order ASC');
+
+        return $select;
     }
 }

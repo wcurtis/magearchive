@@ -20,9 +20,9 @@
 
 class Mage_Admin_Model_Mysql4_Permissions_Roles_Collection extends Varien_Data_Collection_Db
 {
-	protected $_usersTable;
-	protected $_roleTable;
-	protected $_ruleTable;
+    protected $_usersTable;
+    protected $_roleTable;
+    protected $_ruleTable;
 
     public function __construct()
     {
@@ -41,7 +41,6 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles_Collection extends Varien_Data_C
 
     public function toOptionArray()
     {
-	   return $this->_toOptionArray('role_id', 'role_name');
+       return $this->_toOptionArray('role_id', 'role_name');
     }
 }
-?>

@@ -32,12 +32,12 @@
 </div>
 </form>
 <div class="inner-box">
-    <div class="form-buttons no-border">
+    <div class="button-set no-border">
         <span id="shipping-method-buttons-container">
             <a href="#" onclick="checkout.back(); return false;" class="back left"><?=$this->__('Back')?></a>
             <button class="form-button right" onclick="shippingMethod.save()"><span><?=$this->__('Continue')?></span></button>
             <span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
-                <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
+                <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
             </span>
         </span>
     </div>

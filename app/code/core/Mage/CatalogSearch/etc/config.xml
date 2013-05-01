@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_CatalogSearch>
-            <version>0.7.0</version>
+            <version>0.7.3</version>
             <depends>
                 <Mage_Catalog />
             </depends>
@@ -48,7 +48,7 @@
             <catalogsearch>
                 <class>Mage_CatalogSearch_Helper</class>
             </catalogsearch>
-        </helpers> 
+        </helpers>
         <resources>
             <catalogsearch_setup>
                 <setup>
@@ -115,10 +115,19 @@
                 <children>
                     <search translate="title" module="catalog">
                         <title>Search</title>
-                        <action>*/catalog_search/</action>
+                        <action>adminhtml/catalog_search/</action>
                     </search>
                 </children>
             </catalog>
         </menu>
     </adminhtml>
+
+    <default>
+        <catalog>
+            <seo>
+                <search_terms>1</search_terms>
+                <site_map>1</site_map>
+            </seo>
+        </catalog>
+    </default>
 </config>

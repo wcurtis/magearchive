@@ -90,6 +90,9 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
 
         parent::_connect();
 
+        /** @link http://bugs.mysql.com/bug.php?id=18551 */
+        $this->_connection->query("SET SQL_MODE=''");
+
         if (!$this->_connectionFlagsSet) {
             $this->_connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
             #$this->_connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);

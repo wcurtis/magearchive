@@ -22,7 +22,7 @@
 class Mage_CatalogRule_Model_Observer
 {
     protected $_rulePrices = array();
-    
+
     /**
      * Processing final price on frontend
      */
@@ -33,23 +33,23 @@ class Mage_CatalogRule_Model_Observer
         } else {
             $date = mktime(0,0,0);
         }
-        
+
         if ($observer->hasStoreId()) {
             $sId = $observer->getStoreId();
         } else {
             $sId = Mage::app()->getStore()->getId();
         }
-        
+
         if ($observer->hasCustomerGroupId()) {
             $gId = $observer->getCustomerGroupId();
         } else {
             $custSession = Mage::getSingleton('customer/session');
             $gId = $custSession->isLoggedIn() ? $custSession->getCustomer()->getGroupId() : 0;
         }
-        
+
         $product = $observer->getEvent()->getProduct();
         $pId = $product->getId();
-        
+
         $key = "$date|$sId|$gId|$pId";
         if (!isset($this->_rulePrices[$key])) {
             $rulePrice = Mage::getResourceModel('catalogrule/rule')
@@ -62,7 +62,7 @@ class Mage_CatalogRule_Model_Observer
         }
         return $this;
     }
-    
+
     /**
      * Processing final price in admin
      */
@@ -70,12 +70,12 @@ class Mage_CatalogRule_Model_Observer
     {
         if ($ruleData = Mage::registry('rule_data')) {
             $product = $observer->getEvent()->getProduct();
-            
+
             $date = mktime(0,0,0);
             $sId = $ruleData->getStoreId();
             $gId = $ruleData->getCustomerGroupId();
             $pId = $product->getId();
-            
+
             $key = "$date|$sId|$gId|$pId";
             if (!isset($this->_rulePrices[$key])) {
                 $rulePrice = Mage::getResourceModel('catalogrule/rule')
@@ -89,8 +89,8 @@ class Mage_CatalogRule_Model_Observer
         }
         return $this;
     }
-    
-    public function dailyCatalogUpdate($observer)
+
+    public function dailyCatalogUpdate($schedule)
     {
         $resource = Mage::getResourceSingleton('catalogrule/rule');
         $resource->applyAllRulesForDateRange(

@@ -37,17 +37,16 @@ Default layout, loads most of the pages
 -->
 
     <default>
-        
+
         <!-- Mage_Catalog -->
         <reference name="top.menu">
             <block type="catalog/navigation" name="catalog.topnav" template="catalog/navigation/top.phtml"/>
         </reference>
-        <reference name="left">
+        <reference name="right">
             <block type="core/template" name="left.permanent.callout" template="callouts/left_col.phtml">
                 <action method="setImgSrc"><src>images/media/col_left_callout.jpg</src></action>
                 <action method="setImgAlt"><alt>Our customer service is available 24/7. Call us at (800) DEMO-NUMBER.</alt></action>
                 <action method="setLinkUrl"><url>checkout/cart</url></action>
-                <action method="setLinkUrl"><url>http://var-dev.varien.com:81/dev/minu/magento/</url></action>
             </block>
         </reference>
         <reference name="right">
@@ -86,7 +85,7 @@ Category layered navigation layout
             </block>
         </reference>
     </catalog_category_layered>
-    
+
 <!--
 Compare products page
 -->
@@ -111,7 +110,7 @@ Compare products page
             <action method="unsetChild"><name>catalog_compare_sidebar</name></action>
         </reference>
     </customer_account_index>
-    
+
 <!--
 Product view
 -->
@@ -153,7 +152,7 @@ Product send to friend
             </block>
         </reference>
     </catalog_product_send>
-    
+
 <!--
 Product additional images gallery popup
 -->
@@ -170,14 +169,14 @@ Product additional images gallery popup
 
 <!--
 Site Map block
--->     
+-->
     <catalog_seo_sitemap_category>
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
         <reference name="content">
-              <block type="catalog/seo_sitemap_container" name="seo.container" template="catalog/seo/sitemap/container.phtml"/>               
-        </reference>        
+              <block type="catalog/seo_sitemap_container" name="seo.container" template="catalog/seo/sitemap/container.phtml"/>
+        </reference>
     </catalog_seo_sitemap_category>
     <catalog_seo_sitemap_product>
         <reference name="root">
@@ -189,7 +188,7 @@ Site Map block
     </catalog_seo_sitemap_product>
 <!--
 Catalog search terms block
--->     
+-->
     <catalog_seo_searchterm_popular>
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
@@ -197,6 +196,6 @@ Catalog search terms block
         <reference name="content">
             <block type="catalog/seo_searchterm" name="seo.searchterm" template="catalog/seo/searchterm.phtml"/>
         </reference>
-    </catalog_seo_searchterm_popular>   
-  
+    </catalog_seo_searchterm_popular>
+
 </layout>

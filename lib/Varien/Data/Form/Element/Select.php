@@ -47,8 +47,8 @@ class Varien_Data_Form_Element_Select extends Varien_Data_Form_Element_Abstract
         if ($values = $this->getValues()) {
             foreach ($values as $option) {
                 if (is_array($option['value'])) {
-                    $html.='<optgroup label="'.$optionInfo['label'].'">'."\n";
-                    foreach ($optionInfo['value'] as $groupItem) {
+                    $html.='<optgroup label="'.$option['label'].'">'."\n";
+                    foreach ($option['value'] as $groupItem) {
                         $html.= $this->_optionToHtml($groupItem, $value);
                     }
                     $html.='</optgroup>'."\n";

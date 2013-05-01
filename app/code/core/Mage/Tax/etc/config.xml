@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Tax>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Customer />
@@ -41,9 +41,6 @@
                     <tax_class>
                         <table>tax_class</table>
                     </tax_class>
-                    <tax_class_group>
-                        <table>tax_class_group</table>
-                    </tax_class_group>
                     <tax_rate>
                         <table>tax_rate</table>
                     </tax_rate>
@@ -86,27 +83,27 @@
                 <children>
                     <tax translate="title" module="tax">
                         <title>Tax</title>
+                        <sort_order>500</sort_order>
                         <children>
-                        <sort_order>30</sort_order>
                             <rules translate="title" module="tax">
                                 <title>Manage Tax Rules</title>
-                                <action>*/tax_rule</action>
+                                <action>adminhtml/tax_rule</action>
                             </rules>
                             <rates translate="title" module="tax">
                                 <title>Manage Tax Rates</title>
-                                <action>*/tax_rate</action>
+                                <action>adminhtml/tax_rate</action>
                             </rates>
                             <import_export translate="title" module="tax">
                                 <title>Import / Export Tax Rates</title>
-                                <action>*/tax_rate/importExport</action>
+                                <action>adminhtml/tax_rate/importExport</action>
                             </import_export>
                             <classes_customer translate="title" module="tax">
                                 <title>Customer Tax Classes</title>
-                                <action>*/tax_class_customer</action>
+                                <action>adminhtml/tax_class_customer</action>
                             </classes_customer>
                             <classes_product translate="title" module="tax">
                                 <title>Product Tax Classes</title>
-                                <action>*/tax_class_product</action>
+                                <action>adminhtml/tax_class_product</action>
                             </classes_product>
                         </children>
                     </tax>

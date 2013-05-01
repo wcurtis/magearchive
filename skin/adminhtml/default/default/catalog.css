@@ -48,12 +48,17 @@
     height:25px;
 }
 
-.tier-price-input .price-div {
-    padding-left:30px;
+.tier-price-input .custgroup-div select {
+    width:auto;
+    padding:0;
 }
 
 .tier-price-input .qty-div {
-    width:200px;
+    padding-left:20px;
+}
+
+.tier-price-input .price-div {
+    padding-left:20px;
 }
 
 .tier-price-input .price-div .validation-advice {

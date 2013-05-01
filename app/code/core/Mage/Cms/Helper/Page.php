@@ -69,6 +69,7 @@ class Mage_Cms_Helper_Page extends Mage_Core_Helper_Abstract
         if ($root = $action->getLayout()->getBlock('root')) {
             $template = (string)Mage::getConfig()->getNode('global/cms/layouts/'.$page->getRootTemplate().'/template');
             $root->setTemplate($template);
+            $root->addBodyClass('cms-'.$page->getIdentifier());
         }
 
         if ($head = $action->getLayout()->getBlock('head')) {

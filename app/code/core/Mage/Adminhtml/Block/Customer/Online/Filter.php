@@ -62,7 +62,7 @@ class Mage_Adminhtml_Block_Customer_Online_Filter extends Mage_Adminhtml_Block_W
 
         $form->setUseContainer(true);
         $form->setId('filter_form');
-        $form->setMethod('POST');
+        $form->setMethod('post');
 
         $this->setForm($form);
         return parent::_prepareForm();

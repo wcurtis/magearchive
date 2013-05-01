@@ -27,7 +27,7 @@
 class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
 	protected $_loadDefault = false;
-    
+
     protected function _construct()
     {
         $this->_init('core/store');
@@ -38,7 +38,7 @@ class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Col
     	$this->_loadDefault = $loadDefault;
     	return $this;
     }
-    
+
     public function getLoadDefault()
     {
     	return $this->_loadDefault;
@@ -62,7 +62,7 @@ class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Col
         $this->addFilter('store_id', $condition, 'string');
         return $this;
     }
-    
+
     public function addWebsiteFilter($website)
     {
         if (is_array($website)) {
@@ -98,12 +98,13 @@ class Mage_Core_Model_Mysql4_Store_Collection extends Mage_Core_Model_Mysql4_Col
     {
         return $this->_toOptionHash('store_id', 'name');
     }
-    
+
     public function load($printQuery = false, $logQuery = false)
     {
     	if (!$this->getLoadDefault()) {
     		$this->getSelect()->where($this->getConnection()->quoteInto('main_table.store_id>?', 0));
     	}
+    	$this->getSelect()->order('main_table.sort_order ASC');
     	parent::load($printQuery, $logQuery);
     	return $this;
     }

@@ -46,10 +46,10 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Checkbox extends Mage_Adm
         $values = $this->getColumn()->getValues();
         $value  = $row->getData($this->getColumn()->getIndex());
         if (is_array($values)) {
-            $checked = in_array($value, $values) ? ' checked="true"' : '';
+            $checked = in_array($value, $values) ? ' checked="checked"' : '';
         }
         else {
-            $checked = ($value === $this->getColumn()->getValue()) ? ' checked="true"' : '';
+            $checked = ($value === $this->getColumn()->getValue()) ? ' checked="checked"' : '';
         }
         $v = ($row->getId() != "") ? $row->getId():$value;
         return $this->_getCheckboxHtml($v, $checked);

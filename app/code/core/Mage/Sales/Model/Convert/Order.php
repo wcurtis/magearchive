@@ -147,6 +147,7 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
         $quotePayment->setStoreId($payment->getStoreId())
             ->setCustomerPaymentId($payment->getCustomerPaymentId())
             ->setMethod($payment->getMethod())
+            ->setAdditionalData($payment->getAdditionalData())
             ->setPoNumber($payment->getPoNumber())
             ->setCcType($payment->getCcType())
             ->setCcNumberEnc($payment->getCcNumberEnc())
@@ -187,5 +188,131 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setAppliedRuleIds($item->getAppliedRuleIds());
 
         return $quoteItem;
+    }
+
+    /**
+     * Convert order object to invoice
+     *
+     * @param   Mage_Sales_Model_Order $order
+     * @return  Mage_Sales_Model_Order_Invoice
+     */
+    public function toInvoice(Mage_Sales_Model_Order $order)
+    {
+        $invoice = Mage::getModel('sales/order_invoice');
+        $invoice->setOrder($order)
+            ->setCustomerId($order->getCustomerId())
+            ->setBillingAddressId($order->getBillingAddressId())
+            ->setShippingAddressId($order->getShippingAddressId())
+            ->setBaseCurrencyCode($order->getBaseCurrencyCode())
+            ->setStoreCurrencyCode($order->getStoreCurrencyCode())
+            ->setOrderCurrencyCode($order->getOrderCurrencyCode())
+            ->setStoreToBaseRate($order->getStoreToBaseRate())
+            ->setStoreToOrderRate($order->getStoreToOrderRate());
+
+        return $invoice;
+    }
+
+    /**
+     * Convert order item object to invoice item
+     *
+     * @param   Mage_Sales_Model_Order_Item $item
+     * @return  Mage_Sales_Model_Order_Invoice_Item
+     */
+    public function itemToInvoiceItem(Mage_Sales_Model_Order_Item $item)
+    {
+        $invoiceItem = Mage::getModel('sales/order_invoice_item');
+        $invoiceItem->setOrderItem($item)
+            ->setProductId($item->getProductId())
+            ->setName($item->getName())
+            ->setSku($item->getSku())
+            ->setDescription($item->getDescription())
+            ->setPrice($item->getPrice())
+            ->setCost($item->getCost());
+
+        return $invoiceItem;
+    }
+
+    /**
+     * Convert order object to Shipment
+     *
+     * @param   Mage_Sales_Model_Order $order
+     * @return  Mage_Sales_Model_Order_Shipment
+     */
+    public function toShipment(Mage_Sales_Model_Order $order)
+    {
+        $shipment = Mage::getModel('sales/order_shipment');
+        $shipment->setOrder($order)
+            ->setCustomerId($order->getCustomerId())
+            ->setBillingAddressId($order->getBillingAddressId())
+            ->setShippingAddressId($order->getShippingAddressId())
+            ->setBaseCurrencyCode($order->getBaseCurrencyCode())
+            ->setStoreCurrencyCode($order->getStoreCurrencyCode())
+            ->setOrderCurrencyCode($order->getOrderCurrencyCode())
+            ->setStoreToBaseRate($order->getStoreToBaseRate())
+            ->setStoreToOrderRate($order->getStoreToOrderRate());
+
+        return $shipment;
+    }
+
+    /**
+     * Convert order item object to Shipment item
+     *
+     * @param   Mage_Sales_Model_Order_Item $item
+     * @return  Mage_Sales_Model_Order_Shipment_Item
+     */
+    public function itemToShipmentItem(Mage_Sales_Model_Order_Item $item)
+    {
+        $shipmentItem = Mage::getModel('sales/order_shipment_item');
+        $shipmentItem->setOrderItem($item)
+            ->setProductId($item->getProductId())
+            ->setName($item->getName())
+            ->setSku($item->getSku())
+            ->setDescription($item->getDescription())
+            ->setPrice($item->getPrice())
+            ->setWeight($item->getWeight());
+
+        return $shipmentItem;
+    }
+
+    /**
+     * Convert order object to creditmemo
+     *
+     * @param   Mage_Sales_Model_Order $order
+     * @return  Mage_Sales_Model_Order_Creditmemo
+     */
+    public function toCreditmemo(Mage_Sales_Model_Order $order)
+    {
+        $creditmemo = Mage::getModel('sales/order_creditmemo');
+        $creditmemo->setOrder($order)
+            ->setCustomerId($order->getCustomerId())
+            ->setBillingAddressId($order->getBillingAddressId())
+            ->setShippingAddressId($order->getShippingAddressId())
+            ->setBaseCurrencyCode($order->getBaseCurrencyCode())
+            ->setStoreCurrencyCode($order->getStoreCurrencyCode())
+            ->setOrderCurrencyCode($order->getOrderCurrencyCode())
+            ->setStoreToBaseRate($order->getStoreToBaseRate())
+            ->setStoreToOrderRate($order->getStoreToOrderRate());
+
+        return $creditmemo;
+    }
+
+    /**
+     * Convert order item object to Creditmemo item
+     *
+     * @param   Mage_Sales_Model_Order_Item $item
+     * @return  Mage_Sales_Model_Order_Creditmemo_Item
+     */
+    public function itemToCreditmemoItem(Mage_Sales_Model_Order_Item $item)
+    {
+        $creditmemoItem = Mage::getModel('sales/order_creditmemo_item');
+        $creditmemoItem->setOrderItem($item)
+            ->setProductId($item->getProductId())
+            ->setName($item->getName())
+            ->setSku($item->getSku())
+            ->setDescription($item->getDescription())
+            ->setPrice($item->getPrice())
+            ->setCost($item->getCost());
+
+        return $creditmemoItem;
     }
 }

@@ -161,7 +161,9 @@ class Mage_Catalog_Block_Product_List_Toolbar extends Mage_Page_Block_Html_Pager
 
     public function setModes($modes)
     {
-        $this->_availableMode = $modes;
+        if(!isset($this->_availableMode)){
+            $this->_availableMode = $modes;
+        }
         return $this;
     }
 
@@ -207,11 +209,33 @@ class Mage_Catalog_Block_Product_List_Toolbar extends Mage_Page_Block_Html_Pager
     public function getAvailableLimit()
     {
         if ($this->getCurrentMode() == 'list') {
-            return array(5=>5,10=>10,15=>15,20=>20,25=>25, 'all'=>Mage::helper('catalog')->__('All'));
+            $perPageValues = Mage::getConfig()->getNode('frontend/catalog/per_page_values/list');
+            $perPageValues = explode(',', $perPageValues);
+            $perPageValues = array_combine($perPageValues, $perPageValues);
+            return ($perPageValues + array('all'=>Mage::helper('catalog')->__('All')));
         }
         elseif ($this->getCurrentMode() == 'grid') {
-            return array(9=>9,15=>15,30=>30, 'all'=>Mage::helper('catalog')->__('All'));
+            $perPageValues = Mage::getConfig()->getNode('frontend/catalog/per_page_values/grid');
+            $perPageValues = explode(',', $perPageValues);
+            $perPageValues = array_combine($perPageValues, $perPageValues);
+            return ($perPageValues + array('all'=>Mage::helper('catalog')->__('All')));
         }
         return parent::getAvailableLimit();
+    }
+
+    public function getLimit()
+    {
+        $limits = $this->getAvailableLimit();
+        if ($limit = $this->getRequest()->getParam($this->getLimitVarName())) {
+            if (isset($limits[$limit])) {
+                return $limit;
+            }
+        }
+        $defaultLimit = Mage::getStoreConfig('catalog/frontend/product_per_page');
+        if ($defaultLimit != '') {
+            return $defaultLimit;
+        }
+        $limits = array_keys($limits);
+        return $limits[0];
     }
 }

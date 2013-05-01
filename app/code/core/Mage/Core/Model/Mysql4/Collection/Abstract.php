@@ -156,7 +156,9 @@ class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_
         $idsSelect->reset(Zend_Db_Select::LIMIT_COUNT);
         $idsSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
         $idsSelect->reset(Zend_Db_Select::COLUMNS);
-        $idsSelect->from(null, $this->getResource()->getIdFieldName());
+        $idsSelect->from(null,
+            'main_table.' . $this->getResource()->getIdFieldName()
+        );
         return $this->getConnection()->fetchCol($idsSelect);
     }
 

@@ -26,6 +26,8 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
 {
     protected $_statuses;
 
+    protected $_priceBlock;
+
     /**
      * Retrieve product view page url
      *
@@ -117,7 +119,7 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
 
     public function getEmailToFriendUrl($product)
     {
-        return $this->_getUrl('catalog/product/send', array('id'=>$product->getId()));
+        return $this->_getUrl('sendfriend/product/send', array('id'=>$product->getId()));
     }
 
     /**
@@ -128,31 +130,20 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
      */
     public function getPriceHtml($product)
     {
+        if (is_null($this->_priceBlock)) {
+            $className = Mage::getConfig()->getBlockClassName('core/template');
+            $block = new $className();
+            $block->setType('core/template')
+                ->setIsAnonymous(true)
+                ->setTemplate('catalog/product/price.phtml');
+            // TODO make nice block name to be able to set template form the layout
+            $this->_priceBlock = $block;
+        }
         $html = '';
-        if ($product->getPrice() == $product->getFinalPrice()) {
-            $html = '<div class="price-box">
-                <span class="regular-price" id="product-price-'.$product->getId().'">
-                '.Mage::helper('core')->currency($product->getPrice()).'
-                </span><br/>
-                </div>';
-        }
-        else {
-            $html.= '<div class="price-box">
-                <span class="special-price">
-                    <span class="label">'.$this->__('Special Price:').'</span>
-                    <span class="price" id="product-price-'.$product->getId().'">
-                    '.Mage::helper('core')->currency($product->getFinalPrice()).'
-                    </span>
-                </span><br/>
-                <span class="old-price">
-                    <span class="label">'.$this->__('Regular Price:').'</span>
-                    <span class="price">
-                    '.Mage::helper('core')->currency($product->getPrice()).'
-                    </span>
-                </span>
-            </div>';
-        }
-        return $html;
+
+        $this->_priceBlock->setProduct($product);
+
+        return $this->_priceBlock->toHtml();
     }
 
     public function getStatuses()
@@ -163,4 +154,31 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
 
         return $this->_statuses;
     }
+
+    /**
+     * Check if a product can be shown
+     *
+     * @param  Mage_Catalog_Model_Product|int $product
+     * @return boolean
+     */
+    public function canShow($product, $where = 'catalog')
+    {
+        if (is_int($product)) {
+            $product = Mage::getModel('catalog/product')->load($product);
+        }
+
+        /* @var $product Mage_Catalog_Model_Product */
+
+        if (!$product->getId()) {
+            return false;
+        }
+
+        return $product->isVisibleInCatalog();
+        // TODO shold be check both status and visibility
+        //if ('catalog' == $where) {
+        //}
+
+        return false;
+    }
+
 }

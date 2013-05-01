@@ -40,7 +40,9 @@
                     <?if($_item->isSuper()):?>
                         <a href="<?=$_item->getProductUrl()?>"><?=$this->__('View Details')?></a><br/>
                     <?else:?>
+                        <?if ($this->helper('wishlist')->isAllow()) :?>
                         <a href="<?=$this->getAddToWishlistUrl($_item)?>" class="link-cart"><?=$this->__('Add to Wishlist')?></a>
+                        <?endif;?>
                     <?endif;?>
             </div>
         </li>

@@ -23,6 +23,7 @@ class Mage_Sales_Model_Quote_Address_Total_Tax extends Mage_Sales_Model_Quote_Ad
 {
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
+        $store = $address->getQuote()->getStore();
         $address->setTaxAmount(0);
         $tax = Mage::getModel('tax/rate_data')
         	->setRegionId($address->getRegionId())
@@ -37,8 +38,25 @@ class Mage_Sales_Model_Quote_Address_Total_Tax extends Mage_Sales_Model_Quote_Ad
             $address->setTaxAmount($address->getTaxAmount() + $item->getTaxAmount());
         }
 
+        if ($this->_canApplyOnShipping($store)) {
+            $rateType = Mage::getStoreConfig('sales/tax/shipping_rate_type', $store);
+            $tax->setCustomerClassId(null)
+                ->setProductClassId(null)
+                ->setRateTypeId($rateType);
+            if ($rate = $tax->getRate()) {
+                $shippingTax = $address->getShippingAmount() * $rate/100;
+                $shippingTax = $store->roundPrice($shippingTax);
+                $address->setTaxAmount($address->getTaxAmount() + $shippingTax);
+            }
+        }
+
         $address->setGrandTotal($address->getGrandTotal() + $address->getTaxAmount());
         return $this;
+    }
+
+    protected function _canApplyOnShipping($store)
+    {
+        return (bool) Mage::getStoreConfig('sales/tax/apply_on_shipping', $store);
     }
 
     public function fetch(Mage_Sales_Model_Quote_Address $address)

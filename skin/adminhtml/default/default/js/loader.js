@@ -161,6 +161,7 @@ varienLoaderHandler.handler = {
             Position.clone($(request.options.loaderArea), $('loading-mask'), {offsetLeft:-2});
             toggleSelectsUnderBlock($('loading-mask'), false);
             Element.show('loading-mask');
+            setLoaderPosition();
             if(request.options.loaderArea=='html-body'){
                 Element.show('loading-process');
             }
@@ -178,6 +179,26 @@ varienLoaderHandler.handler = {
         }
     }
 };
+
+/**
+ * @todo need calculate middle of visible area and scroll bind
+ */
+function setLoaderPosition(){
+    var elem = $('loading_mask_loader');
+    if (elem && Prototype.Browser.IE) {
+        var middle = parseInt(document.body.clientHeight/2)+document.body.scrollTop;
+        elem.style.position = 'absolute';
+        elem.style.top = middle;
+    }
+}
+
+/*function getRealHeight() {
+    var body = document.body;
+    if (window.innerHeight && window.scrollMaxY) {
+        return window.innerHeight + window.scrollMaxY;
+    }
+    return Math.max(body.scrollHeight, body.offsetHeight);
+}*/
 
 
 

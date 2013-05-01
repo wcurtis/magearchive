@@ -26,6 +26,7 @@
  */
 class Mage_Paypal_Block_Express_Review extends Mage_Core_Block_Template
 {
+    protected $_method='express';
     /**
      * Get PayPal Express Review Information
      *
@@ -84,5 +85,10 @@ class Mage_Paypal_Block_Express_Review extends Mage_Core_Block_Template
     public function getAddressShippingMethod()
     {
         return $this->getAddress()->getShippingMethod();
+    }
+
+    public function setMethod($varName)
+    {
+        $this->_method=$varName;
     }
 }

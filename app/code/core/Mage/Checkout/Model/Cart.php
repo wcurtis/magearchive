@@ -239,31 +239,33 @@ class Mage_Checkout_Model_Cart extends Varien_Object
         $allAvailable = true;
         $allAdded     = true;
 
-        foreach ($productIds as $productId) {
-        	$product = Mage::getModel('catalog/product')
-        	   ->load($productId);
-            if ($product->getId() && $product->isVisibleInCatalog()) {
-                try {
-                    $this->getQuote()->addCatalogProduct($product);
+        if (!empty($productIds)) {
+            foreach ($productIds as $productId) {
+                $product = Mage::getModel('catalog/product')
+                ->load($productId);
+                if ($product->getId() && $product->isVisibleInCatalog()) {
+                    try {
+                        $this->getQuote()->addCatalogProduct($product);
+                    }
+                    catch (Exception $e){
+                        $allAdded = false;
+                    }
                 }
-                catch (Exception $e){
-                    $allAdded = false;
+                else {
+                    $allAvailable = false;
                 }
             }
-            else {
-                $allAvailable = false;
-            }
-        }
 
-        if (!$allAvailable) {
-            $this->getCheckoutSession()->addError(
+            if (!$allAvailable) {
+                $this->getCheckoutSession()->addError(
                 Mage::helper('checkout')->__('Some of the products you requested are unavailable')
-            );
-        }
-        if (!$allAdded) {
-            $this->getCheckoutSession()->addError(
+                );
+            }
+            if (!$allAdded) {
+                $this->getCheckoutSession()->addError(
                 Mage::helper('checkout')->__('Some of the products you requested are not available in the desired quantity')
-            );
+                );
+            }
         }
         return $this;
     }
@@ -346,5 +348,12 @@ class Mage_Checkout_Model_Cart extends Varien_Object
             ->save();
         $this->getCheckoutSession()->setQuoteId($this->getQuote()->getId());
         return $this;
+    }
+
+    public function truncate()
+    {
+        foreach ($this->getQuote()->getItemsCollection() as $item) {
+            $item->isDeleted(true);
+        }
     }
 }

@@ -75,12 +75,11 @@ class Varien_Pear
         if (!$this->_config) {
             $pear_dir = $this->getPearDir();
 
-            $config = PEAR_Config::singleton($pear_dir.DS.'pear.ini');
+            $config = PEAR_Config::singleton($pear_dir.DS.'pear.ini', '-');
 
             $config->set('auto_discover', 1);
             $config->set('cache_ttl', 60);
             #$config->set('preferred_state', 'beta');
-            #$config->set('default_channel', 'var-dev.varien.com');
 
             $config->set('bin_dir', $pear_dir);
             $config->set('php_dir', $pear_dir.DS.'php');
@@ -107,12 +106,6 @@ class Varien_Pear
             PEAR_Frontend::setFrontendObject($this->getFrontend());
 
             #PEAR_Command::registerCommands(false, $pear_dir.DS.'php'.DS.'PEAR'.DS.'Command'.DS);
-
-            if (!$reg->channelExists('var-dev.varien.com')) {
-                $channel = new PEAR_ChannelFile;
-                $channel->fromXmlFile($config->get('bin_dir').DS.'init'.DS.'var-dev.varien.com'.DS.'channel.xml');
-                $reg->addChannel($channel);
-            }
 
             $this->_config = $config;
         }
@@ -147,6 +140,9 @@ class Varien_Pear
 
     public function run($command, $options=array(), $params=array())
     {
+        @set_time_limit(0);
+        @ini_set('memory_limit', '256M');
+
         if (empty($this->_cmdCache[$command])) {
             $cmd = PEAR_Command::factory($command, $this->getConfig());
             if ($cmd instanceof PEAR_Error) {
@@ -177,7 +173,6 @@ class Varien_Pear
     public function runHtmlConsole($runParams)
     {
         ob_implicit_flush();
-        set_time_limit(0);
 
         $fe = $this->getFrontend();
         $oldLogStream = $fe->getLogStream();

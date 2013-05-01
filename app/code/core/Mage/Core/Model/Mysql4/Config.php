@@ -72,74 +72,86 @@ class Mage_Core_Model_Mysql4_Config extends Mage_Core_Model_Mysql4_Abstract
         #$tables = $read->fetchAll("show tables like 'core_%'");
         #print_r($tables);
 
-        $config = array();
-
-        // load websites and stores from db
-        $d['websites'] = $read->fetchAssoc("select website_id, code, name from ".$this->getTable('website'));
-        $d['stores'] = $read->fetchAssoc("select store_id, code, name, website_id from ".$this->getTable('store'));
-#print_r($websites);
         // initialize websites config
-        foreach ($d['websites'] as $wId=>$wData) {
-            $config['websites'][$wId]['system/website/id']['value'] = $wId;
-            $config['websites'][$wId]['system/website/name']['value'] = $wData['name'];
+        $websites = array();
+        $rows = $read->fetchAssoc("select website_id, code, name from ".$this->getTable('website'));
+        foreach ($rows as $w) {
+            $xmlConfig->setNode('websites/'.$w['code'].'/system/website/id', $w['website_id']);
+            $xmlConfig->setNode('websites/'.$w['code'].'/system/website/name', $w['name']);
+            $websites[$w['website_id']] = array('code'=>$w['code']);
         }
 
-        //initialize stores config
-        foreach ($d['stores'] as $sId=>$sData) {
-            $wId = $sData['website_id'];
-            $d['websites'][$wId]['stores'][$sId] = $sData['website_id'];
-            $config['websites'][$wId]['system/stores/'.$d['stores'][$sId]['code']]['value'] = $sId;
-            $config['stores'][$sId]['system/store/id']['value'] = $sId;
-            $config['stores'][$sId]['system/store/name']['value'] = $sData['name'];
-            $config['stores'][$sId]['system/website/id']['value'] = $sData['website_id'];
+        // initialize stores config
+        $stores = array();
+        $rows = $read->fetchAssoc("select store_id, code, name, website_id from ".$this->getTable('store').' order by sort_order asc');
+        foreach ($rows as $s) {
+            $xmlConfig->setNode('stores/'.$s['code'].'/system/store/id', $s['store_id']);
+            $xmlConfig->setNode('stores/'.$s['code'].'/system/store/name', $s['name']);
+            $xmlConfig->setNode('stores/'.$s['code'].'/system/website/id', $s['website_id']);
+            $xmlConfig->setNode('websites/'.$websites[$s['website_id']]['code'].'/system/stores/'.$s['code'], $s['store_id']);
+            $stores[$s['store_id']] = array('code'=>$s['code']);
+            $websites[$s['website_id']]['stores'][$s['store_id']] = $s['code'];
         }
+
+        $subst_from = array();
+        $subst_to = array();
 
         // get default distribution config vars
+        /*
         $vars = Mage::getConfig()->getDistroServerVars();
         foreach ($vars as $k=>$v) {
             $subst_from[] = '{{'.$k.'}}';
             $subst_to[] = $v;
         }
+        */
 
-        // load all configuration records from database
-        $rows = $read->fetchAll("select * from ".$this->getMainTable().($cond ? " where ".$cond : ''));
+        // load all configuration records from database, which are not inherited
+        $rows = $read->fetchAll("select scope, scope_id, path, value from ".$this->getMainTable().($cond ? ' where '.$cond : ''));
 
-        // organize configuration records in $config array and associate stores to websites
+        // set default config values from database
         foreach ($rows as $r) {
-            $r['value'] = str_replace($subst_from, $subst_to, $r['value']);
-            $config[$r['scope']][$r['scope_id']][$r['path']] = array('value'=>$r['value'], 'inherit'=>$r['inherit']);
+            if ($r['scope']!=='default') {
+                continue;
+            }
+            $value = str_replace($subst_from, $subst_to, $r['value']);
+            $xmlConfig->setNode('default/'.$r['path'], $value);
         }
 
-        // inherit global -> website -> store configuration values
-        foreach ($config['default'][0] as $path=>$data) {
-            foreach ($config['websites'] as $wId=>$wConfig) {
-                if (!isset($wConfig[$path]) || $wConfig[$path]['inherit']==1) {
-                    $config['websites'][$wId][$path]['value'] = $data['value'];
-                }
-                if (!empty($d['websites'][$wId]['stores'])) {
-                    foreach ($d['websites'][$wId]['stores'] as $sId=>$dummy) {
-                        $sConfig = $config['stores'][$sId];
-                        if (!isset($sConfig[$path]) || $sConfig[$path]['inherit']==1) {
-                            $config['stores'][$sId][$path]['value'] = $config['websites'][$wId][$path]['value'];
-                        }
-                    }
+        // inherit default config values to all websites
+        $extendSource = $xmlConfig->getNode('default');
+        foreach ($websites as $id=>$w) {
+            $xmlConfig->getNode('websites/'.$w['code'])->extend($extendSource);
+        }
+
+        // set websites config values from database
+        foreach ($rows as $r) {
+            if ($r['scope']!=='websites') {
+                continue;
+            }
+            $value = str_replace($subst_from, $subst_to, $r['value']);
+            $xmlConfig->setNode('websites/'.$websites[$r['scope_id']]['code'].'/'.$r['path'], $value);
+        }
+
+        // extend website config values to all associated stores
+        foreach ($websites as $wId=>$website) {
+            $extendSource = $xmlConfig->getNode('websites/'.$website['code']);
+            if (isset($website['stores'])) {
+                foreach ($website['stores'] as $sId=>$sCode) {
+                    $xmlConfig->getNode('stores/'.$sCode)->extend($extendSource);
                 }
             }
         }
 
-        // save into config object
-        foreach ($config as $scope=>$scopeConfig) {
-            foreach ($scopeConfig as $sId=>$sConfig) {
-                foreach ($sConfig as $path=>$data) {
-                    // get config prefix: 'global' or 'websites/{code}' or 'stores/{code}'
-                    $prefix = $scope.($scope!=='default' ? '/'.$d[$scope][$sId]['code'] : '');
-                    #echo "<pre>".print_r($prefix.'/'.$path,1)."</pre>";
-                    $xmlConfig->setNode($prefix.'/'.$path, $data['value']);
-                }
+        // set stores config values from database
+        foreach ($rows as $r) {
+            if ($r['scope']!=='stores') {
+                continue;
             }
+            $value = str_replace($subst_from, $subst_to, $r['value']);
+            $xmlConfig->setNode('stores/'.$stores[$r['scope_id']]['code'].'/'.$r['path'], $value);
         }
 
-#echo "<xmp>".$xmlConfig->getNode()->asNiceXml()."</xmp>";
+#echo "<xmp>".$xmlConfig->getNode()->asNiceXml()."</xmp>"; exit;
         return $this;
     }
 }

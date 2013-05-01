@@ -24,7 +24,7 @@
         <payment translate="label" module="payment">
             <label>Payment Methods</label>
             <frontend_type>text</frontend_type>
-            <sort_order>70</sort_order>
+            <sort_order>150</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>0</show_in_store>
@@ -45,7 +45,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </active>
                         <cctypes translate="label">
                             <label>Credit Card Types</label>
@@ -55,17 +54,15 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[AE,VI,MC,DI]]></default_value>
                         </cctypes>
                         <order_status translate="label">
                             <label>New order status</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <source_model>adminhtml/system_config_source_order_status_new</source_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[processing]]></default_value>
                         </order_status>
                         <sort_order translate="label">
                             <label>Sort order</label>
@@ -74,7 +71,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </sort_order>
                         <title translate="label">
                             <label>Title</label>
@@ -83,7 +79,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[Credit Card]]></default_value>
                         </title>
                         <useccv translate="label">
                             <label>Credit Card Verification</label>
@@ -94,8 +89,25 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </useccv>
+                         <allowspecific translate="label">
+                            <label>Payment to applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>51</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </specificcountry>
                         <model>
-                            <default_value><![CDATA[payment/method_ccsave]]></default_value>
                         </model>
                     </fields>
                 </ccsave>
@@ -115,17 +127,15 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </active>
                         <order_status translate="label">
                             <label>New order status</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <source_model>adminhtml/system_config_source_order_status_new</source_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[processing]]></default_value>
                         </order_status>
                         <sort_order translate="label">
                             <label>Sort order</label>
@@ -134,7 +144,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[2]]></default_value>
                         </sort_order>
                         <title translate="label">
                             <label>Title</label>
@@ -143,10 +152,41 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[Check / Money order]]></default_value>
                         </title>
+                         <allowspecific translate="label">
+                            <label>Payment to applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>51</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </specificcountry>
+                        <payable_to translate="label">
+                            <label>Make Check payable to</label>
+                            <sort_order>61</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </payable_to>
+                        <mailing_address translate="label">
+                            <label>Send Check to</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>62</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </mailing_address>
                         <model>
-                            <default_value><![CDATA[payment/method_checkmo]]></default_value>
                         </model>
                     </fields>
                 </checkmo>
@@ -166,17 +206,15 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </active>
                         <order_status translate="label">
                             <label>New order status</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <source_model>adminhtml/system_config_source_order_status_new</source_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[processing]]></default_value>
                         </order_status>
                         <sort_order translate="label">
                             <label>Sort order</label>
@@ -185,7 +223,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[3]]></default_value>
                         </sort_order>
                         <title translate="label">
                             <label>Title</label>
@@ -194,10 +231,26 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[Purchase Order]]></default_value>
                         </title>
+                        <allowspecific translate="label">
+                            <label>Payment to applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>51</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </specificcountry>
                         <model>
-                            <default_value><![CDATA[payment/method_purchaseorder]]></default_value>
                         </model>
                     </fields>
                 </purchaseorder>

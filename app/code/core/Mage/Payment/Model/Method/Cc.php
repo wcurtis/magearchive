@@ -69,6 +69,11 @@ class Mage_Payment_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
      */
     public function validate()
     {
+        /*
+        * calling parent validate function
+        */
+        parent::validate();
+
         $info = $this->getInfoInstance();
         $errorMsg = false;
         $availableTypes = explode(',',$this->getConfigData('cctypes'));

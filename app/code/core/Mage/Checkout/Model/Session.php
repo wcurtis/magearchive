@@ -79,7 +79,6 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
         if ($customerQuote) {
             if ($this->getQuoteId()) {
                 foreach ($this->getQuote()->getAllItems() as $item) {
-                    $item->setId(null);
                     $found = false;
                     foreach ($customerQuote->getAllItems() as $quoteItem) {
                         if ($quoteItem->getProductId()==$item->getProductId()) {
@@ -89,7 +88,9 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                         }
                     }
                     if (!$found) {
-                        $customerQuote->addItem($item);
+                        $quoteItem = clone $item;
+                        $quoteItem->setId(null);
+                        $customerQuote->addItem($quoteItem);
                     }
                 }
                 $customerQuote->save();

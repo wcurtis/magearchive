@@ -120,7 +120,15 @@
                     </inventory>
                 </observers>
             </sales_order_item_cancel>
-
+            <catalog_product_save_after>
+                <observers>
+                    <inventory>
+                        <type>singleton</type>
+                        <class>cataloginventory/observer</class>
+                        <method>saveInventoryData</method>
+                    </inventory>
+                </observers>
+            </catalog_product_save_after>
         </events>
 
     </global>
@@ -147,17 +155,7 @@
                 </Mage_CatalogInventory>
             </modules>
         </translate>
-        <events>
-            <catalog_product_save_after>
-                <observers>
-                    <inventory>
-                        <type>singleton</type>
-                        <class>cataloginventory/observer</class>
-                        <method>saveInventoryData</method>
-                    </inventory>
-                </observers>
-            </catalog_product_save_after>
-        </events>
+        
         <acl>
             <resources>
                 <admin>
@@ -178,4 +176,16 @@
             </resources>
         </acl>
     </adminhtml>
+
+    <default>
+        <cataloginventory>
+            <options>
+                <backorders>0</backorders>
+                <can_subtract>0</can_subtract>
+                <max_sale_qty>10000</max_sale_qty>
+                <min_sale_qty>1</min_sale_qty>
+                <min_qty>0</min_qty>
+            </options>
+        </cataloginventory>
+    </default>
 </config>

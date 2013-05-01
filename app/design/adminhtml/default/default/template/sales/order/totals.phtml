@@ -1,0 +1,122 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_source  = $this->getSource()?>
+<?$_currency= $this->getCurrency()?>
+<?if ($_source && $_currency):?>
+<table cellspacing="0" width="100%">
+    <col/>
+    <col width="100"/>
+    <tfoot>
+        <tr>
+            <td class="label">
+                <strong>
+                <?if ($this->getGrandTotalTitle()):?>
+                    <?=$this->getGrandTotalTitle()?>
+                <?else:?>
+                    <?=Mage::helper('sales')->__('Grand Total')?>
+                <?endif;?>
+                </strong>
+            </td>
+            <td class="emph" align="right">
+                <strong><?=$_currency->format($_source->getGrandTotal())?></strong>
+            </td>
+        </tr>
+        <?if ($this->getCanDisplayTotalPaid()):?>
+        <tr>
+            <td class="label">
+                <strong><?=Mage::helper('sales')->__('Total Paid')?></strong>
+            </td>
+            <td class="emph" align="right">
+                <strong><?=$_currency->format($_source->getTotalPaid())?></strong>
+            </td>
+        </tr>
+        <?endif;?>
+        <?if ($this->getCanDisplayTotalRefunded()):?>
+        <tr>
+            <td class="label">
+                <strong><?=Mage::helper('sales')->__('Total Refunded')?></strong>
+            </td>
+            <td class="emph" align="right">
+                <strong><?=$_currency->format($_source->getTotalRefunded())?></strong>
+            </td>
+        </tr>
+        <?endif;?>
+        <?if ($this->getCanDisplayTotalDue()):?>
+        <tr>
+            <td class="label">
+                <strong><?=Mage::helper('sales')->__('Total Due')?></strong>
+            </td>
+            <td class="emph" align="right">
+                <strong><?=$_currency->format($_source->getTotalDue())?></strong>
+            </td>
+        </tr>
+        <?endif;?>
+    </tfoot>
+    <tbody>
+        <?if ((float) $_source->getSubtotal()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Subtotal')?></td>
+            <td align="right"><?=$_currency->format($_source->getSubtotal())?></td>
+        </tr>
+        <?endif;?>
+        <?if ((float) $_source->getTaxAmount()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Tax')?></td>
+            <td align="right"><?=$_currency->format($_source->getTaxAmount())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_source->getShippingAmount()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Shipping')?></td>
+            <td align="right"><?=$_currency->format($_source->getShippingAmount())?></td>
+        </tr>
+        <?endif;?>
+        <?if ((float) $_source->getDiscountAmount()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Discount')?></td>
+            <td align="right"><?=$_currency->format(-$_source->getDiscountAmount())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_source->getGiftcertAmount()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Gift Certificate')?></td>
+            <td align="right"><?=$_currency->format($_source->getGiftcertAmount())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_source->getAdjustmentPositive()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Adjustment Refund')?></td>
+            <td align="right"><?=$_currency->format($_source->getAdjustmentPositive())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_source->getAdjustmentNegative()):?>
+        <tr>
+            <td><?=Mage::helper('sales')->__('Adjustment Fee')?></td>
+            <td align="right"><?=$_currency->format($_source->getAdjustmentNegative())?></td>
+        </tr>
+        <?endif;?>
+    </tbody>
+</table>
+<?endif;?>

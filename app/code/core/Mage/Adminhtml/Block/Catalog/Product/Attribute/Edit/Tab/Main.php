@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
     {
         $model = Mage::registry('entity_attribute');
 
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'POST'));
+        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
 
         $fieldset = $form->addFieldset('base_fieldset', array('legend'=>Mage::helper('catalog')->__('Attribute Properties')));
 

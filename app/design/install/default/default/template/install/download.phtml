@@ -62,15 +62,17 @@ function installFailure()
 <?=$this->getMessagesBlock()->getGroupedHtml()?>
 
 <form action="<?=$this->getPostUrl()?>" method="post" id="form-validate">
-
+<input type="hidden" id="continue" name="continue" value="svn" />
+<?if($this->hasLocalCopy()):?>
 <fieldset class="group-select">
     <legend><?=$this->__('SVN Installation')?></legend>
     <h4 class="legend"><?=$this->__('SVN Installation')?></h4>
 
     <p><?=$this->__("If you have installed Magento through SVN, you should skip packages installation and validation by clicking the button below.")?></p>
 
-    <p><button class="form-button" type="submit" name="continue" value="svn"><span><?=$this->__('Continue SVN Installation')?></span></button></p>
+    <p><button class="form-button" type="submit" onclick="$('continue').value='svn'"><span><?=$this->__('Continue SVN Installation')?></span></button></p>
 </fieldset>
+<?endif;?>
 
 <fieldset class="group-select">
     <legend><?=$this->__('Package Management through the Web')?></legend>
@@ -83,11 +85,11 @@ function installFailure()
 
         <h4><?=$this->__("Preferred stability: %s", $this->__("BETA"))?></h4>
         <p><?=$this->__("Currently this is the most stable state available for Magento packages.")?><br/><?=$this->__("Choose this if you would like to test frontend and backend functionality.")?></p>
-        <p><button class="form-button" type="button" name="continue" value="auto" onclick="startInstall('beta')"><span><?=$this->__('Proceed With Automatic Download (%s)', $this->__('Beta'))?></span></button></p>
+        <p><button class="form-button" type="button" onclick="startInstall('beta')"><span><?=$this->__('Proceed With Automatic Download (%s)', $this->__('Beta'))?></span></button></p>
 <br/>
         <h4><?=$this->__("Preferred stability: %s", $this->__("ALPHA"))?></h4>
         <p><?=$this->__("If you are a developer and would like to have the latest public updates, choose this option.")?><br/><?=$this->__("Please note that it is much less stable than beta.")?></p>
-        <p><button class="form-button" type="button" name="continue" value="auto" onclick="startInstall('alpha')"><span><?=$this->__('Proceed With Automatic Download (%s)', $this->__('Alpha'))?></span></button></p>
+        <p><button class="form-button" type="button" onclick="startInstall('alpha')"><span><?=$this->__('Proceed With Automatic Download (%s)', $this->__('Alpha'))?></span></button></p>
 <br/>
     <iframe id="install_iframe" src="<?=$this->getUrl('*/*/install')?>" style="display:none" frameborder="no"></iframe>
 </fieldset>
@@ -102,14 +104,14 @@ function installFailure()
     <p><?=$this->__("Run this in your shell from Magento root folder:")?></p>
     <pre>
 ./pear mage-setup
-./pear install mage-core/Mage_Pear_Helpers mage-core/Mage_Lib mage-core/Varien_Lib
-./pear install mage-core/Mage_All
+./pear install mage-core/Mage_Pear_Helpers mage-core/Lib_ZF mage-core/Lib_Varien
+./pear install mage-core/Mage_All mage-core/Interface_Install_Default
 ./pear install mage-core/Interface_Frontend_Default mage-core/Interface_Adminhtml_Default
 
 </pre>
     <p><?=$this->__("After successfull installation please click the button below.")?></p>
 
-    <p><button class="form-button" type="submit" name="continue" value="manual"><span><?=$this->__('Continue After Manual Download')?></span></button></p>
+    <p><button class="form-button" type="submit" onclick="$('continue').value='manual'"><span><?=$this->__('Continue After Manual Download')?></span></button></p>
 </fieldset>
 
 </form>

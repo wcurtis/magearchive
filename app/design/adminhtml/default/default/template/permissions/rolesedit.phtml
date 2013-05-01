@@ -19,28 +19,46 @@
  */
 ?>
 <div class="entry-edit">
-	<h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__('Roles Resources')?></h4>
-	<input type="hidden" name="resource" id="role_resources" value="">
-	<fieldset id="role_resources">
-		<div class="tree x-tree" id="tree-div"></div>
-	</fieldset>
+    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__('Roles Resources')?></h4>
+    <input type="hidden" name="resource" id="role_resources" value="">
+    <fieldset id="role_resources">
+
+        <span class="field-row">
+            <label for="all"><?=$this->__('Resource Access')?></label>
+            <select id="all" name="all" onchange="$('resources_container').toggle()" class="select">
+                <option value="0" <?=($this->getEverythingAllowed()?'':'selected');?>><?=$this->__('Custom')?></option>
+                <option value="1" <?=($this->getEverythingAllowed()?'selected':'');?>><?=$this->__('All')?></option>
+            </select>
+        </span>
+
+        <span class="field-row" id="resources_container">
+            <label><?=$this->__('Resources')?></label>
+            <div style="float: left">
+                <div class="tree x-tree" id="tree-div"></div>
+            </div>
+        </span>
+
+    </fieldset>
 </div>
-<!-- /////////////// TREE ////////////////////////////// -->
+<!-- Draw Resources Tree -->
 <script type="text/javascript">
+<?if($this->getEverythingAllowed()):?>
+    $('resources_container').hide();
+<?endif;?>
 Ext.EventManager.onDocumentReady(function() {
-	var tree = new Ext.tree.TreePanel('tree-div', {
+    var tree = new Ext.tree.TreePanel('tree-div', {
         animate:false,
         loader: false,
         enableDD:false,
         containerScroll: true,
-		rootUIProvider: Ext.tree.CheckboxNodeUI,
-		selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
-		rootVisible: false
-	});
+        rootUIProvider: Ext.tree.CheckboxNodeUI,
+        selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
+        rootVisible: false
+    });
 
-	tree.on('check', checkHandler, tree);
+    tree.on('check', checkHandler, tree);
 
-	// set the root node
+    // set the root node
     var root = new Ext.tree.TreeNode({
         text: 'root',
         draggable:false,
@@ -49,13 +67,13 @@ Ext.EventManager.onDocumentReady(function() {
         uiProvider: Ext.tree.CheckboxNodeUI
     });
 
-	tree.setRootNode(root);
-	bildResourcesTree(root, <?=$this->getResTreeJson()?>);
+    tree.setRootNode(root);
+    bildResourcesTree(root, <?=$this->getResTreeJson()?>);
     tree.addListener('click', resourceClick.createDelegate(this));
 
     // render the tree
     tree.render();
-    root.expand();
+    // root.expand();
     tree.expandAll();
 
     $('role_resources').value = tree.getChecked().join(',');
@@ -69,9 +87,9 @@ function resourceClick(node, e){
 function bildResourcesTree(parent, config){
     if (!config) return null;
 
-	if (parent && config && config.length){
+    if (parent && config && config.length){
         for (var i = 0; i < config.length; i++){
-        	config[i].uiProvider = Ext.tree.CheckboxNodeUI;
+            config[i].uiProvider = Ext.tree.CheckboxNodeUI;
             var node = new Ext.tree.TreeNode(config[i]);
             parent.appendChild(node);
             if(config[i].children){
@@ -83,35 +101,35 @@ function bildResourcesTree(parent, config){
 
 function checkHandler(node)
 {
-	if ( node.attributes.checked && node.parentNode ) {
-		var n = node.parentNode;
-		this.removeListener('check', checkHandler);
-		do {
-			if (!n || n.attributes.id == 'admin' || n.attributes.id == '__root__') {
-				break;
-			} else {
-				n.ui.check(true);
-			}
-		} while (n = n.parentNode );
-		this.on('check', checkHandler);
-	}
-	if ( !node.isLeaf() && node.hasChildNodes() ) {
-		this.removeListener('check', checkHandler);
-		processChildren(node, node.attributes.checked);
-		this.on('check', checkHandler);
-	}
-	$('role_resources').value = this.getChecked().join(',');
+    if ( node.attributes.checked && node.parentNode ) {
+        var n = node.parentNode;
+        this.removeListener('check', checkHandler);
+        do {
+            if (!n || n.attributes.id == 'admin' || n.attributes.id == '__root__') {
+                break;
+            } else {
+                n.ui.check(true);
+            }
+        } while (n = n.parentNode );
+        this.on('check', checkHandler);
+    }
+    if ( !node.isLeaf() && node.hasChildNodes() ) {
+        this.removeListener('check', checkHandler);
+        processChildren(node, node.attributes.checked);
+        this.on('check', checkHandler);
+    }
+    $('role_resources').value = this.getChecked().join(',');
 }
 
 function processChildren(node, state)
 {
-	if ( !node.hasChildNodes() ) return false;
-	for(var i = 0; i < node.childNodes.length; i++ ) {
-		node.childNodes[i].ui.check(state);
-		if ( node.childNodes[i].hasChildNodes() ) {
-			processChildren(node.childNodes[i], state);
-		}
-	}
-	return true;
+    if ( !node.hasChildNodes() ) return false;
+    for(var i = 0; i < node.childNodes.length; i++ ) {
+        node.childNodes[i].ui.check(state);
+        if ( node.childNodes[i].hasChildNodes() ) {
+            processChildren(node.childNodes[i], state);
+        }
+    }
+    return true;
 }
 </script>

@@ -22,7 +22,7 @@
 <config>
     <modules>
     <Mage_Log>
-        <version>0.7.0</version>
+        <version>0.7.1</version>
         <depends>
             <Mage_Core />
             <Mage_Customer />
@@ -163,4 +163,17 @@
             </modules>
         </translate>
     </adminhtml>
+
+    <crontab>
+        <jobs>
+            <every_10_minutes>
+                <schedule>
+                    <cron_expr>*/10 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>log/aggregation::run</model>
+                </run>
+            </every_10_minutes>
+        </jobs>
+    </crontab>
 </config>

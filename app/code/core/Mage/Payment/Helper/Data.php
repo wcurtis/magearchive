@@ -57,6 +57,7 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
         $res = array();
         foreach ($methods as $code => $methodConfig) {
             $prefix = self::XML_PATH_PAYMENT_METHODS.'/'.$code.'/';
+
             if (!Mage::getStoreConfigFlag($prefix.'active')) {
                 continue;
             }
@@ -72,14 +73,36 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
                 continue;
             }
 
-            $sortOrder = min(1, (int)Mage::getStoreConfig($prefix.'sort_order'));
-            while (isset($res[$sortOrder])) {
-                $sortOrder++;
-            }
-            $res[$sortOrder] = $methodInstance;
+            $sortOrder = (int)Mage::getStoreConfig($prefix.'sort_order');
+            $methodInstance->sort_order=$sortOrder;
+//            while (isset($res[$sortOrder])) {
+//                $sortOrder++;
+//            }
+//            $res[$sortOrder] = $methodInstance;
+            $res[] = $methodInstance;
         }
-        ksort($res);
+//        ksort($res);
+        //die('!');
+        
+        //echo '<pre>';
+        //var_dump( (array)$res);
+        usort($res, array($this, '_sortMethods'));
+        //var_dump((array)$res);
+      //  echo '</pre>';
         return $res;
+    }
+
+    protected function _sortMethods($a, $b)
+    {
+       // var_dump($a);
+        if (is_object($a)) {
+            //var_dump($a->getData());
+            //var_dump($a->sort_order);
+            //die ();
+            
+            return (int)$a->sort_order < (int)$b->sort_order ? -1 : ((int)$a->sort_order > (int)$b->sort_order ? 1 : 0);
+        }
+        return 0;
     }
 
     /**

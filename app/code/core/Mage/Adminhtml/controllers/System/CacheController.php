@@ -22,6 +22,8 @@
 /**
  * config controller
  *
+ * @category   Mage
+ * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_System_CacheController extends Mage_Adminhtml_Controller_Action
 {

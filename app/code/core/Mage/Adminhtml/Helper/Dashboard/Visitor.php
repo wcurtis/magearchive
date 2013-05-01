@@ -31,7 +31,11 @@ class Mage_Adminhtml_Helper_Dashboard_Visitor extends Mage_Adminhtml_Helper_Dash
     protected function _initCollection()
     {
         $range = $this->_getRangeAndPeriod($this->getParam('range'));
-        $this->_collection = Mage::getResourceSingleton('log/visitor_collection')->getAggregatedData($range['period'], $range['range'], $this->getParam('custom_from'), $this->getParam('custom_to'));
+        $this->_collection = Mage::getResourceSingleton('log/visitor_collection');
+        if($this->getParam('store')) {
+            $this->_collection = $this->_collection->addFieldToFilter('store_id', $this->getParam('store'));
+        }
+        $this->_collection->getAggregatedData($range['period'], $range['range'], $this->getParam('custom_from'), $this->getParam('custom_to'));
     }
 
     protected function _getRangeAndPeriod($type)

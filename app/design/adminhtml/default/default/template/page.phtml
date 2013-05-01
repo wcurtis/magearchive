@@ -98,31 +98,30 @@
 <?endif?>
 </head>
 <body id="html-body">
-<table cellspacing="0" width="100%"><tr><td>
+<![if !IE]><table cellspacing="0" width="100%"><tr><td><![endif]>
 <div class="wrapper">
         <div class="header">
-
-        <?=$this->getChildHtml('header')?>
+            <?=$this->getChildHtml('header')?>
         <div class="clear"></div>
-        <?=$this->getChildHtml('menu')?>
+            <?=$this->getChildHtml('menu')?>
         </div>
         <div class="middle">
             <?=$this->getChildHtml('breadcrumbs')?>
                 <?if($this->getChildHtml('left')):?>
                 <div class="simple-container-left" id="page:main-container">
                     <div class="container <?=$this->getContainerCssClass()?>" id="page:container">
-                            <div class="main">
-                                    <div class="content-container">
-                                            <div class="content" id="content">
-                                                <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
-                                                <?=$this->getChildHtml('content')?>
-                                            </div>
-                                    </div>
-                                    <div class="section-menu" id="page:left">
-                                        <?=$this->getChildHtml('left')?>
-                                        <div class="bottom"></div>
-                                    </div>
+                        <div class="main">
+                            <div class="content-container">
+                                <div class="content" id="content">
+                                    <div id="messages"><?=$this->getMessagesBlock()->getGroupedHtml()?></div>
+                                    <?=$this->getChildHtml('content')?>
+                                </div>
                             </div>
+                            <div class="section-menu" id="page:left">
+                                <?=$this->getChildHtml('left')?>
+                                <div class="bottom"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <?else:?>
@@ -146,7 +145,7 @@
     <p><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=Mage::helper('adminhtml')->__('Loading...')?>"/><br/><?=Mage::helper('adminhtml')->__('Loading...')?></p>
 </div>
 <div id="loading-mask" style="display:none">
-    <!--p class="loader"><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=Mage::helper('adminhtml')->__('Loading...')?>"/></p-->
+    <p class="loader" id="loading_mask_loader"><img src="<?=$this->getSkinUrl('images/ajax-loader-tr.gif')?>" alt="<?=Mage::helper('adminhtml')->__('Loading...')?>"/><br/><?=Mage::helper('adminhtml')->__('Please wait...')?></p>
 </div>
 </td></tr></table>
 </body>

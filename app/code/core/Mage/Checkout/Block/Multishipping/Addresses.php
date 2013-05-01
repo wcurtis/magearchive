@@ -33,7 +33,7 @@ class Mage_Checkout_Block_Multishipping_Addresses extends Mage_Checkout_Block_Mu
         }
         return parent::_prepareLayout();
     }
-    
+
     public function getItems()
     {
         $items = $this->getCheckout()->getQuoteShippingAddressesItems();
@@ -41,10 +41,10 @@ class Mage_Checkout_Block_Multishipping_Addresses extends Mage_Checkout_Block_Mu
         $itemsFilter->addFilter(new Varien_Filter_Sprintf('%d'), 'qty');
         return $itemsFilter->filter($items);
     }
-    
+
     /**
      * Retrieve HTML for addresses dropdown
-     * 
+     *
      * @param  $item
      * @return string
      */
@@ -54,13 +54,13 @@ class Mage_Checkout_Block_Multishipping_Addresses extends Mage_Checkout_Block_Mu
             ->setName('ship['.$index.']['.$item->getQuoteItemId().'][address]')
             ->setValue($item->getCustomerAddressId())
             ->setOptions($this->getAddressOptions());
-            
+
         return $select->getHtml();
     }
-    
+
     /**
      * Retrieve options for addresses dropdown
-     * 
+     *
      * @return array
      */
     public function getAddressOptions()
@@ -70,45 +70,40 @@ class Mage_Checkout_Block_Multishipping_Addresses extends Mage_Checkout_Block_Mu
             $options = array();
             foreach ($this->getCustomer()->getLoadedAddressCollection() as $address) {
                 $options[] = array(
-                    'value'=>$address->getId(), 
-                    'label'=>$address->getFirstname().' '.$address->getLastname().', '.
-                        $address->getStreet(-1).', '.
-                        $address->getCity().', '.
-                        $address->getRegion().', '.
-                        $address->getCountry().' '.
-                        $address->getPostcode(),
+                    'value'=>$address->getId(),
+                    'label'=>$address->format('oneline')
                 );
             }
             $this->setData('address_options', $options);
         }
         return $options;
     }
-    
+
     public function getCustomer()
     {
         return $this->getCheckout()->getCustomerSession()->getCustomer();
     }
-    
+
     public function getItemUrl($item)
     {
         return $this->getUrl('catalog/product/view/id/'.$item->getProductId());
     }
-    
+
     public function getItemDeleteUrl($item)
     {
         return $this->getUrl('*/*/removeItem', array('address'=>$item->getParentId(), 'id'=>$item->getId()));
     }
-    
+
     public function getPostActionUrl()
     {
         return $this->getUrl('*/*/addressesPost');
     }
-    
+
     public function getNewAddressUrl()
     {
         return Mage::getUrl('*/multishipping_address/newShipping');
     }
-    
+
     public function getBackUrl()
     {
         return Mage::getUrl('*/cart/');

@@ -54,8 +54,8 @@ class Mage_Adminhtml_Block_Newsletter_Queue_Edit_Form extends Mage_Adminhtml_Blo
 				'title'	  =>    Mage::helper('newsletter')->__('Subscribers From'),
 				'values'  =>    Mage::getResourceSingleton('core/store_collection')->load()->toOptionArray(),
 				'value'	  =>	$queue->getStores(),
-				'select_all' => Mage::helper('newsletter')->__('Select All Stores'),
-				'deselect_all' => Mage::helper('newsletter')->__('Unselect All Stores'),
+				'select_all' => Mage::helper('newsletter')->__('Select All Store Views'),
+				'deselect_all' => Mage::helper('newsletter')->__('Unselect All Store Views'),
 			));
 		} else {
 			$fieldset->addField('date','date',array(
@@ -78,8 +78,8 @@ class Mage_Adminhtml_Block_Newsletter_Queue_Edit_Form extends Mage_Adminhtml_Blo
 				'class'   =>  'required-entry',
 				'values'  =>    Mage::getResourceSingleton('core/store_collection')->load()->toOptionArray(),
 				'value'	  =>	$queue->getStores(),
-				'select_all' => Mage::helper('newsletter')->__('Select All Stores'),
-				'deselect_all' => Mage::helper('newsletter')->__('Unselect All Stores')
+				'select_all' => Mage::helper('newsletter')->__('Select All Store Views'),
+				'deselect_all' => Mage::helper('newsletter')->__('Unselect All Store Views')
 			));
 		}
 

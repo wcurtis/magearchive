@@ -24,7 +24,7 @@
         <sales translate="label" module="sales">
             <label>Sales</label>
             <frontend_type>text</frontend_type>
-            <sort_order>20</sort_order>
+            <sort_order>70</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>0</show_in_store>
@@ -45,39 +45,116 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[sales]]></default_value>
                         </email_identity>
                         <email_template translate="label">
                             <label>Confirmation Template</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>1</sort_order>
+                            <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[2]]></default_value>
                         </email_template>
+                        <email_copy_to translate="label">
+                            <label>Send Email Copy To</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </email_copy_to>
                     </fields>
                 </new_order>
-                <!--order_statuses translate="label">
-                    <label>Order status labels</label>
+                <email>
+                    <label>Order Documents Email's options</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>3</sort_order>
+                    <sort_order>2</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <fake translate="label">
-                            <label>Order status labels fake field</label>
-                            <frontend_type>text</frontend_type>
-                            <frontend_model>adminhtml/system_config_form_fieldset_order_statuses</frontend_model>
+                        <invoice_comment_identity translate="label">
+                            <label>Invoice Email Sender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_identity</source_model>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </fake>
+                        </invoice_comment_identity>
+                        <invoice_comment_template translate="label">
+                            <label>Invoice Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </invoice_comment_template>
+                        <invoice_comment_copy_to translate="label">
+                            <label>Invoice Email Copy To</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </invoice_comment_copy_to>
+
+                        <creditmemo_comment_identity translate="label">
+                            <label>Credit Memo Email Sender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_identity</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </creditmemo_comment_identity>
+                        <creditmemo_comment_template translate="label">
+                            <label>Credit Memo Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </creditmemo_comment_template>
+                        <creditmemo_comment_copy_to translate="label">
+                            <label>Credit Memo Email Copy To</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </creditmemo_comment_copy_to>
+
+                        <shipment_comment_identity translate="label">
+                            <label>Shipment Email Sender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_identity</source_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipment_comment_identity>
+                        <shipment_comment_template translate="label">
+                            <label>Shipment Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipment_comment_template>
+                        <shipment_comment_copy_to translate="label">
+                            <label>Shipment Email Copy To</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipment_comment_copy_to>
                     </fields>
-                </order_statuses-->
+                </email>
                 <order_update translate="label">
                     <label>Order update options</label>
                     <frontend_type>text</frontend_type>
@@ -94,7 +171,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[sales]]></default_value>
                         </email_identity>
                         <email_template translate="label">
                             <label>Template</label>
@@ -104,14 +180,13 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[4]]></default_value>
                         </email_template>
                     </fields>
                 </order_update>
                 <totals_sort translate="label">
                     <label>Checkout totals sort order</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>2</sort_order>
+                    <sort_order>3</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -123,7 +198,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[20]]></default_value>
                         </discount>
                         <grand_total translate="label">
                             <label>Grand Total</label>
@@ -132,7 +206,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[100]]></default_value>
                         </grand_total>
                         <shipping translate="label">
                             <label>Shipping</label>
@@ -141,7 +214,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[30]]></default_value>
                         </shipping>
                         <subtotal translate="label">
                             <label>Subtotal</label>
@@ -150,7 +222,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[10]]></default_value>
                         </subtotal>
                         <tax translate="label">
                             <label>Tax</label>
@@ -159,10 +230,90 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[40]]></default_value>
                         </tax>
                     </fields>
                 </totals_sort>
+                <reorder translate="label">
+                    <label>Reorder</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <allow translate="label">
+                            <label>Allow Reorder</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allow>
+                    </fields>
+                </reorder>
+                <tax translate="label">
+                    <label>Tax Calculation</label>
+                    <sort_order>6</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <apply_after_discount translate="label">
+                            <label>Apply Tax after Discount</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </apply_after_discount>
+                        <apply_on_shipping translate="label">
+                            <label>Apply Tax on Shipping</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </apply_on_shipping>
+                        <shipping_rate_type translate="label">
+                            <label>Tax Rate for Shipping</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tax/rate_type_source</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipping_rate_type>
+                    </fields>
+                </tax>
+                <cart translate="label">
+                    <label>Shopping Cart</label>
+                    <sort_order>7</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <delete_quote_after translate="label">
+                            <label>Quote Lifetime (days)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </delete_quote_after>
+                        <redirect_to_cart translate="label">
+                            <label>After adding a product redirect to shopping cart</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </redirect_to_cart>
+                    </fields>
+                </cart>
             </groups>
         </sales>
     </sections>

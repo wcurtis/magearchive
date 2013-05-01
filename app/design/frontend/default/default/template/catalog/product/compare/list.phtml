@@ -54,7 +54,9 @@
                     <?if($_item->isSaleable()):?>
                     <button class="form-button" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToCartUrl($_item)?>', true)"><span><?=$this->__('Add to Cart')?></span></button><br/>
                     <?endif;?>
+                    <?if ($this->helper('wishlist')->isAllow()) :?>
                     <a href="#" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToWishlistUrl($_item)?>', true)" class="link-cart"><small><?=$this->__('Add to My Wishlist')?></small></a>
+                    <?endif;?>
                 </td>
             <?endforeach;?>
             </tr>
@@ -96,7 +98,9 @@
                         <?if($_item->isSaleable()):?>
                         <button class="form-button" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToCartUrl($_item)?>', true)"><span><?=$this->__('Add to Cart')?></span></button><br/>
                         <?endif;?>
+                        <?if ($this->helper('wishlist')->isAllow()) :?>
                         <a href="#" onclick="setPLocation('<?=$this->helper('catalog/product_compare')->getAddToWishlistUrl($_item)?>', true)" class="link-cart"><small><?=$this->__('Add to Wishlist')?></small></a>
+                        <?endif;?>
                     </div>
                 </div>
                 </td>
@@ -104,7 +108,7 @@
             </tr>
         </tbody>
     </table>
-    <div class="form-buttons">
+    <div class="button-set">
         <button class="form-button" onclick="window.close();window.opener.focus();"><span><?=$this->__('Close Window')?></span></button>
     </div>
 </div>

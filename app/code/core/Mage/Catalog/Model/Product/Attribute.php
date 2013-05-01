@@ -26,11 +26,11 @@
  */
 class Mage_Catalog_Model_Product_Attribute extends Varien_Object
 {
-    public function __construct($data = array()) 
+    public function __construct($data = array())
     {
         parent::__construct($data);
     }
-    
+
     public function getResource()
     {
         return Mage::getResourceSingleton('catalog/product_attribute');
@@ -41,35 +41,35 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         $this->setData($this->getResource()->load($attributeId));
         return $this;
     }
-    
+
     public function save()
     {
         $this->getResource()->save($this);
         return $this;
     }
-    
+
     public function delete()
     {
         $this->getResource()->delete($this->getId());
         return $this;
     }
-    
+
     public function loadByCode($attributeCode)
     {
         $this->setData($this->getResource()->loadByCode($attributeCode));
         return $this;
     }
-    
+
     public function getId()
     {
         return $this->getAttributeId();
     }
-    
+
     public function getCode()
     {
         return $this->getAttributeCode();
     }
-    
+
     public function isSearchable()
     {
         return $this->getSearchable();
@@ -84,7 +84,7 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
     {
         return $this->getMultiple();
     }
-    
+
     public function isDeletable()
     {
         return $this->getDeletable();
@@ -98,12 +98,12 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         }
         return false;
     }
-    
+
     public function getTableAlias()
     {
         return $this->getAttributeCode() . '_' . $this->getDataType();
     }
-    
+
     public function getSelectTable()
     {
         return $this->getTableName() . ' as ' . $this->getTableAlias();
@@ -124,7 +124,7 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         }
         return $columns;
     }
-    
+
     public function getMultipleOrder()
     {
         if ('decimal' == $this->getDataType()) {
@@ -135,20 +135,20 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         }
         return $order;
     }
-    
+
     public function getOptions()
     {
         $collection = Mage::getResourceModel('catalog/product_attribute_option_collection')
             ->addAttributeFilter($this->getId())
             ->load();
-            
+
         return $collection;
     }
-    
+
     /**
      * Retrieve attribute save object
      *
-     * @return 
+     * @return
      */
     public function getSaver()
     {
@@ -156,29 +156,29 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         if (empty($saverName)) {
             $saverName = 'default';
         }
-        
+
         if ($saver = Mage::getConfig()->getNode('global/catalog/product/attribute/savers.'.$saverName)) {
             $model = Mage::getModel($saver->getClassName())->setAttribute($this);
             // TODO: check instanceof
             return $model;
         }
-        
+
         throw new Exception(Mage::helper('catalog')->__('Attribute saver "%s" not found', $saverName));
     }
-    
+
     public function getSource()
     {
         $sourceName = $this->getDataSource();
         if (empty($sourceName)) {
             return false;
         }
-        
+
         if ($source = Mage::getConfig()->getNode('global/catalog/product/attribute/sources/'.$sourceName)) {
             $model = Mage::getModel($source->getClassName())->setAttribute($this);
             // TODO: check instanceof
             return $model;
         }
-        
+
         throw new Exception(Mage::helper('catalog')->__('Attribute source "%s" not found', $saverName));
     }
 
@@ -194,7 +194,7 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         }
         return $arr;
     }
-    
+
     public function getAllowInput()
     {
         $config = (array) Mage::getConfig()->getNode('global/catalog/product/attribute/inputs');
@@ -233,13 +233,13 @@ class Mage_Catalog_Model_Product_Attribute extends Varien_Object
         }
         return $arr;
     }
-        
+
     public function getPositionInGroup($group)
     {
         if (!$group instanceof Mage_Catalog_Model_Product_Attribute_Group) {
             $group = Mage::getModel('catalog/product_attribute_group')->load($group);
         }
-         
+
         return $group->getResource()->getAttributePosition($group, $this);
-    }   
+    }
 }

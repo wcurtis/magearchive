@@ -18,7 +18,12 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
+/**
+ * Order Item Model
+ *
+ * @category   Mage
+ * @package    Mage_Sales
+ */
 class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
 {
 
@@ -48,6 +53,85 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
     protected function _construct()
     {
         $this->_init('sales/order_item');
+    }
+
+    /**
+     * Check item invoice availability
+     *
+     * @return bool
+     */
+    public function canInvoice()
+    {
+        return $this->getQtyToInvoice()>0;
+    }
+
+    /**
+     * Check item ship availability
+     *
+     * @return bool
+     */
+    public function canShip()
+    {
+        return $this->getQtyToShip()>0;
+    }
+
+    /**
+     * Check item refund availability
+     *
+     * @return bool
+     */
+    public function canRefund()
+    {
+        return $this->getQtyToRefund()>0;
+    }
+
+    /**
+     * Retrieve item qty available for ship
+     *
+     * @return float|integer
+     */
+    public function getQtyToShip()
+    {
+        $qty = $this->getQtyOrdered()
+            - $this->getQtyShipped()
+            - $this->getQtyReturned()
+            - $this->getQtyCanceled();
+        return max($qty, 0);
+    }
+
+    /**
+     * Retrieve item qty available for invoice
+     *
+     * @return float|integer
+     */
+    public function getQtyToInvoice()
+    {
+        $qty = $this->getQtyOrdered()
+            //- $this->getQtyRefunded()
+            - $this->getQtyInvoiced()
+            - $this->getQtyCanceled();
+        return max($qty, 0);
+    }
+
+    /**
+     * Retrieve item qty available for refund
+     *
+     * @return float|integer
+     */
+    public function getQtyToRefund()
+    {
+        return max($this->getQtyInvoiced()-$this->getQtyRefunded(), 0);
+    }
+
+    /**
+     * Retrieve item qty available for cancel
+     *
+     * @return float|integer
+     */
+    public function getQtyToCancel()
+    {
+        $qtyToCancel = $this->getQtyToInvoice() - $this->getQtyCanceled();
+        return max($qtyToCancel, 0);
     }
 
     /**
@@ -139,17 +223,6 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Retrieve item qty for ship
-     *
-     * @return float|integer
-     */
-    public function getQtyToShip()
-    {
-        return max($this->getQtyOrdered()-$this->getQtyShipped()-$this->getQtyReturned()-$this->getQtyCanceled(), 0);
-    }
-
-
-    /**
      * Cancel order item
      *
      * @return Mage_Sales_Model_Order_Item
@@ -163,6 +236,11 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Retrieve order item statuses array
+     *
+     * @return array
+     */
     public static function getStatuses()
     {
         if (is_null(self::$_statuses)) {
@@ -178,5 +256,19 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
             );
         }
         return self::$_statuses;
+    }
+
+    /**
+     * Redeclare getter for back compatibility
+     *
+     * @return float
+     */
+    public function getOriginalPrice()
+    {
+        $price = $this->getData('original_price');
+        if (is_null($price)) {
+            return $this->getPrice();
+        }
+        return $price;
     }
 }

@@ -1,0 +1,70 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?
+/**
+ * Last order sidebar
+ *
+ * @see Mage_Sale_Block_Reorder_Sidebar
+ */
+?>
+
+
+<?if($_order = $this->getLastOrder()):?>
+
+<div class="box base-mini mini-compare-products">
+<form method="post" action="<?=$this->getUrl('checkout/cart/addgroup')?>" id="reorder-validate-detail">
+    <div class="head">
+        <h4 style="display: block; float: left;"><?=$this->__('My Orders')?>&nbsp;&nbsp;-&nbsp;&nbsp;</h4>
+        <a href="<?=$this->getUrl('customer/account')?>">View All</a><br /><br />
+        <h5><?=$this->__('Last ordered items')?></h5>
+    </div>
+<ol id="cart-sidebar">
+
+     <?foreach($_order->getItemsRandomCollection(5) as $_item):?>
+     <?if ($_item->getProduct()): ?>
+        <li>
+            <div class="product-checkbox">
+                <input type="checkbox" name="products[]" value="<?=$_item->getProductId()?>" class="validate-one-required-by-name">
+            </div>
+            <div class="product-names">
+
+                <a href="<?=$_item->getProduct()->getProductUrl()?>"><?=$_item->getName()?></a>
+
+            </div>
+        </li>
+        <?endif;?>
+    <?endforeach;?>
+    </ol>
+    <div class="actions">
+        <button class="form-button" type="submit"><span><?=$this->__('Add to Cart')?></span></button><br/>
+    </div>
+</form>
+</div>
+<?=$this->getPagerHtml();?>
+
+<?endif?>
+<script type="text/javascript">
+
+<!--
+ var reorderFormDetail = new VarienForm('reorder-validate-detail');
+//-->
+
+</script>

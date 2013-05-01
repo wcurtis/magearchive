@@ -139,7 +139,7 @@ class Mage_Core_Helper_Js extends Mage_Core_Helper_Abstract
      */
     public function getJsUrl($file)
     {
-        return Mage::getBaseUrl(array('_type'=>'js')).$file;
+        return Mage::getBaseUrl('js').$file;
     }
     
     /**

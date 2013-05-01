@@ -202,7 +202,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                 }
 
                 $customer->save();
-                if ($isNewCustomer) {
+                if ($isNewCustomer && $customer->hasData('sendemail')) {
                     $customer->sendNewAccountEmail();
                 }
 
@@ -259,6 +259,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
         header("Content-Length: ".sizeof($content));
         header("Content-type: application/octet-stream");
         echo $content;
+        exit;
     }
 
     /**

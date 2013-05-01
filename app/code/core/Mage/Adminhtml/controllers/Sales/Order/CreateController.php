@@ -38,7 +38,7 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
     /**
      * Retrieve session object
      *
-     * @return Mage_Adminhtml_Model_Quote
+     * @return Mage_Adminhtml_Model_Session_Quote
      */
     protected function _getSession()
     {
@@ -113,11 +113,21 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
      */
     protected function _processData()
     {
+
+
         /**
          * Saving order data
          */
         if ($data = $this->getRequest()->getPost('order')) {
             $this->_getOrderCreateModel()->importPostData($data);
+        }
+
+        /**
+         * Flag for using billing address for shipping
+         */
+        $syncFlag = $this->getRequest()->getPost('shipping_as_billing');
+        if (!is_null($syncFlag)) {
+            $this->_getOrderCreateModel()->setShippingAsBilling((int)$syncFlag);
         }
 
         /**
@@ -134,13 +144,6 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
             $this->_getOrderCreateModel()->collectShippingRates();
         }
 
-        /**
-         * Flag for using billing address for shipping
-         */
-        $syncFlag = $this->getRequest()->getPost('shipping_as_billing');
-        if (!is_null($syncFlag)) {
-            $this->_getOrderCreateModel()->setShippingAsBilling((int)$syncFlag);
-        }
 
         /**
          * Applu mass changes from sidebar
@@ -220,6 +223,13 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
             $this->_getGiftmessageSaveModel()->importAllowQuoteItemsFromItems($items);
         }
 
+        $data = $this->getRequest()->getPost('order');
+        if (!empty($data['coupon']['code'])) {
+            if ($this->_getQuote()->getCouponCode() !== $data['coupon']['code']) {
+                $this->_getSession()->addError($this->__('"%s" coupon code is not valid.', $data['coupon']['code']));
+            }
+        }
+
         return $this;
     }
 
@@ -240,6 +250,31 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
             ->renderLayout();
     }
 
+
+    public function reorderAction()
+    {
+        $this->_getSession()->clear();
+        $orderId = $this->getRequest()->getParam('order_id');
+        $order = Mage::getModel('sales/order')->load($orderId);
+
+        if ($order->getId()) {
+            $order->setReordered(true);
+            $this->_getOrderCreateModel()->initFromOrder($order);
+
+            $this->_redirect('*/*');
+        }
+        else {
+            $this->_redirect('*/sales_order/');
+        }
+    }
+
+    protected function _reloadQuote()
+    {
+        $id = $this->_getQuote()->getId();
+        $this->_getQuote()->load($id);
+        return $this;
+    }
+
     /**
      * Loading page block
      */
@@ -250,9 +285,11 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
                 ->_processData();
         }
         catch (Mage_Core_Exception $e){
+            $this->_reloadQuote();
             $this->_getSession()->addError($e->getMessage());
         }
         catch (Exception $e){
+            $this->_reloadQuote();
             $this->_getSession()->addException($e, __('Processing data problem'));
         }
 
@@ -312,6 +349,7 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
     public function saveAction()
     {
         try {
+            $this->_processData();
             $order = $this->_getOrderCreateModel()
                 ->importPostData($this->getRequest()->getPost('order'))
                 ->createOrder();

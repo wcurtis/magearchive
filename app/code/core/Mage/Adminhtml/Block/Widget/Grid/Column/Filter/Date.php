@@ -43,12 +43,12 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Filter_Date extends Mage_Adminhtml
         $html = '<div class="range"><div class="range-line date">
             <span class="label">' . Mage::helper('adminhtml')->__('From').':</span>
             <input type="text" name="'.$this->_getHtmlName().'[from]" id="'.$this->_getHtmlId().'_from" value="'.$this->getEscapedValue('from').'" class="input-text no-changes"/>
-            <img src="' . Mage::getDesign()->getSkinUrl('images/grid-cal.gif') . '" alt="" align="absmiddle" id="'.$this->_getHtmlId().'_from_trig" title="Date selector" />
+            <img src="' . Mage::getDesign()->getSkinUrl('images/grid-cal.gif') . '" alt="" class="v-middle" id="'.$this->_getHtmlId().'_from_trig" title="Date selector"/>
             </div>';
         $html.= '<div class="range-line date">
             <span class="label">' . Mage::helper('adminhtml')->__('To').' :</span>
             <input type="text" name="'.$this->_getHtmlName().'[to]" id="'.$this->_getHtmlId().'_to" value="'.$this->getEscapedValue('to').'" class="input-text no-changes"/>
-            <img src="' . Mage::getDesign()->getSkinUrl('images/grid-cal.gif') . '" alt="" align="absmiddle" id="'.$this->_getHtmlId().'_to_trig" title="Date selector" />
+            <img src="' . Mage::getDesign()->getSkinUrl('images/grid-cal.gif') . '" alt="" class="v-middle" id="'.$this->_getHtmlId().'_to_trig" title="Date selector/>
             </div></div>';
         $html.= '<input type="hidden" name="'.$this->_getHtmlName().'[locale]" value="'.$this->getLocale()->getLocaleCode().'"/>';
         $html.= '<script type="text/javascript">

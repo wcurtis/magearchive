@@ -36,37 +36,48 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 		return false;
 	}
 
-	public function process(Mage_Core_Model_Abstract $item) {
-		if (!$item instanceof Mage_Sales_Model_Quote_Item
-			&& !$item instanceof Mage_Sales_Model_Quote_Address_Item) {
-			throw Mage::exception('Mage_SalesRule', Mage::helper('salesrule')->__('Invalid item entity'));
-		}
-
+	public function process(Mage_Sales_Model_Quote_Item_Abstract $item)
+	{
 		$item->setFreeShipping(false);
 		$item->setDiscountAmount(0);
 		$item->setDiscountPercent(0);
-		
-		if ($item instanceof Mage_Sales_Model_Quote_Item) {
-			$quote = $item->getQuote();
-		} elseif ($item instanceof Mage_Sales_Model_Quote_Address_Item) {
-			$quote = $item->getAddress()->getQuote();
-		}
-		
+
+		$quote= $item->getQuote();
 		$rule = Mage::getModel('salesrule/rule');
-		
+		$customerId = $quote->getCustomerId();
+        $ruleCustomer = Mage::getModel('salesrule/rule_customer');
 		$appliedRuleIds = array();
 
 		$actions = $this->getActionsCollection($item);
+
 		foreach ($actions as $action) {
 			if (!$rule->load($action->getRuleId())->validate($quote)) {
 				continue;
 			}
-			
+
+			if ($action->getCouponCode() && ($action->getCouponCode() == $this->getCouponCode())) {
+                $this->setIsCouponCodeConfirmed(true);
+			}
+
+            if ($rule->getUsesPerCoupon()
+                && ($rule->getTimesUsed() >= $rule->getUsesPerCoupon())) {
+                break;
+            }
+
+            if ($ruleId = $rule->getId()) {
+                $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
+                if ($ruleCustomer->getId()) {
+                    if ($ruleCustomer->getTimesUsed() >= $rule->getUsesPerCustomer()) {
+                        break;
+                    }
+                }
+            }
+
 			$qty = $rule->getDiscountQty() ? min($item->getQty(), $rule->getDiscountQty()) : $item->getQty();
-			
+
 			switch ($rule->getSimpleAction()) {
 				case 'by_percent':
-					$discountAmount = $qty*$item->getPrice()*$rule->getDiscountAmount()/100;
+					$discountAmount = $qty*$item->getCalculationPrice()*$rule->getDiscountAmount()/100;
 					if (!$rule->getDiscountQty()) {
 						$discountPercent = min(100, $item->getDiscountPercent()+$rule->getDiscountAmount());
 						$item->setDiscountPercent($discountPercent);
@@ -77,15 +88,15 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 					$discountAmount = $qty*$rule->getDiscountAmount();
 					break;
 			}
-			
+            $discountAmount = $quote->getStore()->roundPrice($discountAmount);
 			$discountAmount = min($discountAmount, $item->getRowTotal());
 			$item->setDiscountAmount($item->getDiscountAmount()+$discountAmount);
-			
+
 			switch ($rule->getSimpleFreeShipping()) {
 				case Mage_SalesRule_Model_Rule::FREE_SHIPPING_ITEM:
 					$item->setFreeShipping(true);
 					break;
-					
+
 				case Mage_SalesRule_Model_Rule::FREE_SHIPPING_ADDRESS:
 					$address = $item->getAddress();
 					if (!$address) {
@@ -96,16 +107,17 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 					}
 					break;
 			}
-			
-			$appliedRuleIds[$rule->getRuleId()] = true;
-			
+
+			$appliedRuleIds[$rule->getRuleId()] = $rule->getRuleId();
+
 			if ($rule->getStopRulesProcessing()) {
 				break;
 			}
 		}
-		
+
 		$item->setAppliedRuleIds(join(',',$appliedRuleIds));
-		
+		$quote->setAppliedRuleIds(join(',',$appliedRuleIds));
+
 		return $this;
 	}
 
@@ -118,9 +130,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 			->addFieldToFilter('customer_group_id', $this->getCustomerGroupId())
 			->addFieldToFilter('store_id', $this->getStoreId())
 			->addFieldToFilter('product_id', $item->getProductId())
-			->setOrder('sort_order');
-#print_r($actions->getSelect()->__toString());
-		$actions
+			->setOrder('sort_order')
 			->load();
 		return $actions;
 	}

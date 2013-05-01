@@ -26,12 +26,12 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Price extends Varien_Data_Form_Element_Text
 {
-    public function __construct($attributes=array()) 
+    public function __construct($attributes=array())
     {
         parent::__construct($attributes);
-        $this->addClass('validate-greater-than-zero');
+        $this->addClass('validate-zero-or-greater');
     }
-    
+
     public function getAfterElementHtml()
     {
         $html = parent::getAfterElementHtml();
@@ -46,18 +46,18 @@ class Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Price extends Varien_Data
             $currencyCode = (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, $storeId);
             $html.= ' (' . Mage::helper('catalog')->__('Currency') . ' - <strong>'.$currencyCode.'</strong>)';
         }
-        
+
         return $html;
     }
-    
+
     public function getEscapedValue($index=null)
     {
         $value = $this->getValue();
-        
+
         if (!is_numeric($value)) {
             return null;
         }
-        
+
         return number_format($value, 2, null, '');
     }
 }

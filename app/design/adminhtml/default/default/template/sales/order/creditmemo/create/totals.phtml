@@ -1,0 +1,99 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?$_source  = $this->getSource()?>
+<?$_currency= $this->getCurrency()?>
+<?if ($_source && $_currency):?>
+<table cellspacing="0" width="100%">
+    <col/>
+    <col width="100"/>
+    <tfoot>
+        <tr>
+            <td class="label">
+                <strong><?=$this->helper('sales')->__('Total Refund')?></strong>
+            </td>
+            <td class="emph" align="right">
+                <strong><?=$_currency->format($_source->getGrandTotal())?></strong>
+            </td>
+        </tr>
+    </tfoot>
+    <tbody>
+        <?if ((float) $_source->getSubtotal()):?>
+        <tr>
+            <td><?=$this->helper('sales')->__('Subtotal')?></td>
+            <td align="right"><?=$_currency->format($_source->getSubtotal())?></td>
+        </tr>
+        <?endif;?>
+
+        <?if ((float) $_source->getTaxAmount()):?>
+        <tr>
+            <td><?=$this->helper('sales')->__('Tax')?></td>
+            <td align="right"><?=$_currency->format($_source->getTaxAmount())?></td>
+        </tr>
+        <?endif;?>
+        <?if ((float) $_source->getDiscountAmount()):?>
+        <tr>
+            <td><?=$this->helper('sales')->__('Discount')?></td>
+            <td align="right"><?=$_currency->format(-$_source->getDiscountAmount())?></td>
+        </tr>
+        <?endif;?>
+        <tr>
+            <td><?=$this->helper('sales')->__('Refund Shipping')?></td>
+            <td align="right">
+                <input type="text" name="creditmemo[shipping_amount]" value="<?=$_source->getShippingAmount()*1?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="shipping_amount"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" id="shipping_amount_adv" class="advice-bg-right"></td>
+        </tr>
+        <tr>
+            <td><?=$this->helper('sales')->__('Adjustment Refund')?></td>
+            <td align="right">
+                <input type="text" name="creditmemo[adjustment_positive]" value="<?=$_source->getRestockingFeePositive()*1?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="adjustment_positive"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" id="adjustment_positive_adv" class="advice-bg-right"></td>
+        </tr>
+        <tr>
+            <td><?=$this->helper('sales')->__('Adjustment Fee')?></td>
+            <td align="right">
+                <input type="text" name="creditmemo[adjustment_negative]" value="<?=$_source->getRestockingFeeNegative()*1?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="adjustment_negative"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" id="adjustment_negative_adv" class="advice-bg-right"></td>
+        </tr>
+    </tbody>
+</table>
+<script type="text/javascript">
+Validation.addAllThese([
+    ['not-negative-amount', '<?=$this->helper('sales')->__('Please enter positive number in this field.')?>', function(v) {
+        if(v.length)
+            return parseFloat(v) >= 0;
+        else
+            return true;
+    }]
+]);
+if ($('shipping_amount')) $('shipping_amount').advaiceContainer = $('shipping_amount_adv');
+if ($('adjustment_positive')) $('adjustment_positive').advaiceContainer = $('adjustment_positive_adv');
+if ($('adjustment_negative')) $('adjustment_negative').advaiceContainer = $('adjustment_negative_adv');
+</script>
+<?endif;?>

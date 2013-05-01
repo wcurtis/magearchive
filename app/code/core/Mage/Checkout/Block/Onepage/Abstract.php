@@ -100,7 +100,7 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
             foreach ($this->getCustomer()->getLoadedAddressCollection() as $address) {
                 $options[] = array(
                     'value'=>$address->getId(),
-                    'label'=>$address->getStreet(-1).', '.$address->getCity().', '.$address->getRegion().' '.$address->getPostcode(),
+                    'label'=>$address->format('oneline')
                 );
             }
 
@@ -154,7 +154,7 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
             ->setName($type.'[region]')
             ->setId($type.':region')
             ->setTitle(Mage::helper('checkout')->__('State/Province'))
-            ->setClass('required-entry validate-state input-text')
+            ->setClass('required-entry validate-state')
             ->setValue($this->getAddress()->getRegionId())
             ->setOptions($this->getRegionCollection()->toOptionArray());
 

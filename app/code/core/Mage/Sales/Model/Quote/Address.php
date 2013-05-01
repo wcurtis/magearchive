@@ -41,6 +41,14 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         $this->_init('sales/quote_address');
     }
 
+    public function __destruct()
+    {
+        unset($this->_quote);
+        unset($this->_rates);
+        unset($this->_totalModels);
+        unset($this->_totals);
+    }
+
     /**
      * Declare adress quote model object
      *
@@ -323,10 +331,18 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
                 if (!isset($rates[$rate->getCarrier()])) {
                     $rates[$rate->getCarrier()] = array();
                 }
+
                 $rates[$rate->getCarrier()][] = $rate;
+                $rates[$rate->getCarrier()][0]->carrier_sort_order = $rate->getCarrierInstance()->getSortOrder();
             }
         }
+        uasort($rates, array($this, '_sortRates'));
         return $rates;
+    }
+
+    protected function _sortRates($a, $b)
+    {
+        	return (int)$a[0]->carrier_sort_order < (int)$b[0]->carrier_sort_order ? -1 : ((int)$a[0]->carrier_sort_order > (int)$b[0]->carrier_sort_order ? 1 : 0);
     }
 
     /**
@@ -399,12 +415,12 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         $request = Mage::getModel('shipping/rate_request');
         $request->setDestCountryId($this->getCountryId());
         $request->setDestRegionId($this->getRegionId());
-				/*
-				* need to call getStreet with -1
-				* to get data in string instead of array
-				*/
-				$request->setDestStreet($this->getStreet(-1));
-				$request->setDestCity($this->getCity());
+        /**
+         * need to call getStreet with -1
+         * to get data in string instead of array
+         */
+        $request->setDestStreet($this->getStreet(-1));
+        $request->setDestCity($this->getCity());
         $request->setDestPostcode($this->getPostcode());
         $request->setPackageValue($this->getSubtotal());
         $request->setPackageWeight($this->getWeight());
@@ -419,6 +435,12 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
         $request->setStoreId($this->getQuote()->getStore()->getId());
         $request->setWebsiteId($this->getQuote()->getStore()->getWebsiteId());
         $request->setFreeShipping($this->getFreeShipping());
+
+        /**
+         * Currencies need to convert in free shipping
+         */
+        $request->setBaseCurrency($this->getQuote()->getStore()->getBaseCurrency());
+        $request->setPackageCurrency($this->getQuote()->getStore()->getCurrentCurrency());
 
         $result = Mage::getModel('shipping/shipping')
             ->collectRates($request)
@@ -506,5 +528,13 @@ class Mage_Sales_Model_Quote_Address extends Mage_Customer_Model_Address_Abstrac
     public function __clone()
     {
         $this->setEntityId(null);
+    }
+
+    protected function _beforeDelete()
+    {
+        parent::_beforeDelete();
+
+        $this->getItemsCollection()->walk('delete');
+        $this->getShippingRatesCollection()->walk('delete');
     }
 }

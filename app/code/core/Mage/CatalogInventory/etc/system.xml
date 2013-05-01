@@ -24,7 +24,7 @@
         <cataloginventory translate="label" module="cataloginventory">
             <label>Inventory</label>
             <frontend_type>text</frontend_type>
-            <sort_order>102</sort_order>
+            <sort_order>60</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>0</show_in_website>
             <show_in_store>0</show_in_store>
@@ -45,7 +45,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </backorders>
                         <can_subtract translate="label">
                             <label>Decrease Stock When Order is Placed</label>
@@ -55,7 +54,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </can_subtract>
                         <max_sale_qty translate="label">
                             <label>Maximum Qty Allowed in Shopping Cart</label>
@@ -64,7 +62,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[10000]]></default_value>
                         </max_sale_qty>
                         <min_qty translate="label">
                             <label>Minimum Qty for Items' Status to be In Stock</label>
@@ -73,7 +70,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </min_qty>
                         <min_sale_qty translate="label">
                             <label>Minimum Qty Allowed in Shopping Cart</label>
@@ -82,7 +78,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </min_sale_qty>
                     </fields>
                 </options>

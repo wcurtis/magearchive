@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Main extends Mage_Adminhtml_Bl
     {
         $model = Mage::registry('current_promo_catalog_rule');
 
-        //$form = new Varien_Data_Form(array('id' => 'edit_form1', 'action' => $this->getData('action'), 'method' => 'POST'));
+        //$form = new Varien_Data_Form(array('id' => 'edit_form1', 'action' => $this->getData('action'), 'method' => 'post'));
         $form = new Varien_Data_Form();
 
         $form->setHtmlIdPrefix('rule_');
@@ -80,8 +80,8 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Main extends Mage_Adminhtml_Bl
 
     	$fieldset->addField('store_ids', 'multiselect', array(
             'name'      => 'store_ids[]',
-            'label'     => Mage::helper('catalogrule')->__('Stores'),
-            'title'     => Mage::helper('catalogrule')->__('Stores'),
+            'label'     => Mage::helper('catalogrule')->__('Store Views'),
+            'title'     => Mage::helper('catalogrule')->__('Store Views'),
             'required'  => true,
             'values'    => $stores,
         ));

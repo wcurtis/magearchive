@@ -74,6 +74,7 @@ class Mage_Adminhtml_Extensions_RemoteController extends Mage_Adminhtml_Controll
         if (!$result instanceof PEAR_Error) {
             Mage::app()->cleanCache();
         }
+        Mage::app()->getFrontController()->getResponse()->clearAllHeaders();
     }
 
     public function upgradeAction()
@@ -89,6 +90,7 @@ class Mage_Adminhtml_Extensions_RemoteController extends Mage_Adminhtml_Controll
         if (!$result instanceof PEAR_Error) {
             Mage::app()->cleanCache();
         }
+        Mage::app()->getFrontController()->getResponse()->clearAllHeaders();
     }
 
     public function massInstallAction()
@@ -118,5 +120,6 @@ class Mage_Adminhtml_Extensions_RemoteController extends Mage_Adminhtml_Controll
         if (!$result instanceof PEAR_Error) {
             Mage::app()->cleanCache();
         }
+        Mage::app()->getFrontController()->getResponse()->clearAllHeaders();
     }
 }

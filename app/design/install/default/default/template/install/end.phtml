@@ -20,7 +20,7 @@
 
 /**
  * Installation end page
- * 
+ *
  * @see Mage_Install_Block_End
  */
 ?>
@@ -33,7 +33,7 @@
 <p><strong><big><?=$this->getEncryptionKey()?></big></strong></p>
 <p><?=$this->__('(Make sure you keep it in a safe place.)')?></p>
 <?endif;?>
-<div class="form-buttons">
+<div class="button-set">
     <button class="form-button" onclick="setLocation('<?=Mage::getBaseUrl()?>')" type="button"><?=$this->__('Go to Frontend')?></button>&nbsp;&nbsp;
-    <button class="form-button" onclick="setLocation('<?=$this->getUrl('admin')?>')" type="button"><?=$this->__('Go to Backend')?></button>
+    <button class="form-button" onclick="setLocation('<?=$this->getUrl('adminhtml')?>')" type="button"><?=$this->__('Go to Backend')?></button>
 </div>

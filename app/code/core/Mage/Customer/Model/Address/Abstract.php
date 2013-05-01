@@ -24,6 +24,20 @@
  */
 class Mage_Customer_Model_Address_Abstract extends Mage_Core_Model_Abstract
 {
+    /**
+     * Directory country models
+     *
+     * @var array
+     */
+    static protected $_countryModels = array();
+
+    /**
+     * Directory region models
+     *
+     * @var array
+     */
+    static protected $_regionModels = array();
+
     public function getName()
     {
     	return $this->getFirstname().' '.$this->getLastname();
@@ -119,21 +133,25 @@ class Mage_Customer_Model_Address_Abstract extends Mage_Core_Model_Abstract
         $regionId = $this->getData('region_id');
         $region   = $this->getData('region');
 
+        if ($regionId) {
+       	    if ($this->getRegionModel($regionId)->getCountryId() == $this->getCountryId()) {
+       	        $region = $this->getRegionModel($regionId)->getName();
+    	        $this->setData('region', $region);
+    	    }
+        }
+
         if (!empty($region) && is_string($region)) {
     	    $this->setData('region', $region);
     	}
         elseif (!$regionId && is_numeric($region)) {
-            $model = Mage::getModel('directory/region')->load($region);
-            if ($model->getCountryId() == $this->getCountryId()) {
-                $this->setData('region', $model->getName());
+            if ($this->getRegionModel($region)->getCountryId() == $this->getCountryId()) {
+                $this->setData('region', $this->getRegionModel($region)->getName());
                 $this->setData('region_id', $region);
             }
         }
     	elseif ($regionId && !$region) {
-
-    	    $model = Mage::getModel('directory/region')->load($regionId);
-    	    if ($model->getCountryId() == $this->getCountryId()) {
-    	        $this->setData('region', $model->getName());
+       	    if ($this->getRegionModel($regionId)->getCountryId() == $this->getCountryId()) {
+    	        $this->setData('region', $this->getRegionModel($regionId)->getName());
     	    }
     	}
 
@@ -150,15 +168,13 @@ class Mage_Customer_Model_Address_Abstract extends Mage_Core_Model_Abstract
         $region   = $this->getData('region');
 
         if (!$regionId && is_numeric($region)) {
-            $model = Mage::getModel('directory/region')->load($region);
-            if ($model->getCountryId() == $this->getCountryId()) {
-                $this->setData('region_code', $model->getCode());
+            if ($this->getRegionModel($region)->getCountryId() == $this->getCountryId()) {
+                $this->setData('region_code', $this->getRegionModel($region)->getCode());
             }
         }
     	elseif ($regionId) {
-    	    $model = Mage::getModel('directory/region')->load($regionId);
-    	    if ($model->getCountryId() == $this->getCountryId()) {
-    	        $this->setData('region_code', $model->getCode());
+    	    if ($this->getRegionModel($regionId)->getCountryId() == $this->getCountryId()) {
+    	        $this->setData('region_code', $this->getRegionModel($regionId)->getCode());
     	    }
     	}
         elseif (is_string($region)) {
@@ -177,6 +193,38 @@ class Mage_Customer_Model_Address_Abstract extends Mage_Core_Model_Abstract
     	return $country ? $country : $this->getData('country');
     }
 
+    /**
+     * Retrive country model
+     *
+     * @return Mage_Directory_Model_Country
+     */
+    public function getCountryModel()
+    {
+        if(!isset(self::$_countryModels[$this->getCountryId()])) {
+            self::$_countryModels[$this->getCountryId()] = Mage::getModel('directory/country')->load($this->getCountryId());
+        }
+
+        return self::$_countryModels[$this->getCountryId()];
+    }
+
+    /**
+     * Retrive country model
+     *
+     * @return Mage_Directory_Model_Country
+     */
+    public function getRegionModel($region=null)
+    {
+        if(is_null($region)) {
+            $region = $this->getRegionId();
+        }
+
+        if(!isset(self::$_regionModels[$region])) {
+            self::$_regionModels[$region] = Mage::getModel('directory/region')->load($region);
+        }
+
+        return self::$_regionModels[$region];
+    }
+
     public function getHtmlFormat()
     {
         return "{{firstname}} {{lastname}}<br/>
@@ -187,7 +235,27 @@ class Mage_Customer_Model_Address_Abstract extends Mage_Core_Model_Abstract
 
     public function getFormated($html=false)
     {
-    	return Mage::getModel('directory/country')->load($this->getCountryId())->formatAddress($this, $html);
+    	return $this->format($html ? 'html' : 'text');//Mage::getModel('directory/country')->load($this->getCountryId())->formatAddress($this, $html);
+    }
+
+    public function format($type)
+    {
+        if(!($formatType = $this->getConfig()->getFormatByCode($type))
+            || !$formatType->getRenderer()) {
+            return null;
+        }
+
+    	return $formatType->getRenderer()->render($this);
+    }
+
+    /**
+     * Retrive address config object
+     *
+     * @return Mage_Customer_Model_Address_Config
+     */
+    public function getConfig()
+    {
+        return Mage::getSingleton('customer/address_config');
     }
 
     protected function _beforeSave()

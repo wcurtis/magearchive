@@ -115,6 +115,11 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         $this->_outTemplate('example');
     }
 
+    public function testAction()
+    {
+        echo $this->getLayout()->createBlock('core/profiler')->toHtml();
+    }
+
     public function changeLocaleAction()
     {
         $locale = $this->getRequest()->getParam('locale');

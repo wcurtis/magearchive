@@ -30,8 +30,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Image extends Varien_Data
     {
         $url = false;
         if ($this->getValue()) {
-            $url = Mage::app()->getStore()->getConfig('catalog/images/product_upload_url')
-                . $this->getValue();
+            $url = Mage::getBaseUrl('media').'catalog/product/'. $this->getValue();
         }
         return $url;
     }

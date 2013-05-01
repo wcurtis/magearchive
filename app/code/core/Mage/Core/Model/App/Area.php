@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Application area nodel
  *
@@ -27,39 +27,39 @@ class Mage_Core_Model_App_Area
     const AREA_GLOBAL   = 'global';
     const AREA_FRONTEND = 'frontend';
     const AREA_ADMIN    = 'admin';
-    
+
     const PART_CONFIG   = 'config';
     const PART_EVENTS   = 'events';
     const PART_TRANSLATE= 'translate';
     const PART_DESIGN   = 'design';
-    
+
     /**
      * Array of area loaded parts
      *
      * @var array
      */
     protected $_loadedParts;
-    
+
     /**
      * Area code
      *
      * @var string
      */
     protected $_code;
-    
+
     /**
      * Area application
      *
      * @var Mage_Core_Model_App
      */
     protected $_application;
-    
-    public function __construct($areaCode, $application) 
+
+    public function __construct($areaCode, $application)
     {
         $this->_code = $areaCode;
         $this->_application = $application;
     }
-    
+
     /**
      * Retrieve area application
      *
@@ -69,7 +69,7 @@ class Mage_Core_Model_App_Area
     {
         return $this->_application;
     }
-    
+
     /**
      * Load area data
      *
@@ -81,15 +81,15 @@ class Mage_Core_Model_App_Area
         if (is_null($part)) {
             $this->_loadPart(self::PART_CONFIG)
                 ->_loadPart(self::PART_EVENTS)
-                ->_loadPart(self::PART_TRANSLATE)
-                ->_loadPart(self::PART_DESIGN);
+                ->_loadPart(self::PART_DESIGN)
+                ->_loadPart(self::PART_TRANSLATE);
         }
         else {
             $this->_loadPart($part);
         }
         return $this;
     }
-    
+
     /**
      * Loading part of area
      *
@@ -120,26 +120,38 @@ class Mage_Core_Model_App_Area
         Varien_Profiler::stop('app/area/loadPart/'.$this->_code.'/'.$part);
         return $this;
     }
-    
+
     protected function _initConfig()
     {
-        
+
     }
-    
+
     protected function _initEvents()
     {
         Mage::app()->getConfig()->loadEventObservers($this->_code);
         return $this;
     }
-    
+
     protected function _initTranslate()
     {
         Mage::app()->getTranslator()->init($this->_code);
         return $this;
     }
-    
+
     protected function _initDesign()
     {
-        
+        $designPackage = Mage::getSingleton('core/design_package');
+        if ($designPackage->getArea() != self::AREA_FRONTEND)
+            return;
+
+        $currentStore = Mage::app()->getStore()->getStoreId();
+
+        $designChange = Mage::getSingleton('core/design')
+            ->loadChange($currentStore);
+
+        if ($designChange->getData()) {
+            $designPackage->setPackageName($designChange->getPackage())
+                ->setTheme($designChange->getTheme());
+        }
     }
 }

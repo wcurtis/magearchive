@@ -48,7 +48,7 @@ class Mage_Catalog_Model_Entity_Category_Attribute_Backend_Image extends Mage_Ea
             return;
         }
         
-        $uploader->save(Mage::app()->getStore()->getConfig('catalog/images/category_upload_path'));
+        $uploader->save(Mage::getStoreConfig('system/filesystem/media').'/catalog/category');
         
         if ($uploader->getUploadedFileName()) {
             $object->setData($this->getAttribute()->getName(), $uploader->getUploadedFileName());

@@ -94,8 +94,7 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
 
     public function setDateOrder($dir='DESC')
     {
-        $this->getSelect()
-            ->order('rt.created_at', $dir);
+        $this->setOrder('rt.created_at', $dir);
         return $this;
     }
 

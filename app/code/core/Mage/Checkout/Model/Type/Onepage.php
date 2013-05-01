@@ -276,6 +276,13 @@ class Mage_Checkout_Model_Type_Onepage
         return array();
     }
 
+    protected function validateOrder()
+    {
+        if (is_null($this->getQuote()->getShippingAddress()->getShippingMethod())) {
+            Mage::throwException('Select shipping method please.');
+        }
+    }
+
     /**
      * Enter description here...
      *
@@ -286,6 +293,8 @@ class Mage_Checkout_Model_Type_Onepage
         $res = array('error'=>1);
 
         try {
+            $this->validateOrder();
+
             $billing = $this->getQuote()->getBillingAddress();
             $shipping = $this->getQuote()->getShippingAddress();
 
@@ -361,6 +370,19 @@ class Mage_Checkout_Model_Type_Onepage
             $order->place();
             $order->save();
 
+             /*
+             a flag to set that there will be redirect to third party after confirmation
+             eg: paypal standard ipn
+             */
+            $hasOrderRedirect = $this->getQuote()->getPayment()->getOrderPlaceRedirectUrl() ? true : false;
+
+            /*
+            * need to have somelogic to set order as new status to make sure order is not finished yet
+            * quote will be still active when we send the customer to paypal
+            */
+            //if(!$hasOrderRedirect){
+            //}
+
             $this->getQuote()->setIsActive(false);
             $this->getQuote()->save();
 
@@ -369,7 +391,12 @@ class Mage_Checkout_Model_Type_Onepage
             $this->getCheckout()->setLastOrderId($order->getId());
             $this->getCheckout()->setLastRealOrderId($order->getIncrementId());
 
-            $order->sendNewOrderEmail();
+            /*
+            * we only want to send to customer about new order when there is no redirect to third party
+            */
+            if(!$hasOrderRedirect){
+                $order->sendNewOrderEmail();
+            }
 
             $res['success'] = true;
             $res['error']   = false;
@@ -381,7 +408,6 @@ class Mage_Checkout_Model_Type_Onepage
             $res['error_messages'] = $e->getMessage();
         }
         catch (Exception $e){
-            echo $e;
             $res['success'] = false;
             $res['error'] = true;
             if (isset($order)) {

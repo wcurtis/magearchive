@@ -27,19 +27,4 @@ class Mage_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return $this->_getUrl('shipping/tracking/ajax');
     }
-    public function isShipped($order)
-    {
-        if ($order->getTrackingNumbers()){
-            return true;
-        }
-        return false;
-    }
-    public function getTrackingNumbers($order)
-    {
-        $trackingNumbers = '';
-        foreach ($order->getTrackingNumbers() as $trackingNumber) {
-            $trackingNumbers .= "'".$trackingNumber."', ";
-        }
-        return $trackingNumbers;
-    }
 }

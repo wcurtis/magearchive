@@ -127,7 +127,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Core_Block_Templat
             $storeId = (int) $this->getRequest()->getParam('store');
 
             if ($storeId) {
-                $store = Mage::getModel('core/store')->load($storeId);
+                $store = Mage::app()->getStore($storeId);
                 $rootId = (int) $store->getConfig('catalog/category/root_id');
             }
             else {

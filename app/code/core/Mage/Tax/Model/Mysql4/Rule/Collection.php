@@ -25,56 +25,56 @@
  * @package    Mage_Tax
  */
 
-class Mage_Tax_Model_Mysql4_Rule_Collection extends Varien_Data_Collection_Db
+class Mage_Tax_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
-    protected $_classTable;
-
-    protected $_rateTypeTable;
-
-    protected $_ruleTable;
-
-    /**
-     * Construct
-     *
-     */
-    public function __construct()
+    protected function _construct()
     {
-        $resource = Mage::getSingleton('core/resource');
-        parent::__construct($resource->getConnection('tax_read'));
-
-        $this->_setIdFieldName('tax_rule_id');
-        $this->_classTable = $resource->getTableName('tax/tax_class');
-        $this->_rateTable = $resource->getTableName('tax/tax_rate');
-        $this->_rateTypeTable = $resource->getTableName('tax/tax_rate_type');
-        $this->_rateDataTable = $resource->getTableName('tax/tax_rate_data');
-        $this->_ruleTable = $resource->getTableName('tax/tax_rule');
-
-        $this->_sqlSelect->from($this->_ruleTable);
+        $this->_init('tax/rule');
     }
 
-    public function load($printQuery = false, $logQuery = false)
+    public function setClassTypeFilter($classType, $classTypeId)
     {
-        if ($this->isLoaded()) {
-            return $this;
-        }
-        $this->_sqlSelect->joinLeft(array('cct' => $this->_classTable), "cct.class_id = {$this->_ruleTable}.tax_customer_class_id AND cct.class_type = 'CUSTOMER'", array('customer_class' => 'class_name'));
-        $this->_sqlSelect->joinLeft(array('pct' => $this->_classTable), "pct.class_id = {$this->_ruleTable}.tax_product_class_id AND pct.class_type = 'PRODUCT'", array('product_class' => 'class_name'));
-        $this->_sqlSelect->joinLeft($this->_rateTypeTable, "{$this->_rateTypeTable}.type_id = {$this->_ruleTable}.tax_rate_type_id", array('type_name' => 'type_name'));
-        return parent::load($printQuery, $logQuery);
+        $sqlJoin = $classType == 'CUSTOMER'
+            ? 'main_table.tax_customer_class_id = class_table.class_id'
+            : 'main_table.tax_product_class_id = class_table.class_id';
+
+        $sqlWhere = $classType == 'CUSTOMER'
+            ? 'main_table.tax_customer_class_id = ?'
+            : 'main_table.tax_product_class_id = ?';
+
+        $this->_sqlSelect->joinLeft(
+            array('class_table' => $this->getTable('tax/tax_class')),
+            $sqlJoin
+        );
+        $this->_sqlSelect->where($sqlWhere, $classTypeId);
+
+        return $this;
     }
 
-    public function loadWithRates($printQuery = false, $logQuery = false)
+    public function joinClassTable()
     {
-        if ($this->isLoaded()) {
-            return $this;
-        }
+        $this->_sqlSelect->joinLeft(
+            array('class_customer_table' => $this->getTable('tax/tax_class')),
+            'main_table.tax_customer_class_id = class_customer_table.class_id',
+            array('class_customer_name' => 'class_name')
+        );
+        $this->_sqlSelect->joinLeft(
+            array('class_product_table' => $this->getTable('tax/tax_class')),
+            'main_table.tax_product_class_id = class_product_table.class_id',
+            array('class_product_name' => 'class_name')
+        );
 
-        $this->getSelect()->join(array('rd'=>$this->_rateDataTable), "rd.rate_type_id={$this->_ruleTable}.tax_rate_type_id", array('value'=>'rate_value'));
-        $this->getSelect()->join(array('r'=>$this->_rateTable), "r.tax_rate_id=rd.tax_rate_id", array('postcode'=>'tax_postcode'));
+        return $this;
+    }
 
-        $regionTable = Mage::getSingleton('core/resource')->getTableName('directory/country_region');
-        $this->getSelect()->joinLeft(array('reg'=>$regionTable), "reg.region_id=r.tax_region_id", array('country'=>'country_id', 'state'=>'code'));
+    public function joinRateTypeTable()
+    {
+        $this->_sqlSelect->joinLeft(
+            array('rate_type_table' => $this->getTable('tax/tax_rate_type')),
+            'main_table.tax_rate_type_id = rate_type_table.type_id',
+            array('rate_type_name' => 'type_name')
+        );
 
-        return parent::load($printQuery, $logQuery);
+        return $this;
     }
 }

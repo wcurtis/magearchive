@@ -112,17 +112,17 @@
                 <children>
                     <template translate="title" module="newsletter">
                         <title>Newsletter Templates</title>
-                        <action>*/newsletter_template/</action>
+                        <action>adminhtml/newsletter_template/</action>
                         <resource>admin/newsletter/template</resource>
                     </template>
                     <queue translate="title" module="newsletter">
                         <title>Newsletter Queue</title>
-                        <action>*/newsletter_queue/</action>
+                        <action>adminhtml/newsletter_queue/</action>
                         <resource>admin/newsletter/queue</resource>
                     </queue>
                     <problem translate="title" module="newsletter">
                         <title>Newsletter Problem Reports</title>
-                        <action>*/newsletter_problem/</action>
+                        <action>adminhtml/newsletter_problem/</action>
                         <resource>admin/newsletter/problem</resource>
                     </problem>
                 </children>
@@ -219,4 +219,27 @@
               </updates>
           </layout>
     </frontend>
+
+    <default>
+        <newsletter>
+            <subscription>
+                <confirm>0</confirm>
+                <confirm_email_identity>support</confirm_email_identity>
+                <confirm_email_template>6</confirm_email_template>
+                <success_email_identity>general</success_email_identity>
+                <success_email_template>8</success_email_template>
+                <un_email_identity>support</un_email_identity>
+                <un_email_template>9</un_email_template>
+            </subscription>
+        </newsletter>
+    </default>
+
+    <crontab>
+        <jobs>
+            <newsletter_send_all>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>newsletter/observer::scheduledSend</model></run>
+            </newsletter_send_all>
+        </jobs>
+    </crontab>
 </config>

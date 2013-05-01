@@ -273,6 +273,18 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Add join for catalog in stock field to product collection
+     *
+     * @param Mage_Catalog_Model_Entity_Product_Collection $productCollection
+     * @return Mage_CatalogInventory_Model_Stock_Item
+     */
+    public function addCatalogInventoryToProductCollection($productCollection)
+    {
+        $this->_getResource()->addCatalogInventoryToProductCollection($productCollection);
+        return $this;
+    }
+
     protected function _addQuoteItemError(Mage_Sales_Model_Quote_Item $item, $itemError, $quoteError, $errorIndex='error')
     {
         $item->setHasError(true);
@@ -286,7 +298,9 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
     {
         if ($this->getBackorders() == Mage_CatalogInventory_Model_Stock::BACKORDERS_NO
             && $this->getQty() <= $this->getMinQty()) {
-            $this->setIsInStock(false);
+            if(!$this->getProduct() || !$this->getProduct()->isConfigurable()) {
+                $this->setIsInStock(false);
+            }
         }
         Mage::dispatchEvent('cataloginventory_stock_item_save_before', array('item'=>$this));
         return $this;

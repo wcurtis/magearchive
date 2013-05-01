@@ -97,7 +97,7 @@ class Mage_Adminhtml_Catalog_SearchController extends Mage_Adminhtml_Controller_
             Mage::getSingleton('adminhtml/session')->setPageData($model->getData());
             try {
                 $model->save();
-                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Search was successfully saved'));
+                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Search Term was successfully saved'));
                 Mage::getSingleton('adminhtml/session')->setPageData(false);
                 $this->_redirect('*/*/');
                 return;
@@ -128,7 +128,7 @@ class Mage_Adminhtml_Catalog_SearchController extends Mage_Adminhtml_Controller_
                 return;
             }
         }
-        Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Unable to find a page to delete'));
+        Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Unable to find a search term to delete'));
         $this->_redirect('*/*/');
     }
 

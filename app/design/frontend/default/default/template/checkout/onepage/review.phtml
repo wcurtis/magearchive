@@ -22,11 +22,11 @@
     <?=$this->getChildHtml('info')?>
 </div>
 
-<div class="content form-buttons">
+<div class="content button-set">
     <p class="left"><?=$this->__('Forgot an Item?')?> <a href="<?=$this->getUrl('checkout/cart', array('_secure'=>false))?>"><?=$this->__('Edit Your Cart')?></a></p>
     <p>
         <span id="review-please-wait" style="display:none;" class="opc-please-wait">
-            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Submitting order information...')?> &nbsp;
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Submitting order information...')?> &nbsp;
         </span>
 
         <span id="review-buttons-container" class="a-center">

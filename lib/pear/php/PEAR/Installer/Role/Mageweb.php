@@ -19,4 +19,9 @@
  */
 
 
+/**
+ * @category   Varien
+ * @package    Varien_Object
+ * @author     Moshe Gurvich <moshe@varien.com>
+ */
 class PEAR_Installer_Role_Mageweb extends PEAR_Installer_Role_Common {}

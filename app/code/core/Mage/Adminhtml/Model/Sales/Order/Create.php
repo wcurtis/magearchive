@@ -136,7 +136,11 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
      */
     public function initFromOrder(Mage_Sales_Model_Order $order)
     {
-        $this->getSession()->setOrderId($order->getId());
+        if (!$order->getReordered()) {
+        	$this->getSession()->setOrderId($order->getId());
+        }
+
+
         $this->getSession()->setCurrencyId($order->getOrderCurrencyCode());
         $this->getSession()->setCustomerId($order->getCustomerId());
         $this->getSession()->setStoreId($order->getStoreId());
@@ -399,13 +403,15 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
                 $itemQty    = (int) $info['qty'];
                 $itemQty    = $itemQty>0 ? $itemQty : 1;
 
-                $itemPrice  =  $this->_parseCustomPrice($info['custom_price']);;
+                $itemPrice  = $this->_parseCustomPrice($info['custom_price']);;
+                $noDiscount = !isset($info['use_discount']);
 
                 if (empty($info['action'])) {
 
                     if ($item = $this->getQuote()->getItemById($itemId)) {
                        $item->setQty($itemQty);
                        $item->setCustomPrice($itemPrice);
+                       $item->setNoDiscount($noDiscount);
                     }
                 }
                 else {
@@ -543,6 +549,8 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
         }
 
         if (isset($data['customer_group_id'])) {
+            $groupModel = Mage::getModel('customer/group')->load($data['customer_group_id']);
+            $data['customer_tax_class_id'] = $groupModel->getTaxClassId();
             $this->setRecollect(true);
         }
 
@@ -619,7 +627,9 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
         foreach ($quote->getShippingAddress()->getAllItems() as $item) {
             $order->addItem($quoteConvert->itemToOrderItem($item));
         }
-        $order->save();
+
+        $order->place()
+            ->save();
 
         if ($this->getSession()->getOrder()->getId()) {
             $order->setRelationParentId($this->getSession()->getOrder()->getId());
@@ -628,10 +638,8 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
             $this->getSession()->getOrder()->setRelationChildRealId($order->getIncrementId());
             $this->getSession()->getOrder()->cancel()
                 ->save();
+            $order->save();
         }
-
-        $order->place()
-            ->save();
 
         if ($this->getSendConfirmation()) {
             $order->sendNewOrderEmail();
@@ -669,7 +677,7 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
         if (!$this->getQuote()->getPayment()->getMethod()) {
             $errors[] = Mage::helper('adminhtml')->__('Payment method must be specified');
         }
-            
+
         if (!empty($errors)) {
             foreach ($errors as $error) {
                 $this->getSession()->addError($error);
@@ -713,7 +721,6 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
                 ->setDefaultShipping($shippingAddress->getId())
                 ->save();
 
-            $this->getQuote()->setCustomer($customer);
             $this->getBillingAddress()->setCustomerId($customer->getId());
             $this->getShippingAddress()->setCustomerId($customer->getId());
 
@@ -725,6 +732,7 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
 
             $customer->save();
         }
+        $this->getQuote()->setCustomer($customer);
         return $this;
     }
 

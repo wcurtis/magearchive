@@ -21,10 +21,15 @@
 <?
 /**
  * Catalog advanced search form
- * 
+ *
  * @see Mage_CatalogSearch_Block_Advanced_Form
  */
 ?>
+<link rel="stylesheet" type="text/css" media="all" href="<?=$this->getJsUrl()?>calendar/calendar-win2k-1.css" title="win2k-1" />
+<script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/calendar.js"></script>
+<script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/lang/calendar-en.js"></script>
+<script type="text/javascript" src="<?=$this->getJsUrl()?>calendar/calendar-setup.js"></script>
+
 <div class="page-head">
     <h3><?=$this->__('Catalog Advanced Search')?></h3>
 </div>
@@ -49,6 +54,9 @@
                     <?=$this->getAttributeSelectElement($_attribute)?>
                 <?break;
                 case 'date':?>
+                    <?=$this->getDateInput($_attribute, 'from')?>
+                    -
+                    <?=$this->getDateInput($_attribute, 'to')?>
                 <?break;
                 default:?>
                 <input name="<?=$_code?>" id="<?=$_code?>_search_field" value="<?=$this->getAttributeValue($_attribute)?>" title="<?=$this->getAttributeLabel($_attribute)?>"  class="input-text <?=$this->getAttributeValidationClass($_attribute)?>" type="text"/>
@@ -58,9 +66,9 @@
     </ul>
     <script type="text/javascript">decorateList('advanced-search-list')</script>
 </fieldset>
-<div class="form-buttons">
+<div class="button-set">
     <p class="required">* <?=$this->__('Required Fields')?></p>
-    <button type="submit" class="form-button"><span><?=$this->__('Search')?></span></button>
+    <button class="form-button"><span><?=$this->__('Search')?></span></button>
 </div>
 </form>
 <script type="text/javascript">

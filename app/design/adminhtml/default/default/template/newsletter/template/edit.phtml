@@ -41,12 +41,12 @@
         </tr>
     </table>
 </div>
-<form action="<?=$this->getSaveUrl()?>" method="POST" id="newsletter_template_edit_form">
+<form action="<?=$this->getSaveUrl()?>" method="post" id="newsletter_template_edit_form">
 <input type="hidden" id="change_flag_element" name="_change_type_flag" value="" />
 <input type="hidden" id="save_as_flag" name="_save_as_flag" value="<?=$this->getSaveAsFlag()?>" />
 <?=$this->getForm()?>
 </form>
-<form action="<?=$this->getPreviewUrl()?>" method="POST" id="newsletter_template_preview_form" target="_blank">
+<form action="<?=$this->getPreviewUrl()?>" method="post" id="newsletter_template_preview_form" target="_blank">
 <input type="hidden" id="preview_type" name="type" value="<?=$this->isTextType()?1:2?>" />
 <input type="hidden" id="preview_text" name="text" value="" />
 </form>

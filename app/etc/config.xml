@@ -178,12 +178,14 @@
         </models>
     </global>
 
-    <general>
+    <default>
         <system>
             <filesystem>
                 <base>{{root_dir}}</base>
+                <app>{{root_dir}}/app</app>
                 <code>{{app_dir}}/code</code>
                 <design>{{app_dir}}/design</design>
+                <locale>{{app_dir}}/locale</locale>
                 <etc>{{app_dir}}/etc</etc>
                 <media>{{root_dir}}/media</media>
                 <upload>{{root_dir}}/media/upload</upload>
@@ -191,7 +193,11 @@
                 <var>{{var_dir}}</var>
                 <cache>{{var_dir}}/cache</cache>
                 <session>{{var_dir}}/session</session>
+                <tmp>{{var_dir}}/tmp</tmp>
+                <pear>{{var_dir}}/pear</pear>
+                <export>{{var_dir}}/export</export>
             </filesystem>
         </system>
-    </general>
+
+    </default>
 </config>

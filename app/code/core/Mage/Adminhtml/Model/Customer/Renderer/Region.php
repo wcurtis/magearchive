@@ -59,6 +59,8 @@ class Mage_Adminhtml_Model_Customer_Renderer_Region implements Varien_Data_Form_
         $regionId = $element->getForm()->getElement('region_id')->getValue();
 
         if ($regionCollection && $regionCollection->getSize()) {
+            $elementClass = $element->getClass();
+            $element->setClass(str_replace('input-text', '', $elementClass));
             $html.= $element->getLabelHtml();
             $html.= '<select id="'.$element->getHtmlId().'" name="'.$element->getName().'" '
                  .$element->serialize($element->getHtmlAttributes()).'>'."\n";
@@ -67,6 +69,7 @@ class Mage_Adminhtml_Model_Customer_Renderer_Region implements Varien_Data_Form_
             	$html.= '<option value="'.$region->getId().'"'.$selected.'>'.$region->getName().'</option>';
             }
             $html.= '</select>';
+            $element->setClass($elementClass);
         }
         else {
             $element->setClass('input-text');

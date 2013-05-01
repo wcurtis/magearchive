@@ -1,9 +1,9 @@
 <?php
 
 class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts_Customers extends Mage_Adminhtml_Block_Widget_Grid {
-    
-	protected $_alertModel;
-    
+
+    protected $_alertModel;
+
     public function __construct()
     {
         parent::__construct();
@@ -12,13 +12,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts_Customers extends Mag
         $this->setUseAjax(true);
         $this->setEmptyText(Mage::helper('catalog')->__('There are no customers for this alert'));
     }
-    
+
     public function setModel(Mage_CustomerAlert_Model_Type $alertModel)
     {
         $this->_alertModel = $alertModel;
         return $this;
     }
-    
+
     public function loadCustomers()
     {
         $customer = Mage::getResourceModel('customeralert/customer_collection')
@@ -26,7 +26,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts_Customers extends Mag
         $this->setData('customerCollection',$customer);
         return $this;
     }
-    
+
     protected function _prepareCollection()
     {
         $customerCollection = $this->getData('customerCollection');
@@ -55,21 +55,19 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Alerts_Customers extends Mag
             'header' => Mage::helper('catalog')->__('Email'),
             'index'  => 'email',
         ));
-        
+
         $this->addColumn('last_alert_sent', array(
             'header' => Mage::helper('catalog')->__('Last Alert Sent'),
             'index'  => 'last_alert_sent',
             'type'   => 'datetime'
-            
+
         ));
 
         return parent::_prepareColumns();
     }
-    
+
     public function getGridUrl()
     {
         return Mage::getUrl('*/catalog_product/alertsGrid', $this->_alertModel->getParamValues());
     }
 }
-
-?>

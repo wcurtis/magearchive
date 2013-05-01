@@ -50,6 +50,9 @@ class Mage_Checkout_Block_Multishipping_Billing extends Mage_Payment_Block_Form_
         if (!$method->canUseForMultishipping()) {
             return false;
         }
+        if (!$method->canUseForCountry($this->getQuote()->getBillingAddress()->getCountry())) {
+            return false;
+        }
         $method->setInfoInstance($this->getQuote()->getPayment());
         return true;
     }

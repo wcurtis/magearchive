@@ -41,7 +41,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Data extends Mage_Adminhtml_Block_
             'billing_address',
             'shipping_method',
             'billing_method',
-            'coupons',
             'newsletter',
             'search',
             'items',
@@ -63,7 +62,19 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Data extends Mage_Adminhtml_Block_
      */
     public function getAvailableCurrencies()
     {
-        $codes = $this->getStore()->getAvailableCurrencyCodes();
+        $dirtyCodes = $this->getStore()->getAvailableCurrencyCodes();
+        $codes = array();
+        if (is_array($dirtyCodes) && count($dirtyCodes)) {
+            $rates = Mage::getModel('directory/currency')->getCurrencyRates(
+                Mage::app()->getStore()->getBaseCurrency(),
+                $dirtyCodes
+            );
+            foreach ($dirtyCodes as $code) {
+                if (isset($rates[$code])) {
+                    $codes[] = $code;
+                }
+            }
+        }
         return $codes;
     }
 
@@ -75,7 +86,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Data extends Mage_Adminhtml_Block_
      */
     public function getCurrencyName($code)
     {
-        return Mage::app()->getLocale()->getLocale()->getTranslation($code, 'currency');
+        return Mage::app()->getLocale()->currency($code)->getName();
     }
 
     /**

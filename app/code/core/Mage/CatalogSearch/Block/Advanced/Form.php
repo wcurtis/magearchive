@@ -125,8 +125,11 @@ class Mage_CatalogSearch_Block_Advanced_Form extends Mage_Core_Block_Template
     {
         $extra = '';
         $options = $attribute->getSource()->getAllOptions(false);
+
         $name = $attribute->getAttributeCode();
-        if (is_array($options) && count($options)>3) {
+
+        // 2 - avoid yes/no selects to be multiselects
+        if (is_array($options) && count($options)>2) {
             $extra = 'multiple size="4"';
             $name.= '[]';
         }
@@ -156,6 +159,15 @@ class Mage_CatalogSearch_Block_Advanced_Form extends Mage_Core_Block_Template
         return $block;
     }
 
+    protected function _getDateBlock()
+    {
+        $block = $this->getData('_date_block');
+        if (is_null($block)) {
+            $block = $this->getLayout()->createBlock('core/html_date');
+            $this->setData('_date_block', $block);
+        }
+        return $block;
+    }
     /**
      * Retrieve advanced search model object
      *
@@ -169,5 +181,21 @@ class Mage_CatalogSearch_Block_Advanced_Form extends Mage_Core_Block_Template
     public function getSearchPostUrl()
     {
         return $this->getUrl('*/*/result');
+    }
+
+    public function getDateInput($attribute, $part = 'from')
+    {
+        $name = $attribute->getAttributeCode() . '[' . $part . ']';
+        $value = $this->getAttributeValue($attribute, $part);
+
+        return $this->_getDateBlock()
+            ->setName($name)
+            ->setId($attribute->getAttributeCode() . '_' . $part)
+            ->setTitle($this->getAttributeLabel($attribute))
+            ->setValue($value)
+            ->setImage($this->getSkinUrl('images/calendar.gif'))
+            ->setFormat('%m/%d/%y')
+            ->setClass('input-text')
+            ->getHtml();
     }
 }

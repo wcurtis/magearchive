@@ -26,7 +26,7 @@
  * - request
  *
  * - relative_url: true, false
- * - type: 'route', 'skin', 'js', 'media'
+ * - type: 'link', 'skin', 'js', 'media'
  * - store: instanceof Mage_Core_Model_Store
  * - secure: true, false
  *
@@ -70,19 +70,20 @@
  */
 class Mage_Core_Model_Url extends Varien_Object
 {
-    const TYPE_ROUTE    = 'route';
-    const TYPE_SKIN     = 'skin';
-    const TYPE_JS       = 'js';
-    const TYPE_MEDIA    = 'media';
-
-    const SCHEME_UNSECURE   = 'http';
-    const SCHEME_SECURE     = 'https';
-
-    const PORT_UNSECURE = 80;
-    const PORT_SECURE   = 443;
-
     const DEFAULT_CONTROLLER_NAME   = 'index';
     const DEFAULT_ACTION_NAME       = 'index';
+
+    const XML_PATH_UNSECURE_PROTOCOL= 'web/unsecure/protocol';
+    const XML_PATH_UNSECURE_HOST    = 'web/unsecure/host';
+    const XML_PATH_UNSECURE_PORT    = 'web/unsecure/port';
+    const XML_PATH_UNSECURE_PATH    = 'web/unsecure/base_path';
+    const XML_PATH_SECURE_PROTOCOL  = 'web/secure/protocol';
+    const XML_PATH_SECURE_HOST      = 'web/secure/host';
+    const XML_PATH_SECURE_PORT      = 'web/secure/port';
+    const XML_PATH_SECURE_PATH      = 'web/secure/base_path';
+
+    const XML_PATH_UNSECURE_URL     = 'web/unsecure/base_url';
+    const XML_PATH_SECURE_URL       = 'web/secure/base_url';
 
     static protected $_configDataCache;
     static protected $_baseUrlCache;
@@ -166,25 +167,6 @@ class Mage_Core_Model_Url extends Varien_Object
         return self::$_configDataCache[$cacheId];
     }
 
-    public function isCurrentlySecure()
-    {
-        if (!empty($_SERVER['HTTPS'])) {
-            return true;
-        }
-
-        if (Mage::app()->isInstalled()) {
-            return Mage::getStoreConfig('web/secure/protocol')=='https'
-                && Mage::getStoreConfig('web/secure/port')==$_SERVER['SERVER_PORT'];
-        } else {
-            return 443==$_SERVER['SERVER_PORT'];
-        }
-    }
-
-    public function shouldBeSecure()
-    {
-        return false;
-    }
-
     public function setRequest(Zend_Controller_Request_Http $request)
     {
         $this->_request = $request;
@@ -204,63 +186,21 @@ class Mage_Core_Model_Url extends Varien_Object
         return $this->_request;
     }
 
-    public function setType($data)
-    {
-        if ($this->hasData('type') && $this->getData('type')===$data) {
-            return $this;
-        }
-        $this->setData('type', $data);
-        $this->unsetData('secure');
-        $this->unsetData('base_path');
-        $this->unsetData('query');
-        $this->unsetData('query_params');
-        $this->unsetData('fragment');
-        #$this->getSecure();
-        return $this;
-    }
-
     public function getType()
     {
         if (!$this->hasData('type')) {
-            $this->setData('type', self::TYPE_ROUTE);
+            $this->setData('type', Mage_Core_Model_Store::URL_TYPE_LINK);
         }
         return $this->getData('type');
-    }
-
-    public function refreshAbsoluteBase()
-    {
-        $this->unsetData('secure');
-        $this->unsetData('scheme');
-        $this->unsetData('host');
-        $this->unsetData('port');
-        $this->unsetData('base_path');
-        $this->unsetData('authority');
-        return $this;
-    }
-
-    /**
-     * Declare secure flag property
-     *
-     * @param   boolean $flag
-     * @return  Mage_Core_Model_Url
-     */
-    public function setSecure($flag)
-    {
-        if ($flag==$this->getSecure()) {
-            return $this;
-        }
-        $this->refreshAbsoluteBase();
-        $this->setData('secure', $flag);
-        return $this;
     }
 
     public function getSecure()
     {
         if (!$this->hasData('secure')) {
-            if ($this->getType()===self::TYPE_ROUTE) {
-                $this->setData('secure', Mage::getConfig()->isUrlSecure('/'.$this->getActionPath()));
+            if ($this->getType()===Mage_Core_Model_Store::URL_TYPE_LINK) {
+                $this->setData('secure', Mage::getConfig()->shouldUrlBeSecure('/'.$this->getActionPath()));
             } else {
-                $this->setData('secure', $this->isCurrentlySecure());
+                $this->setData('secure', Mage::app()->getStore()->isCurrentlySecure());
             }
         }
         return $this->getData('secure');
@@ -268,36 +208,15 @@ class Mage_Core_Model_Url extends Varien_Object
 
     public function setStore($data)
     {
-        $defStore = Mage::app()->getStore();
-
-        if (is_null($data)) {
-            $store = $defStore;
-        } elseif (is_numeric($data)) {
-            if ($defStore->getId()==$data) {
-                $store = $defStore;
-            } else {
-                $store = Mage::getModel('core/store')->load($data);
-            }
-        } elseif (is_string($data)) {
-            if ($defStore->getCode()==$data) {
-                $store = $defStore;
-            } else {
-                $store = Mage::getModel('core/store')->load($data);
-            }
-        } elseif ($data instanceof Mage_Core_Model_Store) {
-            $store = $data;
-        } else {
-            throw Mage::exception('Mage_Core', 'Wrong store argument specified');
-        }
-        if ($this->hasStore() && $this->getStore()->getId()===$store->getId()) {
-            return $this;
-        }
-
-        $this->setData('store', $store);
-        $this->refreshAbsoluteBase();
+        $this->setData('store', Mage::app()->getStore($data));
         return $this;
     }
 
+    /**
+     * Get current store for the url instance
+     *
+     * @return Mage_Core_Model_Store
+     */
     public function getStore()
     {
         if (!$this->hasData('store')) {
@@ -306,183 +225,19 @@ class Mage_Core_Model_Url extends Varien_Object
         return $this->getData('store');
     }
 
-    public function setScheme($data)
-    {
-        if ($data!==self::SCHEME_SECURE && $data!==self::SCHEME_UNSECURE) {
-            throw Mage::exception('Mage_Core', 'Invalid scheme specified');
-        }
-
-        return $this->setData('scheme', $data);
-    }
-
-    public function getScheme()
-    {
-        if (!$this->hasData('scheme')) {
-            $this->setData('scheme', $this->getConfigData('protocol'));
-        }
-        return $this->getData('scheme');
-    }
-
-    public function setHost($data)
-    {
-        if ($this->getData('host')==$data) {
-            return $this;
-        }
-        $this->setData('host', $data)->unsetData('authority');
-        return $this;
-    }
-
-    public function getHost()
-    {
-        if (!$this->hasData('host')) {
-            $this->setData('host', $this->getConfigData('host'));
-        }
-        return $this->getData('host');
-    }
-
-    public function setPort($data)
-    {
-        if ($this->getData('port')==$data) {
-            return $this;
-        }
-        $this->setData('port', $data)->unsetData('authority');
-        return $this;
-    }
-
-    public function getPort()
-    {
-        if (!$this->hasData('port')) {
-            $this->setData('port', $this->getConfigData('port'));
-        }
-        return $this->getData('port');
-    }
-
-    public function setBasePath($data)
-    {
-        if ($this->getData('base_path')==$data) {
-            return $this;
-        }
-        $this->setData('base_path', $data)->unsetData('authority');
-        return $this;
-    }
-
-    public function getBaseScript()
-    {
-//        if ($this->hasData('base_script')) {
-//            return $this->getData('base_script');
-//        }
-
-        if ($this->getType()!==self::TYPE_ROUTE) {
-            return '';
-        }
-
-        if (!Mage::getStoreConfigFlag('web/url/use_script_name')) {
-            return '';
-        }
-
-        $script = basename($_SERVER['SCRIPT_NAME']).'/';
-
-        return $script;
-    }
-
-    public function getBasePath()
-    {
-        if (!$this->hasData('base_path')) {
-            $basePath = $this->getConfigData('base_path');
-            if ($this->getType()===self::TYPE_ROUTE) {
-                $path = $basePath;
-            } else {
-                $path = $this->getConfigData($this->getType(), 'web/url/');
-                $path = str_replace('{{base_path}}', $basePath, $path);
-            }
-            $path .= $this->getBaseScript();
-            $this->setData('base_path', $path);
-        }
-        return $this->getData('base_path');
-    }
-
-    public function setPath($data)
-    {
-        if (strpos($data, $this->getBasePath())===0) {
-            $this->setRoutePath(substr($data, strlen($this->getBasePath())));
-        } else {
-            $this->setBasePath('');
-            $this->setRoutePath($data);
-        }
-        return $this;
-    }
-
-    public function getPath()
-    {
-        return $this->getBasePath().$this->getRoutePath();
-    }
-
-    public function getAuthority()
-    {
-        if (!$this->hasData('authority')) {
-            $authority = '//'.$this->getHost();
-
-            if ($this->getUser()) {
-                $authority .= $this->getUser();
-                if ($this->getPassword()) {
-                    $authority .= ':'.$this->getPassword();
-                }
-                $authority .= '@';
-            }
-
-            $secure = $this->getSecure();
-            $port = $this->getPort();
-            if (!$secure && $port!=self::PORT_UNSECURE || $secure && $port!=self::PORT_SECURE) {
-                $authority .= ':'.$port;
-            }
-            $this->setData('authority', $authority);
-        }
-        return $this->getData('authority');
-    }
-
-    public function getHostUrl()
-    {
-        $url = $this->getScheme().':'.$this->getAuthority();
-        return $url;
-    }
-
-    public function getAbsoluteBaseUrl()
-    {
-        $url = $this->getHostUrl().$this->getBasePath();
-        return $url;
-    }
-
     public function getBaseUrl($params=array())
     {
+        if (isset($params['_store'])) {
+            $this->setStore($params['_store']);
+        }
         if (isset($params['_type'])) {
             $this->setType($params['_type']);
         }
         if (isset($params['_secure'])) {
-            $this->setSecure(!empty($params['_secure']));
+            $this->setSecure($params['_secure']);
         }
-        if (isset($params['_absolute'])) {
-            $this->setRelativeUrl(!$params['_absolute']);
-        }
-        if (isset($params['_store'])) {
-            $this->setStore($params['_store']);
-        }
-        $cacheId = $this->getStore()->getCode();
-        $cacheId .= '/'.($this->getSecure() ? 'secure' : 'unsecure');
-        $cacheId .= '/'.$this->getType();
 
-        if (isset(self::$_baseUrlCache[$cacheId])) {
-            $url = self::$_baseUrlCache[$cacheId];
-        } else {
-            if ($this->getRelativeUrl()) {
-                $url = $this->getBasePath();
-            } else {
-                $url = $this->getAbsoluteBaseUrl();
-            }
-            self::$_baseUrlCache[$cacheId] = $url;
-        }
-        $this->checkCookieDomains();
-
-        return $url;
+        return $this->getStore()->getBaseUrl($this->getType(), $this->getSecure());
     }
 
     public function setRoutePath($data)
@@ -495,7 +250,9 @@ class Mage_Core_Model_Url extends Varien_Object
 
         $route = array_shift($a);
         if ('*'===$route) {
-            $route = $this->getRequest()->getModuleName();
+            $frontName = $this->getRequest()->getModuleName();
+            $router = Mage::app()->getFrontController()->getRouterByFrontName($frontName);
+            $route = $router->getRouteByFrontName($frontName);
         }
         $this->setRouteName($route);
         $routePath = $route.'/';
@@ -543,7 +300,7 @@ class Mage_Core_Model_Url extends Varien_Object
         }
 
         $hasParams = (bool)$this->getRouteParams();
-        $path = $this->getRouteName() . '/';
+        $path = $this->getRouteFrontName() . '/';
 
         if ($this->getControllerName()) {
             $path .= $this->getControllerName() . '/';
@@ -585,8 +342,25 @@ class Mage_Core_Model_Url extends Varien_Object
         if ($this->getData('route_name')==$data) {
             return $this;
         }
-        $this->unsetData('route_path')->unsetData('controller_name')->unsetData('action_name')->unsetData('secure');
+        $this->unsetData('route_front_name')
+            ->unsetData('route_path')
+            ->unsetData('controller_name')
+            ->unsetData('action_name')
+            ->unsetData('secure');
         return $this->setData('route_name', $data);
+    }
+
+    public function getRouteFrontName()
+    {
+        if (!$this->hasData('route_front_name')) {
+            $routeName = $this->getRouteName();
+            $route = Mage::app()->getFrontController()->getRouterByRoute($routeName);
+            $frontName = $route->getFrontNameByRoute($routeName);
+
+            $this->setRouteFrontName($frontName);
+        }
+
+        return $this->getData('route_front_name');
     }
 
     public function getRouteName()
@@ -736,6 +510,25 @@ class Mage_Core_Model_Url extends Varien_Object
         return $this;
     }
 
+    public function addSessionParam()
+    {
+        $session = Mage::getSingleton('core/session');
+
+        if (!self::$_encryptedSessionId) {
+            $helper = Mage::helper('core');
+            if (!$helper) {
+                return $this;
+            }
+            self::$_encryptedSessionId = $helper->encrypt($session->getSessionId());
+        }
+        $this->setQueryParam(
+            Mage_Core_Model_Session_Abstract::SESSION_ID_QUERY_PARAM,
+            self::$_encryptedSessionId
+        );
+        return $this;
+    }
+
+
     public function setQuery($data)
     {
         if ($this->getData('query')==$data) {
@@ -815,6 +608,11 @@ class Mage_Core_Model_Url extends Varien_Object
         Varien_Profiler::start(__METHOD__);
 
         $url = $this->getRouteUrl($routePath, $routeParams);
+
+        $session = Mage::getSingleton('core/session');
+        if ($sessionId = $session->getSessionIdForHost($url)) {
+            $this->setQueryParam($session->getSessionIdQueryParam(), $sessionId);
+        }
 
         if ($this->getQuery()) {
             $url .= '?'.$this->getQuery();

@@ -21,21 +21,6 @@
 
 class Mage_Core_Controller_Varien_Front
 {
-    /**
-     * Request object
-     *
-     * @var Zend_Controller_Request_Http
-     */
-    protected $_request;
-
-    /**
-     * Response object
-     *
-     * @var Zend_Controller_Response_Http
-     */
-    protected $_response;
-
-
     protected $_defaults = array();
 
     /**
@@ -74,10 +59,7 @@ class Mage_Core_Controller_Varien_Front
      */
     public function getRequest()
     {
-        if (empty($this->_request)) {
-            $this->_request = new Mage_Core_Controller_Request_Http();
-        }
-        return $this->_request;
+        return Mage::app()->getRequest();
     }
 
     /**
@@ -87,10 +69,7 @@ class Mage_Core_Controller_Varien_Front
      */
     public function getResponse()
     {
-        if (empty($this->_response)) {
-            $this->_response = new Zend_Controller_Response_Http();
-        }
-        return $this->_response;
+        return Mage::app()->getResponse();
     }
 
     /**
@@ -160,6 +139,8 @@ class Mage_Core_Controller_Varien_Front
 
         $this->rewrite();
 
+        Varien_Profiler::stop('app/init');
+
         $i = 0;
         while (!$request->isDispatched() && $i++<100) {
             foreach ($this->_routers as $router) {
@@ -183,13 +164,34 @@ class Mage_Core_Controller_Varien_Front
         // empty route supplied - return base url
         if (empty($routeName)) {
             $router = $this->getRouter('standard');
-        } elseif ($this->getRouter('admin')->getRealModuleName($routeName)) {
+        } elseif ($this->getRouter('admin')->getFrontNameByRoute($routeName)) {
             // try standard router url assembly
             $router = $this->getRouter('admin');
-        } elseif ($this->getRouter('standard')->getRealModuleName($routeName)) {
+        } elseif ($this->getRouter('standard')->getFrontNameByRoute($routeName)) {
             // try standard router url assembly
             $router = $this->getRouter('standard');
         } elseif ($router = $this->getRouter($routeName)) {
+            // try custom router url assembly
+        } else {
+            // get default router url
+            $router = $this->getRouter('default');
+        }
+
+        return $router;
+    }
+
+    public function getRouterByFrontName($frontName)
+    {
+        // empty route supplied - return base url
+        if (empty($frontName)) {
+            $router = $this->getRouter('standard');
+        } elseif ($this->getRouter('admin')->getRouteByFrontName($frontName)) {
+            // try standard router url assembly
+            $router = $this->getRouter('admin');
+        } elseif ($this->getRouter('standard')->getRouteByFrontName($frontName)) {
+            // try standard router url assembly
+            $router = $this->getRouter('standard');
+        } elseif ($router = $this->getRouter($frontName)) {
             // try custom router url assembly
         } else {
             // get default router url

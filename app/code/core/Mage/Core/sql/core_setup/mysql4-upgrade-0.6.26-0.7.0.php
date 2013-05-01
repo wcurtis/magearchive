@@ -29,8 +29,6 @@ ALTER TABLE `core_url_rewrite`
 ADD COLUMN `type` int(1) NOT NULL  DEFAULT '0' after `options`,
 ADD COLUMN `description` varchar(255) NULL  after `type`;
 
-DELETE FROM `core_config_data` WHERE `path`='payment/authorizenet/cgi_url';
-
 ");
 
 $installer->endSetup();
@@ -59,7 +57,7 @@ body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;
                           <tr>
                                 <td valign="top">
                              <p><strong>Hello {{var billing.name}}</strong>,<br/>
-                                Thank you for your order from Magento Demo Store. Once your package ships we will send an email with a link to track your order. You can check the status of your order by <a href="{{store url="customer/account/"}}" style="color:#1E7EC8;">logging into your account</a>. If you have any questions about your order please contact us at <a href="mailto:dummyemail@magentocommerce.com" style="color:#1E7EC8;">dummyemail@magentocommerce.com</a> or call us at <nobr>(800) DEMO-NUMBER</nobr> Monday - Friday, 8am - 5pm PST.</p>
+                                Thank you for your order from Magento Demo Store. Once your package ships we will send an email with a link to track your order. You can check the status of your order by <a href="{{store url="customer/account/"}}" style="color:#1E7EC8;">logging into your account</a>. If you have any questions about your order please contact us at <a href="mailto:dummyemail@magentocommerce.com" style="color:#1E7EC8;">dummyemail@magentocommerce.com</a> or call us at <span class="nobr">(800) DEMO-NUMBER</span> Monday - Friday, 8am - 5pm PST.</p>
  <p>Your order confirmation is below. Thank you again for your business.</p>
 
                                 <h3 style="border-bottom:2px solid #eee; font-size:1.05em; padding-bottom:1px; ">Your Order #{{var order.increment_id}} <small>(placed on {{var order.getCreatedAtFormated(\'long\')}})</small></h3>

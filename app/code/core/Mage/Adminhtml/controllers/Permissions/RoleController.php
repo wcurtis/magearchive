@@ -27,13 +27,19 @@
 class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controller_Action
 {
 
-	public function indexAction()
+    protected function _initAction()
     {
         $this->loadLayout();
         $this->_setActiveMenu('system/acl');
         $this->_addBreadcrumb($this->__('System'), $this->__('System'));
         $this->_addBreadcrumb($this->__('Permissions'), $this->__('Permissions'));
         $this->_addBreadcrumb($this->__('Roles'), $this->__('Roles'));
+        return $this;
+    }
+
+    public function indexAction()
+    {
+        $this->_initAction();
 
         $this->_addContent($this->getLayout()->createBlock('adminhtml/permissions_roles'));
 
@@ -43,14 +49,16 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
     public function roleGridAction()
     {
         $this->getResponse()
-        	->setBody($this->getLayout()
-        	->createBlock('adminhtml/permissions_grid_role')
-        	->toHtml()
+            ->setBody($this->getLayout()
+            ->createBlock('adminhtml/permissions_grid_role')
+            ->toHtml()
         );
     }
 
     public function editRoleAction()
     {
+        $this->_initAction();
+
         $roleId = $this->getRequest()->getParam('rid');
         if( intval($roleId) > 0 ) {
             $breadCrumb = $this->__('Edit Role');
@@ -59,12 +67,8 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
             $breadCrumb = $this->__('Add new Role');
             $breadCrumbTitle = $this->__('Add new Role');
         }
-        $this->loadLayout();
-        $this->_addBreadcrumb($this->__('System'), $this->__('System'));
-        $this->_addBreadcrumb($this->__('Permission'), $this->__('Permission'));
-        $this->_addBreadcrumb($this->__('Roles'), $this->__('Roles'), Mage::getUrl('*/*/'));
         $this->_addBreadcrumb($breadCrumb, $breadCrumbTitle);
-        $this->_setActiveMenu('system/acl');
+
         $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
 
         $this->_addLeft(
@@ -90,7 +94,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
             $this->_redirect('*/*/editrole', array('rid' => $rid));
             return;
         }
-       
+
         try {
             Mage::getModel("admin/permissions_roles")->setId($rid)->delete();
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Role successfully deleted.'));
@@ -108,6 +112,11 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
         $roleUsers  = $this->getRequest()->getParam('in_role_user', null);
         parse_str($roleUsers, $roleUsers);
         $roleUsers = array_keys($roleUsers);
+
+        $isAll = $this->getRequest()->getParam('all');
+        if ($isAll)
+            $resource = array("all");
+
         try {
             $role = Mage::getModel("admin/permissions_roles")
                     ->setId($rid)
@@ -120,7 +129,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
                 ->setRoleId($role->getId())
                 ->setResources($resource)
                 ->saveRel();
-            
+
             $oldRoleUsers = Mage::getModel("admin/permissions_roles")->setId($role->getId())->getRoleUsers($role);
             if ( sizeof($oldRoleUsers) > 0 ) {
                 foreach($oldRoleUsers as $oUid) {
@@ -166,17 +175,17 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
     {
         $user = Mage::getModel("admin/permissions_user")->load($userId);
         $user->setRoleId($roleId)->setUserId($userId);
-        
-    	if( $user->roleUserExists() === true ) {
+
+        if( $user->roleUserExists() === true ) {
             return false;
         } else {
             $user->add();
             return true;
         }
-    }    
-    
+    }
+
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('system/acl/roles');
+        return Mage::getSingleton('admin/session')->isAllowed('system/acl/roles');
     }
 }

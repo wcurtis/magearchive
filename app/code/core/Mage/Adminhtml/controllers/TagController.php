@@ -208,6 +208,54 @@ class Mage_Adminhtml_TagController extends Mage_Adminhtml_Controller_Action
             ->renderLayout();
     }
 
+    public function massDeleteAction()
+    {
+        $tagIds = $this->getRequest()->getParam('tag');
+        if(!is_array($tagIds)) {
+             Mage::getSingleton('adminhtml/session')->addError($this->__('Please select tag(s)'));
+        } else {
+            try {
+                foreach ($tagIds as $tagId) {
+                    $tag = Mage::getModel('tag/tag')->load($tagId);
+                    $tag->delete();
+                }
+                Mage::getSingleton('adminhtml/session')->addSuccess(
+                    $this->__('Total of %d record(s) were successfully deleted', count($tagIds))
+                );
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            }
+        }
+        $ret = $this->getRequest()->getParam('ret') ? $this->getRequest()->getParam('ret') : 'index';
+        $this->_redirect('*/*/'.$ret);
+    }
+
+    public function massStatusAction()
+    {
+        $tagIds = $this->getRequest()->getParam('tag');
+        $storeId = (int)$this->getRequest()->getParam('store', 0);
+        if(!is_array($tagIds)) {
+            // No products selected
+            Mage::getSingleton('adminhtml/session')->addError($this->__('Please select tag(s)'));
+        } else {
+            try {
+                foreach ($tagIds as $tagId) {
+                    $tag = Mage::getModel('tag/tag')
+                        ->load($tagId)
+                        ->setStatus($this->getRequest()->getParam('status'));
+                     $tag->save();
+                }
+                Mage::getSingleton('adminhtml/session')->addSuccess(
+                    $this->__('Total of %d record(s) were successfully updated', count($tagIds))
+                );
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            }
+        }
+        $ret = $this->getRequest()->getParam('ret') ? $this->getRequest()->getParam('ret') : 'index';
+        $this->_redirect('*/*/'.$ret);
+    }
+
     protected function _isAllowed()
     {
         switch ($this->getRequest()->getActionName()) {

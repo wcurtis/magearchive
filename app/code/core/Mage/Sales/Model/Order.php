@@ -80,29 +80,18 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     const XML_PATH_NEW_ORDER_EMAIL_TEMPLATE     = 'sales/new_order/email_template';
     const XML_PATH_NEW_ORDER_EMAIL_IDENTITY     = 'sales/new_order/email_identity';
+    const XML_PATH_NEW_ORDER_EMAIL_COPY_TO      = 'sales/new_order/email_copy_to';
     const XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE  = 'sales/order_update/email_template';
     const XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY  = 'sales/order_update/email_identity';
 
+    /**
+     * Order states
+     */
     const STATE_NEW        = 'new';
     const STATE_PROCESSING = 'processing';
     const STATE_COMPLETE   = 'complete';
     const STATE_CLOSED     = 'closed';
     const STATE_CANCELED   = 'canceled';
-
-    const PAYMENT_STATE_PENDING        = 1;
-    const PAYMENT_STATE_NOT_AUTHORIZED = 2;
-    const PAYMENT_STATE_AUTHORIZED     = 3;
-    const PAYMENT_STATE_PARTIAL        = 4;
-    const PAYMENT_STATE_PAID           = 5;
-
-    const SHIPPING_STATE_PENDING   = 1;
-    const SHIPPING_STATE_PARTIAL   = 2;
-    const SHIPPING_STATE_SHIPPED   = 3;
-
-    const REFUND_STATE_NOT_REFUND  = 1;
-    const REFUND_STATE_PANDING     = 2;
-    const REFUND_STATE_PARTIAL     = 3;
-    const REFUND_STATE_REFUNDED    = 4;
 
     protected $_eventPrefix = 'sales_order';
     protected $_eventObject = 'order';
@@ -111,6 +100,11 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     protected $_items;
     protected $_payments;
     protected $_statusHistory;
+    protected $_invoices;
+    protected $_tracks;
+    protected $_shipments;
+    protected $_creditmemos;
+    protected $_relatedObjects = array();
     protected $_orderCurrency = null;
 
     /**
@@ -121,6 +115,34 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         $this->_init('sales/order');
     }
 
+    public function loadByIncrementId($incrementId)
+    {
+        $collection = $this->getCollection()
+            ->addAttributeToSelect('*')
+            ->addAttributeToFilter('increment_id', $incrementId)
+            ->load()
+                ->getItems();
+        if (sizeof($collection)) {
+            reset($collection);
+            $order = current($collection);
+            $this->setData($order->getData());
+        }
+        return $this;
+    }
+
+    /**
+     * Retrieve store model instance
+     *
+     * @return Mage_Core_Model_Store
+     */
+    public function getStore()
+    {
+        if ($storeId = $this->getStoreId()) {
+            return Mage::app()->getStore($storeId);
+        }
+        return Mage::app()->getStore();
+    }
+
     /**
      * Retrieve order cancel availability
      *
@@ -128,10 +150,22 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canCancel()
     {
-        if ($this->getState() === self::STATE_CANCELED) {
+        if ($this->getIsHold()) {
             return false;
         }
-        return true;
+
+        if ($this->getState() === self::STATE_CANCELED ||
+            $this->getState() === self::STATE_COMPLETE ||
+            $this->getState() === self::STATE_CLOSED) {
+            return false;
+        }
+
+        foreach ($this->getAllItems() as $item) {
+            if ($item->getQtyToCancel()>0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -141,6 +175,21 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canInvoice()
     {
+        if ($this->getIsHold()) {
+            return false;
+        }
+
+        if ($this->getState() === self::STATE_CANCELED ||
+            $this->getState() === self::STATE_COMPLETE ||
+            $this->getState() === self::STATE_CLOSED ) {
+            return false;
+        }
+
+        foreach ($this->getAllItems() as $item) {
+            if ($item->getQtyToInvoice()>0) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -151,6 +200,23 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canCreditmemo()
     {
+        if ($this->getIsHold()) {
+            return false;
+        }
+
+        if ($this->getState() === self::STATE_CANCELED ||
+            $this->getState() === self::STATE_CLOSED ) {
+            return false;
+        }
+
+        /**
+         * need use int, becose $a=762.73;$b=762.73; $a-$b!=0;
+         */
+        $paidCompare = (int) $this->getTotalPaid() * 1000000;
+        $refundedCompare = (int) $this->getTotalRefunded() * 1000000;
+        if ($paidCompare>$refundedCompare) {
+            return true;
+        }
         return false;
     }
 
@@ -161,7 +227,13 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canHold()
     {
-        return false;
+        if ($this->getState() === self::STATE_CANCELED ||
+            $this->getState() === self::STATE_COMPLETE ||
+            $this->getState() === self::STATE_CLOSED ) {
+            return false;
+        }
+
+        return !$this->getIsHold();
     }
 
     /**
@@ -171,7 +243,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canUnhold()
     {
-        return false;
+        return $this->getIsHold();
     }
 
     /**
@@ -181,6 +253,15 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canShip()
     {
+        if ($this->getIsHold()) {
+            return false;
+        }
+
+        foreach ($this->getAllItems() as $item) {
+            if ($item->getQtyToShip()>0) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -191,7 +272,13 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canEdit()
     {
-        if ($this->getState() === self::STATE_CANCELED) {
+        if ($this->getIsHold()) {
+            return false;
+        }
+
+        if ($this->getState() === self::STATE_CANCELED ||
+            $this->getState() === self::STATE_COMPLETE ||
+            $this->getState() === self::STATE_CLOSED) {
             return false;
         }
         return true;
@@ -204,6 +291,22 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canReorder()
     {
+        if ($this->getIsHold()) {
+            return false;
+        }
+
+        foreach ($this->getItemsCollection() as $item) {
+            $products[] = $item->getProductId();
+        }
+        $productsCollection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addIdFilter($products)
+            ->load();
+        foreach ($productsCollection as $product) {
+            if ($product->isSalable()) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -311,23 +414,16 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      * @param   string $state
      * @return  Mage_Sales_Model_Order
      */
-    public function setState($state)
+    public function setState($state, $status=false)
     {
-        if ($state != $this->getState()) {
-            $this->setData('state', $state);
-            $this->addStatusToHistory($this->getConfig()->getStateDefaultStatus($state), $this->getCustomerNote());
+        $this->setData('state', $state);
+        if ($status) {
+            if ($status === true) {
+                $status = $this->getConfig()->getStateDefaultStatus($state);
+            }
+            $this->addStatusToHistory($status);
         }
         return $this;
-    }
-
-    /**
-     * Retrieve order status
-     *
-     * @return Mage_Sales_Model_Order_Status
-     */
-    public function getStatus()
-    {
-        return $this->getData('status');
     }
 
     /**
@@ -367,6 +463,19 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     public function place()
     {
         $this->_placePayment();
+        Mage::dispatchEvent('sales_order_place_after', array('order'=>$this));
+        return $this;
+    }
+
+    public function hold()
+    {
+        $this->setIsHold(true);
+        return $this;
+    }
+
+    public function unhold()
+    {
+        $this->setIsHold(false);
         return $this;
     }
 
@@ -379,51 +488,14 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     {
         if ($this->canCancel()) {
             $this->getPayment()->cancel();
+            $cancelState = self::STATE_CANCELED;
             foreach ($this->getAllItems() as $item) {
+                if ($item->getQtyInvoiced()>$item->getQtyRefunded()) {
+                    $cancelState = self::STATE_COMPLETE;
+                }
                 $item->cancel();
             }
-            $this->setState(self::STATE_CANCELED);
-        }
-        return $this;
-    }
-
-    protected function _beforeSave()
-    {
-        if (!$this->getId()) {
-            $this->setState(self::STATE_NEW);
-        }
-        return parent::_beforeSave();
-    }
-
-    /**
-     * Add tracking number to order
-     *
-     * @param   string $number
-     * @return  Mage_Sales_Model_Order
-     */
-    public function addTrackingNumber($number)
-    {
-        $numbers = $this->getTrackingNumbers();
-        if (!in_array($number, $numbers)) {
-            $numbers[] = $number;
-            $this->setTrackingNumbers($numbers);
-        }
-        return $this;
-    }
-
-    /**
-     * Remove tracking number
-     *
-     * @param   string $number
-     * @return  Mage_Sales_Model_Order
-     */
-    public function removeTrackingNumber($number)
-    {
-        $numbers = $this->getTrackingNumbers();
-        $key = array_search($number, $numbers);
-        if ($key !== false) {
-            unset($numbers[$key]);
-            $this->setTrackingNumbers($numbers);
+            $this->setState($cancelState, true);
         }
         return $this;
     }
@@ -439,21 +511,6 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             return explode(',', $this->getData('tracking_numbers'));
         }
         return array();
-    }
-
-    /**
-     * Declare tracking numbers
-     *
-     * @param   mixed $numbers
-     * @return  Mage_Sales_Model_Order
-     */
-    public function setTrackingNumbers($numbers)
-    {
-        if (is_array($numbers)) {
-            $numbers = implode(',', $numbers);
-        }
-        $this->setData('tracking_numbers', $numbers);
-        return $this;
     }
 
     public function getShippingCarrier()
@@ -477,28 +534,6 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         return $carrierModel;
     }
 
-    public function processPayments()
-    {
-        $method = $this->getPayment()->getMethod();
-
-        if (!($modelName = Mage::getStoreConfig('payment/'.$method.'/model'))
-            ||!($model = Mage::getModel($modelName))) {
-            return $this;
-        }
-
-        $this->setDocument($this->getOrder());
-
-        $model->onOrderValidate($this->getPayment());
-
-        if ($this->getPayment()->getStatus()!=='APPROVED') {
-            $errors = $this->getErrors();
-            $errors[] = $this->getPayment()->getStatusDescription();
-            $this->setErrors($errors);
-        }
-
-        return $this;
-    }
-
     /**
      * Sending email with order data
      *
@@ -510,18 +545,29 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             ->setOrder($this);
         $paymentBlock = Mage::helper('payment')->getInfoBlock($this->getPayment());
 
-        Mage::getModel('core/email_template')->sendTransactional(
-            Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_TEMPLATE),
-            Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_IDENTITY),
-            $this->getCustomerEmail(),
-            $this->getBillingAddress()->getName(),
-            array(
-              'order'       => $this,
-              'billing'     => $this->getBillingAddress(),
-              'payment_html'=> $paymentBlock->toHtml(),
-              'items_html'  => $itemsBlock->toHtml(),
+        $mailTamplate = Mage::getModel('core/email_template');
+        /* @var $mailTamplate Mage_Core_Model_Email_Template */
+        if ($bcc = Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_COPY_TO, $this->getStoreId())) {
+            $mailTamplate->getMail()->addBcc($bcc);
+        }
+        $mailTamplate->setDesignConfig(
+                array(
+                    'area'  => 'frontend',
+                    'store' => $this->getStoreId()
+                )
             )
-        );
+            ->sendTransactional(
+                Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_TEMPLATE, $this->getStoreId()),
+                Mage::getStoreConfig(self::XML_PATH_NEW_ORDER_EMAIL_IDENTITY, $this->getStoreId()),
+                $this->getCustomerEmail(),
+                $this->getBillingAddress()->getName(),
+                array(
+                  'order'       => $this,
+                  'billing'     => $this->getBillingAddress(),
+                  'payment_html'=> $paymentBlock->toHtml(),
+                  'items_html'  => $itemsBlock->toHtml(),
+                )
+            );
         return $this;
     }
 
@@ -533,9 +579,15 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     public function sendOrderUpdateEmail($comment='')
     {
         Mage::getModel('core/email_template')
+            ->setDesignConfig(
+                array(
+                    'area'  => 'frontend',
+                    'store' => $this->getStoreId()
+                )
+            )
             ->sendTransactional(
-                Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE),
-                Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY),
+                Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_TEMPLATE, $this->getStoreId()),
+                Mage::getStoreConfig(self::XML_PATH_UPDATE_ORDER_EMAIL_IDENTITY, $this->getStoreId()),
                 $this->getCustomerEmail(),
                 $this->getBillingAddress()->getName(),
                 array(
@@ -605,6 +657,29 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             }
         }
         return $this->_items;
+    }
+
+    public function getItemsRandomCollection($limit=1)
+    {
+        $collection = Mage::getModel('sales/order_item')->getCollection()
+            ->addAttributeToSelect('*')
+            ->setOrderFilter($this->getId())
+            ->setOrder('RAND()')
+            ->setPageSize($limit)
+            ->load();
+
+        foreach ($collection as $item) {
+            $products[] = $item->getProductId();
+        }
+
+        $productsCollection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addIdFilter($products)
+            ->load();
+        foreach ($collection as $item) {
+            $item->setProduct($productsCollection->getItemById($item->getProductId()));
+        }
+        return $collection;
     }
 
     public function getAllItems()
@@ -794,7 +869,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Enter description here...
+     * Retrieve order currency model instance
      *
      * @return Mage_Directory_Model_Currency
      */
@@ -814,33 +889,183 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function formatPrice($price)
     {
-        if (!($rate = floatval($this->getStoreToOrderRate()))) {
-            $rate = 1;
-        }
-        //$price = $price*$rate;
         return $this->getOrderCurrency()->format($price);
     }
 
     /**
-     * Enter description here...
-     *
-     * @return Mage_Sales_Model_Order
-     */
-    public function calcTotalDue()
-    {
-        $this->setTotalDue(max($this->getGrandTotal() - $this->getTotalPaid(), 0));
-        return $this;
-    }
-
-    /**
-     * Enter description here...
+     * Retrieve order total due value
      *
      * @return float
      */
     public function getTotalDue()
     {
-        $this->calcTotalDue();
-        return $this->getData('total_due');
+        $total = $this->getGrandTotal()-$this->getTotalPaid();
+        $total = Mage::app()->getStore($this->getStoreId())->roundPrice($total);
+        return max($total, 0);
+    }
+
+    /**
+     * Retrieve order total paid value
+     *
+     * @return float
+     */
+    public function getTotalPaid()
+    {
+        return $this->getData('total_paid');
+    }
+
+    /**
+     * Retrieve order invoices collection
+     *
+     * @return unknown
+     */
+    public function getInvoiceCollection()
+    {
+        if (is_null($this->_invoices)) {
+            $this->_invoices = Mage::getResourceModel('sales/order_invoice_collection');
+
+            if ($this->getId()) {
+                $this->_invoices
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($this->getId())
+                    ->load();
+                foreach ($this->_invoices as $invoice) {
+                    $invoice->setOrder($this);
+                }
+            }
+        }
+        return $this->_invoices;
+    }
+
+     /**
+     * Retrieve order shipments collection
+     *
+     * @return unknown
+     */
+    public function getShipmentsCollection()
+    {
+        if (empty($this->_shipments)) {
+            if ($this->getId()) {
+                $this->_shipments = Mage::getResourceModel('sales/order_shipment_collection')
+                    ->addAttributeToSelect('increment_id')
+                    ->addAttributeToSelect('created_at')
+                    ->addAttributeToSelect('total_qty')
+                    ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id', null, 'left')
+                    ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left')
+                    ->setOrderFilter($this->getId())
+                    ->load()
+                    ;
+            } else {
+                return false;
+            }
+        }
+        return $this->_shipments;
+    }
+
+    /**
+     * Retrieve order creditmemos collection
+     *
+     * @return unknown
+     */
+    public function getCreditmemosCollection()
+    {
+        if (empty($this->_creditmemos)) {
+            if ($this->getId()) {
+                $this->_creditmemos = Mage::getResourceModel('sales/order_Creditmemo_collection')
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($this->getId())
+                    ->load();
+            } else {
+                return false;
+            }
+        }
+        return $this->_creditmemos;
+    }
+
+    /**
+     * Retrieve order tracking numbers collection
+     *
+     * @return unknown
+     */
+    public function getTracksCollection()
+    {
+        if (empty($this->_tracks)) {
+            $this->_tracks = Mage::getResourceModel('sales/order_shipment_track_collection');
+
+            if ($this->getId()) {
+                $this->_tracks
+                    ->addAttributeToSelect('*')
+                    ->setOrderFilter($this->getId())
+                    ->load();
+            }
+        }
+        return $this->_tracks;
+    }
+
+    /**
+     * Check order invoices availability
+     *
+     * @return bool
+     */
+    public function hasInvoices()
+    {
+        return $this->getInvoiceCollection()->count();
+    }
+
+    /**
+     * Check order shipments availability
+     *
+     * @return bool
+     */
+    public function hasShipments()
+    {
+        return $this->getShipmentsCollection()->count();
+    }
+
+    /**
+     * Check order creditmemos availability
+     *
+     * @return bool
+     */
+    public function hasCreditmemos()
+    {
+        return $this->getCreditmemosCollection()->count();
+    }
+
+
+    /**
+     * Retrieve array of related objects
+     *
+     * Used for order saving
+     *
+     * @return array
+     */
+    public function getRelatedObjects()
+    {
+        return $this->_relatedObjects;
+    }
+
+    public function getCustomerName()
+    {
+        if ($this->getCustomerFirstname()) {
+            $customerName = $this->getCustomerFirstname() . ' ' . $this->getCustomerLastname();
+        }
+        else {
+            $customerName = Mage::helper('sales')->__('Guest');
+        }
+        return $customerName;
+    }
+
+    /**
+     * Add New object to related array
+     *
+     * @param   Mage_Core_Model_Abstract $object
+     * @return  Mage_Sales_Model_Order
+     */
+    public function addRelatedObject(Mage_Core_Model_Abstract $object)
+    {
+        $this->_relatedObjects[] = $object;
+        return $this;
     }
 
     public function getCreatedAtFormated($format)
@@ -854,5 +1079,46 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             return $this->getCustomerNote();
         }
         return '';
+    }
+
+    /**
+     * Processing object before save data
+     *
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function _beforeSave()
+    {
+        parent::_beforeSave();
+        $this->_checkState();
+        return $this;
+    }
+
+    protected function _checkState()
+    {
+        if (!$this->getId()) {
+            return $this;
+        }
+
+        if ($this->getState() == self::STATE_NEW) {
+            $this->setState(self::STATE_PROCESSING, true);
+        }
+
+        if ($this->getState() !== self::STATE_CANCELED
+            && !$this->getIsHold()
+            && !$this->canInvoice()
+            && !$this->canShip()) {
+            if ($this->canCreditmemo()) {
+                if ($this->getState() !== self::STATE_COMPLETE) {
+                    $this->setState(self::STATE_COMPLETE, true);
+                }
+            }
+            else {
+                if ($this->getState() !== self::STATE_CLOSED) {
+                    $this->setState(self::STATE_CLOSED, true);
+                }
+            }
+        }
+
+        return $this;
     }
 }

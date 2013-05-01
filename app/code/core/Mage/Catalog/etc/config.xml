@@ -22,7 +22,7 @@
 <config>
    <modules>
       <Mage_Catalog>
-         <version>0.7.0</version>
+         <version>0.7.3</version>
          <depends>
             <Mage_Customer />
          </depends>
@@ -145,9 +145,6 @@
                   <table>catalog_product_entity_tier_price</table>
               </product_attribute_tier_price>
 
-              <sendfriend>
-                  <table>sendfriend_log</table>
-              </sendfriend>
             </entities>
          </catalog_entity>
          <catalog_mysql4>
@@ -189,28 +186,28 @@
                 <children>
                     <products translate="title" module="catalog">
                         <title>Manage Products</title>
-                        <action>*/catalog_product/</action>
+                        <action>adminhtml/catalog_product/</action>
                     </products>
                     <categories translate="title" module="catalog">
                         <title>Manage Categories</title>
-                        <action>*/catalog_category/</action>
+                        <action>adminhtml/catalog_category/</action>
                     </categories>
                     <attributes translate="title" module="catalog">
                         <title>Attributes</title>
                         <children>
                             <attributes translate="title" module="catalog">
                                 <title>Manage Attributes</title>
-                                <action>*/catalog_product_attribute/</action>
+                                <action>adminhtml/catalog_product_attribute/</action>
                             </attributes>
                             <sets translate="title" module="catalog">
                                 <title>Manage Attribute Sets</title>
-                                <action>*/catalog_product_set/</action>
+                                <action>adminhtml/catalog_product_set/</action>
                             </sets>
                         </children>
                     </attributes>
                     <urlrewrite translate="title" module="catalog">
                     	<title>Url Rewrite Management</title>
-						<action>*/urlrewrite/index</action>
+						<action>adminhtml/urlrewrite/index</action>
                     </urlrewrite>
                 </children>
              </catalog>
@@ -284,7 +281,9 @@
                                         </pending>
                                     </children>
                                 </tag>
-								<urlrewrite title="Url Rewrite Management" />
+								<urlrewrite>
+                                    <title>Url Rewrite Management</title>
+                                </urlrewrite>
                             </children>
                         </catalog>
                     </children>
@@ -342,5 +341,34 @@
               </catalog>
           </updates>
       </layout>
+      <catalog>
+          <per_page_values>
+              <grid>9,15,30</grid>
+              <list>5,10,15,20,25</list>
+          </per_page_values>
+      </catalog>
    </frontend>
+
+    <default>
+        <catalog>
+            <category>
+                <root_id></root_id>
+            </category>
+
+            <frontend>
+                <list_mode>grid-list</list_mode>
+                <product_per_page>9</product_per_page>
+            </frontend>
+
+            <product>
+                <default_tax_group>2</default_tax_group>
+            </product>
+
+            <seo>
+                <product_url_suffix>.html</product_url_suffix>
+                <product_use_categories>1</product_use_categories>
+                <title_separator>-</title_separator>
+            </seo>
+        </catalog>
+    </default>
 </config>

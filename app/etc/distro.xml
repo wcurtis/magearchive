@@ -47,30 +47,22 @@
 
             <web>
                 <unsecure>
-                    <protocol>{{protocol}}</protocol>
-                    <host>{{host}}</host>
-                    <port>{{port}}</port>
-                    <base_path>{{base_path}}</base_path>
+                    <base_url>{{base_url}}</base_url>
+                    <base_link_url>{{unsecure_base_url}}</base_link_url>
+                    <base_web_url>{{unsecure_base_url}}</base_web_url>
+                    <base_skin_url>{{unsecure_base_url}}skin/</base_skin_url>
+                    <base_js_url>{{unsecure_base_url}}js/</base_js_url>
+                    <base_media_url>{{unsecure_base_url}}media/</base_media_url>
                 </unsecure>
 
                 <secure>
-                    <protocol>{{secure_protocol}}</protocol>
-                    <host>{{secure_host}}</host>
-                    <port>{{secure_port}}</port>
-                    <base_path>{{secure_base_path}}</base_path>
+                    <base_url>{{base_url}}</base_url>
+                    <base_web_url>{{secure_base_url}}</base_web_url>
+                    <base_link_url>{{secure_base_url}}</base_link_url>
+                    <base_js_url>{{secure_base_url}}js/</base_js_url>
+                    <base_skin_url>{{secure_base_url}}skin/</base_skin_url>
+                    <base_media_url>{{secure_base_url}}media/</base_media_url>
                 </secure>
-
-                <url>
-                    <media>{{base_path}}media/</media>
-                    <skin>{{base_path}}skin/</skin>
-                    <js>{{base_path}}js/</js>
-                    <use_script_name>1</use_script_name>
-                </url>
-
-                <default>
-                    <front>catalog</front>
-                    <no_route>core/index/noRoute</no_route>
-                </default>
             </web>
         </base>
     </stores>

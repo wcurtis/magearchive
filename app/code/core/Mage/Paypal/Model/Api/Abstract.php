@@ -115,12 +115,12 @@ abstract class Mage_Paypal_Model_Api_Abstract extends Varien_Object
 
     public function getButtonSourceEc()
     {
-        return $this->getConfigData('button_source', 'Varien_Cart_EC_US');
+        return $this->getConfigData('button_source_ec', 'Varien_Cart_EC_US');
     }
 
     public function getButtonSourceDp()
     {
-        return $this->getConfigData('button_source', 'Varien_Cart_DP_US');
+        return $this->getConfigData('button_source_dp', 'Varien_Cart_DP_US');
     }
 
     public function getUseProxy()
@@ -277,7 +277,7 @@ abstract class Mage_Paypal_Model_Api_Abstract extends Varien_Object
 
     public function setAmount($data)
     {
-	$data = sprintf('%.2f', $data);
+	    $data = sprintf('%.2f', $data);
         return $this->setSessionData('amount', $data);
     }
 

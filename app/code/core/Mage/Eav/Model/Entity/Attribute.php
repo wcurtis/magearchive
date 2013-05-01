@@ -37,6 +37,8 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
                 return 'eav/entity_attribute_backend_increment';
         }
 
+
+
         return parent::_getDefaultBackendModel();
     }
 
@@ -57,5 +59,20 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
     public function deleteEntity()
     {
         return $this->_getResource()->deleteEntity($this);
+    }
+
+    protected function _beforeSave()
+    {
+        if ($this->getBackendType() == 'datetime') {
+            if (!$this->getBackendModel()) {
+                $this->setBackendModel('eav/entity_attribute_backend_datetime');
+            }
+
+            if (!$this->getFrontendModel()) {
+                $this->setFrontendModel('eav/entity_attribute_frontend_datetime');
+            }
+        }
+
+        return parent::_beforeSave();
     }
 }

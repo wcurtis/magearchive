@@ -19,10 +19,8 @@
  */
 
 /**
- * Adminhtml sales invoices grid
+ * Adminhtml sales orders grid
  *
- * @category   Mage
- * @package    Mage_Adminhtml
  */
 
 class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widget_Grid
@@ -37,12 +35,17 @@ class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widge
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('sales/invoice_collection')
-            ->addAttributeToSelect('*')
-             ->joinAttribute('billing_firstname', 'invoice_address/firstname', 'billing_address_id')
-             ->joinAttribute('billing_lastname', 'invoice_address/lastname', 'billing_address_id')
-             ->joinAttribute('shipping_firstname', 'invoice_address/firstname', 'shipping_address_id')
-             ->joinAttribute('shipping_lastname', 'invoice_address/lastname', 'shipping_address_id')
+        $collection = Mage::getResourceModel('sales/order_invoice_collection')
+            ->addAttributeToSelect('order_id')
+            ->addAttributeToSelect('increment_id')
+            ->addAttributeToSelect('created_at')
+            ->addAttributeToSelect('state')
+            ->addAttributeToSelect('grand_total')
+            ->addAttributeToSelect('order_currency_code')
+            ->joinAttribute('billing_firstname', 'order_address/firstname', 'billing_address_id', null, 'left')
+            ->joinAttribute('billing_lastname', 'order_address/lastname', 'billing_address_id', null, 'left')
+            ->joinAttribute('order_increment_id', 'order/increment_id', 'order_id', null, 'left')
+            ->joinAttribute('order_created_at', 'order/created_at', 'order_id', null, 'left')
         ;
         $this->setCollection($collection);
         return parent::_prepareCollection();
@@ -50,42 +53,26 @@ class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widge
 
     protected function _prepareColumns()
     {
-
-        $types = Mage_Sales_Model_Invoice::getTypes();
-
-        $this->addColumn('type', array(
-            'header' => Mage::helper('sales')->__('Type'),
-            'align' => 'center',
-            'index' => 'invoice_type',
-            'type' => 'options',
-            'options' => $types,
-        ));
-
         $this->addColumn('increment_id', array(
-            'header' => Mage::helper('sales')->__('Doc Number'),
-            'align' => 'center',
-            'index' => 'increment_id',
-        ));
-
-        $this->addColumn('order_id', array(
-            'header' => Mage::helper('sales')->__('Order #'),
-            'align' => 'center',
-            'index' => 'real_order_id',
-        ));
-
-        $stores = Mage::getResourceModel('core/store_collection')->setWithoutDefaultFilter()->load()->toOptionHash();
-
-        $this->addColumn('store_id', array(
-            'header' => Mage::helper('sales')->__('Purchased from (store)'),
-            'index' => 'store_id',
-            'type' => 'options',
-            'options' => $stores,
+            'header'    => Mage::helper('sales')->__('Invoice #'),
+            'index'     => 'increment_id',
         ));
 
         $this->addColumn('created_at', array(
-            'header' => Mage::helper('sales')->__('Purchased On'),
-            'index' => 'created_at',
-            'type'      => 'date',
+            'header'    => Mage::helper('sales')->__('Invoice Date'),
+            'index'     => 'created_at',
+            'type'      => 'datetime',
+        ));
+
+        $this->addColumn('order_increment_id', array(
+            'header'    => Mage::helper('sales')->__('Order #'),
+            'index'     => 'order_increment_id',
+        ));
+
+        $this->addColumn('order_created_at', array(
+            'header'    => Mage::helper('sales')->__('Order Date'),
+            'index'     => 'order_created_at',
+            'type'      => 'datetime',
         ));
 
         $this->addColumn('billing_firstname', array(
@@ -98,30 +85,19 @@ class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widge
             'index' => 'billing_lastname',
         ));
 
-        $this->addColumn('shipping_firstname', array(
-            'header' => Mage::helper('sales')->__('Ship to First name'),
-            'index' => 'shipping_firstname',
-        ));
-
-        $this->addColumn('shipping_lastname', array(
-            'header' => Mage::helper('sales')->__('Ship to Last name'),
-            'index' => 'shipping_lastname',
+        $this->addColumn('state', array(
+            'header'    => Mage::helper('sales')->__('Status'),
+            'index'     => 'state',
+            'type'      => 'options',
+            'options'   => Mage::getModel('sales/order_invoice')->getStates(),
         ));
 
         $this->addColumn('grand_total', array(
-            'header' => Mage::helper('sales')->__('Grand Total'),
-            'index' => 'grand_total',
-            'type'  => 'currency',
-            'currency' => 'order_currency_code',
-        ));
-
-        $statuses = Mage_Sales_Model_Invoice::getStatuses();
-
-        $this->addColumn('status', array(
-            'header' => Mage::helper('sales')->__('Status'),
-            'index' => 'invoice_status_id',
-            'type'  => 'options',
-            'options' => $statuses,
+            'header'    => Mage::helper('customer')->__('Amount'),
+            'index'     => 'grand_total',
+            'type'      => 'currency',
+            'align'     => 'right',
+            'currency'  => 'order_currency_code',
         ));
 
         return parent::_prepareColumns();
@@ -129,7 +105,17 @@ class Mage_Adminhtml_Block_Sales_Invoice_Grid extends Mage_Adminhtml_Block_Widge
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/view', array('invoice_id' => $row->getId()));
+        return Mage::getUrl('*/sales_order_invoice/view',
+            array(
+                'invoice_id'=> $row->getId(),
+                'order_id'  => $row->getOrderId()
+            )
+        );
+    }
+
+    public function getGridUrl()
+    {
+        return Mage::getUrl('*/*/invoices', array('_current' => true));
     }
 
 }

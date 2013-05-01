@@ -52,6 +52,10 @@ class Mage_Admin_Model_Config extends Varien_Simplexml_Config
             $acl->add(Mage::getModel('admin/acl_resource', $resourceName), $parentName);
         }
 
+        if (isset($resource->all)) {
+            $acl->add(Mage::getModel('admin/acl_resource', 'all'), null);
+        }
+
         if (isset($resource->admin)) {
             $children = $resource->admin;
         } elseif (isset($resource->children)){

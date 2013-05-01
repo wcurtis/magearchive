@@ -20,8 +20,8 @@
 ?>
 <script type="text/javascript" language="javascript">
 
-var countryModel = Class.create();
-countryModel.prototype = {
+var CountryModel = Class.create();
+CountryModel.prototype = {
     initialize : function()
     {
         this.reload = false;
@@ -39,59 +39,61 @@ countryModel.prototype = {
             Event.observe(applyCountryElements[i], 'change', this.checkSpecificCountry.bind(this));
             this.initSpecificCountry(applyCountryElements[i]);
         }
-        
+
     },
     initSpecificCountry : function(element){
         var applyCountryElement = element;
         if (applyCountryElement && applyCountryElement.id) {
-            var specifCountryElement  = $(applyCountryElement.id.replace(/allowall/, 'specificcountry'));    
-            var showMethodElement  = $(applyCountryElement.id.replace(/allowall/, 'showmethod'));
-            var specifErrMsgElement  = $(applyCountryElement.id.replace(/allowall/, 'specificerrmsg'));   
+            var specifCountryElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificcountry'));
+            var showMethodElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'showmethod'));
+            var specifErrMsgElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificerrmsg'));
             if (specifCountryElement) {
-                if (applyCountryElement.value == 1) {                   
-                   specifCountryElement.disable(); 
-                   showMethodElement.up(1).hide();   
-                   specifErrMsgElement.up(1).hide();                   
-                } else {
-                   specifCountryElement.enable(); 
-                   showMethodElement.up(1).show();   
-                   specifErrMsgElement.up(1).show();   
-                }
-            }
-        }
-    },    
-    
-    checkSpecificCountry : function(event)
-    {
-        var applyCountryElement = Event.element(event);
-        if (applyCountryElement && applyCountryElement.id) {
-            var specifCountryElement  = $(applyCountryElement.id.replace(/allowall/, 'specificcountry'));
-            var showMethodElement  = $(applyCountryElement.id.replace(/allowall/, 'showmethod'));
-            var specifErrMsgElement  = $(applyCountryElement.id.replace(/allowall/, 'specificerrmsg'));
-            if (specifCountryElement) {            
                 if (applyCountryElement.value == 1) {
-                    this.unselectSpecificCountry(specifCountryElement); 
-                    specifCountryElement.disable();  
-                    showMethodElement.up(1).hide();   
-                    specifErrMsgElement.up(1).hide(); 
-                } else {
-                   specifCountryElement.enable();  
-                   showMethodElement.up(1).show();   
-                   specifErrMsgElement.up(1).show();                   
+                   //if specific country element selected
+                   specifCountryElement.enable();
+                   showMethodElement.up(1).show();
+                   specifErrMsgElement.up(1).show();
+                 } else {
+                   specifCountryElement.disable();
+                   showMethodElement.up(1).hide();
+                   specifErrMsgElement.up(1).hide();
                 }
             }
         }
     },
-    
+
+    checkSpecificCountry : function(event)
+    {
+        var applyCountryElement = Event.element(event);
+        if (applyCountryElement && applyCountryElement.id) {
+            var specifCountryElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificcountry'));
+            var showMethodElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'showmethod'));
+            var specifErrMsgElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificerrmsg'));
+            if (specifCountryElement) {
+                if (applyCountryElement.value == 1) {
+                   //if specific country element selected
+                   specifCountryElement.enable();
+                   showMethodElement.up(1).show();
+                   specifErrMsgElement.up(1).show();
+                 } else {
+                    this.unselectSpecificCountry(specifCountryElement);
+                    specifCountryElement.disable();
+                    showMethodElement.up(1).hide();
+                    specifErrMsgElement.up(1).hide();
+                }
+            }
+        }
+    },
+
     unselectSpecificCountry : function(element)
     {
         for (var i=0; i<element.options.length; i++) {
             if (element.options[i].selected) {
               element.options[i].selected=false;;
             }
-        }        
+        }
     }
-    
+
 }
-countryApply = new countryModel();
+countryApply = new CountryModel();
 </script>

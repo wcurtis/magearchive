@@ -62,6 +62,7 @@ class Mage_Install_Model_Installer extends Varien_Object
         } catch (Exception $e) {
             $result = false;
         }
+        $this->setData('server_check_status', $result);
         return $result;
     }
 
@@ -109,29 +110,18 @@ class Mage_Install_Model_Installer extends Varien_Object
          * Saving host information into DB
          */
         $setupModel = new Mage_Core_Model_Resource_Setup('core_setup');
-        if (!empty($data['host'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_HOST, $data['host']);
+
+        if (!empty($data['use_rewrites'])) {
+            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_USE_REWRITES, 1);
         }
-        if (!empty($data['base_path'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_PATH, $data['base_path']);
-        }
-        if (!empty($data['protocol'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_PROTOCOL, $data['protocol']);
-        }
-        if (!empty($data['port'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_PORT, $data['port']);
-        }
-        if (!empty($data['secure_host'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_HOST, $data['secure_host']);
-        }
-        if (!empty($data['secure_base_path'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_PATH, $data['secure_base_path']);
-        }
-        if (!empty($data['secure_protocol'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_PROTOCOL, $data['secure_protocol']);
-        }
-        if (!empty($data['secure_port'])) {
-            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_PORT, $data['secure_port']);
+
+        if (!empty($data['use_secure'])) {
+            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_IN_FRONTEND, 1);
+            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_UNSECURE_BASE_URL, Mage::getBaseUrl('web'));
+            $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_BASE_URL, $data['secure_base_url']);
+            if (!empty($data['use_secure_admin'])) {
+                $setupModel->setConfigData(Mage_Core_Model_Store::XML_PATH_SECURE_IN_ADMINHTML, 1);
+            }
         }
 
         /**
@@ -148,14 +138,6 @@ class Mage_Install_Model_Installer extends Varien_Object
             $setupModel->setConfigData(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, $locale['currency']);
         }
 
-        /**
-         * Temporary urls fix
-         * @todo change this whith media library development
-         */
-        $basePath = isset($data['base_path']) ? $data['base_path'] : '/';
-        $setupModel->updateTable('core/config_data',
-            'value like \'%{{base_path}}%\'',
-            "value=REPLACE(value, '{{base_path}}', '".$basePath."')");
         return $this;
     }
 

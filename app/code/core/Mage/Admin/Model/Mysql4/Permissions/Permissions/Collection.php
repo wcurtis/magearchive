@@ -21,9 +21,9 @@
 //class Mage_Tag_Model_Mysql4_Permissions_Collection extends Varien_Data_Collection_Db {
 class Mage_Admin_Model_Mysql4_Permissions_Permissions_Collection extends Varien_Data_Collection_Db {
 
-	protected $_usersTable;
-	protected $_roleTable;
-	protected $_ruleTable;
+    protected $_usersTable;
+    protected $_roleTable;
+    protected $_ruleTable;
 
     public function __construct() {
         $resources = Mage::getSingleton('core/resource');
@@ -35,4 +35,3 @@ class Mage_Admin_Model_Mysql4_Permissions_Permissions_Collection extends Varien_
         $this->_ruleTable         = $resources->getTableName('admin/rule');
     }
 }
-?>

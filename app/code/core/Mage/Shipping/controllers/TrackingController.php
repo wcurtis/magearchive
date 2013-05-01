@@ -29,21 +29,24 @@ class Mage_Shipping_TrackingController extends Mage_Core_Controller_Front_Action
 {
     public function ajaxAction()
     {
-        $params = $this->getRequest()->getPost();
-
         if ($order = $this->_initOrder()) {
-            $numbers = $order->getTrackingNumbers();
             $response = '';
-            foreach ($numbers as $number){
-                if ($carrier = $order->getShippingCarrier()) {
-                    $carrier->getTracking(array($number));
-                    $response .= $number.' - '.$carrier->getResponse()."\n<br />";
-                }
+            $tracks = $order->getTracksCollection();
+
+            $className = Mage::getConfig()->getBlockClassName('core/template');
+            $block = new $className();
+            $block->setType('core/template')
+                ->setIsAnonymous(true)
+                ->setTemplate('sales/order/trackinginfo.phtml');
+
+            foreach ($tracks as $track){
+                $trackingInfo = $track->getNumberDetail();
+                $block->setTrackingInfo($trackingInfo);
+                $response .= $block->toHtml()."\n<br />";
             }
+
             $this->getResponse()->setBody($response);
         }
-        $this->loadLayout();
-        $this->renderLayout();
     }
 
     /**
@@ -60,7 +63,6 @@ class Mage_Shipping_TrackingController extends Mage_Core_Controller_Front_Action
         if (!$order->getId()) {
             return false;
         }
-        Mage::register('sales_order', $order);
         return $order;
     }
 

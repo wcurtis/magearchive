@@ -9,7 +9,7 @@ td { border-color:#ccc !important; }
 hr{ visibility:visible; height:1px; margin:20px 0; }
 
 
-/* Common Elements */.form-buttons { display:none; }
+/* Common Elements */.button-set { display:none; }
 .col2-set *, .col3-set *, .col4-set * { float:none !important; width:auto !important; }
 .form-button { display:none; }
 .head { text-align:left; }

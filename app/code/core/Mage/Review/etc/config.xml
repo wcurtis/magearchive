@@ -96,17 +96,17 @@
                                 <children>
                                     <pending translate="title" module="catalog">
                                         <title>Pending Reviews</title>
-                                        <action>*/catalog_product_review/pending/</action>
+                                        <action>adminhtml/catalog_product_review/pending/</action>
                                     </pending>
                                     <all translate="title" module="catalog">
                                         <title>All Reviews</title>
-                                        <action>*/catalog_product_review/</action>
+                                        <action>adminhtml/catalog_product_review/</action>
                                     </all>
                                 </children>
                             </reviews>
                             <ratings translate="title" module="catalog">
                                 <title>Manage Ratings</title>
-                                <action>*/rating/</action>
+                                <action>adminhtml/rating/</action>
                             </ratings>
                         </children>
                     </reviews_ratings>
@@ -119,11 +119,11 @@
                         <children>
                             <customer translate="title" module="catalog">
                                 <title>Customers Reviews</title>
-                                <action>*/report_review/customer</action>
+                                <action>adminhtml/report_review/customer</action>
                             </customer>
                             <product translate="title" module="catalog">
                                 <title>Products Reviews</title>
-                                <action>*/report_review/product</action>
+                                <action>adminhtml/report_review/product</action>
                             </product>
                         </children>
                     </review>

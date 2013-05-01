@@ -29,9 +29,9 @@ class Mage_CatalogSearch_ResultController extends Mage_Core_Controller_Front_Act
     public function indexAction()
     {
         $query = Mage::helper('catalogSearch')->getQuery();
-        
+
         $query->setStoreId(Mage::app()->getStore()->getId());
-        
+
         if ($text = $query->getQueryText()) {
             if ($query->getId()) {
                 $query->setPopularity($query->getPopularity()+1);
@@ -39,13 +39,13 @@ class Mage_CatalogSearch_ResultController extends Mage_Core_Controller_Front_Act
             else {
                 $query->setPopularity(1);
             }
-            
+
             if ($query->getRedirect()){
                 $query->save();
                 $this->getResponse()->setRedirect($query->getRedirect());
                 return;
             }
-            
+
             $this->loadLayout();
             $this->renderLayout();
             $query->save();
@@ -53,5 +53,5 @@ class Mage_CatalogSearch_ResultController extends Mage_Core_Controller_Front_Act
         else {
             $this->_redirectReferer();
         }
-    } 
+    }
 }

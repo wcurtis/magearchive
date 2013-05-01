@@ -18,19 +18,19 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?if ($this->getFinalPrice() == $this->getPrice()):?>
+<?if ($this->getProduct()->getFinalPrice() == $this->getProduct()->getPrice()):?>
     <div class="price-box">
-        <span class="regular-price" id="product-price-<?=$this->getProduct()->getId()?>"><?=Mage::helper('core')->currency($this->getPrice())?></span><br/>
+        <span class="regular-price" id="product-price-<?=$this->getProduct()->getId()?>"><?=Mage::helper('core')->currency($this->getProduct()->getPrice())?></span><br/>
     </div>
 <?else:?>
     <div class="price-box">
-        <span class="special-price">
-            <span class="label"><?=$this->__('Special Price:')?></span>
-            <span class="price" id="product-price-<?=$this->getProduct()->getId()?>"><?=Mage::helper('core')->currency($this->getFinalPrice())?></span>
-        </span><br/>
         <span class="old-price">
             <span class="label"><?=$this->__('Regular Price:')?></span>
-            <span class="price"><?=Mage::helper('core')->currency($this->getPrice())?></span>
+            <span class="price"><?=Mage::helper('core')->currency($this->getProduct()->getPrice())?></span>
+        </span><br/>
+        <span class="special-price">
+            <span class="label"><?=$this->__('Special Price:')?></span>
+            <span class="price" id="product-price-<?=$this->getProduct()->getId()?>"><?=Mage::helper('core')->currency($this->getProduct()->getFinalPrice())?></span>
         </span>
     </div>
 <?endif?>

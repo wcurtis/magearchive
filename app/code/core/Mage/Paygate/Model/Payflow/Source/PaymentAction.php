@@ -28,8 +28,15 @@ class Mage_Paygate_Model_Payflow_Source_PaymentAction
     public function toOptionArray()
     {
         return array(
-            array('value' => Mage_Paygate_Model_Payflow_Pro::TRXTYPE_AUTH_ONLY, 'label' => Mage::helper('paypal')->__('Authorize Only')),
-            array('value' => Mage_Paygate_Model_Payflow_Pro::TRXTYPE_SALE, 'label' => Mage::helper('paypal')->__('Authorize and Capture')),
+            array('value' => '', 'label' => ''),
+            array(
+                'value' => Mage_Paygate_Model_Payflow_Pro::ACTION_AUTHORIZE, 
+                'label' => Mage::helper('paygate')->__('Authorize Only')
+            ),
+            array(
+                'value' => Mage_Paygate_Model_Payflow_Pro::ACTION_AUTHORIZE_CAPTURE, 
+                'label' => Mage::helper('paypal')->__('Authorize and Capture')
+            ),
         );
     }
 }

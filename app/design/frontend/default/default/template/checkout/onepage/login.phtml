@@ -33,8 +33,8 @@
     <li><?=$this->__('Fast and easy check out')?></li>
     <li><?=$this->__('Easy access to your order history and status')?></li>
 </ul>
-<div class="form-buttons">
-    <button class="form-button" onclick="checkout.setMethod();"><span><?=$this->__('Continue')?></span></button>
+<div class="button-set">
+    <button  class="form-button" onclick="checkout.setMethod();"><span><?=$this->__('Continue')?></span></button>
 
 </div>
     </div>
@@ -51,9 +51,9 @@
                         <li><div class="input-box"><label for="password"><?=$this->__('Password')?> <span class="required">*</span></label><br/>
                             <input type="password" class="input-text required-entry" id="password" name="login[password]" /></div></li>
                 </ul>
-                <div class="form-buttons">
+                <div class="button-set">
                     <p class="required"><?=$this->__('* Required Fields')?></p>
-                        <a href="<?=$this->getUrl('customer/account/forgotpassword')?>" class="left"><?=$this->__('Forgot your password?')?></a><button type="submit" class="form-button"><span><?=$this->__('Login')?></span></button>
+                        <a href="<?=$this->getUrl('customer/account/forgotpassword')?>" class="left"><?=$this->__('Forgot your password?')?></a><button class="form-button" type="submit" ><span><?=$this->__('Login')?></span></button>
                 </div>
         </form>
     </div>

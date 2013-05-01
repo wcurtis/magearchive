@@ -61,12 +61,15 @@ class Mage_Install_Model_Installer_Config
                 $data[$index] = $value;
             }
         }
+        /*
         $data['base_path'] .= substr($data['base_path'],-1) != '/' ? '/' : '';
         $data['secure_base_path'] .= substr($data['secure_base_path'],-1) != '/' ? '/' : '';
 
         if (!Mage::getSingleton('install/session')->getSkipUrlValidation()) {
             $this->_checkHostsInfo($data);
         }
+        */
+
         $data['date']   = self::TMP_INSTALL_DATE_VALUE;
         $data['key']    = self::TMP_ENCRYPT_KEY_VALUE;
         $data['var_dir'] = $data['root_dir'] . '/var';
@@ -81,31 +84,30 @@ class Mage_Install_Model_Installer_Config
         }
         file_put_contents($this->_localConfigFile, $template);
         chmod($this->_localConfigFile, 0777);
-
-        Mage::getConfig()->init();
+        /**
+         * New config initialization we do on install db action
+         */
+        //Mage::getConfig()->init();
     }
 
     public function getFormData()
     {
-        $data = new Varien_Object();
-        $host = $_SERVER['HTTP_HOST'];
-        $hostInfo = explode(':', $host);
-        $host = $hostInfo[0];
-        $port = !empty($hostInfo[1]) ? $hostInfo[1] : 80;
-        $basePath = dirname($_SERVER['SCRIPT_NAME']);
+        $uri = Zend_Uri::factory(Mage::getBaseUrl('web'));
 
-        $data->setServerPath(dirname(Mage::getBaseDir()))
-            ->setHost($host)
-            ->setBasePath($basePath)
-            ->setPort($port)
-            ->setSecureHost($host)
-            ->setSecureBasePath($basePath)
-            ->setSecurePort(443)
+        if ($uri->getScheme()!=='https') {
+            $uri->setPort(null);
+            $baseUrl = str_replace('http://', 'https://', $uri->getUri());
+        } else {
+            $baseUrl = $uri->getUri();
+        }
+
+        $data = Mage::getModel('varien/object')
             ->setDbHost('localhost')
             ->setDbName('magento')
             ->setDbUser('root')
             ->setDbPass('')
-            ->setUseScriptName(1);
+            ->setSecureBaseUrl($baseUrl)
+        ;
         return $data;
     }
 

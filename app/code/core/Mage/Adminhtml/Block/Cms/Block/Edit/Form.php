@@ -39,7 +39,7 @@ class Mage_Adminhtml_Block_Cms_Block_Edit_Form extends Mage_Adminhtml_Block_Widg
     {
         $model = Mage::registry('cms_block');
 
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'POST'));
+        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
 
         $form->setHtmlIdPrefix('block_');
 
@@ -66,7 +66,7 @@ class Mage_Adminhtml_Block_Cms_Block_Edit_Form extends Mage_Adminhtml_Block_Widg
         ));
 
         $stores = Mage::getResourceModel('core/store_collection')->load()->toOptionHash();
-        $stores[0] = Mage::helper('cms')->__('All Stores');
+        $stores[0] = Mage::helper('cms')->__('All Store Views');
 
     	$fieldset->addField('store_id', 'select', array(
             'name'      => 'store_id',

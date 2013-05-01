@@ -30,4 +30,20 @@ class Mage_Core_Model_Mysql4_Config_Data_Collection extends Mage_Core_Model_Mysq
     {
         $this->_init('core/config_data');
     }
+
+    public function addScopeFilter($scope, $scopeId, $section)
+    {
+        $this->_sqlSelect
+            ->where('scope=?', $scope)
+            ->where('scope_id=?', $scopeId)
+            ->where('path like ?', $section . '/%');
+        return $this;
+    }
+
+    public function addPathFilter($section)
+    {
+        $this->_sqlSelect
+            ->where('path like ?', $section . '/%');
+        return $this;
+    }
 }

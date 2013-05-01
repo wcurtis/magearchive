@@ -55,6 +55,10 @@ Default layout, loads most of the pages
                 <action method="setEmptyTemplate"><value>checkout/cart/noItems.phtml</value></action>
                 <action method="chooseTemplate"/>
 
+                <block type="core/text_list" name="checkout.cart.top_methods" as="top_methods">
+                    <block type="checkout/onepage_link" name="checkout.cart.methods.onepage"/>
+                </block>
+
                 <block type="core/text_list" name="checkout.cart.methods" as="methods">
                     <block type="checkout/onepage_link" name="checkout.cart.methods.onepage"/>
                     <block type="checkout/multishipping_link" name="checkout.cart.methods.multishipping"/>
@@ -219,6 +223,7 @@ One page checkout main layout
         </reference>
         <reference name="right">
             <action method="unsetChildren"></action>
+            
             <block type="checkout/onepage_progress" name="checkout.progress" before="-" template="checkout/onepage/progress.phtml"/>
         </reference>
         <reference name="content">
@@ -281,6 +286,9 @@ One page checkout order review block
     </checkout_onepage_review>
 
     <checkout_onepage_success>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
+        </reference>
         <reference name="content">
             <block type="core/template" name="checkout.success" template="checkout/success.phtml"/>
         </reference>

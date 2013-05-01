@@ -135,6 +135,14 @@ class Mage_Paypal_ExpressController extends Mage_Core_Controller_Front_Action
 
     public function saveOrderAction()
     {
+        try {
+            $this->getExpress()->placeOrder($this->getReview()->getQuote()->getPayment());
+        } catch (Exception $e) {
+            Mage::getSingleton('paypal/session')->addError($e->getMessage());
+            $this->_redirect('paypal/express/review');
+            return;
+        }
+
         $address = $this->getReview()->getQuote()->getShippingAddress();
         if (!$address->getShippingMethod()) {
             if ($shippingMethod = $this->getRequest()->getParam('shipping_method')) {

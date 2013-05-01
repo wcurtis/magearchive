@@ -109,7 +109,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
 
         $storeId = $this->getRequest()->getParam('store', 0);
         if ((int) $storeId) {
-            $store = Mage::getModel('core/store')->load($storeId);
+            $store = Mage::app()->getStore($storeId);
             $this->addColumn('custom_name',
                 array(
                     'header'=> Mage::helper('catalog')->__('Name In %s', $store->getName()),
@@ -208,7 +208,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
 
         $this->addColumn('stores',
             array(
-                'header'=> Mage::helper('catalog')->__('Stores'),
+                'header'=> Mage::helper('catalog')->__('Store Views'),
                 'width' => '100px',
                 'filter'    => 'adminhtml/catalog_product_grid_filter_store',
                 'renderer'  => 'adminhtml/catalog_product_grid_renderer_store',

@@ -38,7 +38,7 @@ class Mage_Adminhtml_Block_Promo_Catalog_Edit_Tab_Actions extends Mage_Adminhtml
     {
         $model = Mage::registry('current_promo_catalog_rule');
 
-        //$form = new Varien_Data_Form(array('id' => 'edit_form1', 'action' => $this->getData('action'), 'method' => 'POST'));
+        //$form = new Varien_Data_Form(array('id' => 'edit_form1', 'action' => $this->getData('action'), 'method' => 'post'));
         $form = new Varien_Data_Form();
 
         $form->setHtmlIdPrefix('rule_');

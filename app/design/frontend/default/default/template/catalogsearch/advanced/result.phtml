@@ -18,3 +18,44 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
+<div class="page-head">
+    <h3><?=$this->__('Catalog Advanced Search')?></h3>
+</div>
+
+<?if($this->getResultCount()):?>
+    <div class="advanced-search-found-amount">
+        <?=$this->helper('catalogsearch')
+            ->__('<b>%d item(s)</b> were found using the following search criteria', $this->getResultCount());?>
+    </div>
+<?else:?>
+    <div class="advanced-search-nothing-found">No items were found using the following search criteria. <a href="<?=$this->getFormUrl();?>"><?=$this->helper('catalogsearch')->__('Modify your search');?></a></div>
+<?endif;?>
+
+<?$searchCriterias=$this->getSearchCriterias();?>
+<div class="advanced-search-summary-box">
+    <?foreach (array('left', 'right') as $side):?>
+        <?if(@$searchCriterias[$side]):?>
+            <ul>
+                <?foreach($searchCriterias[$side] as $criteria):?>
+                    <li><span><?=$this->htmlEscape($criteria['name']);?>:</span> <?=$this->htmlEscape($criteria['value']);?></li>
+                <?endforeach;?>
+            </ul>
+        <?endif;?>
+    <?endforeach;?>
+
+    <?if($this->getResultCount()):?>
+        <div class="advanced-search-summary-tip">
+            Don't see what you're looking for?
+            <a href="<?=$this->getFormUrl();?>"><?=$this->helper('catalogsearch')->__('Modify your search');?></a>
+        </div>
+    <?endif;?>
+    <div style="clear:both;"></div>
+</div>
+
+<br />
+
+
+<?if($this->getResultCount()):?>
+    <?=$this->getProductListHtml()?>
+<?endif;?>
+<?$this->getSearchCriterias();?>

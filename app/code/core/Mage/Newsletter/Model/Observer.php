@@ -47,4 +47,18 @@ class Mage_Newsletter_Model_Observer
         }
         return $this;
     }
+
+    public function scheduledSend($schedule)
+    {
+        $countOfQueue  = 3;
+        $countOfSubscritions = 20;
+
+        $collection = Mage::getModel('newsletter/queue')->getCollection()
+            ->setPageSize($countOfQueue)
+            ->setCurPage(1)
+            ->addOnlyForSendingFilter()
+            ->load();
+
+         $collection->walk('sendPerSubscriber', array($countOfSubscritions));
+    }
 }

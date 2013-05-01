@@ -43,7 +43,10 @@
                 </td>
                 <td class="a-center">
                     <button class="form-button" onclick="setLocation('<?=$this->getUrl('checkout/cart/add',array('product'=>$_product->getId()))?>')"><span><?=$this->__('Add to Cart')?></span></button>
-                    <br><a href="<?=$this->getUrl('wishlist/index/add',array('product'=>$_product->getId()))?>"><?=$this->__('Add to Wishlist')?></a></td>
+                    <?if ($this->helper('wishlist')->isAllow()) :?>
+                    <br><a href="<?=$this->getUrl('wishlist/index/add',array('product'=>$_product->getId()))?>"><?=$this->__('Add to Wishlist')?></a>
+                    <?endif;?>
+                </td>
             </tr>
         <?endforeach;?>
         </tbody>

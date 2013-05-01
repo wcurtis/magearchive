@@ -21,6 +21,5 @@
 <div class="page-head">
     <h3><?=$this->__('Shopping Cart is Empty')?></h3>
 </div>
-    <p><?=$this->__('You have no items in your shopping cart.')?></p>
-        <p><?=$this->__('Please <a href="%s">continue shopping</a>.', Mage::getBaseUrl())?></p>
-</div>
+<p><?=$this->__('You have no items in your shopping cart.')?></p>
+<p><?=$this->__('Please <a href="%s">continue shopping</a>.', $this->getContinueShoppingUrl())?></p>

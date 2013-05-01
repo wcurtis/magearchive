@@ -25,9 +25,10 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Core_Block_Template implements Varien_Data_Form_Element_Renderer_Interface
+class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Adminhtml_Block_Widget implements Varien_Data_Form_Element_Renderer_Interface
 {
     protected $_element = null;
+    protected $_customerGroups = null;
 
     public function __construct()
     {
@@ -55,7 +56,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Core
     {
         $values =array();
         $data = $this->getElement()->getValue();
-        if(is_array($data)) {
+
+        if (is_array($data)) {
+            usort($data, array($this, '_sortTierPrices'));
             foreach ($data as $value) {
                 if (isset($value['price'])) {
                     $value['price'] = number_format($value['price'], 2, null, '');
@@ -64,6 +67,57 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier extends Mage_Core
             }
         }
         return $values;
+    }
+
+    protected function _sortTierPrices($a, $b)
+    {
+        if ($a['cust_group']!=$b['cust_group']) {
+            return $this->getCustomerGroups($a['cust_group'])<$this->getCustomerGroups($b['cust_group']) ? -1 : 1;
+        }
+        if ($a['price_qty']!=$b['price_qty']) {
+            return $a['price_qty']<$b['price_qty'] ? -1 : 1;
+        }
+        return 0;
+    }
+
+    public function getCustomerGroups($groupId=null)
+    {
+        if (!$this->_customerGroups) {
+            $collection = Mage::getModel('customer/group')->getCollection()
+                #->setRealGroupsFilter()
+                ->load();
+            $this->_customerGroups = array(
+                Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice::CUST_GROUP_ALL => Mage::helper('catalog')->__('ALL GROUPS'),
+            );
+            foreach ($collection->getIterator() as $item) {
+                $this->_customerGroups[$item->getId()] = $item->getCustomerGroupCode();
+            }
+        }
+        return is_null($groupId) ? $this->_customerGroups :
+            (isset($this->_customerGroups[$groupId]) ? $this->_customerGroups[$groupId] : null);
+    }
+
+    public function getDefaultCustomerGroup()
+    {
+        return Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice::CUST_GROUP_ALL;
+        #return Mage::getStoreConfig(Mage_Customer_Model_Group::XML_PATH_DEFAULT_ID);
+    }
+
+    public function getAfterElementHtml()
+    {
+        $html = $this->getData('after_element_html');
+
+        $storeId = null;
+        $attribute = $this->getElement()->getEntityAttribute();
+        if (!$attribute->getIsGlobal()) {
+            $storeId = $attribute->getEntity()->getStoreId();
+        } else {
+            $html .= $this->getGlobalIcon();
+        }
+        $currencyCode = (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, $storeId);
+        $html .= ' (' . Mage::helper('catalog')->__('Currency') . ' - <strong>'.$currencyCode.'</strong>)';
+
+        return $html;
     }
 
     protected function _prepareLayout()

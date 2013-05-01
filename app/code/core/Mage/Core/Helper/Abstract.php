@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Abstract helper
  *
@@ -30,21 +30,21 @@ abstract class Mage_Core_Helper_Abstract
      * @var string
      */
     protected $_moduleName;
-    
+
     /**
      * Request object
      *
      * @var Zend_Controller_Request_Http
      */
     protected $_request;
-    
+
     /**
      * Layout model object
      *
      * @var Mage_Core_Model_Layout
      */
     protected $_layout;
-    
+
     /**
      * Retrieve request object
      *
@@ -68,7 +68,7 @@ abstract class Mage_Core_Helper_Abstract
     {
         return Mage::app()->loadCache($id);
     }
-    
+
     /**
      * Saving cache
      *
@@ -82,7 +82,7 @@ abstract class Mage_Core_Helper_Abstract
         Mage::app()->saveCache($data, $id, $tags, $lifeTime);
         return $this;
     }
-    
+
     /**
      * Removing cache
      *
@@ -94,7 +94,7 @@ abstract class Mage_Core_Helper_Abstract
         Mage::app()->removeCache($id);
         return $this;
     }
-    
+
     /**
      * Cleaning cache
      *
@@ -106,7 +106,7 @@ abstract class Mage_Core_Helper_Abstract
         Mage::app()->cleanCache($tags);
         return $this;
     }
-    
+
     /**
      * Retrieve helper module name
      *
@@ -120,7 +120,7 @@ abstract class Mage_Core_Helper_Abstract
         }
         return $this->_moduleName;
     }
-    
+
     /**
      * Translate
      *
@@ -133,7 +133,7 @@ abstract class Mage_Core_Helper_Abstract
         array_unshift($args, $expr);
         return Mage::app()->getTranslator()->translate($args);
     }
-    
+
     /**
      * Escape data
      *
@@ -149,7 +149,7 @@ abstract class Mage_Core_Helper_Abstract
         }
         return htmlspecialchars($data);
     }
-    
+
     /**
      * Retrieve url
      *
@@ -161,7 +161,7 @@ abstract class Mage_Core_Helper_Abstract
     {
         return Mage::getUrl($route, $params);
     }
-    
+
     /**
      * Declare layout
      *
@@ -173,7 +173,7 @@ abstract class Mage_Core_Helper_Abstract
         $this->_layout = $layout;
         return $this;
     }
-    
+
     /**
      * Retrieve layout model object
      *

@@ -136,4 +136,23 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Collection extends Mage_Core_Model_
         $this->getSelect()->where('main_table.is_searchable=1');
         return $this;
     }
+
+    public function addHasOptionsFilter()
+    {
+        $this->getSelect()
+            ->joinLeft(
+                array('ao'=>$this->getTable('eav/attribute_option')), 'ao.attribute_id = main_table.attribute_id', 'option_id'
+            )
+            ->group('main_table.attribute_id')
+            ->where('(main_table.frontend_input = ? and option_id > 0) or (main_table.frontend_input <> ?) or (main_table.is_user_defined = 0)', 'select', 'select');
+
+        return $this;
+    }
+
+    public function addDisplayInAdvancedSearchFilter(){
+        $this->getSelect()
+            ->where('main_table.is_visible_in_advanced_search = ?', 1);
+
+        return $this;
+    }
 }

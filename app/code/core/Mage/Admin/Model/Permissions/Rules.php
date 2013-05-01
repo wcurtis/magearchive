@@ -20,7 +20,7 @@
 
 //class Mage_Permissions_Model_Rules extends Varien_Object {
 class Mage_Admin_Model_Permissions_Rules extends Varien_Object {
-	public function getResource() {
+    public function getResource() {
         return Mage::getResourceSingleton('admin/permissions_rules');
     }
 
@@ -49,8 +49,7 @@ class Mage_Admin_Model_Permissions_Rules extends Varien_Object {
     }
 
     public function saveRel() {
-    	$this->getResource()->saveRel($this);
+        $this->getResource()->saveRel($this);
         return $this;
     }
 }
-?>

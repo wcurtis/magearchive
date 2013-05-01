@@ -33,9 +33,14 @@ abstract class Mage_Core_Controller_Varien_Router_Abstract
         return $this->_front;
     }
 
-    public function isCurrentlySecure()
+    public function getFrontNameByRoute($routeName)
     {
-        return Mage::getSingleton('core/url')->isCurrentlySecure();
+        return $routeName;
+    }
+
+    public function getRouteByFrontName($frontName)
+    {
+        return $frontName;
     }
 
     abstract public function match(Zend_Controller_Request_Http $request);

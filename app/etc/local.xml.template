@@ -48,12 +48,4 @@
             </default_write>
          </resources>
      </global>
-
-     <default>
-        <web>
-            <url>
-                <use_script_name>{{use_script_name}}</use_script_name>
-            </url>
-        </web>
-     </default>
 </config>

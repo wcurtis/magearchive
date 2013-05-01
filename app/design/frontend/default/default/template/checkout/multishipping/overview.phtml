@@ -34,7 +34,7 @@
                     <h4><?=$this->__('Billing Address')?><span class="separator">|</span><a href="<?=$this->getEditBillingAddressUrl($_address)?>"><?=$this->__('Change Billing Address')?></a></h4>
                 </div>
                 <address>
-                    <?=$_address->getFormated(true)?>
+                    <?=$_address->format('html')?>
                 </address>
             </div>
             <div class="col-2">
@@ -56,7 +56,7 @@
                 <h4><?=$this->__('Shipping to')?><span class="separator">|</span><a href="<?=$this->getEditShippingAddressUrl($_address)?>"><?=$this->__('Change Shipping Address')?></a></h4>
             </div>
             <address>
-                <?=$_address->getFormated(true)?>
+                <?=$_address->format('html')?>
             </address>
             <br/>
             <div class="head">
@@ -124,7 +124,7 @@
     </tr>
 </table>
 <div class="clear"></div>
-<div class="form-buttons">
+<div class="button-set">
     <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Billing Information')?></a>
 </div>
 </form>

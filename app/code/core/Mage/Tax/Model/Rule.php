@@ -18,34 +18,38 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Mage_Tax_Model_Rule extends Varien_Object
+class Mage_Tax_Model_Rule extends Mage_Core_Model_Abstract
 {
-    public function __construct($rule=false)
+    protected function _construct()
     {
-        parent::__construct();
-        $this->setIdFieldName($this->getResource()->getIdFieldName());
+        $this->_init('tax/rule');
     }
-
-    public function getResource()
-    {
-        return Mage::getResourceModel('tax/rule');
-    }
-
-    public function load($ruleId)
-    {
-        $this->getResource()->load($this, $ruleId);
-        return $this;
-    }
-
-    public function save()
-    {
-        $this->getResource()->save($this);
-        return $this;
-    }
-
-    public function delete()
-    {
-        $this->getResource()->delete($this);
-        return $this;
-    }
+//    public function __construct($rule=false)
+//    {
+//        parent::__construct();
+//        $this->setIdFieldName($this->getResource()->getIdFieldName());
+//    }
+//
+//    public function getResource()
+//    {
+//        return Mage::getResourceModel('tax/rule');
+//    }
+//
+//    public function load($ruleId)
+//    {
+//        $this->getResource()->load($this, $ruleId);
+//        return $this;
+//    }
+//
+//    public function save()
+//    {
+//        $this->getResource()->save($this);
+//        return $this;
+//    }
+//
+//    public function delete()
+//    {
+//        $this->getResource()->delete($this);
+//        return $this;
+//    }
 }

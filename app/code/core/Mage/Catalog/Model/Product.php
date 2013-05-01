@@ -219,8 +219,10 @@ class Mage_Catalog_Model_Product extends Varien_Object
      */
     public function getTierPrice($qty=null)
     {
-        $prices = $this->getData('tier_price');
+        $allGroups = Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice::CUST_GROUP_ALL;
+        #$defaultGroup = Mage::getStoreConfig(Mage_Customer_Model_Group::XML_PATH_DEFAULT_ID);
 
+        $prices = $this->getData('tier_price');
         /**
          * Load tier price
          */
@@ -235,20 +237,48 @@ class Mage_Catalog_Model_Product extends Varien_Object
             if (!is_null($qty)) {
                 return $this->getPrice();
             }
-            return array(array('price'=>$this->getPrice(), 'price_qty'=>1));
+            return array(array(
+                'price'      => $this->getPrice(),
+                'price_qty'  => 1,
+                'cust_group' => $allGroups,
+            ));
         }
 
+        $custGroup = Mage::getSingleton('customer/session')->getCustomer()->getGroupId();
         if ($qty) {
+            // starting with quantity 1 and original price
             $prevQty = 1;
             $prevPrice = $this->getPrice();
+            $prevGroup = $allGroups;
+
             foreach ($prices as $price) {
-                if (($prevQty <= $qty) && ($qty < $price['price_qty'])) {
-                    return $prevPrice;
+                if ($price['cust_group']!=$custGroup && $price['cust_group']!=$allGroups) {
+                    // tier not for current customer group nor is for all groups
+                    continue;
+                }
+                if ($qty < $price['price_qty']) {
+                    // tier is higher than product qty
+                    continue;
+                }
+                if ($price['price_qty'] < $prevQty) {
+                    // higher tier qty already found
+                    continue;
+                }
+                if ($price['price_qty'] == $prevQty && $prevGroup != $allGroups && $price['cust_group'] == $allGroups) {
+                    // found tier qty is same as current tier qty but current tier group is ALL_GROUPS
+                    continue;
                 }
                 $prevPrice = $price['price'];
                 $prevQty = $price['price_qty'];
+                $prevGroup = $price['cust_group'];
             }
             return $prevPrice;
+        } else {
+            foreach ($prices as $i=>$price) {
+                if ($price['cust_group']!=$custGroup && $price['cust_group']!=$allGroups) {
+                    unset($prices[$i]);
+                }
+            }
         }
 
         return ($prices) ? $prices : array();
@@ -311,12 +341,23 @@ class Mage_Catalog_Model_Product extends Varien_Object
          */
         else {
         	$finalPrice = $this->getPrice();
+
         	$tierPrice  = $this->getTierPrice($qty);
 	        if (is_numeric($tierPrice)) {
 	            $finalPrice = min($finalPrice, $tierPrice);
 	        }
-	        if (is_numeric($this->getSpecialPrice())) {
-	            $finalPrice = min($finalPrice, $this->getSpecialPrice());
+
+	        $specialPrice = $this->getSpecialPrice();
+	        if (is_numeric($specialPrice)) {
+	            $today = floor(time()/86400)*86400;
+#echo " TEST:"; echo date('Y-m-d H:i:s', $today).' , '.$this->getSpecialToDate();
+	            if ($this->getSpecialFromDate() && $today < strtotime($this->getSpecialFromDate())) {
+#echo ' test1: '.$this->getSpecialFromDate();
+	            } elseif ($this->getSpecialToDate() && $today > strtotime($this->getSpecialToDate())) {
+#echo ' test2: '.$this->getSpecialToDate();
+	            } else {
+	               $finalPrice = min($finalPrice, $specialPrice);
+	            }
 	        }
         }
 
@@ -868,5 +909,14 @@ class Mage_Catalog_Model_Product extends Varien_Object
             ->getAttribute($attributeCode)
                 ->getSource()
                     ->getOptionText($this->getData($attributeCode));
+    }
+
+    public function getCustomDesignDate()
+    {
+        $result = array();
+        $result['from'] = $this->getData('custom_design_from');
+        $result['to'] = $this->getData('custom_design_to');
+
+        return $result;
     }
 }

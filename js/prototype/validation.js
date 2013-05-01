@@ -137,6 +137,9 @@ Object.extend(Validation, {
         if(container){
             new Insertion.After(container, advice);
         }
+        else if ($(elm.advaiceContainer)) {
+            $(elm.advaiceContainer).update(advice);
+        }
         else {
             switch (elm.type.toLowerCase()) {
                 case 'checkbox':
@@ -323,7 +326,8 @@ Validation.addAllThese([
             }],
     ['validate-email', 'Please enter a valid email address. For example johndoe@domain.com.', function (v) {
                 //return Validation.get('IsEmpty').test(v) || /\w{1,}[@][\w\-]{1,}([.]([\w\-]{1,})){1,3}$/.test(v)
-                return Validation.get('IsEmpty').test(v) || /^[\!\#$%\*/?|\^\{\}`~&\'\+\-=_a-z0-9][\!\#$%\*/?|\^\{\}`~&\'\+\-=_a-z0-9\.]{1,30}[\!\#$%\*/?|\^\{\}`~&\'\+\-=_a-z0-9]@([a-z0-9_-]{1,30}\.){1,5}[a-z]{2,4}$/i.test(v)
+                //return Validation.get('IsEmpty').test(v) || /^[\!\#$%\*/?|\^\{\}`~&\'\+\-=_a-z0-9][\!\#$%\*/?|\^\{\}`~&\'\+\-=_a-z0-9\.]{1,30}[\!\#$%\*/?|\^\{\}`~&\'\+\-=_a-z0-9]@([a-z0-9_-]{1,30}\.){1,5}[a-z]{2,4}$/i.test(v)
+                return Validation.get('IsEmpty').test(v) || /^[a-z0-9,!\#\$%&'\*\+/=\?\^_`\{\|}~-]+(\.[a-z0-9,!#\$%&'\*\+/=\?\^_`\{\|}~-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*\.([a-z]{2,})/i.test(v)
             }],
     ['validate-password', 'Please enter 6 or more characters. Leading or trailing spaces will be ignored.', function(v) {
                 var pass=v.strip(); /*strip leading and trailing spaces*/
@@ -405,6 +409,12 @@ Validation.addAllThese([
                 else
                     return true;
             }],
+    ['validate-zero-or-greater', 'Please enter a number 0 or greater in this field.', function(v) {
+                if(v.length)
+                    return parseFloat(v) >= 0;
+                else
+                    return true;
+            }],
     ['validate-cc-number', 'Please enter a valid credit card number.', function(v, elm) {
                 // remove non-numerics
                 var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_number')) + '_cc_type');
@@ -455,6 +465,33 @@ Validation.addAllThese([
      ['validate-cc-type-select', 'Credit type doesn\'t match credit card number', function(v, elm) {
                 var ccNumberContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_type')) + '_cc_number');
                 return Validation.get('validate-cc-type').test(ccNumberContainer.value, ccNumberContainer);
+            }],
+     ['validate-cc-cvn', 'Please enter a valid credit card verification number.', function(v, elm) {
+                var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_cid')) + '_cc_type');
+                if (!ccTypeContainer) {
+                    return true;
+                }
+                var ccType = ccTypeContainer.value;
+
+                switch (ccType) {
+                    case 'VI' :
+                    case 'MC' :
+                    case 'DI' :
+                        re = new RegExp('^[0-9]{3}$');
+                        break;
+                    case 'AE' :
+                        re = new RegExp('^[0-9]{4}$');
+                        break;
+                    case 'OT' :
+                        re = new RegExp('^[0-9]?$');
+                        break;
+                }
+
+                if (v.match(re)) {
+                    return true;
+                }
+
+                return false;
             }]
 ]);
 

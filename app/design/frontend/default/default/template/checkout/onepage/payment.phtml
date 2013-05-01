@@ -20,7 +20,7 @@
 ?>
 <form id="co-payment-form">
     <?=$this->getChildHtml('methods')?>
-    <div class="tool-tip" id="payment-tool-tip" style="left:0;position:absolute;display:none">
+    <div class="tool-tip" id="payment-tool-tip" style="left:0;position:absolute;display:none;padding-top:15px;">
         <a href="#" id="payment-tool-tip-close" class="btn-close">
             <img src="<?=$this->getSkinUrl('images/btn_window_close.gif')?>" alt="<?=$this->__('Close')?>"/>
         </a>
@@ -29,13 +29,13 @@
         </div>
     </div>
 </form>
-<div class="form-buttons">
+<div class="button-set">
     <p class="required"><?=$this->__('* Required Fields')?></p>
     <span id="payment-buttons-container">
         <a href="#" class="back left" onclick="checkout.back(); return false;"><span><?=$this->__('Back')?></span></a>
         <button class="form-button right" onclick="payment.save()"><span><?=$this->__('Continue')?></span></button>
         <span id="payment-please-wait" style="display:none;" class="opc-please-wait">
-            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp;
         </span>
     </span>
 </div>

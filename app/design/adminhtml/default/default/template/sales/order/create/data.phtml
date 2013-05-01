@@ -53,16 +53,15 @@
         <?=$this->getChildHtml('giftmessage')?>
         </div>
         <div class="clear"></div>
-		<h4><?=Mage::helper('sales')->__('Order Total')?></h4>
-		<div class="entry-edit">
-			<fieldset class="create-order-totals">
-				<div class="box-left">
-					<div id="order:coupons" class="order-coupons"><?=$this->getChildHtml('coupons')?></div>
-					<div id="order:comment"><?=$this->getChildHtml('comment')?></div>
-				</div>
-				<div id="order:totals" class="box-right"><?=$this->getChildHtml('totals')?></div>
-			</fieldset>
-		</div>
+        <h4><?=Mage::helper('sales')->__('Order Total')?></h4>
+        <div class="entry-edit">
+            <fieldset class="create-order-totals">
+                <div class="box-left">
+                    <div id="order:comment"><?=$this->getChildHtml('comment')?></div>
+                </div>
+                <div id="order:totals" class="box-right"><?=$this->getChildHtml('totals')?></div>
+            </fieldset>
+        </div>
 
     </td>
 </tr>

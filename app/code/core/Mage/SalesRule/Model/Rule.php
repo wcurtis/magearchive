@@ -23,7 +23,7 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
 {
     const FREE_SHIPPING_ITEM = 1;
     const FREE_SHIPPING_ADDRESS = 2;
-    
+
     protected function _construct()
     {
         parent::_construct();
@@ -54,17 +54,17 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
              . $this->getActions()->toStringRecursive() ."\n\n";
         return $str;
     }
-    
+
     /**
      * Returns rule as an array for admin interface
-     * 
+     *
      * Output example:
      * array(
      *   'name'=>'Example rule',
      *   'conditions'=>{condition_combine::toArray}
      *   'actions'=>{action_collection::toArray}
      * )
-     * 
+     *
      * @return array
      */
     public function toArray(array $arrAttributes = array())
@@ -72,7 +72,7 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
         $out = parent::toArray($arrAttributes);
         $out['customer_registered'] = $this->getCustomerRegistered();
         $out['customer_new_buyer'] = $this->getCustomerNewBuyer();
-        
+
         return $out;
     }
     /*
@@ -81,7 +81,7 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
         $this->validateProduct($product) && $this->updateProduct($product);
         return $this;
     }
-    
+
     public function validateProduct(Mage_Sales_Model_Product $product)
     {
         if (!$this->getIsCollectionValidated()) {
@@ -98,7 +98,7 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
 
         return $result;
     }
-    
+
     public function updateProduct(Mage_Sales_Model_Product $product)
     {
         $this->getActions()->updateProduct($product);
@@ -109,13 +109,13 @@ class Mage_SalesRule_Model_Rule extends Mage_Rule_Model_Rule
     {
         return Mage::getResourceModel('salesrule/rule_collection');
     }
-    
+
     protected function _afterSave()
     {
         $this->_getResource()->updateRuleProductData($this);
         parent::_afterSave();
     }
-    
+
     public function validate(Varien_Object $quote)
     {
         if ($this->getUsesPerCustomer() && $quote->getCustomer()) {

@@ -21,8 +21,6 @@
 /**
  * Report Products Tags collection
  *
- * @category   Mage
- * @package    Mage_Reports
  */
 
 class Mage_Reports_Model_Mysql4_Tag_Collection extends Mage_Tag_Model_Mysql4_Tag_Collection
@@ -35,4 +33,3 @@ class Mage_Reports_Model_Mysql4_Tag_Collection extends Mage_Tag_Model_Mysql4_Tag
 
 
 }
-?>

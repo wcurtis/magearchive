@@ -36,6 +36,11 @@ class Mage_Sales_Model_Quote_Payment extends Mage_Payment_Model_Info
         $this->_init('sales/quote_payment');
     }
 
+    public function __destruct()
+    {
+        unset($this->_quote);
+    }
+
     /**
      * Declare quote model instance
      *
@@ -71,6 +76,9 @@ class Mage_Sales_Model_Quote_Payment extends Mage_Payment_Model_Info
         $method = $this->getMethodInstance();
 
         $method->assignData($data);
+        /*
+        * validating the payment data
+        */
         $method->validate();
         return $this;
     }
@@ -93,12 +101,15 @@ class Mage_Sales_Model_Quote_Payment extends Mage_Payment_Model_Info
 
     public function getCheckoutRedirectUrl()
     {
-        if (!($method = $this->getMethod())
-            || !($modelName = Mage::getStoreConfig('payment/'.$method.'/model'))
-            || !($model = Mage::getModel($modelName))) {
-            return false;
-        }
+        $method = $this->getMethodInstance();
 
-        return $model->getCheckoutRedirectUrl();
+        return $method ? $method->getCheckoutRedirectUrl() : false;
+    }
+
+    public function getOrderPlaceRedirectUrl()
+    {
+        $method = $this->getMethodInstance();
+
+        return $method ? $method->getOrderPlaceRedirectUrl() : false;
     }
 }

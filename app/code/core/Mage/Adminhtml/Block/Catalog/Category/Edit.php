@@ -80,7 +80,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
         $storeId = (int) $this->getRequest()->getParam('store');
         $params = array('section'=>'catalog');
         if ($storeId) {
-            $store = Mage::getModel('core/store')->load($storeId);
+            $store = Mage::app()->getStore($storeId);
             $params['website'] = $store->getWebsite()->getCode();
             $params['store']   = $store->getCode();
         }

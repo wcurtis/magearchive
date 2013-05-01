@@ -24,7 +24,7 @@
         <newsletter translate="label" module="newsletter">
             <label>Newsletter</label>
             <frontend_type>text</frontend_type>
-            <sort_order>31</sort_order>
+            <sort_order>100</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -45,7 +45,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </confirm>
                         <confirm_email_identity translate="label">
                             <label>Confirmation Email Sender</label>
@@ -55,7 +54,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[support]]></default_value>
                         </confirm_email_identity>
                         <confirm_email_template translate="label">
                             <label>Confirmation Email Template</label>
@@ -65,7 +63,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[6]]></default_value>
                         </confirm_email_template>
                         <success_email_identity translate="label">
                             <label>Success Email Sender</label>
@@ -75,7 +72,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[general]]></default_value>
                         </success_email_identity>
                         <success_email_template translate="label">
                             <label>Success Email Template</label>
@@ -85,7 +81,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[8]]></default_value>
                         </success_email_template>
                         <un_email_identity translate="label">
                             <label>Unsubscription Email Sender</label>
@@ -95,7 +90,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[support]]></default_value>
                         </un_email_identity>
                         <un_email_template translate="label">
                             <label>Unsubscription Email Template</label>
@@ -105,7 +99,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[9]]></default_value>
                         </un_email_template>
                     </fields>
                 </subscription>

@@ -50,32 +50,47 @@ function giftMessageToogle(giftMessageIdentifier)
 </script>
 <?endif;?>
 <? $_order = $this->getOrder() ?>
-<div class="page-head button-level">
-    <h3><?=$this->__('Order #%s - %s', $_order->getRealOrderId(), $_order->getStatusLabel())?></h3>
-    <?/*<a href="#"><?=$this->__('View Invoices')?></a>*/?>
-</div>
-<p><?=$this->__('Order Date: %s', $this->formatDate($_order->getCreatedAt(), 'long'))?></p>
-<div class="col2-set generic-box">
-    <div class="col-1">
-        <h4><?=$this->__('Shipping Address')?></h4>
-        <address><?=$_order->getShippingAddress()->getFormated(true)?></address>
-    </div>
-    <div class="col-2">
-        <h4><?=$this->__('Shipping Method')?><?/* | <a href="#"><?=$this->__('Track Order')?></a>*/?></h4>
-        <?=$_order->getShippingDescription()?>
-    </div>
-</div>
-<div class="col2-set generic-box">
-    <div class="col-1">
-        <h4><?=$this->__('Billing Address')?></h4>
-        <address><?=$_order->getBillingAddress()->getFormated(true)?></address>
-    </div>
-    <div class="col-2">
-        <h4><?=$this->__('Payment Method')?></h4>
-        <?=$this->getPaymentInfoHtml()?>
-    </div>
-</div>
-<h4><?=$this->__('Items Ordered')?></h4>
+
+<h4><?=$this->__('Items Ordered')?>
+
+<? if ($_order->getTracksCollection()->count()) : ?>
+<span class="separator">|</span>
+<a href="#" id="linkId" onclick="shipping.getShipping();return false;"><?=$this->__('Track your order')?></a>
+<span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
+    <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading...')?> &nbsp;
+</span></h4>
+<div id="shipping"></div>
+
+<script type="text/javascript">
+var Shipping = Class.create();
+Shipping.prototype = {
+    initialize: function(){
+        this.onShippingLoad = this.showShipping.bindAsEventListener(this);
+    },
+
+    getShipping: function(){
+        $('shipping-method-please-wait').show();
+        request = new Ajax.Request('<?=$this->helper('shipping')->getTrackingAjaxUrl()?>',{
+            method:     'post',
+            parameters: {order_id: <?=$_order->getId()?>},
+            onSuccess:  this.onShippingLoad,
+            onFailure:  function (){$('shipping').update("<?=$this->__('Can\'t get shipping information.')?>")},
+            onComplete: function (transport){$('shipping-method-please-wait').hide()}
+        });
+    },
+    showShipping: function (transport){
+        if (transport && transport.responseText){
+            $('shipping').update(transport.responseText)
+        } else {
+            $('shipping').update('<?=$this->__('Error in response.')?>');
+        }
+    },
+}
+var shipping = new Shipping();
+</script>
+<?else:?>
+</h4>
+<?endif;?>
 <table cellspacing="0" class="data-table" id="my-orders-table">
     <thead>
         <tr>
@@ -130,15 +145,21 @@ function giftMessageToogle(giftMessageIdentifier)
             <td colspan="4" class="a-right"><?=$this->__('Order Subtotal')?></td>
             <td class="last a-right"><?=$_order->formatPrice($_order->getSubtotal())?></td>
         </tr>
-        <?if ($_order->getTaxAmount()):?>
+        <?if ($_order->getDiscountAmount() > 0):?>
             <tr>
-                <td colspan="4" class="a-right"><?=$this->__('Tax Amount')?></td>
+                <td colspan="4" class="a-right"><?=$this->__('Discount '.($_order->getCouponCode()?'('.$_order->getCouponCode().')':''))?></td>
+                <td class="last a-right"><?=$_order->formatPrice(0.00 - $_order->getDiscountAmount())?></td>
+            </tr>
+        <?endif;?>
+        <?if ($_order->getTaxAmount() > 0):?>
+            <tr>
+                <td colspan="4" class="a-right"><?=$this->__('Tax')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_order->getTaxAmount())?></td>
             </tr>
         <?endif;?>
         <?if ($_order->getShippingAmount()):?>
             <tr>
-                <td colspan="4" class="a-right"><?=$this->__('Shipping Amount')?></td>
+                <td colspan="4" class="a-right"><?=$this->__('Shipping & Handling')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_order->getShippingAmount())?></td>
             </tr>
         <?endif;?>
@@ -148,6 +169,7 @@ function giftMessageToogle(giftMessageIdentifier)
         </tr>
     </tfoot>
 </table>
+<script type="text/javascript">decorateTable('my-orders-table')</script>
 <?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $_order) && $_order->getGiftMessageId()):?>
 <div class="giftmessage">
     <?$_giftMessage=$this->helper('giftmessage/message')->getGiftMessageForEntity($_order);?>
@@ -177,61 +199,6 @@ function giftMessageToogle(giftMessageIdentifier)
     </div>
 <?endif;?>
 
-<? if ($this->helper('shipping')->isShipped($_order)) : ?>
-<br />
-<script type="text/javascript">
-
-
-var Shipping = Class.create();
-Shipping.prototype = {
-    initialize: function(shipping){
-        this.shipping = shipping;
-        this.onShippingLoad = this.showShipping.bindAsEventListener(this);
-        this.onShippingError = this.showError.bindAsEventListener(this);
-
-    },
-
-    getShipping: function(){
-        $('shipping-method-please-wait').show();
-        params = this.prepareParams();
-        request = new Ajax.Request('<?=$this->helper('shipping')->getTrackingAjaxUrl()?>',{
-            method:     'post',
-            parameters: params,
-            onSuccess:  this.onShippingLoad,
-            onFailure:  this.onShippingError,
-            onComplete: function (transport){
-                $('shipping-method-please-wait').hide();
-            }
-        });
-    },
-    showShipping: function (transport){
-        if (transport && transport.responseText){
-            $('shipping').update(transport.responseText)
-        } else {
-            $('shipping').update('<?=$this->__('Error in response.')?>');
-        }
-    },
-    showError: function (){
-        $('shipping').update("<?=$this->__('Can\'t get shipping information.')?>");
-    },
-    prepareParams : function(){
-        params = new Hash();
-        params.order_id = '<?=$_order->getId()?>'
-        params['tracking_ids[]'] =  [<?=$this->helper('shipping')->getTrackingNumbers($_order)?>];
-        return params;
-    },
-}
-
-var shipping = new Shipping();
-</script>
-
-    <a href="#" id="linkId" onclick="shipping.getShipping();return false;"><?=$this->__('Shipping tracking information')?></a>
-    <span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
-        <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading...')?> &nbsp;
-    </span>
-<div id="shipping"></div>
-<?endif;?>
-<script type="text/javascript">decorateTable('my-orders-table')</script>
-<div class="form-buttons">
+<div class="button-set">
     <a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back to My Orders')?></a>
 </div>

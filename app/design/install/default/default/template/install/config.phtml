@@ -60,92 +60,55 @@
         </li>
     </ul>
 </fieldset>
+
 <fieldset class="group-select">
- <legend><?=$this->__('Default store')?></legend>
-    <h4 class="legend"><?=$this->__('Default store')?></h4>
+    <legend><?=$this->__('Web access options')?></legend>
+    <h4 class="legend"><?=$this->__('Web access options')?></h4>
     <ul>
         <li>
-            <div class="input-box">
-                <label for="default_host"><?=$this->__('Host')?> <span class="required">*</span></label><br/>
-                <input type="text" name="config[host]" id="default_host" value="<?=$this->getFormData()->getHost()?>" title="<?=$this->__('Host name')?>" class="required-entry input-text"/>
-            </div>
-            <div class="input-box">
-                <label for="basepath"><?=$this->__('Base Path')?> <span class="required">*</span></label><br/>
-                <input type="text" name="config[base_path]" id="basepath" value="<?=$this->getFormData()->getBasePath()?>" title="<?=$this->__('WWW base path')?>" class="required-entry input-text"/>
-            </div>
-        </li>
-        <li>
-            <div class="input-box">
-                <label for="protocol"><?=$this->__('Protocol')?> <span class="required">*</span></label><br/>
-                <select name="config[protocol]" id="protocol" title="<?=$this->__('Protocol')?>" class="required-entry">
-                    <option value="http" selected>http</option>
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="port"><?=$this->__('Port')?> <span class="required">*</span></label><br/>
-                <input type="text" name="config[port]" id="port" value="<?=$this->getFormData()->getPort()?>" title="<?=$this->__('Port')?>" class="required-entry input-text"/>
-                <p style="margin-top:4px; line-height:1.3em; color:#666;">
-                    <small><?=$this->__('For HTTPS connections, the default port is 443.')?><br/>
-                    <?=$this->__('For HTTP connections, the default port is 80.')?></small>
-                </p>
-            </div>
-        </li>
-    </ul>
-</fieldset>
-<fieldset class="group-select">
- <legend><?=$this->__('Secure Connection')?></legend>
-    <h4 class="legend"><?=$this->__('Secure Connection')?></h4>
-    <ul>
-        <li>
-            <div class="input-box">
-                <label for="secure_host"><?=$this->__('Secure Host')?> <span class="required">*</span></label><br/>
-                <input type="text" name="config[secure_host]" id="secure_host" value="<?=$this->getFormData()->getSecureHost()?>" title="<?=$this->__('Secure host name')?>" class="required-entry input-text"/>
-            </div>
-            <div class="input-box">
-                <label for="secure_basepath"><?=$this->__('Secure Base Path')?> <span class="required">*</span></label><br/>
-                <input type="text" name="config[secure_base_path]" id="secure_basepath" value="<?=$this->getFormData()->getSecureBasePath()?>" title="<?=$this->__('Secure www base path')?>" class="required-entry input-text"/>
-            </div>
-        </li>
-        <li>
-            <div class="input-box">
-                <label for="secure_protocol"><?=$this->__('Secure Protocol')?> <span class="required">*</span></label><br/>
-                <select name="config[secure_protocol]" id="secure_protocol" title="<?=$this->__('Secure Protocol')?>" class="required-entry">
-                    <option value="http"<?if($this->getFormData()->getSecureProtocol()=='http'):?> selected<?endif;?>>http</option>
-                    <option value="https"<?if(!$this->getFormData()->getSecureProtocol() || $this->getFormData()->getSecureProtocol()=='https'):?> selected<?endif;?>>https</option>
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="secure_port"><?=$this->__('Secure Port')?> <span class="required">*</span></label><br/>
-                <input type="text" name="config[secure_port]" id="secure_port" value="<?=$this->getFormData()->getSecurePort()?>" title="<?=$this->__('Secure Port')?>" class="required-entry input-text"/>
-                <p style="margin-top:4px; line-height:1.3em; color:#666;">
-                    <small><?=$this->__('For HTTPS connections, the default port is 443.')?><br/>
-                    <?=$this->__('For HTTP connections, the default port is 80.')?></small>
-                </p>
-            </div>
-        </li>
-    </ul>
-</fieldset>
-<fieldset class="group-select">
-    <legend><?=$this->__('Configuration options')?></legend>
-    <h4 class="legend"><?=$this->__('Configuration options')?></h4>
-    <ul>
-        <li>
-            <input type="checkbox" name="config[use_script_name]" id="use_script_name" value="1" <?if($this->getFormData()->getUseScriptName()):?>checked<?endif?>>
-            <label for="use_script_name"><?=$this->__('Do not use Apache Rewrites')?></label><br/>
+            <input type="checkbox" name="config[use_rewrites]" id="use_rewrites" value="1" <?if($this->getFormData()->getUseRewrites()):?>checked<?endif?>>
+            <label for="use_rewrites"><?=$this->__('Use Web Server (Apache) Rewrites')?></label><br/>
             <p style="margin-top:4px; line-height:1.3em; color:#666;">
-                <small><?=$this->__('If you do not have apache mod_rewrite module available you could use this option to allow Magento functionality by inserting /index.php/ in every URL. Please note, that if you disable this option without having mod_rewrite enabled, the next page might not load.')?></small>
+                <small>
+                    <?=$this->__('You could enable this option to use web server rewrites functionality for improved search engines optimization.')?><br>
+                    <strong><?=$this->__('Please make sure that <code>mod_rewrite</code> is enabled in Apache configuration.')?></strong>
+                </small>
             </p>
         </li>
         <li>
-            <input type="checkbox" name="skip_url_validation" id="skip_url_validation" value="1" <?if($this->getSkipUrlValidation()):?>checked<?endif?>>
-            <label for="skip_url_validation"><?=$this->__('Skip URL validation')?></label><br/>
+            <input type="checkbox" name="config[use_secure]" id="use_secure" value="1" <?if($this->getFormData()->getUseSecure()):?>checked<?endif?> onclick="this.checked ? $('use_secure_options').show() : $('use_secure_options').hide(); return true">
+            <label for="use_secure"><?=$this->__('Use Secure URLs (SSL)')?></label><br/>
             <p style="margin-top:4px; line-height:1.3em; color:#666;">
-                <small><?=$this->__('Check this box only if you are unable to automatically validate Magento URL, for example if HTTP authentication is required.')?></small>
+                <small><?=$this->__('Enable this option only if you have SSL available.')?></small>
+            </p>
+        </li>
+    </ul>
+    <ul id="use_secure_options" <?if(!$this->getFormData()->getUseSecure()):?>style="display:none"<?endif?>>
+        <li>
+            <label for="secure_base_url"><?=$this->__('Secure Base URL')?> <span class="required">*</span></label><br/>
+            <input type="text" name="config[secure_base_url]" id="secure_base_url" value="<?=$this->getFormData()->getSecureBaseUrl()?>" title="<?=$this->__('Secure Base URL')?>" class="required-entry input-text"/>
+            <p style="margin-top:4px; line-height:1.3em; color:#666;">
+                <small><?=$this->__('Provide a complete base URL for SSL connection. For example: %s', '<strong>https://www.mydomain.com/magento/</strong>')?></small>
+            </p>
+        </li>
+        <li>
+            <input type="checkbox" name="config[use_secure_admin]" id="use_secure_admin" value="1" <?if($this->getUseSecureAdmin()):?>checked<?endif?>>
+            <label for="use_secure_admin"><?=$this->__('Run admin interface with SSL')?></label><br/>
+            <p style="margin-top:4px; line-height:1.3em; color:#666;">
+                <small><?=$this->__('')?></small>
+            </p>
+        </li>
+        <li>
+            <input type="checkbox" name="skip_url_validation" id="skip_url_validation" value="1" <?if($this->getSkipSecureValidation()):?>checked<?endif?>>
+            <label for="skip_url_validation"><?=$this->__('Skip Secure URL validation before next step')?></label><br/>
+            <p style="margin-top:4px; line-height:1.3em; color:#666;">
+                <small><?=$this->__('Check this box only if it is not possible to automatically validate Secure URL, for example if HTTP authentication is required.')?></small>
             </p>
         </li>
     </ul>
 </fieldset>
-<div class="form-buttons">
+
+<div class="button-set">
     <p class="required">* <?=$this->__('Required Fields')?></p>
     <button class="form-button" type="submit"><span><?=$this->__('Continue')?></span></button>
 </div>
@@ -155,7 +118,7 @@
 </script>
 <?else:?>
     <div><?=$this->__('Please set all required settings before clicking Continue')?></div>
-    <div class="form-buttons">
+    <div class="button-set">
         <button class="form-button" type="button" onclick="setLocation('<?=$this->getUrl('*/*/*')?>')"><span><?=$this->__('Continue')?></span></button>
     </div>
 <?endif;?>

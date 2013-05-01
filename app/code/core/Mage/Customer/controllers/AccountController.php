@@ -88,7 +88,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                 }
             }
         }
-        if (!$session->getBeforeAuthUrl()) {
+        if (!$session->getBeforeAuthUrl() || $session->getBeforeAuthUrl() == Mage::getBaseUrl() ) {
             $session->setBeforeAuthUrl(Mage::helper('customer')->getAccountUrl());
         }
         $this->_redirectUrl($session->getBeforeAuthUrl());
@@ -188,6 +188,12 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
     public function forgotPasswordAction()
     {
         $this->loadLayout();
+
+        $this->getLayout()->getBlock('forgotPassword')->setEmailValue(
+            Mage::getSingleton('customer/session')->getForgottenEmail()
+        );
+        Mage::getSingleton('customer/session')->unsForgottenEmail();
+
         $this->_initLayoutMessages('customer/session');
         $this->renderLayout();
     }
@@ -220,6 +226,7 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
             else {
                 Mage::getSingleton('customer/session')
                     ->addError($this->__('This email address was not found in our records'));
+                Mage::getSingleton('customer/session')->setForgottenEmail($email);
             }
         }
         $this->getResponse()->setRedirect(Mage::getUrl('*/*/forgotpassword'));

@@ -28,8 +28,15 @@ class Mage_Paygate_Model_Authorizenet_Source_PaymentAction
     public function toOptionArray()
     {
         return array(
-            array('value' => Mage_Paygate_Model_Authorizenet::REQUEST_TYPE_AUTH_ONLY, 'label' => Mage::helper('paypal')->__('Authorize Only')),
-            array('value' => Mage_Paygate_Model_Authorizenet::REQUEST_TYPE_AUTH_CAPTURE, 'label' => Mage::helper('paypal')->__('Authorize and Capture')),
+            array('value' => '', 'label' => ''),
+            array(
+                'value' => Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE,
+                'label' => Mage::helper('paygate')->__('Authorize Only')
+            ),
+            array(
+                'value' => Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE_CAPTURE,
+                'label' => Mage::helper('paygate')->__('Authorize and Capture')
+            ),
         );
     }
 }

@@ -31,7 +31,7 @@ class Mage_Catalog_Model_Entity_Category_Attribute_Frontend_Image extends Mage_E
     {
         $url = false;
         if ($image = $object->getData($this->getAttribute()->getAttributeCode())) {
-            $url = Mage::app()->getStore()->getConfig('catalog/images/category_upload_url').$image;
+            $url = Mage::getBaseUrl('media').'catalog/category/'.$image;
         }
         return $url;
     }

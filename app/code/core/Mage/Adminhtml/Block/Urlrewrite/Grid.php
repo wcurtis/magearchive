@@ -51,7 +51,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
         $stores = Mage::getResourceModel('core/store_collection')->setWithoutDefaultFilter()->load()->toOptionHash();
 
         $this->addColumn('store_id', array(
-            'header'    => $this->__('Store ID'),
+            'header'    => $this->__('Store View'),
             'width'     => '50px',
             'index'     => 'store_id',
             'type'      => 'options',

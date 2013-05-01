@@ -1145,18 +1145,36 @@ class Mage_Eav_Model_Entity_Collection_Abstract implements IteratorAggregate, Co
     protected function _getConditionSql($fieldName, $condition) {
         $sql = '';
         if (is_array($condition)) {
-            /*if (!empty($condition['from']) && !empty($condition['to'])) {
-                $sql = $this->_read->quoteInto("$fieldName between ?", $condition['from']);
-                $sql = $this->_read->quoteInto("$sql and ?", $condition['to']);
-            } */
             if (isset($condition['from']) || isset($condition['to'])) {
                 if (isset($condition['from'])) {
-                    $from = empty($condition['date']) ? ( empty($condition['datetime']) ? $condition['from'] : $this->_read->convertDateTime($condition['from']) ) : $this->_read->convertDate($condition['from']);
+                    if (empty($condition['date'])) {
+                        if ( empty($condition['datetime'])) {
+                            $from = $condition['from'];
+                        }
+                        else {
+                            $from = $this->_read->convertDateTime($condition['from']);
+                        }
+                    }
+                    else {
+                        $from = $this->_read->convertDate($condition['from']);
+                    }
                     $sql.= $this->_read->quoteInto("$fieldName >= ?", $from);
                 }
                 if (isset($condition['to'])) {
                     $sql.= empty($sql) ? '' : ' and ';
-                    $to = empty($condition['date']) ? ( empty($condition['datetime']) ? $condition['to'] : $this->_read->convertDateTime($condition['to']) ) : $this->_read->convertDate($condition['to']);
+
+                    if (empty($condition['date'])) {
+                        if ( empty($condition['datetime'])) {
+                            $to = $condition['to'];
+                        }
+                        else {
+                            $to = $this->_read->convertDateTime($condition['to']);
+                        }
+                    }
+                    else {
+                        $to = $this->_read->convertDate($condition['to']);
+                    }
+
                     $sql.= $this->_read->quoteInto("$fieldName <= ?", $to);
                 }
             }
@@ -1373,4 +1391,10 @@ class Mage_Eav_Model_Entity_Collection_Abstract implements IteratorAggregate, Co
         return $this;
     }
 
+    public function clear()
+    {
+        $this->_items = array();
+        $this->_itemsById = array();
+        return $this;
+    }
 }

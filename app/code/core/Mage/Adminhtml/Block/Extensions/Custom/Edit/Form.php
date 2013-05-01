@@ -29,7 +29,7 @@ class Mage_Adminhtml_Block_Extensions_Custom_Edit_Form extends Mage_Adminhtml_Bl
 {
     protected function _prepareForm()
     {
-        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'POST'));
+        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post'));
 
         $form->setUseContainer(true);
         $this->setForm($form);

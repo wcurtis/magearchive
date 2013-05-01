@@ -26,7 +26,7 @@
  */
 class Mage_Catalog_Model_Entity_Product_Attribute_Source_Status extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
-    public function getAllOptions()
+    public function getAllOptions($addEmptyOption = true)
     {
         if (!$this->_options) {
             $this->_options = Mage::getResourceModel('catalog/product_status_collection')
@@ -34,7 +34,9 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Source_Status extends Mage_Eav
                 ->load()
                 ->toOptionArray();
                 
-            array_unshift($this->_options, array('label'=>'', 'value'=>''));
+            if ($addEmptyOption) {
+                array_unshift($this->_options, array('label'=>'', 'value'=>''));
+            }
         }
         return $this->_options;
     }

@@ -29,11 +29,11 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
 
     public function checkAvailableShipCountries(Mage_Shipping_Model_Rate_Request $request)
     {
-        $allcountriesAllow=Mage::getStoreConfig('carriers/'.$request->getCarrier().'/allowall');
+        $speCountriesAllow=Mage::getStoreConfig('carriers/'.$request->getCarrier().'/sallowspecific');
         /*
-        * for specific countries, the flag will be -1
+        * for specific countries, the flag will be 1
         */
-        if($allcountriesAllow<0){
+        if($speCountriesAllow && $speCountriesAllow==1){
              $availableCountries=explode(',',Mage::getStoreConfig('carriers/'.$request->getCarrier().'/specificcountry'));
              if(!in_array($request->getDestCountryId(), $availableCountries)){
                  if(Mage::getStoreConfig('carriers/'.$request->getCarrier().'/showmethod')){
@@ -56,5 +56,10 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
     public function isTrackingAvailable()
     {
         return false;
+    }
+
+    public function getSortOrder()
+    {
+        return $this->_data['sort_order'];
     }
 }

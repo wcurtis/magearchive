@@ -64,9 +64,30 @@ class Mage_Catalog_Model_Url
     /**
      * URL Rewrites by store_id and request_path
      *
-     * @var unknown_type
+     * @var array
      */
     protected $_paths;
+
+    /**
+     * Is loaded url rewrites by store id
+     *
+     * @var array
+     */
+    protected $_rewritesIsLoaded = array();
+
+    /**
+     * Is loaded categories cache by store id
+     *
+     * @var array
+     */
+    protected $_categoriesIsLoaded = array();
+
+    /**
+     * Is loaded products cache by store id
+     *
+     * @var array
+     */
+    protected $_productsIsLoaded = array();
 
     /**
      * Load url rewrites from core_url_rewrite table
@@ -76,6 +97,10 @@ class Mage_Catalog_Model_Url
      */
     public function loadRewrites($storeId)
     {
+        if (!empty($this->_rewritesIsLoaded[$storeId])) {
+            return $this;
+        }
+
         $rewriteCollection = Mage::getResourceModel('core/url_rewrite_collection');
         $rewriteCollection->getSelect()
             ->where("id_path like 'category/%' or id_path like 'product/%'")
@@ -89,6 +114,9 @@ class Mage_Catalog_Model_Url
             // store rewrites by requestPath
             $this->_paths[$rewrite->getStoreId()][$rewrite->getRequestPath()] = $rewrite->getIdPath();
         }
+
+        $this->_rewritesIsLoaded[$storeId] = true;
+
         return $this;
     }
 
@@ -134,6 +162,10 @@ class Mage_Catalog_Model_Url
      */
     public function loadCategories($storeId)
     {
+        if (!empty($this->_categoryIsLoaded[$storeId])) {
+            return $this;
+        }
+
         $categoryCollection = Mage::getResourceModel('catalog/category_collection')
             ->addAttributeToSelect('children')
             ->addAttributeToSelect('url_key')
@@ -146,6 +178,9 @@ class Mage_Catalog_Model_Url
         foreach ($categoryCollection as $category) {
             $this->_categories[$storeId][$category->getId()] = $category;
         }
+
+        $this->_categoryIsLoaded[$storeId] = true;
+
         return $this;
     }
 
@@ -157,6 +192,9 @@ class Mage_Catalog_Model_Url
      */
     public function loadProducts($storeId)
     {
+        if (!empty($this->_productsIsLoaded[$storeId])) {
+            return $this;
+        }
         $productCollection = Mage::getResourceModel('catalog/product_collection')
             ->addAttributeToSelect('url_key')
             ->addAttributeToSelect('name');
@@ -191,6 +229,8 @@ class Mage_Catalog_Model_Url
             $categories[$category->getId()] = $category;
             $product->setCategories($categories);
         }
+
+        $this->_productsIsLoaded[$storeId] = true;
 
         return $this;
     }
@@ -403,12 +443,14 @@ class Mage_Catalog_Model_Url
                 $parentPath = rtrim($parent->getUrlPath(),'/').'/';
             }
         }
+
         $idPath = 'category/'.$category->getId();
         $targetPath = 'catalog/category/view/id/'.$category->getId();
         $categoryPath = $parentPath.$category->getUrlKey();
         $categoryPath = $this->getUnusedPath($storeId, $categoryPath, $idPath);
         $update = false;
         $rewrite = $this->getRewrite($storeId, $idPath);
+
         if ($rewrite) {
             $update = $rewrite->getRequestPath() !== $categoryPath;
         } else {
@@ -418,8 +460,13 @@ class Mage_Catalog_Model_Url
                 ->setTargetPath($targetPath);
             $update = true;
         }
+
         if ($update) {
-            $category->setUrlPath($categoryPath)->save();
+            $category->setUrlPath($categoryPath);
+
+            $category->getResource()->saveAttribute($category, 'url_key');
+            $category->getResource()->saveAttribute($category, 'url_path');
+
             $this->saveRewrite($rewrite->setRequestPath($categoryPath));
         }
 

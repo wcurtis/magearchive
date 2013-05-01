@@ -56,11 +56,12 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Customer_Grid extends Mage_Adminht
 
     protected function _prepareColumns()
     {
-        /*$this->addColumn('id', array(
+        $this->addColumn('id', array(
             'header'    =>Mage::helper('sales')->__('ID'),
             'width'     =>'50px',
-            'index'     =>'entity_id'
-        ));*/
+            'index'     =>'entity_id',
+            'align'     => 'right',
+        ));
         $this->addColumn('firstname', array(
             'header'    =>Mage::helper('sales')->__('First Name'),
             'index'     =>'firstname'

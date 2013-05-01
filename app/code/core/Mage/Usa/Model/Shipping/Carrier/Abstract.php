@@ -30,4 +30,22 @@ abstract class Mage_Usa_Model_Shipping_Carrier_Abstract extends Mage_Shipping_Mo
     {
         return false;
     }
+
+    public function getTrackingInfo($tracking)
+    {
+        $info = array();
+
+        $result = $this->getTracking($tracking);
+
+        if($result instanceof Mage_Shipping_Model_Tracking_Result){
+            if ($trackings = $result->getAllTrackings()) {
+                return $trackings[0];
+            }
+        }
+        elseif (is_string($result) && !empty($result)) {
+            return $result;
+        }
+
+        return false;
+    }
 }

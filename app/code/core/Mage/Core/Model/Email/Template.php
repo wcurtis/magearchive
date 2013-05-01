@@ -45,6 +45,14 @@ class Mage_Core_Model_Email_Template extends Varien_Object
 
     protected $_templateFilter;
     protected $_preprocessFlag = false;
+    protected $_mail;
+
+    /**
+     * Configuration of desing package for template
+     *
+     * @var Varien_Object
+     */
+    protected $_designConfig;
 
     /**
      * Return resource of template model.
@@ -54,6 +62,19 @@ class Mage_Core_Model_Email_Template extends Varien_Object
     public function getResource()
     {
         return Mage::getResourceSingleton('core/email_template');
+    }
+
+    /**
+     * Retrieve mail object instance
+     *
+     * @return Zend_Mail
+     */
+    public function getMail()
+    {
+        if (is_null($this->_mail)) {
+            $this->_mail = new Zend_Mail('utf-8');
+        }
+        return $this->_mail;
     }
 
     public function getTemplateFilter()
@@ -150,7 +171,10 @@ class Mage_Core_Model_Email_Template extends Varien_Object
             ->setVariables($variables);
 
 
-        return $processor->filter($this->getTemplateText());
+        $this->_applyDesignConfig();
+        $processedResult = $processor->filter($this->getTemplateText());
+        $this->_cancelDesignConfig();
+        return $processedResult;
     }
 
 
@@ -189,8 +213,7 @@ class Mage_Core_Model_Email_Template extends Varien_Object
         ini_set('SMTP', Mage::getStoreConfig('system/smtp/host'));
         ini_set('smtp_port', Mage::getStoreConfig('system/smtp/port'));
 
-        $mail = new Zend_Mail('utf-8');
-        #$mail->setDefaultTransport(Mage::getSingleton('core/email_transport'));
+        $mail = $this->getMail();
         $mail->addTo($email, $name);
 
         $this->setUseAbsoluteLinks(true);
@@ -206,6 +229,7 @@ class Mage_Core_Model_Email_Template extends Varien_Object
         $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
         try {
             $mail->send(); // Zend_Mail warning..
+            $this->_mail = null;
         }
         catch (Exception $e) {
             return false;
@@ -253,6 +277,56 @@ class Mage_Core_Model_Email_Template extends Varien_Object
 
         $processor->setVariables($variables);
 
-        return $processor->filter($this->getTemplateSubject());
+        $this->_applyDesignConfig();
+        $processedResult = $processor->filter($this->getTemplateSubject());
+        $this->_cancelDesignConfig();
+        return $processedResult;
+    }
+
+    public function setDesignConfig(array $config)
+    {
+        if(is_null($this->_designConfig)) {
+            $this->_designConfig = new Varien_Object();
+        }
+        $this->getDesignConfig()->setData($config);
+        return $this;
+    }
+
+    public function getDesignConfig()
+    {
+        return $this->_designConfig;
+    }
+
+    protected function _applyDesignConfig()
+    {
+        if ($this->getDesignConfig()) {
+            $this->getDesignConfig()
+                ->setOldArea(Mage::getDesign()->getArea())
+                ->setOldStore(Mage::getDesign()->getStore());
+
+            if ($this->getDesignConfig()->getArea()) {
+                Mage::getDesign()->setArea($this->getDesignConfig()->getArea());
+            }
+
+            if ($this->getDesignConfig()->getStore()) {
+                Mage::getDesign()->setStore($this->getDesignConfig()->getStore());
+            }
+        }
+        return $this;
+    }
+
+
+    protected function _cancelDesignConfig()
+    {
+        if ($this->getDesignConfig()) {
+            if ($this->getDesignConfig()->getOldArea()) {
+                Mage::getDesign()->setArea($this->getDesignConfig()->getOldArea());
+            }
+
+            if ($this->getDesignConfig()->getOldStore()) {
+                Mage::getDesign()->setStore($this->getDesignConfig()->getOldStore());
+            }
+        }
+        return $this;
     }
 }

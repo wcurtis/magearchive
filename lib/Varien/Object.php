@@ -277,7 +277,7 @@ class Varien_Object
         if (empty($key) || !is_string($key)) {
             return !empty($this->_data);
         }
-        return isset($this->_data[$key]);
+        return array_key_exists($key, $this->_data);
     }
 
     /**

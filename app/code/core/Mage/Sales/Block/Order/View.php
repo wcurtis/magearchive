@@ -62,4 +62,19 @@ class Mage_Sales_Block_Order_View extends Mage_Core_Block_Template
     {
         return Mage::getUrl('*/*/history');
     }
+
+    public function getInvoiceUrl($order)
+    {
+        return Mage::getUrl('*/*/invoice', array('order_id' => $order->getId()));
+    }
+
+    public function getShipmentUrl($order)
+    {
+        return Mage::getUrl('*/*/shipment', array('order_id' => $order->getId()));
+    }
+
+    public function getCreditmemoUrl($order)
+    {
+        return Mage::getUrl('*/*/creditmemo', array('order_id' => $order->getId()));
+    }
 }

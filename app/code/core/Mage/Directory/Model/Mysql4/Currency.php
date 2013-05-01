@@ -132,7 +132,7 @@ class Mage_Directory_Model_Mysql4_Currency extends Mage_Core_Model_Mysql4_Abstra
         $select = $read->select()
                 ->from($this->getTable('core/config_data'))
                 ->where($read->quoteInto(' path = ? ', $path))
-                ->where('inherit = 0')
+                //->where('inherit = 0')
                 ->order(' value ASC ');
 
         $data = $read->fetchAll($select);

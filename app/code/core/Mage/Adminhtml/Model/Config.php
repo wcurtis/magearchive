@@ -46,7 +46,7 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
                     }
                 }
             }
-            $config->applyExtends();
+            #$config->applyExtends();
 
             $this->_sections = $config->getNode('sections');
         }

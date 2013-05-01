@@ -26,18 +26,18 @@
  */
 abstract class Mage_Catalog_Block_Product_Abstract extends Mage_Core_Block_Template
 {
-	public function getAddToCartUrl($product)
-	{
-	    return $this->helper('checkout/cart')->getAddUrl($product);
-	}
-	
-	public function getAddToWishlistUrl($product)
-	{
-	    return $this->getUrl('wishlist/index/add',array('product'=>$product->getId()));
-	}
-	
-	public function getAddToCompareUrl($product)
-	{
-	    return $this->helper('catalog/product_compare')->getAddUrl($product);
-	}
+    public function getAddToCartUrl($product)
+    {
+        return $this->helper('checkout/cart')->getAddUrl($product);
+    }
+
+    public function getAddToWishlistUrl($product)
+    {
+        return $this->getUrl('wishlist/index/add',array('product'=>$product->getId()));
+    }
+
+    public function getAddToCompareUrl($product)
+    {
+        return $this->helper('catalog/product_compare')->getAddUrl($product);
+    }
 }

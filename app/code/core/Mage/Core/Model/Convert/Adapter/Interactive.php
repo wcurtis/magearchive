@@ -32,7 +32,7 @@
      {
          if (!$_FILES) {
 ?>
-<form method="POST" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
 File to upload: <input type="file" name="io_file"/> <input type="submit" value="Upload"/>
 </form>
 <?

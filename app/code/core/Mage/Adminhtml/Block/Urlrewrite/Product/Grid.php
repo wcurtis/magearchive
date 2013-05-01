@@ -84,7 +84,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Product_Grid extends Mage_Adminhtml_Block_
 
         $this->addColumn('stores',
             array(
-                'header'=> Mage::helper('adminhtml')->__('Stores'),
+                'header'=> Mage::helper('adminhtml')->__('Store Views'),
                 'width' => '100px',
                 'filter'    => 'adminhtml/catalog_product_grid_filter_store',
                 'renderer'  => 'adminhtml/catalog_product_grid_renderer_store',

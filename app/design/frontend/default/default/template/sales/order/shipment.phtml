@@ -1,0 +1,125 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order', $this->getOrder())):?>
+<script type="text/javascript">
+function giftMessageToogle(giftMessageIdentifier)
+{
+    var link = $('order-item-gift-message-link-'+giftMessageIdentifier);
+    var container = $('order-item-gift-message-'+giftMessageIdentifier);
+    var row = $('order-item-row-'+giftMessageIdentifier);
+
+
+    if(link.expanded) {
+        link.expanded = false;
+        link.removeClassName('collapse');
+        link.addClassName('expand');
+        if(container.hasClassName('last')) {
+            row.addClassName('last');
+        }
+        container.hide();
+    } else {
+        link.expanded = true;
+        link.addClassName('collapse');
+        link.removeClassName('expand');
+        if(container.hasClassName('last')) {
+            row.removeClassName('last');
+        }
+        container.show();
+    }
+
+    return false;
+}
+</script>
+<?endif;?>
+<? $_order = $this->getOrder() ?>
+
+<?foreach ($_order->getShipmentsCollection() as $_shipment):?>
+<br />
+<div class="head">
+    <h3>Shipment #<?=$_shipment->getIncrementId();?></h3>
+    <!--<a href="#">Print shipment</a>-->
+</div>
+
+<h4><?=$this->__('Items Shipped')?>
+
+<? if ($_order->getTracksCollection()->count()) : ?>
+<span class="separator">|</span>
+<a href="#" id="linkId" onclick="shipping.getShipping();return false;"><?=$this->__('Track your order')?></a>
+<span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
+    <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading...')?> &nbsp;
+</span></h4>
+<div id="shipping"></div>
+
+<script type="text/javascript">
+var Shipping = Class.create();
+Shipping.prototype = {
+    initialize: function(){
+        this.onShippingLoad = this.showShipping.bindAsEventListener(this);
+    },
+
+    getShipping: function(){
+        $('shipping-method-please-wait').show();
+        request = new Ajax.Request('<?=$this->helper('shipping')->getTrackingAjaxUrl()?>',{
+            method:     'post',
+            parameters: {order_id: <?=$_order->getId()?>},
+            onSuccess:  this.onShippingLoad,
+            onFailure:  function (){$('shipping').update("<?=$this->__('Can\'t get shipping information.')?>")},
+            onComplete: function (transport){$('shipping-method-please-wait').hide()}
+        });
+    },
+    showShipping: function (transport){
+        if (transport && transport.responseText){
+            $('shipping').update(transport.responseText)
+        } else {
+            $('shipping').update('<?=$this->__('Error in response.')?>');
+        }
+    },
+}
+var shipping = new Shipping();
+</script>
+<?else:?>
+</h4>
+<?endif;?>
+<table cellspacing="0" class="data-table" id="my-orders-table-<?=$_shipment->getId();?>">
+    <thead>
+        <tr>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-center"><?=$this->__('Qty Shipped')?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?$_items = $_shipment->getAllItems();?>
+        <?$_count = count($_items)?>
+        <?$_index = 0;?>
+        <?foreach ($_items as $_item):?>
+            <tr <?=($_index++ > $_count ? ' class="last"' : '')?> id="order-item-row-<?=$_item->getId()?>">
+                <td><?=$_item->getName()?></td>
+                <td class="a-center"><?=$_item->getQty()*1?></td>
+            </tr>
+        <?endforeach;?>
+
+    </tbody>
+</table>
+<script type="text/javascript">decorateTable('my-orders-table-<?=$_shipment->getId();?>')</script>
+<?endforeach;?>
+<div class="button-set">
+    <a href="<?=$this->getBackUrl()?>" class="left">&laquo; <?=$this->__('Back to My Orders')?></a>
+</div>

@@ -426,7 +426,7 @@ class Mage_Core_Model_Resource_Setup
 
     public function setConfigData($path, $value, $scope='default', $scopeId=0, $inherit=0)
     {
-        $this->_conn->raw_query("replace into ".$this->getTable('core/config_data')." (scope, scope_id, path, value, inherit) values ('$scope', $scopeId, '$path', '$value', $inherit)");
+        $this->_conn->raw_query("replace into ".$this->getTable('core/config_data')." (scope, scope_id, path, value) values ('$scope', $scopeId, '$path', '$value')");
         return $this;
     }
 
@@ -466,8 +466,8 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
     public function endSetup()
     {
         $this->_conn->multi_query("
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET SQL_MODE=IFNULL(@OLD_SQL_MODE,'');
+SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS,0);
 ");
         return $this;
     }

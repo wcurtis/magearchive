@@ -91,6 +91,14 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Orders extends Mage_Adminhtml_Block
             'options' => $stores,
         ));
 
+         $this->addColumn('action', array(
+            'header'    =>  ' ',
+            'filter'    =>  false,
+            'sortable'  =>  false,
+            'width'     => '100px',
+            'renderer'  =>  'adminhtml/sales_reorder_renderer_action'
+        ));
+
         return parent::_prepareColumns();
     }
 

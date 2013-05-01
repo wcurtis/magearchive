@@ -26,6 +26,8 @@
  */
 abstract class Mage_Sales_Model_Quote_Item_Abstract extends Mage_Core_Model_Abstract
 {
+    abstract function getQuote();
+
     /**
      * Retrieve store model object
      *
@@ -114,7 +116,13 @@ abstract class Mage_Sales_Model_Quote_Item_Abstract extends Mage_Core_Model_Abst
      */
     public function calcTaxAmount()
     {
-        $tax = $this->getRowTotal() * $this->getTaxPercent()/100;
+        if (Mage::getStoreConfig('sales/tax/apply_after_discount', $this->getQuote()->getStoreId())) {
+            $rowTotal = $this->getRowTotalWithDiscount();
+        }
+        else {
+            $rowTotal = $this->getRowTotal();
+        }
+        $tax = $rowTotal * $this->getTaxPercent()/100;
         $this->setTaxAmount($this->getStore()->roundPrice($tax));
         return $this;
     }
@@ -128,12 +136,11 @@ abstract class Mage_Sales_Model_Quote_Item_Abstract extends Mage_Core_Model_Abst
     {
         $price = $this->getData('calculation_price');
         if (is_null($price)) {
-            $price = $this->getPrice();
             if ($this->getCustomPrice()) {
                 $price = $this->getCustomPrice();
             }
             else {
-                $price = $this->getStore()->convertPrice($price);
+                $price = $this->getOriginalPrice();
             }
             $this->setData('calculation_price', $price);
         }
@@ -141,30 +148,17 @@ abstract class Mage_Sales_Model_Quote_Item_Abstract extends Mage_Core_Model_Abst
     }
 
     /**
-     * Import data from order item
+     * Retrieve original price (retrieved from product) for item
      *
-     * @param   Mage_Sales_Model_Order_Item $item
-     * @return  Mage_Sales_Model_Quote_Item
+     * @return float
      */
-    public function importOrderItem(Mage_Sales_Model_Order_Item $item)
+    public function getOriginalPrice()
     {
-        $this->setProductId($item->getProductId())
-            ->setSuperProductId($item->getSuperProductId())
-            ->setParentProductId($item->getParentProductId())
-            ->setSku($item->getSku())
-            ->setName($item->getName())
-            ->setDescription($item->getDescription())
-            ->setWeight($item->getWeight())
-            ->setQty($item->getQtyToShip())
-            ->setPrice($item->getPrice())
-            ->setDiscountPercent($item->getDiscountPercent())
-            ->setDiscountAmount($item->getDiscountAmount())
-            ->setTaxPercent($item->getTaxPercent())
-            ->setTaxAmount($item->getTaxAmount())
-            ->setRowWeight($item->getRowWeight())
-            ->setRowTotal($item->getRowTotal())
-            ->setAppliedRuleIds($item->getAppliedRuleIds);
-
-        return $this;
+        $price = $this->getData('original_price');
+        if (is_null($price)) {
+            $price = $this->getStore()->convertPrice($this->getPrice());
+            $this->setData('original_price', $price);
+        }
+        return $price;
     }
 }

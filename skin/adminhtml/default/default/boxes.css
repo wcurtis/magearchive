@@ -54,6 +54,7 @@
 .notice-msg {
     border-color:#fcd344 !important;
     color:#3d6611 !important;
+    background-color:#fefaea #important;
     background-image:url(images/note_msg_icon.gif) !important;
     }
 
@@ -66,8 +67,11 @@
 .box-left .content, .box-right content { padding:6px; }
 
 /* Basic form elements */
-.input-text, textarea, select { border:1px solid #acacac; font:12px arial, helvetica, sans-serif; }
+.input-text, textarea, select { border:1px solid #acacac; }
+.input-text, textarea, select, optgroup { font:12px arial, helvetica, sans-serif; }
 .input-text, textarea { padding:2px; }
+select optgroup { font-weight:bold; }
+select optgroup option { font-weight:normal; padding-left:10px}
 
 
 /* Box */ /* Sets the color for prominent box-elements */
@@ -267,6 +271,7 @@ BODY.html-body-popup{
     border-bottom:4px solid #dfdfdf;
     padding-bottom:.25em;
     }
+.content-header table { width:100%; }
 .content-header h3 {
     margin:0;
     margin-top:.3em;
@@ -275,14 +280,15 @@ BODY.html-body-popup{
     line-height:1.2em;
     }
 .content-header table.grid-header { width:100%; }
+.content-header button.scalable { margin-bottom:5px; }
 .content-header .form-buttons {  text-align:right; }
 .nested-content .content-header { margin-top:-2.4em; }
 /* Box Head */ /* Used when the section heading contains more than just text heading */
 .box-head {
-    margin-bottom:.6em;
+        margin-bottom:.6em;
         padding-bottom:3px;
         border-bottom:1px solid #ccc;
-    text-align:right;
+        text-align:left;
     }
 .box-head h4 {
     float:left;
@@ -328,15 +334,12 @@ BODY.html-body-popup{
 .head-payment-method { background-image:url(images/fam_creditcards.gif); }
 
 .head-order-date { background-image:url(images/fam/calendar.png); }
-.head-customer-sales-statistics { background-image:url(images/fam/money.png); }
+.head-customer-sales-statistics { background-image:url(images/fam_money.png); }
 
 .order-coupons .icon-head { display:none !important; }
+.page-help-link { float:right; background:url(images/fam_help.gif) no-repeat 0 50%; padding-left:21px; color:#fff; font-size:.95em; line-height:27px;}
+.page-help-link:hover { color:#fff; }
 
-
-/************* DATA MANIPULATION ************/
-
-select optgroup {font-style:normal}
-select optgroup option {padding-left:10px}
 
 /* Entry Edit */
 table.form-edit {
@@ -560,7 +563,7 @@ img.attribute-global {
 .entry-view { padding-top: 5px; }
 
 
-.order-totals { width: 200px; margin-left: auto; padding: 10px 0px; text-align: right; }
+.order-totals { width: 220px; margin-left: auto; padding: 10px 0px; text-align: right; }
 .order-totals table { border: none; background: none; margin-left: auto; }
 .order-totals table td { padding:2px 10px; text-align: right; }
 .order-totals table td.last { padding:2px 6px; }
@@ -630,7 +633,8 @@ img.attribute-global {
 .data-table tfoot td { padding-top:1px; padding-bottom:1px; border-bottom:0; border-right:1px solid #d9dde3; }
 .data-table tbody td { border-bottom:1px solid #d9dde3; border-right:1px solid #d9dde3; }
 
-
+.inline-table {border:0px !important}
+.inline-table td {border:0px !important;padding:0px 5px 5px 5px !important;}
 
 /*############# Dashboard #############*/
 
@@ -774,8 +778,8 @@ img.attribute-global {
 /******************** ON A CLOSING NOTE ***********************/ /* Some overrides and clears */
 
 /* Directional and spacial */
-.left {float:left; }
-.right {float:right; }
+.f-left, .left {float:left; }
+.f-right, .right {float:right; }
 .v-top { vertical-align:top; }
 .v-middle { vertical-align:middle; }
 .v-bottom { vertical-align:bottom; }
@@ -785,6 +789,7 @@ img.attribute-global {
 .nm { margin:0 !important; }
 .np { padding:0 !important; }
 .no-float { float:none !important; }
+.nobr     { white-space:nowrap; }
 
 /* Color */
 .emph { color:#e66f20; } /* This just gives an element a little BAM! */
@@ -923,7 +928,6 @@ td.giftmessage-single-item {
 
 .giftmessage-single-item .item-container {
     cursor: auto;
-    width: 555px !important;
 }
 
 .giftmessage-single-item .gift-form {
@@ -957,11 +961,11 @@ td.giftmessage-single-item {
 }
 
 .giftmessage-single-item .gift-form .entry-edit .left .input-text {
-    width: 246px !important;
+    width: 50% !important;
 }
 
 .giftmessage-single-item .gift-form .entry-edit textarea.input-text {
-    width: 519px !important;
+    width: 99% !important;
 }
 
 .giftmessage-single-item .item-text .action-link {
@@ -982,7 +986,7 @@ td.giftmessage-single-item {
 }
 
 .giftmessage-whole-order-container .entry-edit textarea.input-text {
-    width: 400px !important;
+    width: 100% !important;
 }
 
 .giftmessage-whole-order-container .entry-edit label {
@@ -995,4 +999,51 @@ td.giftmessage-single-item {
 .order-history {
     width: 70%;
     margin-right: 27px;
+}
+
+/** Media Library **/
+.uploader .file-row {
+    width: 600px;
+    padding: 0.5em 0.6em;
+    margin:0.5em 0.6em;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    vertical-align: middle;
+}
+
+.uploader .file-row .file-info {
+    float:left;
+}
+
+
+.uploader .file-row .progress-text {
+    float:right;
+    font-weight: bold;
+}
+
+.uploader .file-row .delete-button {
+    float:right;
+}
+
+.uploader .buttons {
+    float:left;
+}
+
+.uploader .flex {
+    float:right;
+}
+
+.uploader .progress {
+    border: 1px solid #f0e6b7;
+    background-color: #feffcc;
+}
+
+.uploader .error {
+    border: 1px solid #aa1717;
+    background-color: #ffe6de;
+}
+
+.uploader .complete {
+    border: 1px solid #90c898;
+    background-color: #e5ffed;
 }

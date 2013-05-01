@@ -21,7 +21,7 @@
 
 class Mage_Tax_Model_Class_Source_Product extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
-	public function getAllOptions()
+	public function getAllOptions($addEmptyOption = true)
 	{
 		if (!$this->_options) {
 			$this->_options = Mage::getResourceModel('tax/class_collection')
@@ -29,7 +29,9 @@ class Mage_Tax_Model_Class_Source_Product extends Mage_Eav_Model_Entity_Attribut
         		->load()
         		->toOptionArray();
         		
-            array_unshift($this->_options, array('value'=>'', 'label'=>''));
+            if ($addEmptyOption) {
+                array_unshift($this->_options, array('value'=>'', 'label'=>''));
+            }
 		}
 		return $this->_options;
 	}

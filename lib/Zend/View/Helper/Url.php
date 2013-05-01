@@ -16,7 +16,7 @@
  * @package    Zend_View
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Url.php 7009 2007-12-01 08:56:56Z thomas $
+ * @version    $Id: Url.php 7383 2008-01-11 09:29:04Z martel $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -62,7 +62,7 @@ class Zend_View_Helper_Url {
         
         if ($encode) {
             foreach ($urlOptions as $key => $option) {
-	        $urlOptions[$key] = urlencode($option);
+                $urlOptions[$key] = ($option !== null) ? urlencode($option) : $option;
             }
         }
 

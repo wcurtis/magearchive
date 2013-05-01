@@ -76,6 +76,7 @@
         </filesystem>
         <php>
             <extensions>
+                <spl/>
                 <dom/>
                 <simplexml/>
                 <pdo_mysql/>

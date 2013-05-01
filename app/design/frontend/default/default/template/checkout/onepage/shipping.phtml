@@ -71,13 +71,13 @@
 </fieldset>
     <p><input type="checkbox" name="shipping[same_as_billing]" id="shipping:same_as_billing" value="1" <?if($this->getAddress()->getSameAsBilling()):?>checked<?endif?> onclick="shipping.setSameAsBilling(this.checked)"/> &nbsp;<label for="shipping:same_as_billing"><?=$this->__('Use Billing Address')?></label></p>
 </form>
-<div class="form-buttons">
+<div class="button-set">
     <p class="required"><?=$this->__('* Required Fields')?></p>
     <span id="shipping-buttons-container">
         <a href="#" class="back left" onclick="checkout.back(); return false;"><?=$this->__('Back')?></a>
         <button class="form-button right" onclick="shipping.save()"><span><?=$this->__('Continue')?></span></button>
         <span id="shipping-please-wait" style="display:none;" class="opc-please-wait">
-            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" align="absmiddle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp; 
+            <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading next step...')?> &nbsp; 
         </span>
     </span>
 </div>

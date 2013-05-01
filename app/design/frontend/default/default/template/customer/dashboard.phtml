@@ -56,10 +56,11 @@
 <div class="input-left">
     <h3><?=$this->__('Personal Information')?></h3>
 </div>
+<?if ($this->helper('wishlist')->isAllow()) :?>
 <div class="input-right">
     <h3><?=$this->__('My Wishlist')?></h3>
 </div>
-
+<?endif;?>
 <div class="input-left">
     <h3><?=$this->__('My Reviews')?></h3>
 </div>

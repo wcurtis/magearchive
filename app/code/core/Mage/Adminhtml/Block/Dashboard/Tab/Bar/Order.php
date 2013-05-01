@@ -59,7 +59,7 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Order extends Mage_Adminhtml_Block_
     protected function _configureTabs()
     {
         // orders income axises configuration
-        $store = Mage::getModel('core/store')->load($this->getDataHelper()->getParam('store'));
+        $store = Mage::app()->getStore($this->getDataHelper()->getParam('store'));
         $this->getTab('orders_income')->getVerticalAxis()->setTitle($this->__('Income'));
         $this->getTab('orders_income')->getVerticalAxis()->setCurrencyCode($store->getBaseCurrencyCode());
         $this->getTab('orders_income')->getHorizontalAxis()->setTitle($this->__('Timeline'));

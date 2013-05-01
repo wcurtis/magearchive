@@ -27,6 +27,7 @@
 
 class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage_Eav_Model_Entity_Attribute_Backend_Abstract
 {
+    const CUST_GROUP_ALL = 32000;
 	/**
 	 * DB connections list
 	 *
@@ -50,6 +51,26 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage
 		return $this->_mainTable;
 	}
 
+	public function validate($object)
+	{
+	    $tiers = $object->getData($this->getAttribute()->getName());
+	    if (empty($tiers)) {
+	        return $this;
+	    }
+	    $dup = array();
+	    foreach ($tiers as $tier) {
+	        if (!empty($tier['delete'])) {
+	            continue;
+	        }
+	        $key = $tier['cust_group'].'-'.$tier['price_qty'];
+	        if (!empty($dup[$key])) {
+	            throw Mage::exception('Mage_Catalog', Mage::helper('catalog')->__('Duplicate tier price customer group and quantity.'));
+	        }
+	        $dup[$key] = 1;
+	    }
+	    return $this;
+	}
+
 	public function afterLoad($object)
     {
     	$storeId = $object->getStoreId();
@@ -59,17 +80,29 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage
         $entityIdField = $this->getEntityIdField();
 
         $select = $this->getConnection('read')->select()
-        	->from($this->getMainTable(), array('qty AS price_qty', 'value AS price'))
+        	->from($this->getMainTable(), array(
+        	   'all_groups',
+        	   'customer_group_id AS cust_group',
+        	   'qty AS price_qty',
+        	   'value AS price'
+        	))
         	->where('store_id = ?', $storeId)
         	->where($entityIdField . ' = ?', $entityId)
         	->where('attribute_id = ?', $attributeId);
 
-        $object->setData($this->getAttribute()->getName(), $this->getConnection('read')->fetchAll($select));
+        $data = $this->getConnection('read')->fetchAll($select);
+
+        foreach ($data as $i=>$row) {
+            if (!empty($row['all_groups'])) {
+                $data[$i]['cust_group'] = self::CUST_GROUP_ALL;
+            }
+        }
+
+        $object->setData($this->getAttribute()->getName(), $data);
     }
 
     public function beforeSave($object)
     {
-
     }
 
     public function afterSave($object)
@@ -109,11 +142,13 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage
 
 
             $data = array();
-            $data[$entityIdField]   = $entityId;
-            $data['attribute_id']   = $attributeId;
-            $data['qty']            = $tierPrice['price_qty'];
-            $data['value']          = $tierPrice['price'];
-            $data['entity_type_id'] = $entityTypeId;
+            $data[$entityIdField]      = $entityId;
+            $data['attribute_id']      = $attributeId;
+            $data['all_groups']        = $tierPrice['cust_group'] == self::CUST_GROUP_ALL;
+            $data['customer_group_id'] = $tierPrice['cust_group'] != self::CUST_GROUP_ALL ? $tierPrice['cust_group'] : 0;
+            $data['qty']               = $tierPrice['price_qty'];
+            $data['value']             = $tierPrice['price'];
+            $data['entity_type_id']    = $entityTypeId;
 
 
 

@@ -133,14 +133,14 @@ class Mage_Admin_Model_Mysql4_Acl
                 	$acl->deny($role, $resource, $privileges, $assert);
                 }
             } catch (Exception $e) {
-                $m = $e->getMessage();
-                if ( eregi("^Resource '(.*)' not found", $m) ) {
+                //$m = $e->getMessage();
+                //if ( eregi("^Resource '(.*)' not found", $m) ) {
                     // Deleting non existent resource rule from rules table
-                    $cond = $this->_write->quoteInto('resource_id = ?', $resource);
-                    $this->_write->delete(Mage::getSingleton('core/resource')->getTableName('admin/rule'), $cond);
-                } else {
+                    //$cond = $this->_write->quoteInto('resource_id = ?', $resource);
+                    //$this->_write->delete(Mage::getSingleton('core/resource')->getTableName('admin/rule'), $cond);
+                //} else {
                     //TODO: We need to log such exceptions to somewhere like a system/errors.log
-                }
+                //}
             }
             /*
             switch ($rule['permission']) {

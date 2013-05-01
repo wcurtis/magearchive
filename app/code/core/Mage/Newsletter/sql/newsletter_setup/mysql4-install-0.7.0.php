@@ -18,21 +18,12 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-$this->installModuleSystemDefaults();
-
 $installer = $this;
 /* @var $installer Mage_Core_Model_Resource_Setup */
 
 $installer->startSetup();
 
 $installer->run("
-
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 /*Table structure for table `newsletter_problem` */
 
@@ -146,8 +137,6 @@ CREATE TABLE `newsletter_template` (
 
 insert  into `newsletter_template`(`template_id`,`template_code`,`template_text`,`template_text_preprocessed`,`template_type`,`template_subject`,`template_sender_name`,`template_sender_email`,`template_actual`,`added_at`,`modified_at`) values (1,'Great Newsletter','This is a GREAT <br> <br> Newsletter','This is a GREAT <br> <br> Newsletter',2,'Greatness','Magento','david@varien.com',0,'2007-08-29 17:30:31','2007-08-29 17:30:31'),(2,'Great Newsletter','This is a GREAT <br> <br> Newsletter','This is a GREAT <br> <br> Newsletter',2,'Greatness','Magento','david@varien.com',0,'2007-08-29 17:30:31','2007-08-29 17:30:31'),(3,'Great Newsletter','This is a GREAT <br> <br> Newsletter',NULL,2,'Greatness','Magento','david@varien.com',1,'2007-08-29 17:30:31','2007-08-29 17:30:31');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 
     ");
 

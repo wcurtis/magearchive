@@ -84,6 +84,19 @@ class Mage_Adminhtml_Block_Catalog_Search_Grid extends Mage_Adminhtml_Block_Widg
             'width'     => '200px'
         ));
 
+        $this->addColumn('display_in_terms', array(
+            'header'=>Mage::helper('catalog')->__('Display in Suggested Terms'),
+            'sortable'=>true,
+            'index'=>'display_in_terms',
+            'type' => 'options',
+            'width' => '100px',
+            'options' => array(
+                '1' => Mage::helper('catalog')->__('Yes'),
+                '0' => Mage::helper('catalog')->__('No'),
+            ),
+            'align' => 'left',
+        ));
+
         return parent::_prepareColumns();
     }
 

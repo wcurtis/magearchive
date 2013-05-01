@@ -25,8 +25,9 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
 
         $rid = Mage::registry('controller')->getRequest()->getParam('rid', false);
 
-        $resources = Mage::getModel("admin/permissions_roles")->getResourcesList();
-        $rules_set = Mage::getResourceModel("admin/permissions_rules_collection")->getByRoles($rid)->load();
+        $resources = Mage::getModel('admin/permissions_roles')->getResourcesList();
+
+        $rules_set = Mage::getResourceModel('admin/permissions_rules_collection')->getByRoles($rid)->load();
 
         $selrids = array();
 
@@ -44,58 +45,67 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
         //->assign('checkedResources', join(',', $selrids));
     }
 
+    public function getEverythingAllowed()
+    {
+        return in_array('all', $this->getSelectedResources());
+    }
+
     public function getResTreeJson()
     {
         $rid = Mage::registry('controller')->getRequest()->getParam('rid', false);
+        $resources = Mage::getModel('admin/permissions_roles')->getResourcesTree();
 
-        $resources = Mage::getModel("admin/permissions_roles")->getResourcesTree();
         $rootArray = $this->_getNodeJson($resources);
-//        $array2
+
         $json = Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : array());
+
         return $json;
     }
-    
+
     protected function _sortTree($a, $b)
     {
         return $a['sort_order']<$b['sort_order'] ? -1 : ($a['sort_order']>$b['sort_order'] ? 1 : 0);
     }
 
-    
+
     protected function _getNodeJson($node, $level=0)
     {
         $item = array();
-        $item['text']= Mage::helper('adminhtml')->__((string)$node->title);
-        $item['sort_order']= isset($node->sort_order) ? (string)$node->sort_order : 0;
-        $item['id']  = (string)$node->attributes()->aclpath;
-        
         $selres = $this->getSelectedResources();
 
-        if ( in_array($item['id'], $selres) ) $item['checked'] = true;
-        if (isset($node->children)) {
-        	$children = $node->children->children();
+        if ($level != 0) {
+            $item['text']= Mage::helper('adminhtml')->__((string)$node->title);
+            $item['sort_order']= isset($node->sort_order) ? (string)$node->sort_order : 0;
+            $item['id']  = (string)$node->attributes()->aclpath;
 
+            if (in_array($item['id'], $selres))
+                $item['checked'] = true;
+        }
+        if (isset($node->children)) {
+            $children = $node->children->children();
         } else {
             $children = $node->children();
         }
         if (empty($children)) {
             return $item;
         }
-        
+
         if ($children) {
             $item['children'] = array();
             //$item['cls'] = 'fiche-node';
             foreach ($children as $child) {
-
                 if ($child->getName()!='title' && $child->getName()!='sort_order') {
-                    $item['children'][] = $this->_getNodeJson($child, $level+1);
+                    if ($level != 0) {
+                        $item['children'][] = $this->_getNodeJson($child, $level+1);
+                    } else {
+                        $item = $this->_getNodeJson($child, $level+1);
+                    }
                 }
             }
             if (!empty($item['children'])) {
-            	
-            usort(&$item['children'], array($this, '_sortTree'));
-
+                usort(&$item['children'], array($this, '_sortTree'));
             }
-        }   
+        }
         return $item;
     }
 }

@@ -79,7 +79,8 @@ class Mage_Adminhtml_Block_Tax_Rate_Grid extends Mage_Adminhtml_Block_Widget_Gri
                     'align' =>'left',
                     'filter' => false,
                     'index' => "rate_value_{$type->getTypeId()}",
-                    'default' => Mage::helper('tax')->__('N/A')
+                    'default' => '0.00',
+                    'renderer' => 'adminhtml/tax_rate_grid_renderer_data', // Mage_Adminhtml_Block_Tax_Rate_Grid_Renderer_Data
                 )
             );
         }

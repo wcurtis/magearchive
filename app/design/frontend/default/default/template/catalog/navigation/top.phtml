@@ -27,12 +27,11 @@
 ?>
 <div class="header-nav-container">
     <div class="header-nav">
-        <h4 class="no-show"><?=$this->__('Category Navigation:')?></h4>
+        <h4 class="no-display"><?=$this->__('Category Navigation:')?></h4>
         <ul id="nav">
         <?foreach ($this->getStoreCategories(10) as $_category):?>
             <?=$this->drawItem($_category)?>
         <?endforeach?>
-			<li>
         </ul>
     </div>
 

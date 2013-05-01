@@ -40,6 +40,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Filter_Datetime extends Mage_Admin
         if (is_array($value)) {
             $value['datetime'] = true;
         }
+        if (!empty($value['to'])) {
+            $value['to'].= ' 23:59:59';
+        }
         return $value;
     }
 

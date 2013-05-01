@@ -158,8 +158,7 @@ class Mage_Tag_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Entity
 
     public function setDescOrder($dir='DESC')
     {
-        $this->getSelect()
-            ->order('relation.tag_relation_id', $dir);
+        $this->setOrder('relation.tag_relation_id', $dir);
         return $this;
     }
 

@@ -43,7 +43,7 @@ Default layout, loads most of the pages
 
         <!-- Mage_Customer -->
         <reference name="top.left.links">
-            <action method="addLink" translate="label"><li/><a>href="{{baseUrl}}customer/account/"</a><label>My Account</label></action>
+            <action method="addLink" translate="label"><li/><a>href="{{baseSecureUrl}}customer/account/"</a><label>My Account</label></action>
         </reference>
     </default>
 
@@ -53,7 +53,7 @@ Load this update on every page when customer is logged in
 
     <customer_logged_in>
         <reference name="top.left.links">
-            <action method="addLink"><li/><a>href="{{baseUrl}}customer/account/logout/"</a><label>Log Out</label></action>
+            <action method="addLink" translate="label"><li/><a>href="{{baseUrl}}customer/account/logout/"</a><label>Log Out</label></action>
         </reference>
     </customer_logged_in>
 
@@ -63,7 +63,7 @@ Load this update on every page when customer is logged out
 
     <customer_logged_out>
         <reference name="top.left.links">
-            <action method="addLink"><li/><a>href="{{baseUrl}}customer/account/"</a><label>Log In</label></action>
+            <action method="addLink" translate="label"><li/><a>href="{{baseSecureUrl}}customer/account/login/"</a><label>Log In</label></action>
         </reference>
     </customer_logged_out>
 
@@ -115,7 +115,8 @@ New customer registration
             <action method="setHeaderTitle" translate="title"><title>Password forgotten</title></action>
         </reference>
         <reference name="content">
-            <block type="core/template" name="forgotPassword" template="customer/form/forgotpassword.phtml"/>
+            <!--<block type="core/template" name="forgotPassword" template="customer/form/forgotpassword.phtml"/>-->
+            <block type="customer/account_forgotpassword" name="forgotPassword" template="customer/form/forgotpassword.phtml"/>
         </reference>
     </customer_account_forgotpassword>
 
@@ -127,7 +128,7 @@ New customer registration
         <reference name="content">
             <block type="customer/form_edit" name="customer_edit" template="customer/form/edit.phtml"/>
         </reference>
-        
+
         <reference name="left">
           <action method="unsetChild"><name>left.permanent.callout</name></action>
         </reference>
@@ -201,5 +202,5 @@ Customer account address edit page
             <block type="customer/address_edit" name="customer_address_edit" template="customer/address/edit.phtml"/>
         </reference>
     </customer_address_form>
-	
+
 </layout>

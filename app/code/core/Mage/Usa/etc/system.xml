@@ -38,7 +38,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </account>
                         <active translate="label">
                             <label>Enabled</label>
@@ -48,7 +47,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </active>
                         <allowed_methods translate="label">
                             <label>Allowed methods</label>
@@ -58,7 +56,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[E,N,S,G]]></default_value>
                         </allowed_methods>
                         <contentdesc translate="label">
                             <label>Package Description</label>
@@ -67,7 +64,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[Big Box]]></default_value>
                         </contentdesc>
                         <cutoff_cost translate="label">
                             <label>Minimum order amount for free shipping</label>
@@ -85,7 +81,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </dutiable>
                         <dutypaymenttype translate="label">
                             <label>Shipment Duty Payment Type</label>
@@ -95,7 +90,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[R]]></default_value>
                         </dutypaymenttype>
                         <free_method translate="label">
                             <label>Free method</label>
@@ -106,7 +100,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[G]]></default_value>
                         </free_method>
                         <gateway_url translate="label">
                             <label>Gateway URL</label>
@@ -115,7 +108,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[https://eCommerce.airborne.com/ApiLandingTest.asp]]></default_value>
                         </gateway_url>
                         <handling translate="label">
                             <label>Handling fee</label>
@@ -132,7 +124,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </id>
                         <password translate="label">
                             <label>Password</label>
@@ -141,7 +132,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </password>
                         <shipment_type translate="label">
                             <label>Shipment type</label>
@@ -151,7 +141,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[P]]></default_value>
                         </shipment_type>
                         <shipping_intlkey translate="label">
                             <label>Shipping key (International)</label>
@@ -184,19 +173,17 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[DHL]]></default_value>
                         </title>
-                        <allowall translate="label">
+                        <sallowspecific translate="label">
                             <label>Ship to applicable countries</label>
-                            <frontend_type>allowall</frontend_type>
+                            <frontend_type>select</frontend_type>
                             <sort_order>90</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
-                        </allowall>
+                        </sallowspecific>
                         <specificcountry translate="label">
                             <label>Ship to Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
@@ -205,7 +192,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificcountry>
                         <showmethod translate="label">
                             <label>Show method if not applicable</label>
@@ -215,7 +201,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </showmethod>
                         <specificerrmsg translate="label">
                             <label>Displayed Error Message</label>
@@ -224,7 +209,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificerrmsg>
                     </fields>
                 </dhl>
@@ -252,7 +236,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </active>
                         <allowed_methods translate="label">
                             <label>Allowed methods</label>
@@ -262,7 +245,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[PRIORITYOVERNIGHT,STANDARDOVERNIGHT,FIRSTOVERNIGHT,FEDEX2DAY,FEDEXEXPRESSSAVER,INTERNATIONALPRIORITY,INTERNATIONALECONOMY,INTERNATIONALFIRST,FEDEX1DAYFREIGHT,FEDEX2DAYFREIGHT,FEDEX3DAYFREIGHT,FEDEXGROUND,GROUNDHOMEDELIVERY,INTERNATIONALPRIORITY FREIGHT,INTERNATIONALECONOMY FREIGHT,EUROPEFIRSTINTERNATIONALPRIORITY]]></default_value>
                         </allowed_methods>
                         <cutoff_cost translate="label">
                             <label>Minimum order amount for free shipping</label>
@@ -280,7 +262,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[REGULARPICKUP]]></default_value>
                         </dropoff>
                         <free_method translate="label">
                             <label>Free method</label>
@@ -291,7 +272,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[FEDEXGROUND]]></default_value>
                         </free_method>
                         <gateway_url translate="label">
                             <label>Gateway URL</label>
@@ -300,7 +280,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[https://gateway.fedex.com/GatewayDC]]></default_value>
                         </gateway_url>
                         <handling translate="label">
                             <label>Handling fee</label>
@@ -318,7 +297,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[YOURPACKAGING]]></default_value>
                         </packaging>
                         <sort_order translate="label">
                             <label>Sort order</label>
@@ -335,19 +313,17 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[Federal Express]]></default_value>
                         </title>
-                        <allowall translate="label">
+                        <sallowspecific translate="label">
                             <label>Ship to applicable countries</label>
-                            <frontend_type>allowall</frontend_type>
+                            <frontend_type>select</frontend_type>
                             <sort_order>90</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
-                        </allowall>
+                        </sallowspecific>
                         <specificcountry translate="label">
                             <label>Ship to Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
@@ -356,7 +332,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificcountry>
                         <showmethod translate="label">
                             <label>Show method if not applicable</label>
@@ -366,7 +341,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </showmethod>
                         <specificerrmsg translate="label">
                             <label>Displayed Error Message</label>
@@ -375,7 +349,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificerrmsg>
                     </fields>
                 </fedex>
@@ -403,7 +376,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </active>
                         <allowed_methods translate="label">
                             <label>Allowed methods</label>
@@ -413,7 +385,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1DM,1DML,1DA,1DAL,1DAPI,1DP,1DPL,2DM,2DML,2DA,2DAL,3DS,GND,GNDCOM,GNDRES,STD,XPR,WXS,XPRL,XDM,XDML,XPD]]></default_value>
                         </allowed_methods>
                         <container translate="label">
                             <label>Container</label>
@@ -423,7 +394,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[CP]]></default_value>
                         </container>
                         <cutoff_cost translate="label">
                             <label>Minimum order amount for free shipping</label>
@@ -441,7 +411,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[RES]]></default_value>
                         </dest_type>
                         <free_method translate="label">
                             <label>Free method</label>
@@ -452,7 +421,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[GND]]></default_value>
                         </free_method>
                         <gateway_url translate="label">
                             <label>Gateway URL</label>
@@ -461,7 +429,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[http://www.ups.com:80/using/services/rave/qcostcgi.cgi]]></default_value>
                         </gateway_url>
                         <gateway_xml_url translate="label">
                             <label>Gateway XML URL</label>
@@ -470,7 +437,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[https://www.ups.com/ups.app/xml/Rate]]></default_value>
                         </gateway_xml_url>
                         <handling translate="label">
                             <label>Handling fee</label>
@@ -479,7 +445,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </handling>
                         <origin_shipment translate="label">
                             <label>Origin of the shipment</label>
@@ -506,7 +471,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[CC]]></default_value>
                         </pickup>
                         <sort_order translate="label">
                             <label>Sort order</label>
@@ -523,7 +487,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[United Parcel Service]]></default_value>
                         </title>
                         <tracking_xml_url translate="label">
                             <label>Tracking XML URL</label>
@@ -532,7 +495,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[https://www.ups.com/ups.app/xml/Track]]></default_value>
                         </tracking_xml_url>
                         <type translate="label">
                             <label>UPS type</label>
@@ -551,7 +513,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[LBS]]></default_value>
                         </unit_of_measure>
                         <username translate="label">
                             <label>UserId</label>
@@ -561,17 +522,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </username>
-                        <allowall translate="label">
+                        <sallowspecific translate="label">
                             <label>Ship to applicable countries</label>
-                            <frontend_type>allowall</frontend_type>
+                            <frontend_type>select</frontend_type>
                             <sort_order>90</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
-                        </allowall>
+                        </sallowspecific>
                         <specificcountry translate="label">
                             <label>Ship to Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
@@ -580,7 +540,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificcountry>
                         <showmethod translate="label">
                             <label>Show method if not applicable</label>
@@ -590,7 +549,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </showmethod>
                         <specificerrmsg translate="label">
                             <label>Displayed Error Message</label>
@@ -599,7 +557,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificerrmsg>
                     </fields>
                 </ups>
@@ -619,7 +576,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[0]]></default_value>
                         </active>
                         <allowed_methods translate="label">
                             <label>Allowed methods</label>
@@ -629,7 +585,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[First-Class,Express Mail,Express Mail PO to PO,Priority Mail,Parcel Post,Express Mail Flat-Rate Envelope,Priority Mail Flat-Rate Box,Bound Printed Matter,Media Mail,Library Mail,Priority Mail Flat-Rate Envelope,Global Express Guaranteed,Global Express Guaranteed Non-Document Rectangular,Global Express Guaranteed Non-Document Non-Rectangular,Express Mail International (EMS),Express Mail International (EMS) Flat Rate Envelope,Priority Mail International,Priority Mail International Flat Rate Box]]></default_value>
                         </allowed_methods>
                         <container translate="label">
                             <label>Container</label>
@@ -639,7 +594,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[VARIABLE]]></default_value>
                         </container>
                         <cutoff_cost translate="label">
                             <label>Minimum order amount for free shipping</label>
@@ -683,7 +637,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[true]]></default_value>
                         </machinable>
                         <size translate="label">
                             <label>Size</label>
@@ -693,7 +646,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[REGULAR]]></default_value>
                         </size>
                         <sort_order translate="label">
                             <label>Sort order</label>
@@ -719,17 +671,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </userid>
-                        <allowall translate="label">
+                        <sallowspecific translate="label">
                             <label>Ship to applicable countries</label>
-                            <frontend_type>allowall</frontend_type>
+                            <frontend_type>select</frontend_type>
                             <sort_order>90</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
-                        </allowall>
+                        </sallowspecific>
                         <specificcountry translate="label">
                             <label>Ship to Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
@@ -738,7 +689,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificcountry>
                         <showmethod translate="label">
                             <label>Show method if not applicable</label>
@@ -748,7 +698,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </showmethod>
                         <specificerrmsg translate="label">
                             <label>Displayed Error Message</label>
@@ -757,7 +706,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[]]></default_value>
                         </specificerrmsg>
                     </fields>
                 </usps>

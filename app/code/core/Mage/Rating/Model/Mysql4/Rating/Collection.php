@@ -158,5 +158,29 @@ class Mage_Rating_Model_Mysql4_Rating_Collection extends Mage_Core_Model_Mysql4_
         return $this;
     }
 
+    public function addStoresToCollection()
+    {
+        if (!$this->_isCollectionLoaded) {
+            return $this;
+        }
+        $ratingIds = array();
+        foreach ($this as $item) {
+            $ratingIds[] = $item->getId();
+            $item->setStores(array());
+        }
+        if (!$ratingIds) {
+            return $this;
+        }
 
+        $this->_sqlSelect = $this->getConnection()
+            ->select()
+            ->from($this->getTable('rating_store'))
+            ->where('rating_id IN(?)', $ratingIds);
+        foreach ($this->getConnection()->fetchAll($this->_sqlSelect) as $row) {
+            $item = $this->getItemById($row['rating_id']);
+            $item->setStores(array_merge($item->getStores(), array($row['store_id'])));
+        }
+
+        return $this;
+    }
 }

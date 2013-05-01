@@ -25,13 +25,6 @@ $installer->startSetup();
 
 $installer->run("
 
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-
 /*Table structure for table `tax_class` */
 
 DROP TABLE IF EXISTS `tax_class`;
@@ -46,21 +39,6 @@ CREATE TABLE `tax_class` (
 /*Data for the table `tax_class` */
 
 insert  into `tax_class`(`class_id`,`class_name`,`class_type`) values (2,'Taxable Goods','PRODUCT'),(3,'Retail Customer','CUSTOMER');
-
-/*Table structure for table `tax_class_group` */
-
-DROP TABLE IF EXISTS `tax_class_group`;
-
-CREATE TABLE `tax_class_group` (
-  `group_id` smallint(6) NOT NULL auto_increment,
-  `class_parent_id` smallint(6) NOT NULL default '0',
-  `class_group_id` tinyint(3) NOT NULL default '0',
-  PRIMARY KEY  (`group_id`),
-  KEY `class_parent_id` (`class_parent_id`),
-  CONSTRAINT `FK_TAX_CLASS_GROUP_TAX_CLASS` FOREIGN KEY (`class_parent_id`) REFERENCES `tax_class` (`class_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `tax_class_group` */
 
 /*Table structure for table `tax_rate` */
 
@@ -135,9 +113,6 @@ CREATE TABLE `tax_rule` (
 /*Data for the table `tax_rule` */
 
 insert  into `tax_rule`(`tax_rule_id`,`tax_customer_class_id`,`tax_product_class_id`,`tax_rate_type_id`) values (1,3,2,1);
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 
     ");
 

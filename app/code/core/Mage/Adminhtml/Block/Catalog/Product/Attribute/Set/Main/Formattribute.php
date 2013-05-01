@@ -57,7 +57,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Formattribute exte
         );
 
         $form->setUseContainer(true);
-        $form->setMethod('POST');
+        $form->setMethod('post');
         $this->setForm($form);
     }
 }

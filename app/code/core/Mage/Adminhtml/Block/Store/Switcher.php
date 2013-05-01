@@ -33,7 +33,7 @@ class Mage_Adminhtml_Block_Store_Switcher extends Mage_Core_Block_Template
         parent::__construct();
         $this->setTemplate('store/switcher.phtml');
         $this->setUseConfirm(true);
-        $this->setDefaultStoreName($this->__('All Stores'));
+        $this->setDefaultStoreName($this->__('All Store Views'));
     }
 
     public function getWebsiteCollection()

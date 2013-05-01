@@ -53,8 +53,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
                     'label'  => Mage::helper('customer')->__('Add New Address'),
                     'id'     => 'add_address_button',
                     'name'   => 'add_address_button',
-                    'class'  => 'add left',
-                    'style'  => 'margin:3px 0px;',
+                    'class'  => 'add',
                     'onclick'=> 'customerAddresses.addNewAddress()'
                 ))
         );

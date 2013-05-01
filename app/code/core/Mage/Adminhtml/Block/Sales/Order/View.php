@@ -29,9 +29,9 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
 
     public function __construct()
     {
-        $this->_objectId = 'order_id';
-        $this->_controller = 'sales_order';
-        $this->_mode = 'view';
+        $this->_objectId    = 'order_id';
+        $this->_controller  = 'sales_order';
+        $this->_mode        = 'view';
 
         parent::__construct();
 
@@ -58,43 +58,43 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
 
         if ($this->getOrder()->canCreditmemo()) {
             $this->_addButton('order_creditmemo', array(
-                'label'     => Mage::helper('sales')->__('Creditmemo'),
-                //'onclick'   => 'setLocation(\'' . $this->getUrl() . '\')',
+                'label'     => Mage::helper('sales')->__('Credit Memo'),
+                'onclick'   => 'setLocation(\'' . $this->getCreditmemoUrl() . '\')',
             ));
         }
 
         if ($this->getOrder()->canHold()) {
             $this->_addButton('order_hold', array(
                 'label'     => Mage::helper('sales')->__('Hold'),
-                //'onclick'   => 'setLocation(\'' . $this->getUrl() . '\')',
+                'onclick'   => 'setLocation(\'' . $this->getHoldUrl() . '\')',
             ));
         }
 
         if ($this->getOrder()->canUnhold()) {
             $this->_addButton('order_unhold', array(
                 'label'     => Mage::helper('sales')->__('Unhold'),
-                //'onclick'   => 'setLocation(\'' . $this->getUrl() . '\')',
+                'onclick'   => 'setLocation(\'' . $this->getUnholdUrl() . '\')',
             ));
         }
 
         if ($this->getOrder()->canInvoice()) {
             $this->_addButton('order_invoice', array(
                 'label'     => Mage::helper('sales')->__('Invoice'),
-                //'onclick'   => 'setLocation(\'' . $this->getUrl() . '\')',
+                'onclick'   => 'setLocation(\'' . $this->getInvoiceUrl() . '\')',
             ));
         }
 
         if ($this->getOrder()->canShip()) {
             $this->_addButton('order_ship', array(
                 'label'     => Mage::helper('sales')->__('Ship'),
-                //'onclick'   => 'setLocation(\'' . $this->getUrl() . '\')',
+                'onclick'   => 'setLocation(\'' . $this->getShipUrl() . '\')',
             ));
         }
 
         if ($this->getOrder()->canReorder()) {
             $this->_addButton('order_reorder', array(
                 'label'     => Mage::helper('sales')->__('Reorder'),
-                //'onclick'   => 'setLocation(\'' . $this->getUrl() . '\')',
+                'onclick'   => 'setLocation(\'' . $this->getReorderUrl() . '\')',
             ));
         }
     }
@@ -122,11 +122,19 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
     public function getHeaderText()
     {
         if ($this->getOrder()->getRelationParentRealId()) {
-            return Mage::helper('sales')->__('Order # %s / %s', $this->getOrder()->getRealOrderId(), $this->getOrder()->getRelationParentRealId());
+            $text = Mage::helper('sales')->__('Order # %s / %s | Order Date %s',
+                $this->getOrder()->getRealOrderId(),
+                $this->getOrder()->getRelationParentRealId(),
+                $this->formatDate($this->getOrder()->getCreatedAt(), 'medium', true)
+            );
         }
         else {
-            return Mage::helper('sales')->__('Order # %s', $this->getOrder()->getRealOrderId());
+            $text = Mage::helper('sales')->__('Order # %s | Order Date %s',
+                $this->getOrder()->getRealOrderId(),
+                $this->formatDate($this->getOrder()->getCreatedAt(), 'medium', true)
+            );
         }
+        return $text;
     }
 
     public function getUrl($params='', $params2=array())
@@ -147,12 +155,12 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
 
     public function getInvoiceUrl()
     {
-        return $this->getUrl('*/*/capture');
+        return $this->getUrl('*/sales_order_invoice/start');
     }
 
     public function getCreditmemoUrl()
     {
-        return $this->getUrl('*/*/creditmemo');
+        return $this->getUrl('*/sales_order_creditmemo/start');
     }
 
     public function getHoldUrl()
@@ -167,7 +175,7 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
 
     public function getShipUrl()
     {
-        return $this->getUrl('*/*/ship');
+        return $this->getUrl('*/sales_order_shipment/start');
     }
 
     public function getCommentUrl()
@@ -177,12 +185,6 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
 
     public function getReorderUrl()
     {
-        return $this->getUrl('*/*/reorder');
-    }
-
-
-    public function getEditBackorderedUrl()
-    {
-        return Mage::getUrl('*/*/edit', array('order_id' => $this->getRequest()->getParam('order_id')));
+        return $this->getUrl('*/sales_order_create/reorder');
     }
 }

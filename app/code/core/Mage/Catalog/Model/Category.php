@@ -29,15 +29,26 @@ class Mage_Catalog_Model_Category extends Varien_Object
     /**
      * Category display modes
      */
-    const DM_PRODUCT= 'PRODUCTS';
-    const DM_PAGE   = 'PAGE';
-    const DM_MIXED  = 'PRODUCTS_AND_PAGE';
+    const DM_PRODUCT        = 'PRODUCTS';
+    const DM_PAGE           = 'PAGE';
+    const DM_MIXED          = 'PRODUCTS_AND_PAGE';
+    const XML_PATH_ROOT_ID  = 'catalog/category/root_id';
 
     protected static $_url;
     protected static $_urlRewrite;
 
+    private $_designAttributes;
+
     public function __construct()
     {
+        $this->_designAttributes = array(
+            'custom_design',
+            'custom_design_apply',
+            'custom_design_from',
+            'custom_design_to',
+            'page_layout',
+            'custom_layout_update');
+
         parent::__construct();
         $this->setIdFieldName($this->getResource()->getEntityIdField());
     }
@@ -149,6 +160,11 @@ class Mage_Catalog_Model_Category extends Varien_Object
         return $this;
     }
 
+    public function getCollection()
+    {
+        return Mage::getResourceModel('catalog/category_collection');
+    }
+
     /**
      * Retrieve default attribute set id
      *
@@ -176,11 +192,21 @@ class Mage_Catalog_Model_Category extends Varien_Object
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes($noDesignAttributes = false)
     {
-        return $this->getResource()
+        $result = $this->getResource()
             ->loadAllAttributes($this)
             ->getAttributesByCode();
+
+        if ($noDesignAttributes){
+            foreach ($result as $k=>$a){
+                if (in_array($k, $this->_designAttributes)) {
+                    unset($result[$k]);
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -289,9 +315,8 @@ class Mage_Catalog_Model_Category extends Varien_Object
     {
         $url = false;
         if ($image = $this->getImage()) {
-            $url = Mage::app()->getStore()->getConfig('catalog/images/category_upload_url').$image;
+            $url = Mage::getBaseUrl('media').'catalog/category/'.$image;
         }
-
         return $url;
     }
 
@@ -311,5 +336,34 @@ class Mage_Catalog_Model_Category extends Varien_Object
         $this->setUrlPath($path);
 
         return $path;
+    }
+
+    public function getParentCategory()
+    {
+        return Mage::getModel('catalog/category')->load($this->getParentId());
+    }
+
+    public function getCustomDesignDate()
+    {
+        $result = array();
+        $result['from'] = $this->getData('custom_design_from');
+        $result['to'] = $this->getData('custom_design_to');
+
+        return $result;
+    }
+
+    public function getDesignAttributes()
+    {
+        $result = array();
+        foreach ($this->_designAttributes as $attrName) {
+            $result[] = $this->_getAttribute($attrName);
+        }
+        return $result;
+    }
+
+    private function _getAttribute($attributeCode)
+    {
+        return $this->getResource()
+            ->getAttribute($attributeCode);
     }
 }

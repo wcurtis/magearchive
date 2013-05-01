@@ -34,7 +34,7 @@
                 <a href="<?=$this->getSetAddressUrl($_address)?>"><strong><?=$this->__('Select Address')?></strong></a>
             </p>
             <address>
-                <?=$_address->getFormated(true)?>
+                <?=$_address->format('html')?>
                 <?if($this->isAddressDefaultBilling($_address)):?>
                 <br/><strong><?=$this->__('Default Billing')?></strong>
                 <?endif;?>
@@ -49,6 +49,6 @@
 <?endforeach;?>
 <?if(!$_index || $_index%3!=0):?></div><br/><?endif;?>
 </div>
-<div class="form-buttons">
+<div class="button-set">
     <a href="<?=$this->getBackUrl()?>" class="left"><?=$this->__('&laquo; Back to Billing Information')?></a>
 </div>

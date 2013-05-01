@@ -96,6 +96,11 @@ class Mage_Adminhtml_Cms_BlockController extends Mage_Adminhtml_Controller_Actio
                 $model->save();
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cms')->__('Block was successfully saved'));
                 Mage::getSingleton('adminhtml/session')->setBlockData(false);
+
+                if ($this->getRequest()->getParam('back')) {
+                    $this->_redirect('*/*/edit', array('block_id'=>$model->getId()));
+                    return;
+                }
                 $this->_redirect('*/*/');
             } catch (Exception $e) {
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());

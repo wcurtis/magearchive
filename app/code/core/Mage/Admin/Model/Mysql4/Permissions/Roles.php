@@ -19,9 +19,9 @@
  */
 
 class Mage_Admin_Model_Mysql4_Permissions_Roles {
-	protected $_usersTable;
-	protected $_roleTable;
-	protected $_ruleTable;
+    protected $_usersTable;
+    protected $_roleTable;
+    protected $_ruleTable;
 
     /**
      * Read connection
@@ -50,60 +50,60 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles {
 
     public function load($roleId) {
         if ($roleId) {
-        	$row = $this->_read->fetchRow("SELECT * FROM {$this->_roleTable} WHERE role_id = {$roleId}");
-        	return $row;
-    	} else {
-    		return array();
-    	}
+            $row = $this->_read->fetchRow("SELECT * FROM {$this->_roleTable} WHERE role_id = {$roleId}");
+            return $row;
+        } else {
+            return array();
+        }
     }
 
     public function save(Mage_Admin_Model_Permissions_Roles $role) {
-    	if ($role->getPid() > 0) {
-			$row = $this->load($role->getPid());
-    	} else {
-			$row = array('tree_level' => 0);
-    	}
+        if ($role->getPid() > 0) {
+            $row = $this->load($role->getPid());
+        } else {
+            $row = array('tree_level' => 0);
+        }
 
-    	if ($role->getId()) {
-    		$this->_write->update($this->_roleTable, array('parent_id' => $role->getPid(),
-    													   'tree_level' => $row['tree_level'] + 1,
-    													   'role_name' => $role->getName(),
+        if ($role->getId()) {
+            $this->_write->update($this->_roleTable, array('parent_id' => $role->getPid(),
+                                                           'tree_level' => $row['tree_level'] + 1,
+                                                           'role_name' => $role->getName(),
 
-    													   ), "role_id = {$role->getId()}");
-    	} else {
-    		$this->_write->insert($this->_roleTable, array('parent_id' => $role->getPid(),
-    													   'tree_level' => $row['tree_level'] + 1,
-    													   'role_name' => $role->getName(),
-    													   'role_type' => $role->getRoleType(),
-    													   ));
-    		$role->setId($this->_write->lastInsertId());
-    	}
+                                                           ), "role_id = {$role->getId()}");
+        } else {
+            $this->_write->insert($this->_roleTable, array('parent_id' => $role->getPid(),
+                                                           'tree_level' => $row['tree_level'] + 1,
+                                                           'role_name' => $role->getName(),
+                                                           'role_type' => $role->getRoleType(),
+                                                           ));
+            $role->setId($this->_write->lastInsertId());
+        }
         $this->_updateRoleUsersAcl($role);
-    	return $role->getId();
+        return $role->getId();
     }
 
     public function delete(Mage_Admin_Model_Permissions_Roles $role) {
-    	$this->_write->beginTransaction();
+        $this->_write->beginTransaction();
 
         try {
-	    	$this->_write->delete($this->_roleTable, "role_id={$role->getId()}");
-	    	$this->_write->delete($this->_roleTable, "parent_id={$role->getId()}");
-	    	$this->_write->delete($this->_ruleTable, "role_id={$role->getId()}");
-	    	$this->_write->commit();
+            $this->_write->delete($this->_roleTable, "role_id={$role->getId()}");
+            $this->_write->delete($this->_roleTable, "parent_id={$role->getId()}");
+            $this->_write->delete($this->_ruleTable, "role_id={$role->getId()}");
+            $this->_write->commit();
         } catch (Mage_Core_Exception $e) {
             throw $e;
         } catch (Exception $e){
             $this->_write->rollBack();
         }
     }
-    
+
     public function getRoleUsers(Mage_Admin_Model_Permissions_Roles $role)
     {
         $read 	= $this->_read;
         $select = $read->select()->from($this->_roleTable, array('user_id'))->where("(parent_id = {$role->getId()} AND role_type = 'U') AND user_id > 0");
         return $read->fetchCol($select);
     }
-    
+
     private function _updateRoleUsersAcl(Mage_Admin_Model_Permissions_Roles $role)
     {
         $write  = $this->_write;
@@ -120,4 +120,3 @@ class Mage_Admin_Model_Mysql4_Permissions_Roles {
         }
     }
 }
-?>

@@ -20,20 +20,19 @@
 
 
 class Mage_CatalogSearch_TermController extends Mage_Core_Controller_Front_Action {
-	
+
     public function preDispatch(){
         parent::preDispatch();
         if(!Mage::getStoreConfig('catalog/seo/search_terms')){
     		  $this->_redirect('noroute');
     		  $this->setFlag('',self::FLAG_NO_DISPATCH,true);
     	}
-    	return $this;    
-        
+    	return $this;
+
     }
     public function popularAction()
-    {    	      
-    	$this->loadLayout();        	
-    	$this->renderLayout();    	
+    {
+    	$this->loadLayout();
+    	$this->renderLayout();
     }
 }
-

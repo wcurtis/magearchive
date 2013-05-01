@@ -27,7 +27,7 @@
 <div class="entry-edit">
 	<table cellspacing="10" border="0" width="100%">
 		<tr><td width="50%">
-			<form id="import_form" action="<?=$this->getUrl('*/*/importPost')?>" method="POST" enctype="multipart/form-data">
+			<form id="import_form" action="<?=$this->getUrl('*/*/importPost')?>" method="post" enctype="multipart/form-data">
 			<h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('tax')->__('Import Tax Rates')?></h4>
 			<fieldset>
 				<legend><?=Mage::helper('tax')->__('Import Tax Rates')?></legend>
@@ -39,7 +39,7 @@
 				var importForm = new varienForm('import_form');
 			</script>
 		</td><td width="50%">
-			<form id="export_form" action="<?=$this->getUrl('*/*/exportPost')?>" method="POST" enctype="multipart/form-data">
+			<form id="export_form" action="<?=$this->getUrl('*/*/exportPost')?>" method="post" enctype="multipart/form-data">
 			<h4 class="icon-head head-edit-form fieldset-legend"><?=Mage::helper('tax')->__('Export Tax Rates')?></h4>
 			<fieldset>
 				<legend><?=Mage::helper('tax')->__('Export Tax Rates')?></legend>

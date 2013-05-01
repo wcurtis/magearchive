@@ -15,108 +15,76 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-var GiftMessage = Class.create();
-
-GiftMessage.prototype = {
-    uniqueId: 0,
-    initialize: function (buttonId) {
-        GiftMessageStack.addObject(this);
-        this.buttonId = buttonId;
-        this.initListeners();
-    },
-    editGiftMessage: function (evt) {
-        var popUpUrl = this.url + '?uniqueId=' + this.uniqueId;
-        this.popUp = window.open(popUpUrl, 'giftMessage', 'width=425,height=480,resizable=yes,scrollbars=yes');
-        this.popUp.focus();
-        Event.stop(evt);
-    },
-    initListeners: function () {
-        var items = $(this.buttonId).getElementsByClassName('listen-for-click');
-        items.each(function(item) {
-           item.observe('click', this.editGiftMessage.bindAsEventListener(this));
-           item.controller = this;
-        }.bind(this));
-    },
-    reloadContainer: function (url) {
-        new Ajax.Updater(this.buttonId, url, {onComplete:this.initListeners.bind(this)});
-    },
-    initWindow: function (windowObject) {
-        this.windowObj = windowObject;
-    }
-};
-
-var GiftMessageStack = {
-    _stack: [],
-    _nextUniqueId: 0,
-    addObject: function(giftMessageObject) {
-       giftMessageObject.uniqueId = this.uniqueId();
-       this._stack.push(giftMessageObject);
-       return this;
-    },
-    uniqueId: function() {
-        return 'objectStack' + (this._nextUniqueId++);
-    },
-    getObjectById: function(id) {
-        var giftMessageObject = false;
-        this._stack.each(function(item){
-           if(item.uniqueId == id) {
-               giftMessageObject = item;
-           }
-        });
-        return giftMessageObject;
-    }
-};
-
-var GiftMessageWindow = Class.create();
-GiftMessageWindow.prototype = {
-    initialize: function(uniqueId, formId, removeUrl) {
-        this.uniqueId = uniqueId;
-        this.removeUrl = removeUrl;
-        if(window.opener) {
-            this.parentObject = window.opener.GiftMessageStack.getObjectById(this.uniqueId);
-            this.parentObject.initWindow(this);
-        }
-        if(formId) {
-            this.form = new varienForm(formId, true);
-            this.formElement = $(formId);
-            this.initListeners();
+var giftMessagesController = {
+    toogleRequired: function(source, objects)
+    {
+        if(!$(source).value.blank()) {
+            objects.each(function(item) {
+               $(item).addClassName('required-entry');
+            });
+        } else {
+            objects.each(function(item) {
+                if($(source).formObj && $(source).formObj.validator) {
+                    $(source).formObj.validator.reset(item);
+                }
+                $(item).removeClassName('required-entry');
+            });
         }
     },
-    initListeners: function() {
-        removeButtons = this.formElement.getElementsByClassName('listen-remove');
-        removeButtons.each(function(item){
-            Event.observe(item, 'click', this.remove.bindAsEventListener(this));
-        }.bind(this));
+    toogleGiftMessage: function(container) {
+        if(!$(container).toogleGiftMessage) {
+            $(container).toogleGiftMessage = true;
+            $(this.getFieldId(container, 'edit')).show();
+            $(container).getElementsByClassName('action-link')[0].addClassName('open');
+            $(container).getElementsByClassName('default-text')[0].hide();
+            $(container).getElementsByClassName('close-text')[0].show();
+            this.toogleRequired(this.getFieldId(container, 'message'), [
+                this.getFieldId(container, 'sender'),
+                this.getFieldId(container, 'recipient')
+            ]);
+        } else {
+            $(container).toogleGiftMessage = false;
+            $(this.getFieldId(container, 'message')).formObj = $(this.getFieldId(container, 'form'));
 
-        cancelButtons = this.formElement.getElementsByClassName('listen-cancel');
-        cancelButtons.each(function(item){
-            Event.observe(item, 'click', this.cancel.bindAsEventListener(this));
-        }.bind(this));
+            if(!$(this.getFieldId(container, 'form')).validator) {
+                $(this.getFieldId(container, 'form')).validator = new Validation(this.getFieldId(container, 'form'));
+            }
+
+            if(!$(this.getFieldId(container, 'form')).validator.validate()) {
+                return false;
+            }
+
+            new Ajax.Updater(container, $(this.getFieldId(container, 'form')).action, {
+                parameters: Form.serialize($(this.getFieldId(container, 'form')), true),
+                loaderArea: container
+            });
+        }
+
+        return false;
     },
-    cancel: function(evt)  {
-        Event.stop(evt);
-        window.opener.focus();
-        window.close();
-    },
-    close: function()  {
-        window.opener.focus();
-        window.close();
-    },
-    remove: function(evt)  {
-        Event.stop(evt);
-        if(this.confirmMessage && !window.confirm(this.confirmMessage)) {
+    saveGiftMessage: function(container) {
+        this.toogleRequired(this.getFieldId(container, 'message'), [
+            this.getFieldId(container, 'sender'),
+            this.getFieldId(container, 'recipient')
+        ]);
+
+        $(this.getFieldId(container, 'message')).formObj = $(this.getFieldId(container, 'form'));
+
+        if(!$(this.getFieldId(container, 'form')).validator) {
+            $(this.getFieldId(container, 'form')).validator = new Validation(this.getFieldId(container, 'form'));
+        }
+
+        if(!$(this.getFieldId(container, 'form')).validator.validate()) {
             return;
         }
-        window.location.href = this.removeUrl;
+
+        new Ajax.Request($(this.getFieldId(container, 'form')).action, {
+            parameters: Form.serialize($(this.getFieldId(container, 'form')), true),
+            loaderArea: container
+        });
     },
-    updateParent: function (url, buttonUrl) {
-        if(this.parentObject) {
-            this.parentObject.url = url
-            this.parentObject.reloadContainer(buttonUrl);
-        }
-        setTimeout(function(){
-            window.opener.focus();
-            window.close();
-        }, 3000);
+    getFieldId: function(container, name) {
+        return container + '_' + name;
     }
 };
+

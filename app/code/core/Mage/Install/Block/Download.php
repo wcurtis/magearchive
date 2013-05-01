@@ -46,5 +46,14 @@ class Mage_Install_Block_Download extends Mage_Install_Block_Abstract
             ->getStepByName('download')
                 ->getNextUrl();
     }
+
+    public function hasLocalCopy()
+    {
+        $dir = Mage::getConfig()->getModuleDir('etc', 'Mage_Adminhtml');
+        if ($dir && file_exists($dir)) {
+            return true;
+        }
+        return false;
+    }
 }
 

@@ -18,7 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
 class Mage_Checkout_Block_Cart extends Mage_Checkout_Block_Cart_Abstract
 {
     protected $_totals;
@@ -31,12 +30,12 @@ class Mage_Checkout_Block_Cart extends Mage_Checkout_Block_Cart_Abstract
             $this->setTemplate($this->getEmptyTemplate());
         }
     }
-    
+
     public function hasError()
     {
         return $this->getQuote()->getHasError();
     }
-    
+
     public function getItems()
     {
         return $this->getQuote()->getAllItems();
@@ -109,4 +108,5 @@ class Mage_Checkout_Block_Cart extends Mage_Checkout_Block_Cart_Abstract
     {
         return $this->helper('checkout')->getQuoteItemProductIsInStock($item);
     }
+
 }

@@ -143,7 +143,9 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
         $timeZoneOffset = Mage::app()->getLocale()->date()->getGmtOffset();
         $this->_itemObjectClass = 'Varien_Object';
         $this->_setIdFieldName('summary_id');
-    	$this->_sqlSelect->from(array('summary'=>$this->_summaryTable), array('summary_id','type_id','customer_count','visitor_count','add_date'=>"DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND)"))
+
+/*
+    	$this->_sqlSelect->from(array('summary'=>$this->_summaryTable), array('summary_id','customer_count','visitor_count','add_date'=>"DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND)"))
     	   ->join(array('type'=>$this->_summaryTypeTable), 'type.type_id=summary.type_id', array());
 
     	if (is_null($customFrom) && is_null($customTo)) {
@@ -157,15 +159,40 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
      	    }
     	}
 
+
     	if( is_null($type_code) ) {
     		$this->_sqlSelect->where("summary.type_id IS NULL");
     	} else {
 		    $this->_sqlSelect->where("type.type_code = ? ", $type_code);
     	}
+*/
 
+    	$this->_sqlSelect->from(array('summary'=>$this->_summaryTable),
+            array('summary_id',
+                'customer_count'=>'SUM(customer_count)',
+                'visitor_count'=>'SUM(visitor_count)',
+                'add_date'=>"DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND)"
+        ));
+
+        $this->_sqlSelect->where("DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ( DATE_SUB(?, INTERVAL $timeZoneOffset SECOND) - INTERVAL {$period} {$this->_getRangeByType($type_code)} )", now() );
+    	$this->_sqlSelect->group('DATE_FORMAT(add_date, \''.$this->_getGroupByDateFormat($type_code).'\')');
     	$this->_sqlSelect->order('add_date ASC');
 
     	return $this;
+    }
+
+    protected function _getGroupByDateFormat($type)
+    {
+        switch ($type) {
+            case 'day':
+                $format = '%Y-%m-%d';
+                break;
+            default:
+            case 'hour':
+                $format = '%Y-%m-%d %H';
+                break;
+        }
+        return $format;
     }
 
     protected function _getRangeByType($type_code)
@@ -196,6 +223,8 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
             } else {
                 return parent::addFieldToFilter('customer_id', array('moreq' => 1));
             }
+        } else {
+            return parent::addFieldToFilter($fieldName, $fieldValue);
         }
     }
 }

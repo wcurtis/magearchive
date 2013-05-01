@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Directory data helper
  *
@@ -27,7 +27,8 @@ class Mage_Directory_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_countryCollection;
     protected $_regionCollection;
     protected $_regionJson;
-    
+    protected $_currencyCache = array();
+
     public function getRegionCollection()
     {
         if (!$this->_regionCollection) {
@@ -37,7 +38,7 @@ class Mage_Directory_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return $this->_regionCollection;
     }
-    
+
     public function getCountryCollection()
     {
         if (!$this->_countryCollection) {
@@ -46,7 +47,7 @@ class Mage_Directory_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return $this->_countryCollection;
     }
-    
+
     /**
      * Retrieve regions data json
      *
@@ -75,5 +76,17 @@ class Mage_Directory_Helper_Data extends Mage_Core_Helper_Abstract
 	    	$this->_regionJson = Zend_Json::encode($regions);
     	}
     	return $this->_regionJson;
+    }
+
+    public function currencyConvert($amount, $from, $to=null)
+    {
+        if (empty($this->_currencyCache[$from])) {
+            $this->_currencyCache[$from] = Mage::getModel('directory/currency')->load($from);
+        }
+        if (is_null($to)) {
+            $to = Mage::app()->getStore()->getCurrentCurrencyCode();
+        }
+        $converted = $this->_currencyCache[$from]->convert($amount, $to);
+        return $converted;
     }
 }

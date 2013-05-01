@@ -239,8 +239,11 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
             if (!$this->getBackendModel()) {
                 $this->setBackendModel($this->_getDefaultBackendModel());
             }
-            $this->_backend = Mage::getModel($this->getBackendModel())
-                ->setAttribute($this);
+            $backend = Mage::getModel($this->getBackendModel());
+            if (!$backend) {
+                throw Mage::exception('Mage_Eav', 'Invalid backend model specified: '.$this->getBackendModel());
+            }
+            $this->_backend = $backend->setAttribute($this);
         }
         return $this->_backend;
     }

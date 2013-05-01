@@ -94,6 +94,13 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Account extends Mage_Adminhtml_Bloc
                 )
             );*/
             $field->setRenderer($this->getLayout()->createBlock('adminhtml/customer_edit_renderer_newpass'));
+
+            // send welcome email checkbox
+            $sendEmail = new Varien_Data_Form_Element_Checkbox();
+            $sendEmail->setLabel(Mage::helper('customer')->__('Send welcome email'))
+                ->setName('sendemail')
+                ->setId('sendemail');
+            $fieldset->addElement($sendEmail);
         }
 
 

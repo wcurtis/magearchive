@@ -19,9 +19,9 @@
  */
 
 class Mage_Admin_Model_Mysql4_Permissions_Rules {
-	protected $_usersTable;
-	protected $_roleTable;
-	protected $_ruleTable;
+    protected $_usersTable;
+    protected $_roleTable;
+    protected $_ruleTable;
 
     /**
      * Read connection
@@ -57,33 +57,33 @@ class Mage_Admin_Model_Mysql4_Permissions_Rules {
     }
 
     public function saveRel(Mage_Admin_Model_Permissions_Rules $rule) {
-    	$this->_write->beginTransaction();
+        $this->_write->beginTransaction();
 
         try {
-        	$roleId = $rule->getRoleId();
-	    	$this->_write->delete($this->_ruleTable, "role_id = {$roleId}");
-	    	$masterResources = Mage::getModel('admin/permissions_roles')->getResourcesList2D();
+            $roleId = $rule->getRoleId();
+            $this->_write->delete($this->_ruleTable, "role_id = {$roleId}");
+            $masterResources = Mage::getModel('admin/permissions_roles')->getResourcesList2D();
             $masterAdmin = false;
-	    	if ( $postedResources = $rule->getResources() ) {
-		    	foreach ($masterResources as $index => $resName) {
-		    		if ( !$masterAdmin ) {
-    		    	    $permission = ( in_array($resName, $postedResources) )? 'allow' : 'deny';
-    		    		$this->_write->insert($this->_ruleTable, array(
-    			    		'role_type' 	=> 'G',
-    			    		'resource_id' 	=> trim($resName, '/'),
-    			    		'privileges' 	=> '', # FIXME !!!
-    			    		'assert_id' 	=> 0,
-    			    		'role_id' 		=> $roleId,
-    			    		'permission'	=> $permission
-    			    		));
-		    		}
-    		    	if ( $resName == 'admin' && $permission == 'allow' ) {
-    		    	    $masterAdmin = true;
-    		    	}
-		    	}
-	    	}
+            if ( $postedResources = $rule->getResources() ) {
+                foreach ($masterResources as $index => $resName) {
+                    if ( !$masterAdmin ) {
+                        $permission = ( in_array($resName, $postedResources) )? 'allow' : 'deny';
+                        $this->_write->insert($this->_ruleTable, array(
+                            'role_type' 	=> 'G',
+                            'resource_id' 	=> trim($resName, '/'),
+                            'privileges' 	=> '', # FIXME !!!
+                            'assert_id' 	=> 0,
+                            'role_id' 		=> $roleId,
+                            'permission'	=> $permission
+                            ));
+                    }
+                    if ( $resName == 'all' && $permission == 'allow' ) {
+                        $masterAdmin = true;
+                    }
+                }
+            }
 
-	    	$this->_write->commit();
+            $this->_write->commit();
         } catch (Mage_Core_Exception $e) {
             throw $e;
         } catch (Exception $e){
@@ -91,4 +91,3 @@ class Mage_Admin_Model_Mysql4_Permissions_Rules {
         }
     }
 }
-?>

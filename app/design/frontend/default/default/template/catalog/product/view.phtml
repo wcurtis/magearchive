@@ -65,7 +65,7 @@
                 <a href="<?=$this->helper('catalog/product')->getEmailToFriendUrl($_product)?>"><?=$this->__('Email to a Friend')?></a><br />
             <?endif;?>
             <?=$this->helper('review/product')->getSummaryHtml($_product, null, 1)?>
-            <form action="<?=$this->getUrl('checkout/cart/add')?>" method="post" id="product_addtocart_form">
+            <form action="<?=$this->getAddToCartUrl($_product)?>" method="post" id="product_addtocart_form">
             <input type="hidden" name="product" value="<?=$_product->getId()?>"/>
             <input type="hidden" name="related_product" id="related-products-field" value=""/>
 
@@ -78,7 +78,12 @@
                 <div class="product-pricing">
                     <ul class="bare">
                     <?foreach($_tierPrices as $_price):?>
-                        <li><?=$this->__('Buy %s for %s each', $_price['price_qty'], $_price['formated_price'])?> <?=$this->__('and')?> <strong><?=$this->__('save %s%%', $_price['savePercent'])?></strong></li>
+                        <li><?=$this->__('Buy %s for %s each', $_price['price_qty'], $_price['formated_price'])?>
+                        <?if(($_product->getPrice() == $_product->getFinalPrice() && $_product->getPrice() > $_price['price'])
+                        || ($_product->getPrice() != $_product->getFinalPrice() &&  $_product->getFinalPrice() > $_price['price'])):?>
+                            <?=$this->__('and')?> <strong><?=$this->__('save %s%%', $_price['savePercent'])?>
+                        <?endif?></strong>
+                        </li>
                     <?endforeach?>
                     </ul>
                 </div>
@@ -90,7 +95,7 @@
 
             <?if(!$_product->isSuperGroup()):?>
                 <?if($_product->isSaleable()):?>
-                <p><small><?=$this->__('Availability: In stock. Ships within 24hours.')?></small></p>
+                <p><small><?=$this->__('Availability: In stock.')?></small></p>
                 <?else:?>
                 <p><small><?=$this->__('Availability: Out of stock.')?></small><br />
                 <?//=$this->getAlertHtml('product_back_stock');?></p>
@@ -104,22 +109,31 @@
                     <span class="qty-box"><label for="qty"><?=$this->__('Qty')?>:</label>
                     <input name="qty" type="text" class="input-text qty" id="qty" maxlength="12" value="<?=$this->getMinimalQty($_product)?>"/></span>
                     <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button>
-                    <strong><?=$this->__('OR')?></strong>
+                    <?if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
+                        <strong><?=$this->__('OR')?></strong>
+                    <?endif;?>
                 </fieldset>
                 <?endif;?>
+
                 <div class="add-to-box">
+                <?if ($this->helper('wishlist')->isAllow()) :?>
                     <a href="<?=$this->getAddToWishlistUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a><br/>
-                    <?if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
-                    <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
-                    <?endif;?>
+                <?endif;?>
+
+                <?if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product) ):?>
+                <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>
+                <?endif;?>
                 </div>
+
             <?else:?>
-                <p><small><?=$this->__('Availability: In stock. Ships within 24hours.')?></small></p>
+                <p><small><?=$this->__('Availability: In stock.')?></small></p>
                 <?if($_product->isSaleable() && $_product->getSuperGroupProductsLoaded()->getSize()):?>
                 <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button> <strong><?=$this->__('OR')?></strong>
                 &nbsp;&nbsp;
                 <?endif;?>
+                <?if ($this->helper('wishlist')->isAllow()) :?>
                 <a href="<?=$this->getAddToWishlistUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a>
+                <?endif;?>
                 <?if($_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
                 <span class="pipe">|</span>
                 <a href="<?=$_compareUrl?>"><?=$this->__('Add to Compare')?></a>

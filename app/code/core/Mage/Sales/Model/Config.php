@@ -26,7 +26,7 @@ class Mage_Sales_Model_Config
         $config = Mage::getConfig()->getNodeClassInstance("global/sales/quote/rule/conditions/$type");
         return $config;
     }
-    
+
     public function getQuoteRuleActionInstance($type)
     {
         return Mage::getConfig()->getNodeClassInstance("global/sales/quote/rule/actions/$type");

@@ -105,11 +105,12 @@ class Mage_Adminhtml_Block_Tax_Rate_Form_Add extends Mage_Adminhtml_Block_Widget
 
         foreach ($rateTypeCollection as $rateType) {
             if ($rateModel->getId()) {
-                $value = $rateModel->getRateDataCollection()->getItemByRateAndType($rateModel->getId(), $rateType->getTypeId())->getRateValue();
+                $value = 1*$rateModel->getRateDataCollection()->getItemByRateAndType($rateModel->getId(), $rateType->getTypeId())->getRateValue();
             }
             else {
                 $value = '0.0000';
             }
+            $value = number_format($value, 4);
             $fieldset->addField('rate_data_'.$rateType->getTypeId(), 'text',
                 array(
                     'name' => "rate_data[{$rateType->getTypeId()}]",
@@ -124,7 +125,7 @@ class Mage_Adminhtml_Block_Tax_Rate_Form_Add extends Mage_Adminhtml_Block_Widget
         $form->setAction(Mage::getUrl('*/tax_rate/save'));
         $form->setUseContainer(true);
         $form->setId('rate_form');
-        $form->setMethod('POST');
+        $form->setMethod('post');
 
         $this->setForm($form);
 

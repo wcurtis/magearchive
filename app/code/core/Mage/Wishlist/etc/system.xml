@@ -24,10 +24,10 @@
         <wishlist translate="label" module="wishlist">
             <label>Wishlist</label>
             <frontend_type>text</frontend_type>
-            <sort_order>45</sort_order>
+            <sort_order>90</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
-            <show_in_store>1</show_in_store>
+            <show_in_store>0</show_in_store>
             <groups>
                 <email translate="label">
                     <label>Share options</label>
@@ -45,7 +45,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[general]]></default_value>
                         </email_identity>
                         <email_template translate="label">
                             <label>Email Template</label>
@@ -55,7 +54,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[7]]></default_value>
                         </email_template>
                     </fields>
                 </email>
@@ -75,7 +73,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <default_value><![CDATA[1]]></default_value>
                         </active>
                     </fields>
                 </general>

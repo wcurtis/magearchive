@@ -88,8 +88,7 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Core_Block_Template
 
             $menuArr = array();
 
-            $menuArr['label'] =
-            $menuArr['title'] = $this->_getHelperValue($child);
+            $menuArr['label'] = $this->_getHelperValue($child);
 
             $menuArr['sort_order'] = $child->sort_order ? (int)$child->sort_order : $sortOrder;
 
@@ -118,7 +117,9 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Core_Block_Template
         while (list($key, $value) = each($parentArr)) {
             $last = $key;
         }
-        $parentArr[$last]['last'] = true;
+        if (isset($last)) {
+            $parentArr[$last]['last'] = true;
+        }
 
         return $parentArr;
     }

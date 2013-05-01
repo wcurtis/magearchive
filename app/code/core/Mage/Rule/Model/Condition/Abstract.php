@@ -240,7 +240,7 @@ abstract class Mage_Rule_Model_Condition_Abstract
     public function getAddLinkHtml()
     {
     	$src = Mage::getDesign()->getSkinUrl('images/rule_component_add.gif');
-    	$html = '<img src="'.$src.'" align="absmiddle" class="rule-param-add"/>';
+    	$html = '<img src="'.$src.'" class="rule-param-add v-middle"/>';
         return $html;
     }
 
@@ -248,7 +248,7 @@ abstract class Mage_Rule_Model_Condition_Abstract
     public function getRemoveLinkHtml()
     {
     	$src = Mage::getDesign()->getSkinUrl('images/rule_component_remove.gif');
-        $html = ' <span class="rule-param"><a href="javascript:void(0)" class="rule-param-remove"><img src="'.$src.'" align="absmiddle"/></a></span>';
+        $html = ' <span class="rule-param"><a href="javascript:void(0)" class="rule-param-remove"><img src="'.$src.'" class="v-middle"/></a></span>';
         return $html;
     }
 

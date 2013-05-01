@@ -33,7 +33,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Massaction extends Mage_A
 
     public function renderProperty()
     {
-        $out = 'align="center"';
+        $out = 'class="a-center"';
         return $out;
     }
 

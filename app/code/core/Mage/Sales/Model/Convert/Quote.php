@@ -55,6 +55,8 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
              */
             ->setCustomerId($quote->getCustomerId())
             ->setCustomerEmail($quote->getCustomerEmail())
+            ->setCustomerFirstname($quote->getCustomerFirstname())
+            ->setCustomerLastname($quote->getCustomerLastname())
             ->setCustomerGroupId($quote->getCustomerGroupId())
             ->setCustomerTaxClassId($quote->getCustomerTaxClassId())
             ->setCustomerNote($quote->getCustomerNote())
@@ -75,7 +77,8 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setCouponCode($quote->getCouponCode())
             ->setGiftcertCode($quote->getGiftcertCode())
             ->setIsVirtual($quote->getIsVirtual())
-            ->setIsMultiPayment($quote->getIsMultiPayment());
+            ->setIsMultiPayment($quote->getIsMultiPayment())
+            ->setAppliedRuleIds($quote->getAppliedRuleIds());
 
 
         Mage::dispatchEvent('sales_convert_quote_to_order', array('order'=>$order, 'quote'=>$quote));
@@ -151,6 +154,7 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setStoreId($payment->getStoreId())
             ->setCustomerPaymentId($payment->getCustomerPaymentId())
             ->setMethod($payment->getMethod())
+            ->setAdditionalData($payment->getAdditionalData())
             ->setPoNumber($payment->getPoNumber())
             ->setCcType($payment->getCcType())
             ->setCcNumberEnc($payment->getCcNumberEnc())
@@ -181,14 +185,17 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setDescription($item->getDescription())
             ->setWeight($item->getWeight())
             ->setQtyOrdered($item->getQty())
+            ->setOriginalPrice($item->getOriginalPrice())
             ->setPrice($item->getCalculationPrice())
-            ->setDiscountPercent($item->getDiscountPercent())
-            ->setDiscountAmount($item->getDiscountAmount())
             ->setTaxPercent($item->getTaxPercent())
             ->setTaxAmount($item->getTaxAmount())
             ->setRowWeight($item->getRowWeight())
             ->setRowTotal($item->getRowTotal())
             ->setAppliedRuleIds($item->getAppliedRuleIds());
+        if (!$item->getNoDiscount()) {
+            $orderItem->setDiscountPercent($item->getDiscountPercent())
+                ->setDiscountAmount($item->getDiscountAmount());
+        }
 
         Mage::dispatchEvent('sales_convert_quote_item_to_order_item',
             array('order_item'=>$orderItem, 'item'=>$item)

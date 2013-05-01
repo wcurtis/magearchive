@@ -44,12 +44,13 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
 
     public function _prepareLayout()
     {
+	parent::_prepareLayout();
         $form = new Varien_Data_Form();
         $form->setHtmlIdPrefix('_general');
 
         $fieldset = $form->addFieldset('base_fieldset', array('legend'=>Mage::helper('catalog')->__('General Information')));
 
-        $this->_setFieldset($this->getCategory()->getAttributes(), $fieldset);
+        $this->_setFieldset($this->getCategory()->getAttributes(true), $fieldset);
 
         if (!$this->getCategory()->getId()) {
             $fieldset->addField('parent_id', 'select', array(
@@ -68,8 +69,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
 
         $form->setFieldNameSuffix('general');
         $this->setForm($form);
-
-        return parent::_prepareLayout();
     }
 
     protected function _getAdditionalElementTypes()

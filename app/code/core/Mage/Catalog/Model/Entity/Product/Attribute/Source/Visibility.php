@@ -32,7 +32,7 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Source_Visibility extends Mage
             $this->_options = Mage::getResourceModel('catalog/product_visibility_collection')
                 ->load()
                 ->toOptionArray();
-                
+
             array_unshift($this->_options, array('label'=>'', 'value'=>''));
         }
         return $this->_options;

@@ -37,16 +37,16 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar extends Mage_Adminhtml_Blo
 
     protected function _prepareLayout()
     {
-        $this->setChild('currency', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_currency'));
         if ($this->getCustomerId()) {
             $button = $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
-                'label' => Mage::helper('sales')->__('Update Changes'), 
+                'label' => Mage::helper('sales')->__('Update Changes'),
                 'onclick' => 'order.sidebarApplyChanges()',
             ));
             $this->setChild('top_button', $button);
         }
         $this->setChild('cart', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_cart'));
         $this->setChild('wishlist', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_wishlist'));
+        $this->setChild('reorder', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_reorder'));
         $this->setChild('viewed', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_viewed'));
         $this->setChild('compared', $this->getLayout()->createBlock('adminhtml/sales_order_create_sidebar_compared'));
         if ($this->getCustomerId()) {
@@ -54,7 +54,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar extends Mage_Adminhtml_Blo
         }
         return parent::_prepareLayout();
     }
-    
+
     public function canDisplay($child)
     {
         if (method_exists($child, 'canDisplay')) {

@@ -43,7 +43,7 @@ class Mage_Core_Block_Text_Tag_Css extends Mage_Core_Block_Text_Tag
         if (empty($type)) { 
             $type = 'skin'; 
         }
-        $url = Mage::getBaseUrl(array('_type'=>$type)).$href;
+        $url = Mage::getBaseUrl($type).$href;
         
         return $this->setTagParam('href', $url);
     }

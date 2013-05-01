@@ -69,7 +69,7 @@ function imagePreview(element){
 function toggleValueElements(checkbox, container){
     if(container && checkbox){
         //var elems = container.getElementsBySelector('select', 'input');
-        var elems = Element.getElementsBySelector(container, ['select', 'input']);
+        var elems = Element.getElementsBySelector(container, ['select', 'input', 'textarea']);
         elems.each(function(elem){if(elem!=checkbox)elem.disabled=checkbox.checked});
     }
 }
@@ -81,14 +81,25 @@ function submitAndReloadArea(area, url) {
     if($(area)) {
         var fields = $(area).getElementsBySelector('input', 'select', 'textarea');
         var data = Form.serializeElements(fields, true);
-        new Ajax.Updater(
-            area,
-            url,
-            {
-                parameters: $H(data),
-                loaderArea: area,
-                evalScripts:true
-            });
+        new Ajax.Request(url, {
+            parameters: $H(data),
+            loaderArea: area,
+            onSuccess: function(transport) {
+                try {
+                    if (transport.responseText.isJSON()) {
+                        var response = transport.responseText.evalJSON()
+                        if (response.error) {
+                            alert(response.message);
+                        }
+                    } else {
+                        $(area).update(transport.responseText);
+                    }
+                }
+                catch (e) {
+                    $(area).update(transport.responseText);
+                }
+            }
+        });
     }
 }
 

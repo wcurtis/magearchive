@@ -114,6 +114,7 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
     {
         $html = '';
         if (!$category->getIsActive()) {
+
             return $html;
         }
 
@@ -143,13 +144,21 @@ class Mage_Catalog_Block_Navigation extends Mage_Core_Block_Template
         $html.= '">'."\n";
         $html.= '<a href="'.$this->getCategoryUrl($category).'"><span>'.$category->getName().'</span></a>'."\n";
         //$html.= '<span>'.$level.'</span>';
+
         if ($hasChildren){
-            $html.= '<ul class="level' . $level . '">'."\n";
+
             $j = 0;
+            $htmlChildren = '';
             foreach ($children as $child) {
-            	$html.= $this->drawItem($child, $level+1, ++$j >= $cnt);
+            	$htmlChildren.= $this->drawItem($child, $level+1, ++$j >= $cnt);
             }
-            $html.= '</ul>';
+
+            if (!empty($htmlChildren)) {
+            	$html.= '<ul class="level' . $level . '">'."\n"
+            	        .$htmlChildren
+            	        .'</ul>';
+            }
+
         }
         $html.= '</li>'."\n";
         return $html;

@@ -36,7 +36,7 @@ class Mage_Eav_Model_Entity_Attribute_Source_Table extends Mage_Eav_Model_Entity
         }
         return $this->_options;
     }
-    
+
     /**
      * Get a text for option value
      *
@@ -50,7 +50,7 @@ class Mage_Eav_Model_Entity_Attribute_Source_Table extends Mage_Eav_Model_Entity
             $isMultiple = true;
             $value = explode(',', $value);
         }
-        
+
         $collection = Mage::getResourceModel('eav/entity_attribute_option_collection')
             ->setAttributeFilter($this->getAttribute()->getId())
             ->setStoreFilter($this->getAttribute()->getEntity()->getStoreId())

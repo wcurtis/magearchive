@@ -24,6 +24,7 @@ class Mage_Adminhtml_Block_Permissions_Editroles extends Mage_Adminhtml_Block_Wi
         parent::__construct();
         $this->setId('role_info_tabs');
         $this->setDestElementId('role_edit_form');
+        $this->setTitle(Mage::helper('adminhtml')->__('Role Information'));
     }
 
     protected function _beforeToHtml()

@@ -60,12 +60,13 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
         $order = Mage::getModel('sales/order')->load($id);
 
         if (!$order->getId()) {
-            $this->_getSession()->addError($this->__('This order no longer exists'));
+            $this->_getSession()->addError($this->__('This order no longer exists.'));
             $this->_redirect('*/*/');
             $this->setFlag('', self::FLAG_NO_DISPATCH, true);
             return false;
         }
         Mage::register('sales_order', $order);
+        Mage::register('current_order', $order);
         return $order;
     }
 
@@ -88,6 +89,7 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
             $this->_initAction()
                 ->_addBreadcrumb($this->__('View Order'), $this->__('View Order'))
                 ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_view'))
+                ->_addLeft($this->getLayout()->createBlock('adminhtml/sales_order_view_tabs'))
                 ->renderLayout();
         }
     }
@@ -102,14 +104,60 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
                 $order->cancel()
                     ->save();
                 $this->_getSession()->addSuccess(
-                    $this->__('Order was successfully cancelled')
+                    $this->__('Order was successfully cancelled.')
                 );
             }
             catch (Mage_Core_Exception $e) {
                 $this->_getSession()->addError($e->getMessage());
             }
             catch (Exception $e) {
-                $this->_getSession()->addError($this->__('Order was not cancelled'));
+                $this->_getSession()->addError($this->__('Order was not cancelled.'));
+            }
+            $this->_redirect('*/sales_order/view', array('order_id' => $order->getId()));
+        }
+    }
+
+    /**
+     * Hold order
+     */
+    public function holdAction()
+    {
+        if ($order = $this->_initOrder()) {
+            try {
+                $order->hold()
+                    ->save();
+                $this->_getSession()->addSuccess(
+                    $this->__('Order was successfully holded.')
+                );
+            }
+            catch (Mage_Core_Exception $e) {
+                $this->_getSession()->addError($e->getMessage());
+            }
+            catch (Exception $e) {
+                $this->_getSession()->addError($this->__('Order was not holded.'));
+            }
+            $this->_redirect('*/sales_order/view', array('order_id' => $order->getId()));
+        }
+    }
+
+    /**
+     * Unhold order
+     */
+    public function unholdAction()
+    {
+        if ($order = $this->_initOrder()) {
+            try {
+                $order->unhold()
+                    ->save();
+                $this->_getSession()->addSuccess(
+                    $this->__('Order was successfully unholded.')
+                );
+            }
+            catch (Mage_Core_Exception $e) {
+                $this->_getSession()->addError($e->getMessage());
+            }
+            catch (Exception $e) {
+                $this->_getSession()->addError($this->__('Order was not unholded.'));
             }
             $this->_redirect('*/sales_order/view', array('order_id' => $order->getId()));
         }
@@ -133,120 +181,66 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
                     $order->sendOrderUpdateEmail($comment);
                 }
                 $order->save();
+                Mage::getDesign()->setArea('adminhtml');
+                $response = $this->getLayout()->createBlock('adminhtml/sales_order_view_history')->toHtml();
+            }
+            catch (Mage_Core_Exception $e) {
+                $response = array(
+                    'error'     => true,
+                    'message'   => $e->getMessage(),
+                );
             }
             catch (Exception $e) {
-
+                $response = array(
+                    'error'     => true,
+                    'message'   => $this->__('Can nod add order history.')
+                );
             }
-            Mage::getDesign()->setArea('adminhtml');
-            $this->getResponse()->setBody(
-                $this->getLayout()->createBlock('adminhtml/sales_order_view_history')->toHtml()
-            );
+            if (is_array($response)) {
+                $response = Zend_Json::encode($response);
+            }
+            $this->getResponse()->setBody($response);
         }
     }
 
     /**
-     * Add tracking number
+     * Generate invoices grid for ajax request
      */
-    public function addTrackingAction()
+    public function invoicesAction()
     {
-        if ($order = $this->_initOrder()) {
-            if ($number = $this->getRequest()->getPost('tracking_number')) {
-                $order->addTrackingNumber($number);
-                $order->save();
-            }
-            $this->getResponse()->setBody(
-                $this->getLayout()->createBlock('adminhtml/sales_order_view_tracking')->toHtml()
-            );
-        }
+        $this->_initOrder();
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('adminhtml/sales_order_view_tab_invoices')->toHtml()
+        );
     }
 
     /**
-     * Remove tracking number
+     * Generate shipments grid for ajax request
      */
-    public function removeTrackingAction()
+    public function shipmentsAction()
     {
-        if ($order = $this->_initOrder()) {
-            if ($number = $this->getRequest()->getParam('tracking_number')) {
-                $order->removeTrackingNumber($number);
-                $order->save();
-            }
-            $this->getResponse()->setBody(
-                $this->getLayout()->createBlock('adminhtml/sales_order_view_tracking')->toHtml()
-            );
-        }
-    }
-
-    public function viewTrackingAction()
-    {
-        if ($order = $this->_initOrder()) {
-            $number = $this->getRequest()->getParam('tracking_number');
-            if ($carrier = $order->getShippingCarrier()) {
-            	$carrier->getTracking(array($number));
-            	$this->getResponse()->setBody($carrier->getResponse().'<br />');
-            }
-        }
-
+        $this->_initOrder();
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('adminhtml/sales_order_view_tab_shipments')->toHtml()
+        );
     }
 
     /**
-     * Edit order status
+     * Generate creditmemos grid for ajax request
      */
-    public function editAction()
+    public function creditmemosAction()
     {
-        $id = $this->getRequest()->getParam('order_id');
-        $model = Mage::getModel('sales/order')->load($id);
-
-        if ($model->getId()) {
-            Mage::register('sales_order', $model);
-
-            $this->_initAction()
-                ->_addBreadcrumb(__('Edit Order'), __('Edit Order'))
-                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_edit'))
-                ->renderLayout();
-        }
-        else {
-            $this->_getSession()->addError($this->__('This order no longer exists'));
-            $this->_redirect('*/*/');
-        }
+        $this->_initOrder();
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('adminhtml/sales_order_view_tab_creditmemos')->toHtml()
+        );
     }
 
-    /**
-     * Save order
-     */
-    public function saveAction()
+    /*public function emailAction()
     {
-        $orderId = $this->getRequest()->getParam('order_id');
-        $order = Mage::getModel('sales/order')->load($orderId);
-
-        if ($order->getId()) {
-            if ($newStatus = $this->getRequest()->getParam('new_status')) {
-                $notifyCustomer = $this->getRequest()->getParam('notify_customer', false);
-                $comment = $this->getRequest()->getParam('comments', '');
-
-                $order->addStatus($newStatus, $comment, $notifyCustomer);
-
-                try {
-                    $order->save();
-                    if ($notifyCustomer) {
-                        $order->sendOrderUpdateEmail($comment);
-                    }
-                    $this->_getSession()->addSuccess($this->__('Order status was successfully changed'));
-                }
-                catch (Mage_Core_Exception $e){
-                    $this->_getSession()->addError($e->getMessage());
-                }
-                catch (Exception $e) {
-                    $this->_getSession()->addError($this->__('Order was not changed'));
-                }
-            }
-
-            $this->_redirect('*/sales_order/view', array('order_id' => $orderId));
-        }
-        else {
-            Mage::getSingleton('adminhtml/session')->addError(__('This order no longer exists'));
-            $this->_redirect('*/*/');
-        }
-    }
+        $order = $this->_initOrder();
+        $order->sendNewOrderEmail();
+    }*/
 
     /**
      * Random orders generation

@@ -208,6 +208,7 @@ class Mage_Adminhtml_Newsletter_QueueController extends Mage_Adminhtml_Controlle
     	}
     	catch (Exception $e) {
     		echo $e->getMessage();
+            exit;
     	}
 
     	$this->_redirect('*/*');

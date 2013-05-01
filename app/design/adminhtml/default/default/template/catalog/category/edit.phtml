@@ -35,7 +35,7 @@
 </div>
 <?if($this->hasStoreRootCategory()):?>
     <?=$this->getTabsHtml()?>
-    <form id="category_edit_form" action="<?=$this->getSaveUrl()?>" method="POST" enctype="multipart/form-data">
+    <form id="category_edit_form" action="<?=$this->getSaveUrl()?>" method="post" enctype="multipart/form-data">
     <input type="hidden" name="category_products" id="in_category_products" value=""/>
     <div id="category_tab_content"></div>
     </form>

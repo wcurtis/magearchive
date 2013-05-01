@@ -132,13 +132,17 @@
                         <strong><?=$this->__('OR')?></strong>
                     </fieldset>
                     <div class="add-to-box">
+                        <?if ($this->helper('wishlist')->isAllow()) :?>
                         <a href="<?=$this->getAddToWishlistUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a><br/>
+                        <?endif;?>
                         <a href="<?=$this->getAddToCompareUrl($_product)?>"><?=$this->__('Add to Compare')?></a>
                     </div>
                 <?else:?>
                     <p><small><?=$this->__('Availability: Out of stock.')?></small></p>
                     <p>
+                        <?if ($this->helper('wishlist')->isAllow()) :?>
                         <a href="<?=$this->getAddToWishlistUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a> <br/>
+                        <?endif;?>
                         <a href="<?=$this->getAddToCompareUrl($_product)?>"><?=$this->__('Add to Compare')?></a>
                     </p>
                 <?endif;?>
@@ -146,8 +150,10 @@
                 <p><small><?=$this->__('Availability: In stock. Ships within 24 hours.')?></small></p>
                 <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button> <strong><?=$this->__('OR')?></strong>
                 &nbsp;&nbsp;
+                <?if ($this->helper('wishlist')->isAllow()) :?>
                 <a href="<?=$this->getAddToWishlistUrl($_product)?>"><?=$this->__('Add to Wishlist')?></a>
                 <span class="pipe">|</span>
+                <?endif;?>
                 <a href="<?=$this->getAddToCompareUrl($_product)?>"><?=$this->__('Add to Compare')?></a>
             <?endif;?>
             </form>

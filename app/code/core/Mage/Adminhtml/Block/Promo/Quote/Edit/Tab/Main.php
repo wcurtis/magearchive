@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Main extends Mage_Adminhtml_Bloc
     {
         $model = Mage::registry('current_promo_quote_rule');
 
-        //$form = new Varien_Data_Form(array('id' => 'edit_form1', 'action' => $this->getData('action'), 'method' => 'POST'));
+        //$form = new Varien_Data_Form(array('id' => 'edit_form1', 'action' => $this->getData('action'), 'method' => 'post'));
         $form = new Varien_Data_Form();
 
         $form->setHtmlIdPrefix('rule_');
@@ -80,8 +80,8 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Main extends Mage_Adminhtml_Bloc
 
     	$fieldset->addField('store_ids', 'multiselect', array(
             'name'      => 'store_ids[]',
-            'label'     => Mage::helper('salesrule')->__('Stores'),
-            'title'     => Mage::helper('salesrule')->__('Stores'),
+            'label'     => Mage::helper('salesrule')->__('Store Views'),
+            'title'     => Mage::helper('salesrule')->__('Store Views'),
             'required'  => true,
             'values'    => $stores,
         ));

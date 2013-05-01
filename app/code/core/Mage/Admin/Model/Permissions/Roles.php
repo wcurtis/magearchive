@@ -78,20 +78,17 @@ class Mage_Admin_Model_Permissions_Roles extends Varien_Object {
     {
         return $this->getResource()->getRoleUsers($this);
     }
-    
+
     protected function _buildResourcesArray(Varien_Simplexml_Element $resource=null, $parentName=null, $level=0, $represent2Darray=null, $rawNodes = false)
     {
         static $result;
         if (is_null($resource)) {
-//            $config = new Varien_Simplexml_Config();
-//            $config->loadFile(Mage::getModuleDir('etc', 'Mage_Admin').DS.'admin.xml');
-//            $resource = $config->getNode("admin/acl/resources");
-            $resource=Mage::getConfig()->getNode('adminhtml/acl/resources');
+            $resource = Mage::getConfig()->getNode('adminhtml/acl/resources');
             $resourceName = null;
             $level = -1;
-//            unset($config);
         } else {
-            if ($resource->getName()!='title') {
+            $resourceName = $parentName;
+            if ($resource->getName()!='title' && $resource->getName() != 'children') {
                 $resourceName = (is_null($parentName) ? '' : $parentName.'/').$resource->getName();
                 if ($rawNodes) {
                     $resource->addAttribute("aclpath", $resourceName);
@@ -105,6 +102,7 @@ class Mage_Admin_Model_Permissions_Roles extends Varien_Object {
                 }
             }
         }
+
         $children = $resource->children();
         if (empty($children)) {
             if ($rawNodes) {
@@ -124,4 +122,3 @@ class Mage_Admin_Model_Permissions_Roles extends Varien_Object {
     }
 
 }
-?>

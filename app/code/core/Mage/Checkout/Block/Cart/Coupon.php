@@ -19,7 +19,7 @@
  */
 
 
-class Mage_Checkout_Block_Cart_Coupon extends Mage_Checkout_Block_Cart_Abstract 
+class Mage_Checkout_Block_Cart_Coupon extends Mage_Checkout_Block_Cart_Abstract
 {
     public function getQuote()
     {
@@ -28,11 +28,11 @@ class Mage_Checkout_Block_Cart_Coupon extends Mage_Checkout_Block_Cart_Abstract
         }
         return $this->_quote;
     }
-    
+
     public function getCouponCode()
     {
         return $this->getQuote()->getCouponCode();
     }
-    
+
 
 }

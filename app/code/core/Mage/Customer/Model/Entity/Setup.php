@@ -115,7 +115,7 @@ class Mage_Customer_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'type'=>'varchar', 
                         'input'=>'select', 
                         'label'=>'Country',
-                        'class'=>'countries input-text', 
+                        'class'=>'countries', 
                         'source'=>'customer_entity/address_attribute_source_country',
                         'sort_order'=>6,
                     ),

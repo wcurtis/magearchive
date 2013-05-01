@@ -97,6 +97,11 @@ class Mage_Adminhtml_Cms_PageController extends Mage_Adminhtml_Controller_Action
                 $model->save();
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('cms')->__('Page was successfully saved'));
                 Mage::getSingleton('adminhtml/session')->setPageData(false);
+
+                if ($this->getRequest()->getParam('back')) {
+                    $this->_redirect('*/*/edit', array('page_id'=>$model->getId()));
+                    return;
+                }
                 $this->_redirect('*/*/');
                 return;
             } catch (Exception $e) {

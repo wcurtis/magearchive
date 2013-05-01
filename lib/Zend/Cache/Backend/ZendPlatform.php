@@ -148,6 +148,7 @@ class Zend_Cache_Backend_ZendPlatform extends Zend_Cache_Backend implements Zend
                 $old_tags = array();
             }
             $old_tags[$id] = $id;
+            output_cache_remove_key($tagid);
             $result2 = output_cache_put($tagid, $old_tags);
         }
 
@@ -182,7 +183,7 @@ class Zend_Cache_Backend_ZendPlatform extends Zend_Cache_Backend implements Zend
      *                                               This mode is not supported in this backend
      *
      * @param string $mode clean mode
-     * @param tags array $tags array of tags
+     * @param array $tags array of tags
      * @return boolean true if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())

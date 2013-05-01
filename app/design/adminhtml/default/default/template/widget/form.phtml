@@ -21,7 +21,7 @@
 <div class="entry-edit">
     <?=$this->getFormHtml()?>
 <?/*if( $form->getUseContainer() === true ):?>
-<form id="<?=$form->getFormId()?>" method="<?=( $form->getFormMethod() ) ? $form->getFormMethod() : 'POST' ;?>" action="<?=$form->getFormAction()?>" <?=( $form->getFormEnctype() ) ? 'enctype="' . $this->getForm()->getFormEnctype() . '"' : '' ?> >
+<form id="<?=$form->getFormId()?>" method="<?=( $form->getFormMethod() ) ? $form->getFormMethod() : 'post' ;?>" action="<?=$form->getFormAction()?>" <?=( $form->getFormEnctype() ) ? 'enctype="' . $this->getForm()->getFormEnctype() . '"' : '' ?> >
 <?endif;?>
 	<?foreach ($form->getElements() as $_element):?>
 	<?=$this->drawElement($_element)?>

@@ -62,18 +62,6 @@
         </resources>
         <sales>
             <shipping>
-                <carriers>
-                    <tablerate>
-                        <active>true</active>
-                        <class>shipping/carrier_tablerate</class>
-                        <title>Table rate</title>
-                    </tablerate>
-                    <pickup>
-                        <active>true</active>
-                        <class>shipping/carrier_pickup</class>
-                        <title>Pickup</title>
-                    </pickup>
-                </carriers>
                 <rule>
                     <conditions>
                         <dest_country>
@@ -169,4 +157,48 @@
             </updates>
         </layout>
     </frontend>
+    
+    <default>
+        <shipping>
+            <option>
+                <checkout_multiple>1</checkout_multiple>
+            </option>
+            
+            <origin>
+                <country_id>US</country_id>
+                <postcode>90034</postcode>
+                <region_id>12</region_id>
+            </origin>
+        </shipping>
+        
+        <carriers>
+            <flatrate>
+                <active>1</active>
+                <sallowspecific>0</sallowspecific>
+                <model>shipping/carrier_flatrate</model>
+                <name>Fixed</name>
+                <price>5.00</price>
+                <title>Flat Rate</title>
+                <type>I</type>
+            </flatrate>
+            
+            <freeshipping>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <cutoff_cost>50</cutoff_cost>
+                <model>shipping/carrier_freeshipping</model>
+                <name>Free</name>
+                <title>Free Shipping</title>
+            </freeshipping>
+            
+            <tablerate>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <condition_name>package_weight</condition_name>
+                <model>shipping/carrier_tablerate</model>
+                <name>Table Rate</name>
+                <title>Best Way</title>
+            </tablerate>
+        </carriers>
+    </default>
 </config>

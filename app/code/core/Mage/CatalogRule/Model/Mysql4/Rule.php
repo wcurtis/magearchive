@@ -233,7 +233,7 @@ class Mage_CatalogRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
             ->where('product_id=?', $pId);
         return $read->fetchOne($select);
     }
-    
+
     public function getRulesForProduct($date, $sId, $pId)
     {
         $read = $this->_getReadAdapter();

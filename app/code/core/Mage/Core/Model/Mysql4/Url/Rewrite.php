@@ -22,6 +22,9 @@
 /**
  * Url rewrite resource model class
  *
+ *
+ * @category   Mage
+ * @package    Mage_Core
  */
 class Mage_Core_Model_Mysql4_Url_Rewrite extends Mage_Core_Model_Mysql4_Abstract
 {
