@@ -25,8 +25,8 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `gift_message`;
-CREATE TABLE `gift_message` (
+DROP TABLE IF EXISTS {$this->getTable('gift_message')};
+CREATE TABLE {$this->getTable('gift_message')} (
     `gift_message_id` int(7) unsigned NOT NULL auto_increment,
     `customer_id` int(7) unsigned NOT NULL default '0',
     `sender` varchar(255) NOT NULL default '',

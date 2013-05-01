@@ -1,0 +1,164 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<? $_results = $this->getTrackingInfo()?>
+<div class="shipping-tracking">
+<div class="button-set">
+<button class="form-button" onclick="window.close();window.opener.focus();"><span><?=$this->__('Close Window')?></span></button>
+</div>
+<?if(sizeof($_results)>0):?>
+<?foreach($_results as $shipid => $_result):?>
+    <?if($shipid):?>
+    <div class="box-header"><?=$this->__('Shipment #').$shipid;?></div>
+    <?endif;?>
+    <?if(sizeof($_result)>0):?>
+        <?$rowCount = sizeof($_result); $counter = 1;?>
+        <?foreach($_result as $track):?>
+        <table class="generic-table">
+            <?if(is_object($track)):?>
+            <tr>
+                <td class="first label"><?=$this->__('Tracking Number:');?></td>
+                <td><?=$track->getTracking();?></td>
+            </tr>
+            <?if ($track->getCarrierTitle()):?>
+            <tr>
+                <td class="first label"><?=$this->__('Carrier:');?></td>
+                <td><?=$track->getCarrierTitle();?></td>
+            </tr>
+            <?endif;?>
+            <?if($track->getErrorMessage()):?>
+            <tr>
+                <td class="first label"><?=$this->__('Error:');?></td>
+                <td class="error"><?=$this->__('Tracking information is currently not available. Please ')."<a href='{$this->getContactUs()}' target='_blank'>".$this->__('contact us').'</a>'.$this->__(' for more information or email us at ');?><a href="<?=$this->getStoreSupportEmail()?>"><?=$this->getStoreSupportEmail()?></a></td>
+            </tr>
+            <?elseif($track->getTrackSummary()):?>
+            <tr>
+                <td class="first label"><?=$this->__('Info:');?></td>
+                <td><?=$track->getTrackSummary();?></td>
+            </tr>
+            <?elseif($track->getUrl()):?>
+            <tr>
+                <td class="first label"><?=$this->__('Track:');?></td>
+                <td><a href="<?=$track->getUrl();?>" target="_blank"><?=$track->getUrl();?></a></td>
+            </tr>
+            <?else:?>
+                <?if ($track->getStatus()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Status:');?></td>
+                    <td><?=$track->getStatus();?></td>
+                </tr>
+                <?endif;?>
+
+                <?if ($track->getDeliverydate()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Delivered on:');?></td>
+                    <td><?=$this->formatDeliveryDateTime($track->getDeliverydate(),$track->getDeliverytime());?></td>
+                </tr>
+                <?endif;?>
+
+                <?if ($track->getSignedby()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Signed by:');?></td>
+                    <td><?=$track->getSignedby();?></td>
+                </tr>
+                <?endif;?>
+
+                <?if ($track->getDeliveryLocation()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Delivered to:');?></td>
+                    <td><?=$track->getDeliveryLocation();?></td>
+                </tr>
+                <?endif;?>
+
+                <?if ($track->getShippedDate()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Shipped or billed on:');?></td>
+                    <td><?=$track->getShippedDate();?></td>
+                </tr>
+                <?endif;?>
+
+                <?if ($track->getService()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Service Type:');?></td>
+                    <td><?=$track->getService();?></td>
+                </tr>
+                <?endif;?>
+
+                <?if ($track->getWeight()):?>
+                <tr>
+                    <td class="first label"><?=$this->__('Weight:');?></td>
+                    <td><?=$track->getWeight();?></td>
+                </tr>
+                <?endif;?>
+
+                <?endif;?>
+                <?else:?>
+                <!--if the tracking is custom value-->
+                  <tr>
+                    <td class="first label"><?=$track['title'];?>:</td>
+                    <td><?=$track['number'];?></td>
+                </tr>
+                <?endif;?>
+
+                </table>
+
+                <?if (is_object($track) && sizeof($track->getProgressdetail())>0):?>
+                <br/>
+                <table cellspacing="0" class="data-table" id="track-history-table-<?=$track->getTracking();?>">
+                    <thead>
+                        <tr>
+                            <th><?=$this->__('Location')?></th>
+                            <th><?=$this->__('Date')?></th>
+                            <th><?=$this->__('Local Time')?></th>
+                            <th><?=$this->__('Description')?></th>
+                        </tr>
+                   </thead>
+                   <?foreach($track->getProgressdetail() as $_detail):?>
+                    <tr>
+                        <td><?=$_detail['deliverylocation']?></td>
+                        <td><?=$this->formatDeliveryDate($_detail['deliverydate'])?></td>
+                        <td><?=$this->formatDeliveryTime($_detail['deliverytime'])?></td>
+                        <td><?=$_detail['activity']?></td>
+                    </tr>
+                   <?endforeach;?>
+                </table>
+                <script>
+                 decorateTable('track-history-table-<?=$track->getTracking();?>');
+                </script>
+                <?endif;?>
+
+            <?if($counter!=$rowCount):?>
+            <div class="divider"></div>
+            <?endif;?>
+            <?$counter++;?>
+        <!--end for each tracking information-->
+        <?endforeach;?>
+    <?else:?>
+        <div><?=$this->__('There is no tracking available for this shipment.');?></div>
+    <?endif;?>
+
+<?endforeach;?>
+<?else:?>
+    <div><?=$this->__('There is no tracking available.');?></div>
+<?endif;?>
+</div>
+<div class="button-set">
+<button class="form-button" onclick="window.close();window.opener.focus();"><span><?=$this->__('Close Window')?></span></button>
+</div>

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml giftmessage save model
  *
@@ -283,4 +284,5 @@ class Mage_Adminhtml_Model_Giftmessage_Save extends Varien_Object
     {
         return $this->_getSession()->getQuote();
     }
-} // Class Mage_Adminhtml_Model_Giftmessage_Save End
+
+}

@@ -62,10 +62,10 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Items extends Mage_Adminhtml_Block
         return $this->getLayout()->createBlock('adminhtml/widget_button')->setData($addButtonData)->toHtml();
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         if ($this->getStoreId()) {
-            return parent::toHtml();
+            return parent::_toHtml();
         }
         return '';
     }

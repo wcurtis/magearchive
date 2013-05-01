@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog comapare sidebar block
  *
@@ -26,15 +27,15 @@
  */
  class Mage_Catalog_Block_Product_Compare_Sidebar extends Mage_Core_Block_Template
  {
- 	protected function _construct()
- 	{
- 		$this->setId('compare');
- 	}
+     protected function _construct()
+     {
+         $this->setId('compare');
+     }
 
- 	public function getItems()
- 	{
- 		return $this->helper('catalog/product_compare')->getItemCollection();
- 	}
+     public function getItems()
+     {
+         return $this->helper('catalog/product_compare')->getItemCollection();
+     }
 
     public function getRemoveUrl($item)
     {
@@ -46,8 +47,8 @@
         return $this->helper('catalog/product_compare')->getClearListUrl();
     }
 
- 	public function getCompareUrl()
- 	{
- 	    return $this->helper('catalog/product_compare')->getListUrl();
- 	}
- } // Class Mage_Catalog_Block_Compare_Sidebar end
+     public function getCompareUrl()
+     {
+         return $this->helper('catalog/product_compare')->getListUrl();
+     }
+ }

@@ -81,7 +81,8 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
         $response->setError(0);
 
         $modelSet = Mage::getModel('eav/entity_attribute_set')
-            ->setId($this->getRequest()->getParam('id'));
+            ->setId($this->getRequest()->getParam('id'))
+	    ->setEntityTypeId(Mage::registry('entityType'));
 
         if( $this->getRequest()->getParam('gotoEdit') ) {
             $modelSet = Mage::getModel('eav/entity_attribute_set');
@@ -98,17 +99,17 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
                 $modelSet->initFromSkeleton($this->getRequest()->getParam('skeleton_set'))
                     ->save();
 
-                $this->getResponse()->setRedirect(Mage::getUrl('*/*/edit', array('id' => $modelSet->getId())));
+                $this->getResponse()->setRedirect($this->getUrl('*/*/edit', array('id' => $modelSet->getId())));
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Attribute set successfully saved.'));
             } else {
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Attribute set successfully saved.'));
                 $response->setMessage(Mage::helper('catalog')->__('Attribute set successfully saved.'));
-                $response->setUrl(Mage::getUrl('*/*/'));
+                $response->setUrl($this->getUrl('*/*/'));
             }
         } catch (Exception $e) {
             if( $this->getRequest()->getParam('gotoEdit') == 1 ) {
-                #Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Error while saving this set. Set with the same name already exists.'));
-                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Error while saving this set. Set with the same name already exists.'));
+                //Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
                 $this->_redirectReferer();
             } else {
                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Attribute set with the same name already exists.'));
@@ -143,7 +144,7 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
                 ->delete();
 
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Attribute set was successfully removed.'));
-            $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+            $this->getResponse()->setRedirect($this->getUrl('*/*/'));
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Error while deleting this set.'));
             $this->_redirectReferer();

@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_System_Currency extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_System_Currency extends Mage_Adminhtml_Block_Template
 {
     public function __construct()
     {
@@ -102,6 +102,6 @@ class Mage_Adminhtml_Block_System_Currency extends Mage_Core_Block_Template
 
     protected function getImportFormAction()
     {
-        return Mage::getUrl('*/*/fetchRates');
+        return $this->getUrl('*/*/fetchRates');
     }
 }

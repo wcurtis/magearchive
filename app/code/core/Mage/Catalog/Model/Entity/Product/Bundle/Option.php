@@ -18,19 +18,20 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog product bundle option resource model
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
- class Mage_Catalog_Model_Entity_Product_Bundle_Option extends Mage_Core_Model_Mysql4_Abstract 
+ class Mage_Catalog_Model_Entity_Product_Bundle_Option extends Mage_Core_Model_Mysql4_Abstract
  {
-    protected function _construct() 
+    protected function _construct()
     {
-        $this->_init('catalog/product_bundle_option', 'option_id'); 
+        $this->_init('catalog/product_bundle_option', 'option_id');
     }
-    
+
     /**
      * Load an object
      *
@@ -63,23 +64,23 @@
 
         return true;
     }
-    
+
     protected function _afterSave(Mage_Core_Model_Abstract $object)
     {
         $select = $this->_getWriteAdapter()->select()
             ->from($this->getTable('product_bundle_option_value'),'value_id')
             ->where('option_id=?', $object->getId())
             ->where('store_id=?',  (int)$object->getStoreId());
-        
+
         $valueId = $this->_getWriteAdapter()->fetchOne($select);
-        
+
         $data = array();
-        
+
         $data['option_id'] = $object->getId();
-        $data['store_id']  = $object->getStoreId(); 
+        $data['store_id']  = $object->getStoreId();
         $data['label']     = $object->getLabel();
         $data['position']  = $object->getPosition();
-        
+
         $this->_getWriteAdapter()->beginTransaction();
         try {
             if($valueId) {
@@ -96,7 +97,7 @@
         }
         return $this;
     }
-    
+
     public function toArray(Mage_Core_Model_Abstract $object) {
         return array(
                      'label'    =>  $object->getLabel(),
@@ -104,4 +105,4 @@
                      'id'       =>  $object->getId(),
                      'products' =>  $object->getLinkCollection()->toArray());
     }
- } // Class Mage_Catalog_Model_Entity_Product_Bundle_Option end
+ }

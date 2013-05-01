@@ -25,9 +25,14 @@
  * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Block_System_Config_Form_Field
-    extends Mage_Core_Block_Abstract
+    extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        return $element->getElementHtml();
+    }
+
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
         $html = '<tr><td class="label">'.$element->getLabel().'</td>';
@@ -58,7 +63,12 @@ class Mage_Adminhtml_Block_System_Config_Form_Field
             }
         }
 
-        $html.= '<td class="value">'.$element->getElementHtml().'</td>';
+        $html.= '<td class="value">';
+        $html.= $this->_getElementHtml($element);
+        if ($element->getComment()) {
+            $html.= '<div><small>'.$element->getComment().'</small></div>';
+        }
+        $html.= '</td>';
         if ($addInheritCheckbox) {
 
             $defText = $element->getDefaultValue();

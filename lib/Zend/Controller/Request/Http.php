@@ -277,7 +277,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     /**
      * Retrieve a member of the $_SERVER superglobal
      *
-     * If no $key is passed, returns the entire $_COOKIE array.
+     * If no $key is passed, returns the entire $_SERVER array.
      *
      * @param string $key
      * @param mixed $default Default value to use if key not found
@@ -295,7 +295,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     /**
      * Retrieve a member of the $_ENV superglobal
      *
-     * If no $key is passed, returns the entire $_COOKIE array.
+     * If no $key is passed, returns the entire $_ENV array.
      *
      * @param string $key
      * @param mixed $default Default value to use if key not found
@@ -572,8 +572,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      */
     public function setParam($key, $value)
     {
-        $keyName = (null !== ($alias = $this->getAlias($key))) ? $alias : $key;
-
+        $key = (null !== ($alias = $this->getAlias($key))) ? $alias : $key;
         parent::setParam($key, $value);
         return $this;
     }

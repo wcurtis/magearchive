@@ -25,16 +25,16 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `admin_assert`;
-CREATE TABLE `admin_assert` (
+DROP TABLE IF EXISTS {$this->getTable('admin_assert')};
+CREATE TABLE {$this->getTable('admin_assert')} (
   `assert_id` int(10) unsigned NOT NULL auto_increment,
   `assert_type` varchar(20) character set utf8 NOT NULL default '',
   `assert_data` text character set utf8,
   PRIMARY KEY  (`assert_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='ACL Asserts';
 
-DROP TABLE IF EXISTS `admin_role`;
-CREATE TABLE `admin_role` (
+DROP TABLE IF EXISTS {$this->getTable('admin_role')};
+CREATE TABLE {$this->getTable('admin_role')} (
   `role_id` int(10) unsigned NOT NULL auto_increment,
   `parent_id` int(10) unsigned NOT NULL default '0',
   `tree_level` tinyint(3) unsigned NOT NULL default '0',
@@ -47,10 +47,10 @@ CREATE TABLE `admin_role` (
   KEY `tree_level` (`tree_level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='ACL Roles';
 
-insert  into `admin_role`(`role_id`,`parent_id`,`tree_level`,`sort_order`,`role_type`,`user_id`,`role_name`) values (1,0,1,1,'G',0,'Administrators'),(2,1,2,1,'U',1,'Administrator');
+insert  into {$this->getTable('admin_role')}(`role_id`,`parent_id`,`tree_level`,`sort_order`,`role_type`,`user_id`,`role_name`) values (1,0,1,1,'G',0,'Administrators'),(2,1,2,1,'U',1,'Administrator');
 
-DROP TABLE IF EXISTS `admin_rule`;
-CREATE TABLE `admin_rule` (
+DROP TABLE IF EXISTS {$this->getTable('admin_rule')};
+CREATE TABLE {$this->getTable('admin_rule')} (
   `rule_id` int(10) unsigned NOT NULL auto_increment,
   `role_id` int(10) unsigned NOT NULL default '0',
   `resource_id` varchar(255) character set utf8 NOT NULL default '',
@@ -61,13 +61,13 @@ CREATE TABLE `admin_rule` (
   PRIMARY KEY  (`rule_id`),
   KEY `resource` (`resource_id`,`role_id`),
   KEY `role_id` (`role_id`,`resource_id`),
-  CONSTRAINT `FK_admin_rule` FOREIGN KEY (`role_id`) REFERENCES `admin_role` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_admin_rule` FOREIGN KEY (`role_id`) REFERENCES {$this->getTable('admin_role')} (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='ACL Rules';
 
-insert into `admin_rule`(`rule_id`, `role_id`, `resource_id`, `privileges`, `assert_id`, `role_type`, `permission`) values (1,1,'admin','',0,'G','allow');
+insert into {$this->getTable('admin_rule')}(`rule_id`, `role_id`, `resource_id`, `privileges`, `assert_id`, `role_type`, `permission`) values (1,1,'all','',0,'G','allow');
 
-DROP TABLE IF EXISTS `admin_user`;
-CREATE TABLE `admin_user` (
+DROP TABLE IF EXISTS {$this->getTable('admin_user')};
+CREATE TABLE {$this->getTable('admin_user')} (
   `user_id` mediumint(9) unsigned NOT NULL auto_increment,
   `firstname` varchar(32) character set utf8 NOT NULL default '',
   `lastname` varchar(32) character set utf8 NOT NULL default '',
@@ -83,7 +83,7 @@ CREATE TABLE `admin_user` (
   PRIMARY KEY  (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Users';
 
-insert  into `admin_user`(`user_id`,`firstname`,`lastname`,`email`,`username`,`password`,`created`,`modified`,`logdate`,`lognum`,`reload_acl_flag`,`is_active`) values (1,'admin','admin','admin@magentocommerce.com','admin','4297f44b13955235245b2497399d7a93',NOW(),NOW(),NOW(),1,0,1);
+insert  into {$this->getTable('admin_user')}(`user_id`,`firstname`,`lastname`,`email`,`username`,`password`,`created`,`modified`,`logdate`,`lognum`,`reload_acl_flag`,`is_active`) values (1,'admin','admin','admin@magentocommerce.com','admin','4297f44b13955235245b2497399d7a93',NOW(),NOW(),NOW(),1,0,1);
 
     ");
 

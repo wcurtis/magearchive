@@ -24,7 +24,6 @@
         <install>
             <date></date>
         </install>
-
         <locale>
             <allow>
                 <codes>
@@ -198,6 +197,5 @@
                 <export>{{var_dir}}/export</export>
             </filesystem>
         </system>
-
     </default>
 </config>

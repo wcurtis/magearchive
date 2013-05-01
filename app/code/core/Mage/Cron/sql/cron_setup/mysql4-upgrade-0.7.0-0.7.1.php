@@ -24,8 +24,8 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `cron_schedule`;
-CREATE TABLE `cron_schedule` (
+DROP TABLE IF EXISTS {$this->getTable('cron_schedule')};
+CREATE TABLE {$this->getTable('cron_schedule')} (
   `schedule_id` int(10) unsigned NOT NULL auto_increment,
   `job_code` varchar(255) NOT NULL default '0',
   `status` enum('pending','running','success','missed','error') NOT NULL default 'pending',

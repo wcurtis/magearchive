@@ -18,25 +18,27 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml config system template source
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Model_System_Config_Source_Email_Template
 {
+
     public function toOptionArray()
     {
         if(!$collection = Mage::registry('config_system_email_template')) {
             $collection = Mage::getResourceModel('core/email_template_collection')
                 ->load();
-                        
+
             Mage::register('config_system_email_template', $collection);
         }
         $options = $collection->toOptionArray();
         array_unshift($options, array('value'=>'', 'label'=>''));
         return $options;
     }
-}// Class Mage_Adminhtml_Model_Newsletter_Config_Source_Template END
+
+}

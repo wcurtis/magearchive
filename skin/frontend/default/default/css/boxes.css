@@ -61,6 +61,7 @@ input.input-text, textarea { padding:2px; }
 input.form-radio { margin-right:3px;}
 .qty { width:2.5em; }
 .group-select label, .form-list label, .payment-methods label { font-weight:bold;}
+input:focus, select:focus, textarea:focus { background:#edf7fd; outline:0; }
 .button-set { /* Container for form buttons*/
     clear:both;
     margin-top:4em;
@@ -240,9 +241,11 @@ p.required {
     font-weight:normal;
     }
 
-
+.box-header {font-size:1.05em;text-align:left;background:#EEEEEE none repeat scroll 0%;font-weight:bold;padding:2px 8px;margin:10px 0px}
 
 /********************* Tables */
+
+td.label        { font-weight:bold; }
 
 /* Data Table */
 .data-table { border:1px solid #bebcb7;  width:100%; }
@@ -259,7 +262,6 @@ p.required {
     }
 .data-table th a, .data-table th a:hover { color:#fff;}
 .data-table td { padding:3px 8px; }
-.data-table td.label { font-weight:bold; }
 .data-table thead tr { background:url(../images/data_table_th_bg.gif) repeat-x 0 100% #d9e5ee; }
 .data-table tfoot { border-bottom:1px solid #d9dde3;}
 .data-table tfoot tr.first { background:url(../images/base_mini_actions_bg.gif) repeat-x; }
@@ -274,7 +276,9 @@ p.required {
 .nested-data-table th, .nested-data-table td { padding-top:2px; padding-bottom:2px;  }
 .nested-data-table tfoot td {font-size:.95em; }
 
-
+.generic-table td { padding:0 8px}
+.generic-table td.first { padding-left:0; white-space:nowrap;}
+.shipping-tracking .button-set {margin-top:0;border:none;border-top:0;padding-top:0}
 
 /********************** Lists */
 .disc { margin-bottom:10px; }
@@ -405,7 +409,7 @@ h1#logo {
 
 /* Quick Access*/
 .quick-access {
-    width:390px;
+    width:540px;
     float:right;
     margin-top:28px;
     text-align:right;
@@ -419,13 +423,17 @@ h1#logo {
     padding-right:7px;
     padding-left:3px;
     }
-.quick-access li.first { padding-left:0;}
-.quick-access li.last { padding-right:0; background:none;}
+.quick-access li.first { /* padding-left:0; */ }
+.quick-access li.last { /* padding-right:0; background:none; */ }
+.account-access { float: right; padding-right: 5px; }
 .account-access p, .account-access ul, .account-access li { display:inline; color:#fff; }
-.account-access a, .account-access a:hover { color:#e1f1fb; }
+.account-access a, .account-access a:hover { color:#ebbc58; /* color:#e1f1fb; */ }
 .account-access ul { padding-left:10px; font-size:.95em; }
+.shop-access { float: right; }
 .shop-access a, .shop-access a:hover { color:#ebbc58; font-size:.95em; }
-
+.shop-access li.last { padding-right:0; background:none; }
+.language-switcher { float: right; margin-top: 5px; margin-left: 60px; }
+.language-switcher label { color:#A7C6DD; padding-right: 5px; }
 
 /* Breadcrumbs */
 .breadcrumbs {  margin-bottom:13px; font-size:.95em; line-height:1.25em; }
@@ -1405,7 +1413,7 @@ tr.grand_total td, p.grand_total { padding-top:5px; padding-bottom:5px; }
 
 
 /********************** Pop up pages */
-.page-popup { background:#fff; margin:25px 30px; }
+.page-popup { background:#fff; margin:25px 30px; text-align:left;}
 .product-gallery-nav { padding:0 5px; }
 
 

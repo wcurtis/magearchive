@@ -88,9 +88,9 @@ class Mage_Tag_Block_All extends Mage_Core_Block_Template
         return $this->_minPopularity;
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
-        return parent::toHtml();
+        return parent::_toHtml();
     }
 
     protected function _getHeadText()

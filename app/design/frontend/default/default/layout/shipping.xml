@@ -30,5 +30,16 @@
             <block type="shipping/tracking_ajax" name="shipping.tracking.ajax" template="shipping/tracking/ajax.phtml" />
         </reference>
     </shipping_tracking_ajax>
-
+    <shipping_tracking_popup>
+        <reference name="root">
+            <action method="setTemplate"><template>page/one-column.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>scriptaculous/scriptaculous.js</script></action>
+        </reference>
+        <reference name="content">
+            <block type="shipping/tracking_popup" name="shipping.tracking.popup" template="shipping/tracking/popup.phtml" />
+        </reference>
+    </shipping_tracking_popup>
 </layout>
+

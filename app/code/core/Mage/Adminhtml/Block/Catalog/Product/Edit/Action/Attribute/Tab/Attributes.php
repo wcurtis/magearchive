@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml catalog product edit action attributes update tab block
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute_Tab_Attributes extends Mage_Adminhtml_Block_Widget_Form
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -81,4 +83,5 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute_Tab_Attributes 
              . '</label></span>
                 <script type="text/javascript">initDisableFields(\''.$element->getId().'\')</script>';
     }
-} // Class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute_Tab_Attributes End
+
+}

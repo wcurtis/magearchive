@@ -24,16 +24,17 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_Block_Widget_Grid 
+class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_Block_Widget_Grid
 {
-    public function __construct() 
+
+    public function __construct()
     {
         parent::__construct();
         $this->setId('catalog_category_products');
         $this->setDefaultSort('id');
         $this->setUseAjax(true);
     }
-    
+
     /*protected function _prepareLayout()
     {
         parent::_prepareLayout();
@@ -73,7 +74,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
         }
         return $this;
     }
-    
+
     protected function _prepareCollection()
     {
         $this->setDefaultFilter(array('in_category'=>1));
@@ -81,23 +82,23 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('price')
-            ->joinField('store_id', 
-                'catalog/product_store', 
-                'store_id', 
-                'product_id=entity_id', 
+            ->joinField('store_id',
+                'catalog/product_store',
+                'store_id',
+                'product_id=entity_id',
                 '{{table}}.store_id='.(int) $this->getRequest()->getParam('store', 0))
-            ->joinField('position', 
-                'catalog/category_product', 
-                'position', 
-                'product_id=entity_id', 
-                'category_id='.(int) $this->getRequest()->getParam('id', 0), 
+            ->joinField('position',
+                'catalog/category_product',
+                'position',
+                'product_id=entity_id',
+                'category_id='.(int) $this->getRequest()->getParam('id', 0),
                 'left');
         $collection->getEntity()->setStore(0);
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
     }
-    
+
     protected function _prepareColumns()
     {
         $this->addColumn('in_category', array(
@@ -132,21 +133,20 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
         $this->addColumn('position', array(
             'header'    => Mage::helper('catalog')->__('Position'),
             'width'     => '70px',
-            'align'     => 'center',
             'type'      => 'number',
             'index'     => 'position',
             'editable'  => true
             //'renderer'  => 'adminhtml/widget_grid_column_renderer_input'
         ));
-        
+
         return parent::_prepareColumns();
     }
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/grid', array('_current'=>true));
+        return $this->getUrl('*/*/grid', array('_current'=>true));
     }
-    
+
     protected function _getSelectedProducts()
     {
         $products = $this->getRequest()->getPost('selected_products');
@@ -159,4 +159,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_Product extends Mage_Adminhtml_B
         }*/
         return $products;
     }
+
 }
+

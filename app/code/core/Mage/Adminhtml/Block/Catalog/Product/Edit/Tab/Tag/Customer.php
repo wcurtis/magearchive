@@ -80,7 +80,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Tag_Customer extends Mage_Ad
 
     protected function getRowUrl($row)
     {
-        return Mage::getUrl('*/tag/edit', array(
+        return $this->getUrl('*/tag/edit', array(
             'tag_id' => $row->getTagId(),
             'product_id' => $this->getProductId(),
         ));
@@ -88,7 +88,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Tag_Customer extends Mage_Ad
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/catalog_product/tagCustomerGrid', array(
+        return $this->getUrl('*/catalog_product/tagCustomerGrid', array(
             '_current' => true,
             'id'       => $this->getProductId(),
             'product_id' => $this->getProductId(),

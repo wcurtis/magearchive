@@ -24,21 +24,21 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Template 
+class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Adminhtml_Block_Template
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('catalog/category/edit.phtml');
     }
-    
+
     protected function _prepareLayout()
     {
         $this->setChild('tabs',
             $this->getLayout()->createBlock('adminhtml/catalog_category_tabs', 'tabs')
         );
-        
-        $this->setChild('save_button', 
+
+        $this->setChild('save_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Save Category'),
@@ -46,8 +46,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
                     'class' => 'save'
                 ))
         );
-        
-        $this->setChild('delete_button', 
+
+        $this->setChild('delete_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Delete Category'),
@@ -56,16 +56,16 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
                 ))
         );
 
-        $this->setChild('reset_button', 
+        $this->setChild('reset_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Reset'),
-                    'onclick'   => "setLocation('".Mage::getUrl('*/*/*', array('_current'=>true))."')"
+                    'onclick'   => "setLocation('".$this->getUrl('*/*/*', array('_current'=>true))."')"
                 ))
         );
         return parent::_prepareLayout();
     }
-    
+
     public function hasStoreRootCategory()
     {
         $root = $this->getLayout()->getBlock('category.tree')->getRoot();
@@ -74,7 +74,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
         }
         return false;
     }
-    
+
     public function getStoreConfigurationUrl()
     {
         $storeId = (int) $this->getRequest()->getParam('store');
@@ -86,27 +86,27 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
         }
         return $this->getUrl('*/system_config/edit', $params);
     }
-    
+
     public function getSaveUrl()
     {
         return $this->getUrl('*/*/save', array('_current'=>true));
     }
-    
+
     public function getCategoryId()
     {
         return Mage::registry('category')->getId();
     }
-    
+
     public function getCategoryName()
     {
         return Mage::registry('category')->getName();
     }
-    
+
     public function getDeleteButtonHtml()
     {
         return $this->getChildHtml('delete_button');
     }
-    
+
     public function getSaveButtonHtml()
     {
         if ($this->hasStoreRootCategory()) {
@@ -114,7 +114,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
         }
         return '';
     }
-    
+
     public function getResetButtonHtml()
     {
         if ($this->hasStoreRootCategory()) {
@@ -127,7 +127,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
     {
         return $this->getChildHtml('tabs');
     }
-    
+
     public function getHeader()
     {
         if ($this->hasStoreRootCategory()) {
@@ -135,12 +135,12 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Core_Block_Templat
         }
         return Mage::helper('catalog')->__('Set Root Category For Store');
     }
-    
+
     public function getDeleteUrl()
     {
-        return Mage::getUrl('*/*/delete', array('_current'=>true));
+        return $this->getUrl('*/*/delete', array('_current'=>true));
     }
-    
+
     public function getProductsJson()
     {
         $products = Mage::registry('category')->getProductsPosition();

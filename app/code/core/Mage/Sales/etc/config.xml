@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Sales>
-            <version>0.7.9</version>
+            <version>0.8.7</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Customer />
@@ -41,10 +41,6 @@
                     <quote><table>sales_quote_entity</table></quote>
                     <quote_temp><table>sales_quote_temp</table></quote_temp>
                     <order><table>sales_order_entity</table></order>
-                    <order_status><table>sales_order_status</table></order_status>
-                    <invoice><table>sales_invoice_entity</table></invoice>
-                    <shipment><table>sales_shipment_entity</table></shipment>
-                    <creditmemo><table>sales_creditmemo_entity</table></creditmemo>
                 </entities>
             </sales_entity>
         </models>
@@ -98,6 +94,7 @@
                 <statuses>
                     <pending><label>Pending</label></pending>
                     <processing><label>Processing</label></processing>
+                    <holded><label>On Hold</label></holded>
                     <complete><label>Complete</label></complete>
                     <closed><label>Closed</label></closed>
                     <canceled><label>Canceled</label></canceled>
@@ -128,6 +125,11 @@
                             <canceled/>
                         </statuses>
                     </canceled>
+                    <holded>
+                        <statuses>
+                            <holded/>
+                        </statuses>
+                    </holded>
                 </states>
             </order>
             <order_invoice>
@@ -149,8 +151,6 @@
                     </grand_total>
                 </totals>
             </order_invoice>
-            <order_shipment>
-            </order_shipment>
             <order_creditmemo>
                 <totals>
                     <subtotal>
@@ -293,6 +293,14 @@
     </adminhtml>
 
     <default>
+        <payment>
+            <googlecheckout>
+                <active>1</active>
+                <model>googlecheckout/payment</model>
+                <title>Google Checkout</title>
+            </googlecheckout>
+        </payment>
+
         <sales>
             <new_order>
                 <email_identity>sales</email_identity>
@@ -307,7 +315,7 @@
                 <shipment_comment_identity>sales</shipment_comment_identity>
                 <shipment_comment_template>4</shipment_comment_template>
             </email>
-            
+
             <order_update>
                 <email_identity>sales</email_identity>
                 <email_template>4</email_template>

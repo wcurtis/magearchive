@@ -45,6 +45,9 @@ class Mage_Adminhtml_Block_Widget_Form extends Mage_Adminhtml_Block_Widget
         Varien_Data_Form::setFieldsetRenderer(
             $this->getLayout()->createBlock('adminhtml/widget_form_renderer_fieldset')
         );
+        Varien_Data_Form::setFieldsetElementRenderer(
+            $this->getLayout()->createBlock('adminhtml/widget_form_renderer_fieldset_element')
+        );
     }
 
     public function getForm()

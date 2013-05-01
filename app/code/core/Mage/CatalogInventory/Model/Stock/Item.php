@@ -223,7 +223,7 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
         if ($this->getMinSaleQty() && $qty<$this->getMinSaleQty()) {
             $this->_addQuoteItemError(
                 $item,
-                Mage::helper('cataloginventory')->__('The minimum quantity allowed for purchase is %d.', $this->getMinSaleQty()),
+                Mage::helper('cataloginventory')->__('The minimum quantity allowed for purchase is %s.', $this->getMinSaleQty()*1),
                 Mage::helper('cataloginventory')->__('Some of the products cannot be ordered in the requested quantity'),
                 'qty'
             );
@@ -233,7 +233,7 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
         if ($this->getMaxSaleQty() && $qty>$this->getMaxSaleQty()) {
             $this->_addQuoteItemError(
                 $item,
-                Mage::helper('cataloginventory')->__('The maximum quantity allowed for purchase is %d.', $this->getMaxSaleQty()),
+                Mage::helper('cataloginventory')->__('The maximum quantity allowed for purchase is %s.', $this->getMaxSaleQty()*1),
                 Mage::helper('cataloginventory')->__('Some of the products can not be ordered in requested quantity'),
                 'qty'
             );
@@ -246,8 +246,8 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
                 ($this->getBackorders() == Mage_CatalogInventory_Model_Stock::BACKORDERS_YES)) {
                 if ($this->getProduct()) {
                     $item->setMessage(
-                        Mage::helper('cataloginventory')->__('This product is not available in the requested quantity. %d of the items will be backordered.',
-                            ($this->getQty()>0) ? $qty - $this->getQty() : $qty,
+                        Mage::helper('cataloginventory')->__('This product is not available in the requested quantity. %s of the items will be backordered.',
+                            ($this->getQty()>0) ? ($qty - $this->getQty())*1 : $qty*1,
                             $this->getProduct()->getName())
                     );
                 }

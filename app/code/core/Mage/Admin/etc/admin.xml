@@ -129,7 +129,7 @@
                         <customer title="Customers Section" />
                         <sales title="Sales Section" />
                         <newsletter title="Newsletter Section" />
-                        <web_track title="Web Tracking Section" />
+                        <!--<web_track title="Web Tracking Section" />-->
                         <catalog title="Catalog Section" />
                         <wishlist title="Wishlist Section" />
                         <shipping title="Shipping Section" />

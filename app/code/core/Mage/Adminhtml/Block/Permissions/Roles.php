@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Permissions_Roles extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Permissions_Roles extends Mage_Adminhtml_Block_Template
 {
     public function __construct()
     {

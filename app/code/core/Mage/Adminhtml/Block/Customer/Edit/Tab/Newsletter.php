@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter extends Mage_Adminhtml_Block_Widget_Form
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -83,4 +84,5 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter extends Mage_Adminhtml_B
         );
         return parent::_prepareLayout();
     }
+
 }

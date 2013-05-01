@@ -25,12 +25,12 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Tax_Rate_Toolbar_Save extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Tax_Rate_Toolbar_Save extends Mage_Adminhtml_Block_Template
 {
     public function __construct()
     {
         parent::__construct();
-        $this->assign('createUrl', Mage::getUrl('*/tax_rate/save'));
+        $this->assign('createUrl', $this->getUrl('*/tax_rate/save'));
         $this->setTemplate('tax/toolbar/rate/save.phtml');
     }
 
@@ -40,7 +40,7 @@ class Mage_Adminhtml_Block_Tax_Rate_Toolbar_Save extends Mage_Core_Block_Templat
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('tax')->__('Back'),
-                    'onclick'   => 'window.location.href=\''.Mage::getUrl('*/*/').'\'',
+                    'onclick'   => 'window.location.href=\''.$this->getUrl('*/*/').'\'',
                     'class' => 'back'
                 ))
         );
@@ -66,7 +66,7 @@ class Mage_Adminhtml_Block_Tax_Rate_Toolbar_Save extends Mage_Core_Block_Templat
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('tax')->__('Delete Rate'),
-                    'onclick'   => 'deleteConfirm(\'' . Mage::helper('tax')->__('Are you sure you want to do this?') . '\', \'' . Mage::getUrl('*/*/delete', array('rate' => $this->getRequest()->getParam('rate'))) . '\')',
+                    'onclick'   => 'deleteConfirm(\'' . Mage::helper('tax')->__('Are you sure you want to do this?') . '\', \'' . $this->getUrl('*/*/delete', array('rate' => $this->getRequest()->getParam('rate'))) . '\')',
                     'class' => 'delete'
                 ))
         );

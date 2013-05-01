@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml dashboard tab bar abstract
  *
@@ -26,6 +27,7 @@
  */
  abstract class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Abstract extends Mage_Adminhtml_Block_Widget
  {
+
     protected $_tabs;
 
     protected $_dataHelperName = null;
@@ -220,4 +222,4 @@
     {
         return sizeof($this->_tabs);
     }
- } // Class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Abstract end
+ }

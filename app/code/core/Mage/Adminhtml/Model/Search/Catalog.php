@@ -44,7 +44,7 @@ class Mage_Adminhtml_Model_Search_Catalog extends Varien_Object
                 'type'          => 'Product',
                 'name'          => $product->getName(),
                 'description'   => substr($product->getDescription(), 0, 50),
-                'url'           => Mage::getUrl('*/catalog_product/edit', array('id'=>$product->getId())),
+                'url'           => $this->getUrl('*/catalog_product/edit', array('id'=>$product->getId())),
             );
         }
         

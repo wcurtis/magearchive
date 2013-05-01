@@ -26,20 +26,21 @@
  */
 class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
 {
+
     protected $_config;
 
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('media/uploader.phtml');
-        $this->getConfig()->setUrl(Mage::getModel('core/url')->addSessionParam()->getUrl('*/*/upload'));
+        $this->getConfig()->setUrl(Mage::getModel('adminhtml/url')->addSessionParam()->getUrl('*/*/upload'));
         $this->getConfig()->setParams();
         $this->getConfig()->setFileField('file');
         $this->getConfig()->setFilters(array(
             'images' => array(
                 'label' => Mage::helper('adminhtml')->__('Images (.gif, .jpg, .png)'),
                 'files' => array('*.gif', '*.jpg', '*.png')
-            ),
+            )/*,
             'media' => array(
                 'label' => Mage::helper('adminhtml')->__('Media (.avi, .flv, .swf)'),
                 'files' => array('*.avi', '*.flv', '*.swf')
@@ -47,7 +48,7 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
             'all'    => array(
                 'label' => Mage::helper('adminhtml')->__('All Files'),
                 'files' => array('*.*')
-            )
+            )*/
         ));
     }
 
@@ -140,4 +141,5 @@ class Mage_Adminhtml_Block_Media_Uploader extends Mage_Adminhtml_Block_Widget
 
         return $this->_config;
     }
-} // Class Mage_Adminhtml_Block_Media_Uploader End
+
+}

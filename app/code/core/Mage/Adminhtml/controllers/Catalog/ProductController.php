@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller_Action
 {
+
     protected function _construct()
     {
         // Define module dependent translate
@@ -86,7 +87,7 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
                 $this->getLayout()->createBlock('adminhtml/store_switcher')
                     ->setDefaultStoreName($this->__('Default Values'))
                     ->setStoreIds($product->getStoreIds())
-                    ->setSwitchUrl(Mage::getUrl('*/*/*', array('_current'=>true, 'active_tab'=>null, 'store'=>null)))
+                    ->setSwitchUrl($this->getUrl('*/*/*', array('_current'=>true, 'active_tab'=>null, 'store'=>null)))
             );
         }
 
@@ -208,6 +209,7 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
         	}
 
         	$product = Mage::getModel('catalog/product');
+        	/* @var $product Mage_Catalog_Model_Product */
         	if (!$productId) {
         	    $product->setAttributeSetId($attributeSetId);
         	    $product->setTypeId($typeId);
@@ -263,7 +265,6 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
                 ->setUpSellProducts($upSellProducts)
                 ->setCrossSellProducts($crossSellProducts);
 
-
             if($product->isSuperGroup()) {
             	if($this->getRequest()->getPost('_super_group_product')) {
             		$product->setSuperGroupProducts($this->_decodeInput($this->getRequest()->getPost('_super_group_product')));
@@ -299,7 +300,12 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
             }
 
             if ($this->getRequest()->getParam('back')) {
-                $this->_redirect('*/*/edit', array('id'=>$product->getId(), 'store'=>$product->getStoreId()));
+                $this->_redirect('*/*/edit', array(
+                    'id'=>$product->getId(),
+                    'store'=>$product->getStoreId(),
+                    'tab'=>$this->getRequest()->getParam('tab')
+                ));
+
                 return;
             }
         }
@@ -340,7 +346,6 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
         return $data;
     }
 
-
     public function deleteAction()
     {
         if ($id = $this->getRequest()->getParam('id')) {
@@ -357,7 +362,7 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
                     ->addError($e->getMessage());
             }
         }
-        $this->getResponse()->setRedirect(Mage::getUrl('*/*/', array('store'=>$this->getRequest()->getParam('store'))));
+        $this->getResponse()->setRedirect($this->getUrl('*/*/', array('store'=>$this->getRequest()->getParam('store'))));
     }
 
     public function exportCsvAction()
@@ -425,6 +430,7 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
             try {
                 foreach ($productIds as $productId) {
                     $product = Mage::getModel('catalog/product')->load($productId);
+                    Mage::dispatchEvent('catalog_controller_product_delete', array('product'=>$product));
                     $product->delete();
                 }
                 Mage::getSingleton('adminhtml/session')->addSuccess(
@@ -485,6 +491,7 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('catalog/products');
+        return Mage::getSingleton('admin/session')->isAllowed('catalog/products');
     }
+
 }

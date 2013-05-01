@@ -65,65 +65,201 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
     protected $_canUseCheckout          = true;
     protected $_canUseForMultishipping  = true;
 
-    /*
-    * 3 = Authorisation approved
-    * 6 = Settlement pending (transaction is scheduled to be settled)
-    * 9 =  Authorisation captured
-    */
+    /**
+     * 3 = Authorisation approved
+     * 6 = Settlement pending (transaction is scheduled to be settled)
+     * 9 = Authorisation captured
+     */
     protected $_validVoidTransState = array(3,6,9);
 
     public function authorize(Varien_Object $payment, $amount)
     {
+        $error = false;
         if($amount>0){
             $payment->setTrxtype(self::TRXTYPE_AUTH_ONLY);
             $payment->setAmount($amount);
-            $request = $this->buildRequest($payment);
-            $result = $this->postRequest($request);
+
+            $request = $this->_buildRequest($payment);
+            $result = $this->_postRequest($request);
             $payment->setCcTransId($result->getPnref());
+
             switch ($result->getResultCode()){
                 case self::RESPONSE_CODE_APPROVED:
-                     $payment->setStatus('APPROVED');
-                     $payment->setPaymentStatus('AUTHORIZE');
+                     $payment->setStatus(self::STATUS_APPROVED);
                      break;
                 default:
-                    Mage::throwException($result->getRespmsg()?$result->getRespmsg():Mage::helper('paygate')->__('Error in authorizing the payment'));
+                    if ($result->getRespmsg()) {
+                        $error = $result->getRespmsg();
+                    }
+                    else {
+                        $error = Mage::helper('paygate')->__('Error in authorizing the payment');
+                    }
                 break;
             }
         }else{
-            Mage::throwException(Mage::helper('paygate')->__('Invalid amount for authorization'));
+            $error = Mage::helper('paygate')->__('Invalid amount for authorization');
+        }
+
+        if ($error !== false) {
+            Mage::throwException($error);
         }
         return $this;
     }
 
     public function capture(Varien_Object $payment, $amount)
     {
+        $error = false;
         if ($payment->getCcTransId()) {
-             $payment->setTrxtype(self::TRXTYPE_DELAYED_CAPTURE);
-              $request = $this->buildBasicRequest($payment);
+            $payment->setTrxtype(self::TRXTYPE_DELAYED_CAPTURE);
+            $request = $this->_buildBasicRequest($payment);
         } else {
-             $payment->setTrxtype(self::TRXTYPE_SALE);
-             $request = $this->buildRequest($payment);
+            $payment->setTrxtype(self::TRXTYPE_SALE);
+            $request = $this->_buildRequest($payment);
         }
 
-         if($amount>0){
-             $request->setAmt($amount);
-         }
-         $result = $this->postRequest($request);
-         if($result->getResultCode()!=self::RESPONSE_CODE_APPROVED){
-             /*
+        if ($amount>0) {
+            $request->setAmt($amount);
+        }
+
+        $result = $this->_postRequest($request);
+        if ($result->getResultCode()!=self::RESPONSE_CODE_APPROVED) {
+            /**
              * payflow: only one delayed capture transaction is allower per authorization.
-                        so need to use sale transaction
+             * so need to use sale transaction
              */
-             Mage::throwException($result->getRespmsg()?$result->getRespmsg():Mage::helper('paygate')->__('Error in capturing the payment'));
-         }else{
-             $payment->setStatus('APPROVED');
-             $payment->setPaymentStatus('CAPTURE');
-             $payment->setCcTransId($result->getPnref());
-         }
+            if ($result->getRespmsg()) {
+                $error = $result->getRespmsg();
+            } else {
+                $error = Mage::helper('paygate')->__('Error in capturing the payment');
+            }
+        } else {
+            $payment->setStatus(self::STATUS_APPROVED);
+            $payment->setCcTransId($result->getPnref());
+            $payment->setLastTransId($result->getPnref());
+        }
         return $this;
     }
 
-    public function postRequest(Varien_Object $request)
+    /**
+      * canVoid
+      *
+      * @access public
+      * @param string $payment Varien_Object object
+      * @return Mage_Payment_Model_Abstract
+      * @desc checking the transaction id is valid or not and transction id was not settled
+      */
+    public function canVoid(Varien_Object $payment)
+    {
+        if($payment->getCcTransId()){
+            $payment->setTrxtype(self::TRXTYPE_DELAYED_INQUIRY);
+
+            $request=$this->_buildBasicRequest($payment);
+            $result = $this->_postRequest($request);
+            if ($this->getConfigData('debug')) {
+              $payment->setCcDebugRequestBody($result->getRequestBody())
+                ->setCcDebugResponseSerialized(serialize($result));
+            }
+
+            if($result->getResultCode()==self::RESPONSE_CODE_APPROVED){
+                if($result->getTransstate()>1000){
+                    $payment->setStatus(self::STATUS_ERROR);
+                    $payment->setStatusDescription(Mage::helper('paygate')->__('Voided transaction'));
+                }elseif(in_array($result->getTransstate(),$this->_validVoidTransState)){
+                     $payment->setStatus(self::STATUS_VOID);
+                }
+            }else{
+                $payment->setStatus(self::STATUS_ERROR);
+                $payment->setStatusDescription($result->getRespmsg()?
+                    $result->getRespmsg():
+                    Mage::helper('paygate')->__('Error in retreiving the transaction'));
+            }
+        }else{
+            $payment->setStatus(self::STATUS_ERROR);
+            $payment->setStatusDescription(Mage::helper('paygate')->__('Invalid transaction id'));
+        }
+
+        return $this;
+    }
+
+     /**
+      * void
+      *
+      * @access public
+      * @param string $payment Varien_Object object
+      * @return Mage_Payment_Model_Abstract
+      */
+    public function void(Varien_Object $payment)
+    {
+         if($payment->getCcTransId()){
+            $payment->setTrxtype(self::TRXTYPE_DELAYED_VOID);
+
+            $request=$this->_buildBasicRequest($payment);
+
+            $result = $this->_postRequest($request);
+
+            if ($this->getConfigData('debug')) {
+              $payment->setCcDebugRequestBody($result->getRequestBody())
+                ->setCcDebugResponseSerialized(serialize($result));
+            }
+            if($result->getResultCode()==self::RESPONSE_CODE_APPROVED){
+                 $payment->setStatus(self::STATUS_SUCCESS);
+                 $payment->setCcTransId($result->getPnref());
+            }else{
+                $payment->setStatus(self::STATUS_ERROR);
+                $payment->setStatusDescription($result->getRespmsg());
+            }
+
+         }else{
+            $payment->setStatus(self::STATUS_ERROR);
+            $payment->setStatusDescription(Mage::helper('paygate')->__('Invalid transaction id'));
+        }
+
+        return $this;
+
+    }
+
+
+     /**
+      * refund the amount with transaction id
+      *
+      * @access public
+      * @param string $payment Varien_Object object
+      * @return Mage_Payment_Model_Abstract
+      */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        if(($payment->getCcTransId() && $payment->getAmount()>0)){
+            $payment->setTrxtype(self::TRXTYPE_CREDIT);
+
+            $request=$this->_buildBasicRequest($payment);
+
+            $request->setAmt(round($payment->getAmount(),2));
+
+            $result = $this->_postRequest($request);
+
+            if ($this->getConfigData('debug')) {
+              $payment->setCcDebugRequestBody($result->getRequestBody())
+                ->setCcDebugResponseSerialized(serialize($result));
+            }
+            if($result->getResultCode()==self::RESPONSE_CODE_APPROVED){
+                 $payment->setStatus(self::STATUS_SUCCESS);
+                 $payment->setCcTransId($result->getPnref());
+            }else{
+                $payment->setStatus(self::STATUS_ERROR);
+                $payment->setStatusDescription($result->getRespmsg()?
+                    $result->getRespmsg():
+                    Mage::helper('paygate')->__('Error in refunding the payment.'));
+            }
+        }else{
+            $payment->setStatus(self::STATUS_ERROR);
+            $payment->setStatusDescription(Mage::helper('paygate')->__('Error in refunding the payment'));
+        }
+
+        return $this;
+
+    }
+
+    protected function _postRequest(Varien_Object $request)
     {
         if ($this->getConfigData('debug')) {
             foreach( $request->getData() as $key => $value ) {
@@ -155,7 +291,12 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
             ->setHeaders('X-VPS-CLIENT-TIMEOUT: ' . $this->_clientTimeout)
         ;
 
-        $response = $client->request();
+        /*
+        * we are sending request to payflow pro without url encoding
+        * so we set up _urlEncodeBody flag to false
+        */
+        $response = $client->setUrlEncodeBody(false)
+                           ->request();
 
         $result = Mage::getModel('paygate/payflow_pro_result');
 
@@ -181,7 +322,7 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
         return $result;
     }
 
-    public function buildRequest(Varien_Object $payment)
+    protected function _buildRequest(Varien_Object $payment)
     {
         $document = $payment->getDocument();
 
@@ -242,146 +383,27 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
     }
 
      /**
-      * buildBasicRequest
+      * Prepare base request
       *
       * @access public
       * @return object which was set with all basic required information
       */
-    public function buildBasicRequest(Varien_Object $payment)
+    protected function _buildBasicRequest(Varien_Object $payment)
     {
         if( !$payment->getTender() ) {
             $payment->setTender(self::TENDER_CC);
         }
 
         $request = Mage::getModel('paygate/payflow_pro_request')
-                ->setUser($this->getConfigData('user'))
-                ->setVendor($this->getConfigData('vendor'))
-                ->setPartner($this->getConfigData('partner'))
-                ->setPwd($this->getConfigData('pwd'))
-                ->setTender($payment->getTender())
-                ->setTrxtype($payment->getTrxtype())
-                ->setVerbosity($this->getConfigData('verbosity'))
-                ->setRequestId($this->_generateRequestId())
-                ->setOrigid($payment->getCcTransId());
+            ->setUser($this->getConfigData('user'))
+            ->setVendor($this->getConfigData('vendor'))
+            ->setPartner($this->getConfigData('partner'))
+            ->setPwd($this->getConfigData('pwd'))
+            ->setTender($payment->getTender())
+            ->setTrxtype($payment->getTrxtype())
+            ->setVerbosity($this->getConfigData('verbosity'))
+            ->setRequestId($this->_generateRequestId())
+            ->setOrigid($payment->getCcTransId());
         return $request;
-    }
-
-    /**
-      * canVoid
-      *
-      * @access public
-      * @param string $payment Varien_Object object
-      * @return Mage_Payment_Model_Abstract
-      * @desc checking the transaction id is valid or not and transction id was not settled
-      */
-    public function canVoid(Varien_Object $payment)
-    {
-        if($payment->getCcTransId()){
-            $payment->setTrxtype(self::TRXTYPE_DELAYED_INQUIRY);
-
-            $request=$this->buildBasicRequest($payment);
-            $result = $this->postRequest($request);
-            if ($this->getConfigData('debug')) {
-              $payment->setCcDebugRequestBody($result->getRequestBody())
-                ->setCcDebugResponseSerialized(serialize($result));
-            }
-
-            if($result->getResultCode()==self::RESPONSE_CODE_APPROVED){
-                if($result->getTransstate()>1000){
-                    $payment->setStatus(self::STATUS_ERROR);
-                    $payment->setStatusDescription(Mage::helper('paygate')->__('Voided transaction'));
-                }elseif(in_array($result->getTransstate(),$this->_validVoidTransState)){
-                     $payment->setStatus(self::STATUS_VOID);
-                }
-            }else{
-                $payment->setStatus(self::STATUS_ERROR);
-                $payment->setStatusDescription($result->getRespmsg()?
-                    $result->getRespmsg():
-                    Mage::helper('paygate')->__('Error in retreiving the transaction'));
-            }
-        }else{
-            $payment->setStatus(self::STATUS_ERROR);
-            $payment->setStatusDescription(Mage::helper('paygate')->__('Invalid transaction id'));
-        }
-
-        return $this;
-    }
-
-     /**
-      * void
-      *
-      * @access public
-      * @param string $payment Varien_Object object
-      * @return Mage_Payment_Model_Abstract
-      */
-    public function void(Varien_Object $payment)
-    {
-         if($payment->getCcTransId()){
-            $payment->setTrxtype(self::TRXTYPE_DELAYED_VOID);
-
-            $request=$this->buildBasicRequest($payment);
-
-            $result = $this->postRequest($request);
-
-            if ($this->getConfigData('debug')) {
-              $payment->setCcDebugRequestBody($result->getRequestBody())
-                ->setCcDebugResponseSerialized(serialize($result));
-            }
-            if($result->getResultCode()==self::RESPONSE_CODE_APPROVED){
-                 $payment->setStatus(self::STATUS_SUCCESS);
-                 $payment->setCcTransId($result->getPnref());
-            }else{
-                $payment->setStatus(self::STATUS_ERROR);
-                $payment->setStatusDescription($result->getRespmsg());
-            }
-
-         }else{
-            $payment->setStatus(self::STATUS_ERROR);
-            $payment->setStatusDescription(Mage::helper('paygate')->__('Invalid transaction id'));
-        }
-
-        return $this;
-
-    }
-
-
-     /**
-      * refund the amount with transaction id
-      *
-      * @access public
-      * @param string $payment Varien_Object object
-      * @return Mage_Payment_Model_Abstract
-      */
-    public function refund(Varien_Object $payment, $amount)
-    {
-        if(($payment->getCcTransId() && $payment->getAmount()>0)){
-            $payment->setTrxtype(self::TRXTYPE_CREDIT);
-
-            $request=$this->buildBasicRequest($payment);
-
-            $request->setAmt(round($payment->getAmount(),2));
-
-            $result = $this->postRequest($request);
-
-            if ($this->getConfigData('debug')) {
-              $payment->setCcDebugRequestBody($result->getRequestBody())
-                ->setCcDebugResponseSerialized(serialize($result));
-            }
-            if($result->getResultCode()==self::RESPONSE_CODE_APPROVED){
-                 $payment->setStatus(self::STATUS_SUCCESS);
-                 $payment->setCcTransId($result->getPnref());
-            }else{
-                $payment->setStatus(self::STATUS_ERROR);
-                $payment->setStatusDescription($result->getRespmsg()?
-                    $result->getRespmsg():
-                    Mage::helper('paygate')->__('Error in refunding the payment.'));
-            }
-        }else{
-            $payment->setStatus(self::STATUS_ERROR);
-            $payment->setStatusDescription(Mage::helper('paygate')->__('Error in refunding the payment'));
-        }
-
-        return $this;
-
     }
 }

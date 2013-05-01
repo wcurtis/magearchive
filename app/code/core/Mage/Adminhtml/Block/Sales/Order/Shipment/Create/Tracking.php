@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_Shipment_Create_Tracking extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Shipment_Create_Tracking extends Mage_Adminhtml_Block_Template
 {
     protected function _construct()
     {
@@ -75,7 +75,7 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_Create_Tracking extends Mage_Cor
         $carriers['custom'] = Mage::helper('sales')->__('Custom Value');
         foreach ($carrierInstances as $code => $carrier) {
             if ($carrier->isTrackingAvailable()) {
-                $carriers[$code] = $carrier->getTitle();
+                $carriers[$code] = $carrier->getConfigData('title');
             }
         }
         return $carriers;

@@ -25,44 +25,57 @@
  * @category   Mage
  * @package    Mage_Shipping
  */
-class Mage_Shipping_Model_Carrier_Flatrate extends Mage_Shipping_Model_Carrier_Abstract
+class Mage_Shipping_Model_Carrier_Flatrate
+    extends Mage_Shipping_Model_Carrier_Abstract
+    implements Mage_Shipping_Model_Carrier_Interface
 {
-	/**
-	 * Enter description here...
-	 *
-	 * @param Mage_Shipping_Model_Rate_Request $data
-	 * @return Mage_Shipping_Model_Rate_Result
-	 */
-	public function collectRates(Mage_Shipping_Model_Rate_Request $request)
+
+    protected $_code = 'flatrate';
+
+    /**
+     * Enter description here...
+     *
+     * @param Mage_Shipping_Model_Rate_Request $data
+     * @return Mage_Shipping_Model_Rate_Result
+     */
+    public function collectRates(Mage_Shipping_Model_Rate_Request $request)
     {
-        if (!Mage::getStoreConfig('carriers/flatrate/active')) {
+        if (!$this->getConfigFlag('active')) {
             return false;
         }
 
         $result = Mage::getModel('shipping/rate_result');
-        if (Mage::getStoreConfig('carriers/flatrate/type') == 'O') { // per order
-            $shippingPrice = Mage::getStoreConfig('carriers/flatrate/price');
-        } elseif (Mage::getStoreConfig('carriers/flatrate/type') == 'I') { // per item
-            $shippingPrice = $request->getPackageQty() * Mage::getStoreConfig('carriers/flatrate/price');
+        if ($this->getConfigData('type') == 'O') { // per order
+            $shippingPrice = $this->getConfigData('price');
+        } elseif ($this->getConfigData('type') == 'I') { // per item
+            $shippingPrice = $request->getPackageQty() * $this->getConfigData('price');
         } else {
             $shippingPrice = false;
         }
 
+        $shippingPrice+= $this->getConfigData('handling_fee');
+
         if ($shippingPrice) {
-	    	$method = Mage::getModel('shipping/rate_result_method');
+            $method = Mage::getModel('shipping/rate_result_method');
 
-	    	$method->setCarrier('flatrate');
-	    	$method->setCarrierTitle(Mage::getStoreConfig('carriers/flatrate/title'));
+            $method->setCarrier('flatrate');
+            $method->setCarrierTitle($this->getConfigData('title'));
 
-	    	$method->setMethod('flatrate');
-	    	$method->setMethodTitle(Mage::getStoreConfig('carriers/flatrate/name'));
+            $method->setMethod('flatrate');
+            $method->setMethodTitle($this->getConfigData('name'));
 
-	    	$method->setPrice($shippingPrice);
-	    	$method->setCost($shippingPrice);
+            $method->setPrice($shippingPrice);
+            $method->setCost($shippingPrice);
 
-    	    $result->append($method);
+            $result->append($method);
         }
 
-    	return $result;
+        return $result;
     }
+
+    public function getAllowedMethods()
+    {
+        return array('flatrate'=>$this->getConfigData('name'));
+    }
+
 }

@@ -23,6 +23,9 @@ class Mage_Sales_Model_Order_Shipment_Track extends Mage_Core_Model_Abstract
     const CUSTOM_CARRIER_CODE   = 'custom';
     protected $_shipment = null;
 
+    protected $_eventPrefix = 'sales_order_shipment_track';
+    protected $_eventObject = 'track';
+
     /**
      * Initialize resource model
      */
@@ -65,12 +68,14 @@ class Mage_Sales_Model_Order_Shipment_Track extends Mage_Core_Model_Abstract
      */
     public function getNumberDetail()
     {
-        $carrierInstnce = Mage::getSingleton('shipping/config')->getCarrierInstance($this->getCarrierCode());
-        if (!$carrierInstnce) {
-            return $this->getNumber();
+        $carrierInstance = Mage::getSingleton('shipping/config')->getCarrierInstance($this->getCarrierCode());
+        if (!$carrierInstance) {
+            $custom['title'] = $this->getTitle();
+            $custom['number'] = $this->getNumber();
+            return $custom;
         }
 
-        if (!$trackingInfo = $carrierInstnce->getTrackingInfo($this->getNumber())) {
+        if (!$trackingInfo = $carrierInstance->getTrackingInfo($this->getNumber())) {
             return Mage::helper('sales')->__('No detail for number "%s"', $this->getNumber());
         }
 

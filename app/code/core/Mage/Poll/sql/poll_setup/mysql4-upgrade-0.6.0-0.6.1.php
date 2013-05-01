@@ -22,18 +22,18 @@ $conn->dropForeignKey('poll_answer', 'FK_POLL_PARENT');
 $conn->dropForeignKey('poll_vote', 'FK_POLL_ANSWER');
 $this->startSetup()
     ->run("
-        ALTER TABLE `poll` CHANGE `poll_id` `poll_id` INT UNSIGNED NOT NULL AUTO_INCREMENT;
-        ALTER TABLE `poll_answer` CHANGE `poll_id` `poll_id` INT UNSIGNED NOT NULL DEFAULT '0';
-        ALTER TABLE `poll_answer` CHANGE `answer_id` `answer_id` INT UNSIGNED NOT NULL AUTO_INCREMENT;
-        ALTER TABLE `poll_vote` CHANGE `poll_id` `poll_id` INT UNSIGNED NOT NULL DEFAULT '0';
-        ALTER TABLE `poll_vote` CHANGE `poll_answer_id` `poll_answer_id` INT UNSIGNED NOT NULL DEFAULT '0';
-        CREATE TABLE `poll_store` (
+        ALTER TABLE {$this->getTable('poll')} CHANGE `poll_id` `poll_id` INT UNSIGNED NOT NULL AUTO_INCREMENT;
+        ALTER TABLE {$this->getTable('poll_answer')} CHANGE `poll_id` `poll_id` INT UNSIGNED NOT NULL DEFAULT '0';
+        ALTER TABLE {$this->getTable('poll_answer')} CHANGE `answer_id` `answer_id` INT UNSIGNED NOT NULL AUTO_INCREMENT;
+        ALTER TABLE {$this->getTable('poll_vote')} CHANGE `poll_id` `poll_id` INT UNSIGNED NOT NULL DEFAULT '0';
+        ALTER TABLE {$this->getTable('poll_vote')} CHANGE `poll_answer_id` `poll_answer_id` INT UNSIGNED NOT NULL DEFAULT '0';
+        CREATE TABLE {$this->getTable('poll_store')} (
           `poll_id` int UNSIGNED NOT NULL,
           `store_id` smallint(5) unsigned NOT NULL,
           PRIMARY KEY  (`poll_id`,`store_id`),
-          CONSTRAINT `FK_POLL_STORE` FOREIGN KEY (`poll_id`) REFERENCES `poll` (`poll_id`) ON DELETE CASCADE
+          CONSTRAINT `FK_POLL_STORE` FOREIGN KEY (`poll_id`) REFERENCES {$this->getTable('poll')} (`poll_id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-        ALTER TABLE `poll_answer` ADD CONSTRAINT `FK_POLL_PARENT` FOREIGN KEY (`poll_id`) REFERENCES `poll` (`poll_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ALTER TABLE `poll_vote` ADD CONSTRAINT `FK_POLL_ANSWER` FOREIGN KEY (`poll_answer_id`) REFERENCES `poll_answer` (`answer_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+        ALTER TABLE `poll_answer` ADD CONSTRAINT `FK_POLL_PARENT` FOREIGN KEY (`poll_id`) REFERENCES {$this->getTable('poll')} (`poll_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+        ALTER TABLE `poll_vote` ADD CONSTRAINT `FK_POLL_ANSWER` FOREIGN KEY (`poll_answer_id`) REFERENCES {$this->getTable('poll_answer')} (`answer_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ")
     ->endSetup();

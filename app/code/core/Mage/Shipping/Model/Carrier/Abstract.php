@@ -21,26 +21,54 @@
 
 abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
 {
+    protected $_code;
     protected $_rates = null;
 
+    public function __construct()
+    {
+
+    }
+
+    /**
+     * Retrieve information from carrier configuration
+     *
+     * @param   string $field
+     * @return  mixed
+     */
+    public function getConfigData($field)
+    {
+        if (empty($this->_code)) {
+            return false;
+        }
+        $path = 'carriers/'.$this->_code.'/'.$field;
+        return Mage::getStoreConfig($path, $this->getStore());
+    }
+
+    public function getConfigFlag($field)
+    {
+        if (empty($this->_code)) {
+            return false;
+        }
+        $path = 'carriers/'.$this->_code.'/'.$field;
+        return Mage::getStoreConfigFlag($path, $this->getStore());
+    }
 
     abstract public function collectRates(Mage_Shipping_Model_Rate_Request $request);
 
-
     public function checkAvailableShipCountries(Mage_Shipping_Model_Rate_Request $request)
     {
-        $speCountriesAllow=Mage::getStoreConfig('carriers/'.$request->getCarrier().'/sallowspecific');
+        $speCountriesAllow = $this->getConfigData('sallowspecific');
         /*
         * for specific countries, the flag will be 1
         */
         if($speCountriesAllow && $speCountriesAllow==1){
-             $availableCountries=explode(',',Mage::getStoreConfig('carriers/'.$request->getCarrier().'/specificcountry'));
-             if(!in_array($request->getDestCountryId(), $availableCountries)){
-                 if(Mage::getStoreConfig('carriers/'.$request->getCarrier().'/showmethod')){
+             $availableCountries=explode(',',$this->getConfigData('specificcountry'));
+             if (!in_array($request->getDestCountryId(), $availableCountries)){
+                 if ($this->getConfigData('showmethod')){
                    $error = Mage::getModel('shipping/rate_result_error');
                    $error->setCarrier($request->getCarrier());
-                   $error->setCarrierTitle(Mage::getStoreConfig('carriers/'.$request->getCarrier().'/title'));
-                   $errorMsg=Mage::getStoreConfig('carriers/'.$request->getCarrier().'/specificerrmsg');
+                   $error->setCarrierTitle($this->getConfigData('title'));
+                   $errorMsg = $this->getConfigData('specificerrmsg');
                    $error->setErrorMessage($errorMsg?$errorMsg:Mage::helper('shipping')->__('The shipping module is not available for selected delivery country'));
                    return $error;
                  }else{
@@ -53,6 +81,18 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
         }
         return $this;
     }
+
+    public function isActive()
+    {
+        $active = $this->getConfigData('active');
+        return $active==1 || $active=='true';
+    }
+
+    /**
+     * Check if carrier has shipping tracking option available
+     *
+     * @return boolean
+     */
     public function isTrackingAvailable()
     {
         return false;
@@ -60,6 +100,7 @@ abstract class Mage_Shipping_Model_Carrier_Abstract extends Varien_Object
 
     public function getSortOrder()
     {
-        return $this->_data['sort_order'];
+        return $this->getConfigData('sort_order');
     }
+
 }

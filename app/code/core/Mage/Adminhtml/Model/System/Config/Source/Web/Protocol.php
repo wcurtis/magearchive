@@ -17,10 +17,9 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-
 class Mage_Adminhtml_Model_System_Config_Source_Web_Protocol
 {
+
     public function toOptionArray()
     {
         return array(
@@ -29,4 +28,5 @@ class Mage_Adminhtml_Model_System_Config_Source_Web_Protocol
             array('value'=>'https', 'label'=>Mage::helper('adminhtml')->__('HTTPS (SSL)')),
         );
     }
+
 }

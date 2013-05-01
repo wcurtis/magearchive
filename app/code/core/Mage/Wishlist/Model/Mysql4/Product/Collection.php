@@ -18,21 +18,22 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Wishlist product collection
  *
  * @category   Mage
  * @package    Mage_Wishlist
  */
-
 class Mage_Wishlist_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Entity_Product_Collection
 {
-	public function addWishlistFilter(Mage_Wishlist_Model_Wishlist	$wishlist)
-	{
+
+    public function addWishlistFilter(Mage_Wishlist_Model_Wishlist    $wishlist)
+    {
         $this->_joinFields['e_id'] = array('table'=>'e','field'=>'entity_id');
-        
-        $this->joinTable('wishlist/item', 
-            'product_id=e_id', 
+
+        $this->joinTable('wishlist/item',
+            'product_id=e_id',
             array(
                 'product_id' => 'product_id',
                 'description' => 'description',
@@ -40,33 +41,34 @@ class Mage_Wishlist_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_E
                 'added_at' => 'added_at',
                 'wishlist_id' => 'wishlist_id',
                 'wishlist_item_id' => 'wishlist_item_id',
-            ), 
+            ),
             array('wishlist_id'=>$wishlist->getId())
         );
         return $this;
-	}
-	
-	public function addStoreData()
-	{
-		if(!isset($this->_joinFields['e_id'])) {
-			return $this;
-		}
-        
-		$dayTable = $this->_getAttributeTableAlias('days_in_wishlist');
-		$this->joinField('store_name', 'core/store', 'name', 'store_id=store_id')
-			->joinField('days_in_wishlist', 
-                'wishlist/item', 
-                "(TO_DAYS('" . now() . "') - TO_DAYS(".$dayTable.".added_at))", 
+    }
+
+    public function addStoreData()
+    {
+        if(!isset($this->_joinFields['e_id'])) {
+            return $this;
+        }
+
+        $dayTable = $this->_getAttributeTableAlias('days_in_wishlist');
+        $this->joinField('store_name', 'core/store', 'name', 'store_id=store_id')
+            ->joinField('days_in_wishlist',
+                'wishlist/item',
+                "(TO_DAYS('" . now() . "') - TO_DAYS(".$dayTable.".added_at))",
                 'wishlist_item_id=wishlist_item_id');
 
-		return $this;
-	}
+        return $this;
+    }
 
-	protected function _getAttributeFieldName($attributeCode)
+    protected function _getAttributeFieldName($attributeCode)
     {
-    	if($attributeCode == 'days_in_wishlist') {
-    		return $this->_joinFields[$attributeCode]['field'];
-    	}
-    	return parent::_getAttributeFieldName($attributeCode);
-    }	
-}// Class Mage_Wishlist_Model_Mysql_Item_Collection END
+        if($attributeCode == 'days_in_wishlist') {
+            return $this->_joinFields[$attributeCode]['field'];
+        }
+        return parent::_getAttributeFieldName($attributeCode);
+    }
+
+}

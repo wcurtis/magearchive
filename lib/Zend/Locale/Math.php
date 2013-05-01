@@ -16,7 +16,7 @@
  * @package    Zend_Locale
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Math.php 6726 2007-11-03 19:25:31Z thomas $
+ * @version    $Id: Math.php 7447 2008-01-15 20:47:58Z thomas $
  */
 
 
@@ -127,6 +127,24 @@ class Zend_Locale_Math
         if (!empty($convert['negative_sign']) and (strpos($value, $convert['negative_sign']))) {
             $value = str_replace($convert['negative_sign'], "",$value);
             $value = "-".$value;
+        }
+        return (string) $value;
+    }
+
+    /**
+     * Localizes an input from standard english notation
+     * Fixes a problem of BCMath with setLocale which is PHP related
+     *
+     * @param   integer  $value  Value to normalize
+     * @return  string           Normalized string without BCMath problems
+     */
+    public static function localize($value)
+    {
+        $value = (string) $value;
+        $convert = localeconv();
+        $value = str_replace(".", $convert['decimal_point'], $value);
+        if (!empty($convert['negative_sign']) and (strpos($value, "-"))) {
+            $value = str_replace("-", $convert['negative_sign'], $value);
         }
         return (string) $value;
     }

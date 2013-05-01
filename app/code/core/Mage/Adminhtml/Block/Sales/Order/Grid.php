@@ -24,13 +24,14 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->setId('sales_order_grid');
+        $this->setUseAjax(true);
         $this->setDefaultSort('created_at');
         $this->setDefaultDir('DESC');
     }
@@ -41,13 +42,8 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
             ->addAttributeToSelect('*')
             ->joinAttribute('billing_firstname', 'order_address/firstname', 'billing_address_id', null, 'left')
             ->joinAttribute('billing_lastname', 'order_address/lastname', 'billing_address_id', null, 'left')
-#            ->joinAttribute('billing_telephone', 'order_address/telephone', 'billing_address_id')
-#            ->joinAttribute('billing_postcode', 'order_address/postcode', 'billing_address_id')
             ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id', null, 'left')
-            ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left')
-#            ->joinAttribute('shipping_telephone', 'order_address/telephone', 'shipping_address_id')
-#            ->joinAttribute('shipping_postcode', 'order_address/postcode', 'shipping_address_id')
-        ;
+            ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left');
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -111,26 +107,95 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
             'options' => Mage::getSingleton('sales/order_config')->getStatuses(),
         ));
 
-//        $this->addColumn('actions', array(
-//            'header' => Mage::helper('sales')->__('Action'),
-//            'width' => 10,
-//            'sortable' => false,
-//            'filter' => false,
-//            'type' => 'action',
-//            'actions' => array(
-//                array(
-//                    'url' => Mage::getUrl('*/*/edit') . 'order_id/$entity_id',
-//                    'caption' => Mage::helper('sales')->__('Edit'),
-//                ),
-//            )
-//        ));
+        $this->addColumn('action',
+            array(
+                'header'    => Mage::helper('customer')->__('Action'),
+                'width'     => '60px',
+                'type'      => 'action',
+                'getter'     => 'getId',
+                'actions'   => array(
+                    array(
+                        'caption' => Mage::helper('customer')->__('View'),
+                        'url'     => array('base'=>'*/*/view'),
+                        'field'   => 'order_id'
+                    )
+                ),
+                'filter'    => false,
+                'sortable'  => false,
+                'index'     => 'stores',
+                'is_system' => true,
+        ));
 
         return parent::_prepareColumns();
     }
 
+    protected function _prepareMassaction()
+    {
+        $this->setMassactionIdField('entity_id');
+        $this->getMassactionBlock()->setFormFieldName('order_ids');
+
+        $this->getMassactionBlock()->addItem('cancel_order', array(
+             'label'=> Mage::helper('sales')->__('Cancel'),
+             'url'  => $this->getUrl('*/*/massCancel'),
+        ));
+
+        $this->getMassactionBlock()->addItem('hold_order', array(
+             'label'=> Mage::helper('sales')->__('Hold'),
+             'url'  => $this->getUrl('*/*/massHold'),
+        ));
+
+        $this->getMassactionBlock()->addItem('unhold_order', array(
+             'label'=> Mage::helper('sales')->__('Unhold'),
+             'url'  => $this->getUrl('*/*/massUnhold'),
+        ));
+
+//        $statuses = Mage::getSingleton('sales/order_config')->getStatuses();
+//        array_unshift($statuses, array('value'=>'', 'label'=>''));
+//        $this->getMassactionBlock()->addItem('change_status', array(
+//             'label'=> Mage::helper('sales')->__('Change Status'),
+//             'url'  => $this->getUrl('*/*/massStatus'),
+//             'additional' => array(
+//                    'visibility' => array(
+//                             'name' => 'status',
+//                             'type' => 'select',
+//                             'class' => 'required-entry',
+//                             'label' => Mage::helper('sales')->__('New Status'),
+//                             'values' => $statuses
+//                         )
+//             )
+//        ));
+
+//        $prints = array(
+//            'empty'     => array('value'=>'', 'label'=>''),
+//            'order'    => Mage::helper('sales')->__('Orders'),
+//            'invoice'  => Mage::helper('sales')->__('Invoices'),
+//            'shipment' => Mage::helper('sales')->__('Shipments'),
+//        );
+//        $this->getMassactionBlock()->addItem('print', array(
+//             'label'=> Mage::helper('sales')->__('Print'),
+//             'url'  => $this->getUrl('*/*/massPrint'),
+//             'additional' => array(
+//                    'visibility' => array(
+//                             'name' => 'document',
+//                             'type' => 'select',
+//                             'class' => 'required-entry',
+//                             'label' => Mage::helper('sales')->__('Document'),
+//                             'values' => $prints
+//                         )
+//             )
+//        ));
+
+        return $this;
+    }
+
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/view', array('order_id' => $row->getId()));
+        return $this->getUrl('*/*/view', array('order_id' => $row->getId()));
+    }
+
+    public function getGridUrl()
+    {
+        return $this->getUrl('*/*/grid', array('_current'=>true));
     }
 
 }

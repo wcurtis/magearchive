@@ -270,8 +270,11 @@ class Mage_Catalog_Model_Url
     {
         if (!$this->_rootIds) {
             $this->_rootIds = array();
-            foreach ($this->getStoreConfig() as $sId=>$storeNode) {
-                $this->_rootIds[$sId] = (int)$storeNode->catalog->category->root_id;
+            $collection = Mage::getModel('core/store')
+                ->getCollection()
+                ->addRootCategoryIdAttribute();
+            foreach ($collection as $store) {
+                $this->_rootIds[$store->getId()] = $store->getRootCategoryId();
             }
         }
         if (is_null($storeId)) {
@@ -460,7 +463,9 @@ class Mage_Catalog_Model_Url
                 ->setTargetPath($targetPath);
             $update = true;
         }
-
+        if ($rewrite) {
+            $rewrite->setType(Mage_Core_Model_Url_Rewrite::TYPE_CATEGORY);
+        }
         if ($update) {
             $category->setUrlPath($categoryPath);
 
@@ -498,8 +503,8 @@ class Mage_Catalog_Model_Url
                     return $this;
                 }
 */
-                $this->loadCategories($storeId);
-                $this->loadProducts($storeId);
+                /*$this->loadCategories($storeId);
+                $this->loadProducts($storeId);*/
                 $this->refreshProductRewrites($storeId, $product, $category);
             }
             return $this;
@@ -545,6 +550,11 @@ class Mage_Catalog_Model_Url
                 ->setTargetPath($targetPath);
             $update = true;
         }
+
+        if ($rewrite) {
+            $rewrite->setType(Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT); // for product
+        }
+
         if ($update) {
             $this->saveRewrite($rewrite->setRequestPath($productPath));
         }

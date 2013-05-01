@@ -17,7 +17,7 @@
  * @package    Zend_Config
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Xml.php 7191 2007-12-18 19:30:16Z darby $
+ * @version    $Id: Xml.php 7724 2008-01-31 08:19:34Z rob $
  */
 
 
@@ -139,6 +139,7 @@ class Zend_Config_Xml extends Zend_Config
      */
     protected function _toArray($xmlObject)
     {
+        
         $config = array();
         if (count($xmlObject->children())) {
             foreach ($xmlObject->children() as $key => $value) {
@@ -148,7 +149,7 @@ class Zend_Config_Xml extends Zend_Config
                     $value = (string) $value;
                 }
                 if (array_key_exists($key, $config)) {
-                    if (!is_array($config[$key])) {
+                    if (!is_array($config[$key]) || count($config[$key]) == 1) {
                         $config[$key] = array($config[$key]);
                     }
                     $config[$key][] = $value;

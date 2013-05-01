@@ -139,7 +139,7 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         return Zend_Json::encode(
             array(
                 'ajaxExpired'  => 1,
-                'ajaxRedirect' => Mage::getUrl('*/index/login')
+                'ajaxRedirect' => $this->getUrl('*/index/login')
             )
         );
     }

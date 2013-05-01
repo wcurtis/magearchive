@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Report_Search_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -81,4 +82,6 @@ class Mage_Adminhtml_Block_Report_Search_Grid extends Mage_Adminhtml_Block_Widge
 
         return parent::_prepareColumns();
     }
+
 }
+

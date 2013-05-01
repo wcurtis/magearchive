@@ -38,7 +38,7 @@ class Mage_Catalog_Model_Entity_Category_Attribute_Backend_Tree_Path extends Mag
             ->load();
 
         $store = $this->getAttribute()->getEntity()->getStore();
-        $lastNodeId = $store->getConfig('catalog/category/root_id');
+        $lastNodeId = $store->getRootCategoryId();
 
         $nodeIds = array();
         $path = $tree->getPath($object->getId());

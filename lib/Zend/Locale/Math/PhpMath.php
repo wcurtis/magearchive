@@ -16,7 +16,7 @@
  * @package    Zend_Locale
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PhpMath.php 6658 2007-10-19 13:07:32Z thomas $
+ * @version    $Id: PhpMath.php 7447 2008-01-15 20:47:58Z thomas $
  */
 
 
@@ -70,6 +70,9 @@ class Zend_Locale_Math_PhpMath extends Zend_Locale_Math
         if (empty($op1)) {
             $op1 = 0;
         }
+        self::localize($op1);
+        self::localize($op2);
+        
         $result = $op1 - $op2;
         if (($result === INF) or ((string) ($result + $op2) != (string) $op1)) {
             require_once 'Zend/Locale/Math/Exception.php';

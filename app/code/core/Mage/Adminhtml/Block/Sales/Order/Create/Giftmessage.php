@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml order create gift message block
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage extends Mage_Adminhtml_Block_Sales_Order_Create_Abstract
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -83,4 +85,4 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage extends Mage_Adminhtml
         return Mage::getSingleton('adminhtml/giftmessage_save');
     }
 
-} // Class Mage_Adminhmtml_Block_Sales_Order_Create_Giftmessage End
+}

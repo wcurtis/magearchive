@@ -291,7 +291,7 @@ abstract class Mage_Core_Model_Mysql4_Abstract extends Mage_Core_Model_Resource_
         }
 
         $read = $this->_getReadAdapter();
-        if ($read) {
+        if ($read && !is_null($value)) {
             $select = $this->_getLoadSelect($field, $value, $object);
             $data = $read->fetchRow($select);
 

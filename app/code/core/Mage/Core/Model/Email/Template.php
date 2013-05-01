@@ -315,7 +315,6 @@ class Mage_Core_Model_Email_Template extends Varien_Object
         return $this;
     }
 
-
     protected function _cancelDesignConfig()
     {
         if ($this->getDesignConfig()) {

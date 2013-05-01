@@ -35,20 +35,13 @@ class Mage_Core_Model_Email_Template_Filter extends Varien_Filter_Template
 	{
 		$blockParameters = $this->_getIncludeParameters($construction[2]);
 		$layout = Mage::registry('action')->getLayout();
-
 		if (isset($blockParameters['type'])) {
     		$type = $blockParameters['type'];
 
-    		$block = $layout->createBlock($type);
+    		$block = $layout->createBlock($type, null, $blockParameters);
     		if (!$block) {
     		    return '';
     		}
-    		if (!empty($blockParameters['template'])) {
-    			$block->setTemplate($blockParameters['template']);
-    		}
-
-    		$block->addData($blockParameters);
-
     		return $block->toHtml();
 		}
 

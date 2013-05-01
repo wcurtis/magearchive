@@ -161,7 +161,10 @@ abstract class Mage_Eav_Model_Entity_Attribute_Abstract extends Mage_Core_Model_
 
     public function getBackendTable()
     {
-        return $this->getData('backend_table');
+        $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
+        if( $this->getData('backend_table') ) {
+            return $tablePrefix . $this->getData('backend_table');
+        }
     }
 
     public function getIsVisibleOnFront()

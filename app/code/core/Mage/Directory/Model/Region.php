@@ -30,10 +30,10 @@ class Mage_Directory_Model_Region extends Mage_Core_Model_Abstract
     {
         $this->_init('directory/region');
     }
-    
+
     /**
      * Retrieve region name
-     * 
+     *
      * If name is no declared, then default_name is used
      *
      * @return string
@@ -46,10 +46,17 @@ class Mage_Directory_Model_Region extends Mage_Core_Model_Abstract
         }
         return $name;
     }
-    
+
     public function loadByCode($code, $countryId)
     {
         $this->_getResource()->loadByCode($this, $code, $countryId);
         return $this;
     }
+
+    public function loadByName($name, $countryId)
+    {
+        $this->_getResource()->loadByCode($this, $name, $countryId);
+        return $this;
+    }
+
 }

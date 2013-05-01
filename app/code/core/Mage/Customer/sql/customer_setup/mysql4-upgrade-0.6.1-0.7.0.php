@@ -19,5 +19,5 @@
  */
 
 $this->startSetup()->run("
-alter table `customer_entity` drop foreign key  `FK_CUSTOMER_ENTITY_PARENT_ENTITY` ;
+alter table {$this->getTable('customer_entity')} drop foreign key  `FK_CUSTOMER_ENTITY_PARENT_ENTITY` ;
 ")->endSetup();

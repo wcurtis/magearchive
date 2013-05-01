@@ -84,7 +84,7 @@
                             <show_in_store>0</show_in_store>
                         </cctypes>
                          <allowspecific translate="label">
-                            <label>Payment to applicable countries</label>
+                            <label>payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>50</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -93,7 +93,7 @@
                             <show_in_store>1</show_in_store>
                         </allowspecific>
                         <specificcountry translate="label">
-                            <label>Payment to Specific countries</label>
+                            <label>payment from Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>51</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -155,7 +155,7 @@
                             <show_in_store>0</show_in_store>
                         </title>
                          <allowspecific translate="label">
-                            <label>Payment to applicable countries</label>
+                            <label>payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>50</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -164,7 +164,7 @@
                             <show_in_store>1</show_in_store>
                         </allowspecific>
                         <specificcountry translate="label">
-                            <label>Payment to Specific countries</label>
+                            <label>payment from Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>51</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -244,7 +244,7 @@
                             <show_in_store>0</show_in_store>
                         </sort_order>
                          <allowspecific translate="label">
-                            <label>Payment to applicable countries</label>
+                            <label>payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>50</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -253,7 +253,7 @@
                             <show_in_store>1</show_in_store>
                         </allowspecific>
                         <specificcountry translate="label">
-                            <label>Payment to Specific countries</label>
+                            <label>payment from Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>51</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -284,6 +284,7 @@
                         <api_password translate="label">
                             <label>API Password</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -291,6 +292,7 @@
                         </api_password>
                         <api_signature translate="label">
                             <label>API Signature</label>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <frontend_type>text</frontend_type>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
@@ -300,6 +302,7 @@
                         <api_username translate="label">
                             <label>API User Name</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -361,6 +364,7 @@
                         <business_account translate="label">
                             <label>Business Account</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>

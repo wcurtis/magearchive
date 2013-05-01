@@ -15,15 +15,18 @@
  * @package    Zend_Controller
  * @subpackage Router
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Module.php 7384 2008-01-11 09:55:27Z martel $
+ * @version    $Id: Module.php 7703 2008-01-30 19:31:46Z martel $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/** Zend_Controller_Router_Exception */
-require_once 'Zend/Controller/Router/Exception.php';
-
 /** Zend_Controller_Router_Route_Interface */
 require_once 'Zend/Controller/Router/Route/Interface.php';
+
+/** Zend_Controller_Dispatcher_Interface */
+require_once 'Zend/Controller/Dispatcher/Interface.php';
+
+/** Zend_Controller_Request_Abstract */
+require_once 'Zend/Controller/Request/Abstract.php';
 
 /**
  * Module Route
@@ -235,6 +238,27 @@ class Zend_Controller_Router_Route_Module implements Zend_Controller_Router_Rout
         }
 
         return ltrim($url, self::URI_DELIMITER);
+    }
+
+    /**
+     * Return a single parameter of route's defaults
+     *
+     * @param string $name Array key of the parameter
+     * @return string Previously set default
+     */
+    public function getDefault($name) {
+        if (isset($this->_defaults[$name])) {
+            return $this->_defaults[$name];
+        }
+    }
+
+    /**
+     * Return an array of defaults
+     *
+     * @return array Route defaults
+     */
+    public function getDefaults() {
+        return $this->_defaults;
     }
 
 }

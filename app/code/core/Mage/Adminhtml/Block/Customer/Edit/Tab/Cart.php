@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml customer orders grid block
  *
@@ -26,15 +27,16 @@
  */
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->setId('customer_cart_grid');
         $this->setUseAjax(true);
-        $this->_parentTemplate = $this->getTemplateName();
+        $this->_parentTemplate = $this->getTemplate();
         $this->setTemplate('customer/tab/cart.phtml');
     }
-    
+
     protected function _prepareCollection()
     {
         $quote = Mage::getResourceModel('sales/quote_collection')
@@ -48,10 +50,10 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
         }
 
         $this->setCollection($collection);
-        
+
         return parent::_prepareCollection();
     }
-    
+
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', array(
@@ -64,27 +66,27 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
             'header' => Mage::helper('customer')->__('Product Name'),
             'index' => 'name',
         ));
-        
+
         $this->addColumn('sku', array(
             'header' => Mage::helper('customer')->__('SKU'),
             'index' => 'sku',
             'width' => '100px',
         ));
-        
+
         $this->addColumn('qty', array(
             'header' => Mage::helper('customer')->__('Qty'),
             'index' => 'qty',
             'type'  => 'number',
             'width' => '60px',
         ));
-        
+
         $this->addColumn('price', array(
             'header' => Mage::helper('customer')->__('Price'),
             'index' => 'price',
             'type'  => 'currency',
             'currency_code' => (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE),
         ));
-        
+
         $this->addColumn('total', array(
             'header' => Mage::helper('customer')->__('Total'),
             'index' => 'row_total',
@@ -106,23 +108,24 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
                 )
             )
         ));
-        
+
         return parent::_prepareColumns();
     }
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/cart', array('_current'=>true));
+        return $this->getUrl('*/*/cart', array('_current'=>true));
     }
-    
+
     public function getGridParentHtml()
     {
         $templateName = Mage::getDesign()->getTemplateFilename($this->_parentTemplate, array('_relative'=>true));
         return $this->fetchView($templateName);
     }
-    
+
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/catalog_product/edit', array('id' => $row->getProductId()));
-    }    
+        return $this->getUrl('*/catalog_product/edit', array('id' => $row->getProductId()));
+    }
+
 }

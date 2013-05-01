@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-class Mage_Catalog_Model_Entity_Collection_Abstract extends Mage_Eav_Model_Entity_Collection_Abstract
+class Mage_Catalog_Model_Entity_Collection_Abstract extends Mage_Eav_Model_Entity_Collection_Abstractold
 {
 
 }

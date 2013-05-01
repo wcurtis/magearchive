@@ -72,7 +72,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Formset extends Ma
         $form->setMethod('post');
         $form->setUseContainer(true);
         $form->setId('set_prop_form');
-        $form->setAction(Mage::getUrl('*/*/save'));
+        $form->setAction($this->getUrl('*/*/save'));
         $form->setOnsubmit('return false;');
         $this->setForm($form);
     }

@@ -28,9 +28,12 @@ require_once "Varien/Pear/Package.php";
  */
 class Mage_Adminhtml_Block_Extensions_Remote_Edit_Tab_Abstract extends Mage_Adminhtml_Block_Widget_Form
 {
+
     public function initForm()
     {
         $this->setPkg(Mage::registry('remote_extension'));
         return $this;
     }
+
 }
+

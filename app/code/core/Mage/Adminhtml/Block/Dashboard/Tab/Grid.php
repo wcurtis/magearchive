@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml dashboard grid with totals
  *
@@ -102,7 +103,6 @@
     {
         return isset($this->_columns[$columnId]) ? $this->_columns[$columnId] : null;
     }
-
 
     /**
      * Returns rendered row value for grid
@@ -207,4 +207,5 @@
     {
     	return 'dashboard/tab/grid.phtml';
     }
- } // Class Mage_Adminhtml_Block_Dashboard_Tab_Grid end
+ }
+

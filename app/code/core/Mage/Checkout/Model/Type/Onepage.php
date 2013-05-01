@@ -57,6 +57,14 @@ class Mage_Checkout_Model_Type_Onepage
                 }
             }
         }
+        /*
+        * want to laod the correct customer information by assiging to address
+        * instead of just loading from sales/quote_address
+        */
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        if ($customer) {
+            $this->getQuote()->assignCustomer($customer);
+        }
         return $this;
     }
 
@@ -300,7 +308,9 @@ class Mage_Checkout_Model_Type_Onepage
 
             switch ($this->getQuote()->getCheckoutMethod()) {
             case 'guest':
-                $this->getQuote()->setCustomerEmail($billing->getEmail());
+                $this->getQuote()->setCustomerEmail($billing->getEmail())
+                    ->setCustomerIsGuest(true)
+                    ->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
                 $email  = $billing->getEmail();
                 $name   = $billing->getFirstname().' '.$billing->getLastname();
                 break;
@@ -370,16 +380,16 @@ class Mage_Checkout_Model_Type_Onepage
             $order->place();
             $order->save();
 
-             /*
-             a flag to set that there will be redirect to third party after confirmation
-             eg: paypal standard ipn
+            /**
+             * a flag to set that there will be redirect to third party after confirmation
+             * eg: paypal standard ipn
              */
             $hasOrderRedirect = $this->getQuote()->getPayment()->getOrderPlaceRedirectUrl() ? true : false;
 
-            /*
-            * need to have somelogic to set order as new status to make sure order is not finished yet
-            * quote will be still active when we send the customer to paypal
-            */
+            /**
+             * need to have somelogic to set order as new status to make sure order is not finished yet
+             * quote will be still active when we send the customer to paypal
+             */
             //if(!$hasOrderRedirect){
             //}
 
@@ -391,9 +401,9 @@ class Mage_Checkout_Model_Type_Onepage
             $this->getCheckout()->setLastOrderId($order->getId());
             $this->getCheckout()->setLastRealOrderId($order->getIncrementId());
 
-            /*
-            * we only want to send to customer about new order when there is no redirect to third party
-            */
+            /**
+             * we only want to send to customer about new order when there is no redirect to third party
+             */
             if(!$hasOrderRedirect){
                 $order->sendNewOrderEmail();
             }
@@ -412,6 +422,8 @@ class Mage_Checkout_Model_Type_Onepage
             $res['error'] = true;
             if (isset($order)) {
                 $res['error_messages'] = $order->getErrors();
+            } else {
+                $res['error_messages'] = Mage::helper('checkout')->__('There is an error in placing an order. Please try again later or contact the store owner.');
             }
         }
 

@@ -58,6 +58,6 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_Create extends Mage_Adminhtml_Bl
 
     public function getBackUrl()
     {
-        return Mage::getUrl('*/sales_order/view', array('order_id'=>$this->getShipment()->getOrderId()));
+        return $this->getUrl('*/sales_order/view', array('order_id'=>$this->getShipment()->getOrderId()));
     }
 }

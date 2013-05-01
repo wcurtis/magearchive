@@ -94,7 +94,7 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
     {
         $qty = $this->getQtyOrdered()
             - $this->getQtyShipped()
-            - $this->getQtyReturned()
+            - $this->getQtyRefunded()
             - $this->getQtyCanceled();
         return max($qty, 0);
     }
@@ -107,7 +107,6 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
     public function getQtyToInvoice()
     {
         $qty = $this->getQtyOrdered()
-            //- $this->getQtyRefunded()
             - $this->getQtyInvoiced()
             - $this->getQtyCanceled();
         return max($qty, 0);
@@ -130,7 +129,7 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
      */
     public function getQtyToCancel()
     {
-        $qtyToCancel = $this->getQtyToInvoice() - $this->getQtyCanceled();
+        $qtyToCancel = min($this->getQtyToInvoice(), $this->getQtyToShip());
         return max($qtyToCancel, 0);
     }
 
@@ -231,7 +230,7 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
     {
         if ($this->getStatusId() !== self::STATUS_CANCELED) {
             Mage::dispatchEvent('sales_order_item_cancel', array('item'=>$this));
-            $this->setQtyCanceled($this->getQtyToShip());
+            $this->setQtyCanceled($this->getQtyToCancel());
         }
         return $this;
     }

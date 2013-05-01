@@ -16,7 +16,7 @@
  * @package    Zend_Controller
  * @subpackage Action_Helper
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: ActionStack.php 7078 2007-12-11 14:29:33Z matthew $
+ * @version    $Id: ActionStack.php 7681 2008-01-29 18:07:22Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -86,7 +86,7 @@ class Zend_Controller_Action_Helper_ActionStack extends Zend_Controller_Action_H
         if ($action instanceof Zend_Controller_Request_Abstract) {
             return $this->pushStack($action);
         } elseif (!is_string($action)) {
-            require_once 'Zend/Controller/Action/Exception';
+            require_once 'Zend/Controller/Action/Exception.php';
             throw new Zend_Controller_Action_Exception('ActionStack requires either a request object or minimally a string action');
         }
 

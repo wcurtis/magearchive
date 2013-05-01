@@ -31,11 +31,21 @@
         </div>
     </div>
     <div class="box-right">
+        <!--Shipping Address-->
         <div class="entry-edit">
             <h4 class="icon-head head-shipping-method"><?=Mage::helper('sales')->__('Shipping Information')?></h4>
             <fieldset>
-                <strong><?=$_order->getShippingDescription()?></strong>
-                (<?=$this->helper('sales')->__('Total Shipping Charges %s', $_order->formatPrice($_order->getShippingAmount()))?>)
+                <div>
+                    <strong><?=$_order->getShippingDescription()?></strong>
+                    (<?=$this->helper('sales')->__('Total Shipping Charges %s', $_order->formatPrice($_order->getShippingAmount()))?>)
+                </div>
+                <?if ($this->canCreateShipment()):?>
+                <p>
+                <label for="invoice_do_shipment" class="normal"><?=Mage::helper('sales')->__('Create Shipment')?></label>
+                <input type="checkbox" name="invoice[do_shipment]" id="invoice_do_shipment" value="1" onclick="if ( this.checked==true ) { document.getElementById('tracking').style.display = 'block'} else { document.getElementById('tracking').style.display = 'none' }" />
+                </p>
+                <?endif;?>
+                <div id="tracking" style="display:none;"><?=$this->getChildHtml('tracking')?></div>
             </fieldset>
         </div>
     </div>

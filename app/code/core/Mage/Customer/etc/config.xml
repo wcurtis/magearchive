@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Customer>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
             <depends>
                 <Mage_Eav />
             </depends>
@@ -37,7 +37,8 @@
                         <defaultFormat><![CDATA[
 {{var firstname}} {{var lastname}}
 {{var street}}
-{{var city}}, {{var regionName}} {{var postcode}}
+{{var city}},  {{var postcode}}, {{var region}}
+{{var country}}
 T: {{var telephone}}
 {{depend fax}}F: {{var fax}}{{/depend}}
                         ]]></defaultFormat>
@@ -53,8 +54,9 @@ T: {{var telephone}}
                         <defaultFormat><![CDATA[
 {{var firstname}} {{var lastname}}<br/>
 {{var street}}<br/>
-{{var city}}, {{var regionName}} {{var postcode}}<br/>
-T: {{var telephone}}
+{{var city}}, {{var postcode}}, {{var region}}<br/>
+{{var country}}<br/>
+{{depend telephone}}T: {{var telephone}}{{/depend}}
 {{depend fax}}<br/>F: {{var fax}}{{/depend}}
             ]]></defaultFormat>
                     </html>

@@ -18,15 +18,16 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml newsletter template edit block
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Newsletter_Template_Edit extends Mage_Adminhtml_Block_Widget
 {
+
     protected $_template;
 
     public function __construct()
@@ -192,7 +193,6 @@ class Mage_Adminhtml_Block_Newsletter_Template_Edit extends Mage_Adminhtml_Block
         return $this->getChildHtml('save_as_button');
     }
 
-
     /**
      * Set edit flag for block
      *
@@ -229,7 +229,6 @@ class Mage_Adminhtml_Block_Newsletter_Template_Edit extends Mage_Adminhtml_Block
         return  Mage::helper('newsletter')->__('New Newsletter Template');
     }
 
-
     /**
      * Return form block HTML
      *
@@ -259,7 +258,7 @@ class Mage_Adminhtml_Block_Newsletter_Template_Edit extends Mage_Adminhtml_Block
      */
     public function getSaveUrl()
     {
-        return Mage::getUrl('*/*/save');
+        return $this->getUrl('*/*/save');
     }
 
     /**
@@ -269,7 +268,7 @@ class Mage_Adminhtml_Block_Newsletter_Template_Edit extends Mage_Adminhtml_Block
      */
     public function getPreviewUrl()
     {
-        return Mage::getUrl('*/*/preview');
+        return $this->getUrl('*/*/preview');
     }
 
     public function isTextType()
@@ -284,7 +283,7 @@ class Mage_Adminhtml_Block_Newsletter_Template_Edit extends Mage_Adminhtml_Block
      */
     public function getDeleteUrl()
     {
-        return Mage::getUrl('*/*/delete', array('id' => $this->_request->getParam('id')));
+        return $this->getUrl('*/*/delete', array('id' => $this->_request->getParam('id')));
     }
 
     public function getSaveAsFlag()

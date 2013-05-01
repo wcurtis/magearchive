@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_PromoController extends Mage_Adminhtml_Controller_Action
 {
+
     public function indexAction()
     {
         $this->loadLayout();
@@ -36,6 +37,7 @@ class Mage_Adminhtml_PromoController extends Mage_Adminhtml_Controller_Action
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('promo');
+        return Mage::getSingleton('admin/session')->isAllowed('promo');
     }
+
 }

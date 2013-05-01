@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog product price block
  *
@@ -36,4 +37,4 @@
 
         return $product->getFormatedPrice();
     }
- } // Class Mage_Catalog_Block_Product_View_Price end
+ }

@@ -33,13 +33,13 @@ class Mage_Adminhtml_Block_System_Config_Form_Field_Export extends Varien_Data_F
         $params = array(
             'website' => $buttonBlock->getRequest()->getParam('website')
         );
-        
+
         $data = array(
             'label'     => Mage::helper('adminhtml')->__('Export CSV'),
-            'onclick'   => 'setLocation(\''.Mage::getUrl("*/*/exportTablerates", $params) . 'conditionName/\' + $(\'carriers_tablerate_condition_name\').value + \'/\' )',
+            'onclick'   => 'setLocation(\''.Mage::helper('adminhtml')->getUrl("*/*/exportTablerates", $params) . 'conditionName/\' + $(\'carriers_tablerate_condition_name\').value + \'/\' )',
             'class'     => '',
         );
-        
+
         $html = $buttonBlock->setData($data)->toHtml();
 
         return $html;

@@ -81,7 +81,7 @@ Checkout.prototype = {
             Element.hide('register-customer-password');
             this.gotoSection('billing');
         }
-        else if($('login:register') && $('login:register').checked) {
+        else if($('login:register') && ($('login:register').checked || $('login:register').type == 'hidden')) {
             this.method = 'register';
             var request = new Ajax.Request(
                 this.saveMethodUrl,

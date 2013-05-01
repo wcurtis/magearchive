@@ -24,13 +24,14 @@ class Mage_Core_Model_Mysql4_Store extends Mage_Core_Model_Mysql4_Abstract
     protected function _construct()
     {
         $this->_init('core/store', 'store_id');
+        $this->_uniqueFields = array(array('field' => 'code', 'title' => Mage::helper('core')->__('Store with the same code')));
     }
 
     protected function _beforeSave(Mage_Core_Model_Abstract $model)
     {
         if(!preg_match('/^[a-z]+[a-z0-9_]*$/',$model->getCode())) {
             Mage::throwException(
-                Mage::helper('core')->__('Code should contain only letters (a-z), numbers (0-9) or underscore(_), first character should be a letter'));
+                Mage::helper('core')->__('Store code should contain only letters (a-z), numbers (0-9) or underscore(_), first character should be a letter'));
         }
 
         return $this;
@@ -40,6 +41,52 @@ class Mage_Core_Model_Mysql4_Store extends Mage_Core_Model_Mysql4_Abstract
     {
     	parent::_afterSave($object);
     	$this->updateDatasharing();
+    	$this->_updateGroupDefaultStore($object->getGroupId(), $object->getId());
+    	$this->_changeGroup($object);
+
+    	return $this;
+    }
+
+    protected function _afterDelete(Mage_Core_Model_Abstract $model)
+    {
+        $this->_getWriteAdapter()->delete(
+            $this->getTable('core/config_data'),
+            $this->_getWriteAdapter()->quoteInto("scope = 'stores' AND scope_id = ?", $model->getStoreId())
+        );
+        return $this;
+    }
+
+    protected function _updateGroupDefaultStore($groupId, $store_id)
+    {
+        $write = $this->_getWriteAdapter();
+        $cnt   = $write->fetchOne($write->select()
+            ->from($this->getTable('core/store'), array('count'=>'COUNT(*)'))
+            ->where($write->quoteInto('group_id=?', $groupId)),
+            'count');
+        if ($cnt == 1) {
+            $write->update($this->getTable('core/store_group'),
+                array('default_store_id' => $store_id),
+                $write->quoteInto('group_id=?', $groupId)
+            );
+        }
+        return $this;
+    }
+
+    protected function _changeGroup(Mage_Core_Model_Abstract $model) {
+        if ($model->getOriginalGroupId() && $model->getGroupId() != $model->getOriginalGroupId()) {
+            $write = $this->_getWriteAdapter();
+            $storeId = $write->fetchOne($write->select()
+                ->from($this->getTable('core/store_group'), 'default_store_id')
+                ->where($write->quoteInto('group_id=?', $model->getOriginalGroupId())),
+                'default_store_id'
+            );
+            if ($storeId == $model->getId()) {
+                $write->update($this->getTable('core/store_group'),
+                    array('default_store_id'=>0),
+                    $write->quoteInto('group_id=?', $model->getOriginalGroupId()));
+            }
+        }
+        return $this;
     }
 
     public function updateDatasharing($key='default')

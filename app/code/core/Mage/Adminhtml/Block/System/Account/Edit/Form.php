@@ -91,7 +91,7 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
         );
 
         $form->setValues($user->getData());
-        $form->setAction(Mage::getUrl('*/system_account/save'));
+        $form->setAction($this->getUrl('*/system_account/save'));
         $form->setMethod('post');
         $form->setUseContainer(true);
         $form->setId('edit_form');

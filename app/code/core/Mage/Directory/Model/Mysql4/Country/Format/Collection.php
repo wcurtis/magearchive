@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Directory country format resource model
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Directory_Model_Mysql4_Country_Format_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
+
     protected function _construct()
     {
         $this->_init('directory/country_format');
@@ -48,4 +50,5 @@ class Mage_Directory_Model_Mysql4_Country_Format_Collection extends Mage_Core_Mo
         $this->addFieldToFilter('country_id', $countryId);
         return $this;
     }
-} // Class Mage_Directory_Model_Mysql4_Country_Format_Collection End
+
+}

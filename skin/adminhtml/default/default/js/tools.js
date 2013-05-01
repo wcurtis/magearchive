@@ -69,8 +69,17 @@ function imagePreview(element){
 function toggleValueElements(checkbox, container){
     if(container && checkbox){
         //var elems = container.getElementsBySelector('select', 'input');
-        var elems = Element.getElementsBySelector(container, ['select', 'input', 'textarea']);
-        elems.each(function(elem){if(elem!=checkbox)elem.disabled=checkbox.checked});
+        var elems = Element.getElementsBySelector(container, ['select', 'input', 'textarea', 'button']);
+        elems.each(function (elem) {
+            if(elem!=checkbox) {
+                elem.disabled=checkbox.checked;
+                if (checkbox.checked) {
+                    elem.addClassName('disabled');
+                } else {
+                    elem.removeClassName('disabled');
+                }
+            };
+        })
     }
 }
 
@@ -130,3 +139,38 @@ function syncOnchangeValue(baseElem, distElem){
 }
 
 /********** Ajax session expiration ***********/
+
+
+if (!navigator.appVersion.match('MSIE 6.')) {
+    var header, header_offset, header_copy;
+
+    Event.observe(window, 'load', function() {
+        header = $$('.content-header')[0];
+        header_offset = Position.cumulativeOffset(header)[1];
+        header_copy = header.cloneNode(true);
+        document.body.appendChild(header_copy);
+        $(header_copy).addClassName('content-header-floating');
+    });
+
+    Event.observe(window, 'scroll', function () {
+        if (!header_copy.parentNode) {
+            return;
+        }
+        var s;
+        // scrolling offset calculation via www.quirksmode.org
+        if (self.pageYOffset){
+            s = self.pageYOffset;
+        }else if (document.documentElement && document.documentElement.scrollTop) {
+            s = document.documentElement.scrollTop;
+        }else if (document.body) {
+            s = document.body.scrollTop;
+        }
+        if (s > header_offset) {
+            header.style.visibility = 'hidden';
+            header_copy.style.display = 'block';
+        } else {
+            header.style.visibility = 'visible';
+            header_copy.style.display = 'none';
+        }
+    });
+}

@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Template
 {
     protected $_withProductCount;
 
@@ -37,7 +37,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Core_Block_Templat
 
     protected function _prepareLayout()
     {
-        $url = Mage::getUrl('*/*/add', array(
+        $url = $this->getUrl('*/*/add', array(
             '_current'=>true,
             'parent'=>$this->getCategoryId(),
             'id'=>null,
@@ -53,7 +53,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Core_Block_Templat
 
         $this->setChild('store_switcher',
             $this->getLayout()->createBlock('adminhtml/store_switcher')
-                ->setSwitchUrl(Mage::getUrl('*/*/*', array('store'=>null)))
+                ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
         );
         return parent::_prepareLayout();
     }
@@ -128,7 +128,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Core_Block_Templat
 
             if ($storeId) {
                 $store = Mage::app()->getStore($storeId);
-                $rootId = (int) $store->getConfig('catalog/category/root_id');
+                $rootId = $store->getRootCategoryId();
             }
             else {
                 $rootId = 1;
@@ -184,7 +184,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Core_Block_Templat
         if ($this->_withProductCount) {
              $item['text'].= ' ('.$node->getProductCount().')';
         }
-        $rootForStores = Mage::getConfig()->getStoresConfigByPath('catalog/category/root_id', array($node->getEntityId()), 'name');
+
+        $rootForStores = Mage::getModel('core/store')->getCollection()->loadByCategoryIds(array($node->getEntityId()));
 
         $item['id']  = $node->getId();
         $item['cls'] = 'folder ' . ($node->getIsActive() ? 'active-category' : 'no-active-category');

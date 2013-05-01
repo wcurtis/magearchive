@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog products compare block
  *
@@ -119,4 +120,4 @@
         return $this->getUrl('*/*/*', array('_current'=>true, 'print'=>1));
     }
 
- } // Class Mage_Catalog_Block_Product_Compare_List end
+ }

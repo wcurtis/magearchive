@@ -27,11 +27,20 @@ function setPLocation(url, setFocus){
     window.opener.location.href = url;
 }
 
-function setStoreCode(code){
-    if(window.Mage && Mage.Cookies){
-        Mage.Cookies.set('store', code);
+function setLanguageCode(code){
+    //TODO: javascript cookies have different domain and path than php cookies
+    var href = window.location.href;
+    if (href.match(/[?]/)) {
+        var re = /([?&]store=)[a-z0-9_]*/;
+        if (href.match(re)) {
+            href = href.replace(re, '$1'+code);
+        } else {
+            href += '&store='+code;
+        }
+    } else {
+        href += '?store='+code;
     }
-    setLocation(window.location.href);
+    setLocation(href);
 }
 
 /**

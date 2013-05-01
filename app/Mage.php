@@ -27,16 +27,19 @@ define('BP', dirname(dirname(__FILE__)));
  */
 error_reporting(E_ALL | E_STRICT);
 
+Mage::register('original_include_path', get_include_path());
+
 /**
- * Include path
+ * Set include path
  */
-ini_set('include_path',
-           BP . '/app/code/local'
-    . PS . BP . '/app/code/community'
-    . PS . BP . '/app/code/core'
-    . PS . BP . '/lib'
-    . PS . ini_get('include_path')
-);
+$paths[] = BP . DS . 'app' . DS . 'code' . DS . 'local';
+$paths[] = BP . DS . 'app' . DS . 'code' . DS . 'community';
+$paths[] = BP . DS . 'app' . DS . 'code' . DS . 'core';
+$paths[] = BP . DS . 'lib';
+
+$app_path = implode(PS, $paths);
+
+set_include_path($app_path . PS . Mage::registry('original_include_path'));
 
 include_once "Mage/Core/functions.php";
 include_once "Varien/Profiler.php";
@@ -51,7 +54,6 @@ checkMagicQuotes();
 /**
  * Main Mage hub class
  *
- * @author Moshe Gurvich <moshe@varien.com>
  */
 final class Mage {
     /**
@@ -72,7 +74,7 @@ final class Mage {
 
     public static function getVersion()
     {
-        return '0.7.15480';
+        return '0.8.16100';
     }
 
     /**
@@ -176,6 +178,13 @@ final class Mage {
         return Mage::app()->getStore()->getBaseUrl($type, $secure);
     }
 
+    /**
+     * Generate url by route and parameters
+     *
+     * @param   string $route
+     * @param   array $params
+     * @return  string
+     */
     public static function getUrl($route='', $params=array())
     {
         return Mage::getModel('core/url')->getUrl($route, $params);
@@ -498,4 +507,5 @@ final class Mage {
 
         return $result;
     }
+
 }

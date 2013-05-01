@@ -26,7 +26,7 @@
 <div class="content-header">
     <table cellspacing="0" class="grid-header">
         <tr>
-            <td><h3><?=$this->getHeader()?></h3></td>
+            <td><h3 class="icon-head head-products"><?=$this->getHeader()?></h3></td>
             <td class="a-right">
             <?=$this->getBackButtonHtml()?>
             <?=$this->getCancelButtonHtml()?>
@@ -53,33 +53,33 @@
 <script type="text/javascript" language="javascript">
     var productForm = new varienForm('product_edit_form', '<?=$this->getValidationUrl()?>');
     function saveAndContinueEdit(){
-        productForm.submit($('product_edit_form').action+'back/edit/');
+        productForm.submit($('product_edit_form').action+'back/edit/tab/' + product_info_tabsJsTabs.activeTab.id);
     }
     function setSettings(baseUrl, setElement, typeElement){
         var url = baseUrl+'set/'+$F(setElement)+'/type/'+$F(typeElement)+'/';
         setLocation(url);
     }
-    
+
      function setSuperSettings(baseUrl, attributesClass, validateField){
         var attributesFields = $$('.' + attributesClass);
         var attributes = Form.serializeElements(attributesFields, true).attribute;
         if(typeof attributes == 'string') {
         	attributes = [attributes];
         }
-        
+
         if(!attributes) {
         	$(validateField).value = 'no-attributes';
         } else {
         	$(validateField).value = 'has-attributes';
         }
-     	
+
         if(productForm.validator.validate()) {
            	var url = baseUrl+'attributes/'+encode_base64(attributes.join(',')).replace(new RegExp('/','g'),'%2F').replace(new RegExp('=','g'),'%3D')+'/';
 	        setLocation(url);
         }
     }
-    
-    
+
+
 
 <?if($this->getProductSetId() && $this->getIsConfigured()):?>
 	var productLinksController = Class.create();
@@ -190,6 +190,14 @@
 	});
 	<?endif;?>
 <?endif;?>
+
+Event.observe(window, 'load', function() {
+    var objName = '<?=$this->getSelectedTabId()?>';
+    if (objName) {
+        obj = $(objName);
+        product_info_tabsJsTabs.showTabContent(obj);
+    }
+});
 
 Validation.addAllThese([
     ['validate-super-product-attributes', '<?=Mage::helper('catalog')->__('Please select one or more attributes.')?>', function(v) {

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Measure
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Number.php 7319 2008-01-01 11:02:48Z thomas $
+ * @version    $Id: Number.php 7656 2008-01-27 19:25:52Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -237,9 +237,8 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
                     require_once 'Zend/Measure/Exception.php';
                     throw new Zend_Measure_Exception($e->getMessage());
                 }
-                if (call_user_func(Zend_Locale_Math::$comp, $value, 0) < 0) {
-                    $value = call_user_func(Zend_Locale_Math::$sqrt, call_user_func(Zend_Locale_Math::$pow, $value, 2));
-                }
+                preg_match('/[0123456789]+/', $value, $ergebnis);
+                $value = $ergebnis[0];
                 break;
         }
 
@@ -304,13 +303,31 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
      */
     private function fromDecimal($value, $type)
     {
+        $tempvalue = $value;
         if ($this->_UNITS[$type][0] <= 16) {
             $newvalue = "";
-            while(call_user_func(Zend_Locale_Math::$comp, $value, 0) >= 1) {
+            $count = 200;
+            while (call_user_func(Zend_Locale_Math::$comp, $value, 0, 25) <> 0) {
                 $target = call_user_func(Zend_Locale_Math::$mod, $value, $this->_UNITS[$type][0]);
+                if (($value != $tempvalue) && (($value * 2) > $oldvalue)) {
+                    $target = 0;
+                    --$value;
+                }
+                $oldvalue = $value;
+                $value = call_user_func(Zend_Locale_Math::$div, $value, $this->_UNITS[$type][0], 0);
+                if (call_user_func(Zend_Locale_Math::$add, $value, $target) > $oldvalue) {
+                    --$value;
+                }
                 $target = strtoupper( dechex($target) );
                 $newvalue = $target . $newvalue;
-                $value = call_user_func(Zend_Locale_Math::$div, $value, $this->_UNITS[$type][0], 0);
+                if (($value == 1) and ($newvalue == 1)) {
+                    break;
+                }
+                --$count;
+                if ($count == 0) {
+                    require_once 'Zend/Measure/Exception.php';
+                    throw new Zend_Measure_Exception("Your value '$tempvalue' cannot be processed because it extends 200 digits");
+                }
             }
         }
 
@@ -319,11 +336,21 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
             $newvalue = "";
             $romanval = array_values( array_reverse(self::$_ROMAN) );
             $romankey = array_keys( array_reverse(self::$_ROMAN) );
-            while(call_user_func(Zend_Locale_Math::$comp, $value, 0) >= 1) {
+            $count = 200;
+            while(call_user_func(Zend_Locale_Math::$comp, $value, 0, 25) <> 0) {
 
                 while ($value >= $romanval[$i]) {
                     $value    -= $romanval[$i];
                     $newvalue .= $romankey[$i];
+
+                    if ($value < 1) {
+                        break; 
+                    }
+                    --$count;
+                    if ($count == 0) {
+                        require_once 'Zend/Measure/Exception.php';
+                        throw new Zend_Measure_Exception("Your value '$tempvalue' cannot be processed because it extends 200 digits");
+                    }
                 }
                 $i++;
 

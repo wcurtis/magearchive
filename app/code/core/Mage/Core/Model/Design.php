@@ -38,7 +38,7 @@ class Mage_Core_Model_Design extends Mage_Core_Model_Abstract
             ->loadChange($storeId, $date);
 
         if (count($result)){
-            if ($result['design']){
+            if (!empty($result['design'])) {
                 $tmp = explode('/', $result['design']);
                 $result['package'] = $tmp[0];
                 $result['theme'] = $tmp[1];

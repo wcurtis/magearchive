@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Block_Widget_Form_Container
 {
+
     public function __construct()
     {
         $this->_objectId    = 'shipment_id';
@@ -59,11 +59,13 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
 
     public function getBackUrl()
     {
-        return Mage::getUrl(
+        return $this->getUrl(
             '*/sales_order/view',
             array(
                 'order_id'  => $this->getShipment()->getOrderId(),
                 'active_tab'=> 'order_shipments'
             ));
     }
+
 }
+

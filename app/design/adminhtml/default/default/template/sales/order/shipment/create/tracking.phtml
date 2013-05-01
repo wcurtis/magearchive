@@ -37,10 +37,9 @@ trackingControl = {
     bindCurrierOnchange : function() {
         var elems = $('tracking_numbers_table').getElementsByClassName('select');
         elems.each(function (elem) {
-            if (!elem.onchangeBinded) {
-                elem.onchangeBinded = true;
-                elem.valueInput = elem.parentNode.parentNode.getElementsByClassName('number-title');
-                elem.valueInput = elem.valueInput[0];
+            if (!elem.onchangeBound) {
+                elem.onchangeBound = true;
+                elem.valueInput = $(elem.parentNode.parentNode).getElementsByClassName('number-title')[0];
                 elem.observe('change', this.currierOnchange);
             }
         }.bind(this));

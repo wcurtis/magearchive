@@ -41,7 +41,7 @@ require_once 'Zend/Search/Exception.php';
 class Zend_Search_Lucene_Analysis_TokenFilter_StopWords extends Zend_Search_Lucene_Analysis_TokenFilter
 {
     /**
-     * Minimum allowed term length
+     * Stop Words
      * @var array
      */
     private $_stopSet;
@@ -63,7 +63,6 @@ class Zend_Search_Lucene_Analysis_TokenFilter_StopWords extends Zend_Search_Luce
      */
     public function normalize(Zend_Search_Lucene_Analysis_Token $srcToken) {
         if (array_key_exists($srcToken->getTermText(), $this->_stopSet)) {
-            $t = $srcToken->getTermText();
             return null;
         } else {
             return $srcToken;

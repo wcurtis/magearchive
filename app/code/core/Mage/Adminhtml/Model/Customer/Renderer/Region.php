@@ -28,24 +28,24 @@ class Mage_Adminhtml_Model_Customer_Renderer_Region implements Varien_Data_Form_
 {
     /**
      * Country region collections
-     * 
+     *
      * array(
      *      [$countryId] => Varien_Data_Collection_Db
      * )
-     * 
+     *
      * @var array
      */
     static protected $_regionCollections;
-    
+
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        $html = '<span class="field-row">'."\n";
-        
+        $html = '<tr>'."\n";
+
         $countryId = false;
         if ($country = $element->getForm()->getElement('country_id')) {
             $countryId = $country->getValue();
         }
-        
+
         $regionCollection = false;
         if ($countryId) {
             if (!isset(self::$_regionCollections[$countryId])) {
@@ -55,34 +55,31 @@ class Mage_Adminhtml_Model_Customer_Renderer_Region implements Varien_Data_Form_
             }
             $regionCollection = self::$_regionCollections[$countryId];
         }
-        
+
         $regionId = $element->getForm()->getElement('region_id')->getValue();
 
         if ($regionCollection && $regionCollection->getSize()) {
             $elementClass = $element->getClass();
             $element->setClass(str_replace('input-text', '', $elementClass));
-            $html.= $element->getLabelHtml();
-            $html.= '<select id="'.$element->getHtmlId().'" name="'.$element->getName().'" '
+            $html.= '<td class="label">'.$element->getLabelHtml().'</td>';
+            $html.= '<td class="input-ele"><select id="'.$element->getHtmlId().'" name="'.$element->getName().'" '
                  .$element->serialize($element->getHtmlAttributes()).'>'."\n";
             foreach ($regionCollection as $region) {
                 $selected = ($regionId==$region->getId()) ? ' selected' : '';
             	$html.= '<option value="'.$region->getId().'"'.$selected.'>'.$region->getName().'</option>';
             }
-            $html.= '</select>';
+            $html.= '</select></td>';
             $element->setClass($elementClass);
         }
         else {
             $element->setClass('input-text');
             $element->setRequired(false);
-            
-            $html.= $element->getLabelHtml();
-            $html.= '<input id="'.$element->getHtmlId().'" name="'.$element->getName()
-                 .'" value="'.$element->getEscapedValue().'"'.$element->serialize($element->getHtmlAttributes()).'/>'."\n";
+
+            $html.= '<td class="label">'.$element->getLabelHtml().'</td>';
+            $html.= '<td class="input-ele"><input id="'.$element->getHtmlId().'" name="'.$element->getName()
+                 .'" value="'.$element->getEscapedValue().'"'.$element->serialize($element->getHtmlAttributes()).'/></td>'."\n";
         }
-        $html.= '</span>'."\n";
-        /*$html.= '<input id="'.$this->getHtmlId().'" name="'.$this->getName()
-             .'" value="'.$this->getEscapedValue().'"'.$this->serialize($this->getHtmlAttributes()).'/>'."\n";
-        $html.= '</span>'."\n";*/
+        $html.= '</tr>'."\n";
         return $html;
     }
 }

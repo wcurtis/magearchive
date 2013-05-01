@@ -26,9 +26,9 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `usa_postcode`;
+DROP TABLE IF EXISTS {$this->getTable('usa_postcode')};
 
-CREATE TABLE `usa_postcode` (
+CREATE TABLE {$this->getTable('usa_postcode')} (
   `country_id` varchar(2) NOT NULL default 'US',
   `postcode` varchar(16) NOT NULL default '',
   `region_id` int(10) unsigned NOT NULL default '0',
@@ -47,7 +47,7 @@ set_time_limit(0);
 
 $fp = fopen($sqlFilesDir.'/us_zipcodes.txt', 'r');
 while ($row = fgets($fp)) {
-    $this->run("insert into `usa_postcode` (country_id, postcode, region_id, county, city, postcode_class) values ".$row);
+    $this->run("insert into {$this->getTable('usa_postcode')} (country_id, postcode, region_id, county, city, postcode_class) values ".$row);
 }
 fclose($fp);
 

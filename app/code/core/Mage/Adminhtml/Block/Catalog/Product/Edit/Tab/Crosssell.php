@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Adminhtml_Block_Widget_Grid 
+class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Adminhtml_Block_Widget_Grid
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setId('cross_sell_product_grid');
@@ -57,9 +57,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
         }
         return $this;
     }
-    
+
     protected function _prepareCollection()
-    {       
+    {
         $collection = Mage::getResourceModel('catalog/product_link_collection')
             ->setLinkType('cross_sell')
             ->setProductId(Mage::registry('product')->getId())
@@ -67,19 +67,19 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
             ->addLinkAttributeToSelect('position')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('price')  
+            ->addAttributeToSelect('price')
             ->addAttributeToSelect('attribute_set_id')
             ->addAttributeToSelect('type_id')
             ->addAttributeToSelect('status')
             ->addAttributeToSelect('visibility')
-            
+
             ->useProductItem();
 
         $this->setCollection($collection);
-        
+
         return parent::_prepareCollection();
     }
-    
+
     protected function _prepareColumns()
     {
         $this->addColumn('in_products', array(
@@ -90,7 +90,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
             'align'     => 'center',
             'index'     => 'entity_id'
         ));
-        
+
         $this->addColumn('id', array(
             'header'    => Mage::helper('catalog')->__('ID'),
             'sortable'  => true,
@@ -101,7 +101,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
             'header'    => Mage::helper('catalog')->__('Name'),
             'index'     => 'name'
         ));
-        
+
         $types = Mage::getResourceModel('catalog/product_type_collection')
             ->load()
             ->toOptionHash();
@@ -128,7 +128,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
                 'type'  => 'options',
                 'options' => $sets,
         ));
-        
+
         $statuses = Mage::getResourceModel('catalog/product_status_collection')
             ->load()
             ->toOptionHash();
@@ -154,7 +154,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
                 'type'  => 'options',
                 'options' => $visibility,
         ));
-                
+
         $this->addColumn('sku', array(
             'header'    => Mage::helper('catalog')->__('SKU'),
             'width'     => '80px',
@@ -166,37 +166,36 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Crosssell extends Mage_Admin
             'currency_code' => (string) Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE),
             'index'     => 'price'
         ));
-        
-                
+
+
         $this->addColumn('position', array(
             'header'    => Mage::helper('catalog')->__('Position'),
             'name'      => 'position',
-            'align'     => 'center',
             'width'     => '60px',
             'type'      => 'number',
             'validate_class' => 'validate-number',
             'index'     => 'position',
             'editable'  => true
         ));
-        
-         
-        
+
+
+
         return parent::_prepareColumns();
     }
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/crosssell', array('_current'=>true));
+        return $this->getUrl('*/*/crosssell', array('_current'=>true));
     }
-    
+
     protected function _getSelectedProducts()
     {
         $products = $this->getRequest()->getPost('products', null);
-        
+
         if (!is_array($products)) {
             $products = Mage::registry('product')->getCrossSellProductsLoaded()->getColumnValues('entity_id');
         }
-        
+
         return $products;
     }
 }

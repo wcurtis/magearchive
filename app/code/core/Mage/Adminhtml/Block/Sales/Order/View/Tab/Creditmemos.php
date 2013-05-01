@@ -83,7 +83,6 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
             'header'    => Mage::helper('customer')->__('Refunded'),
             'index'     => 'grand_total',
             'type'      => 'currency',
-            'align'     => 'right',
             'currency'  => 'order_currency_code',
         ));
 
@@ -102,7 +101,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl(
+        return $this->getUrl(
             '*/sales_order_creditmemo/view',
             array(
                 'creditmemo_id'=> $row->getId(),
@@ -112,6 +111,6 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Creditmemos extends Mage_Adminht
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/creditmemos', array('_current' => true));
+        return $this->getUrl('*/*/creditmemos', array('_current' => true));
     }
 }

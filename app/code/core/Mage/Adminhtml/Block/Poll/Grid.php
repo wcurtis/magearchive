@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Poll_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -62,7 +62,6 @@ class Mage_Adminhtml_Block_Poll_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
         $this->addColumn('votes_count', array(
             'header'    => Mage::helper('poll')->__('Number of Responses'),
-            'align'     => 'right',
             'width'     => '50px',
             'type'      => 'number',
             'index'     => 'votes_count',
@@ -118,12 +117,12 @@ class Mage_Adminhtml_Block_Poll_Grid extends Mage_Adminhtml_Block_Widget_Grid
             ),
         ));
 
-
         return parent::_prepareColumns();
     }
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array('id' => $row->getId()));
+        return $this->getUrl('*/*/edit', array('id' => $row->getId()));
     }
+
 }

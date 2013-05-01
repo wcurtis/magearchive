@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Sales_Reorder_Renderer_Action extends Mage_Adminhtml_
         $actions = array();
         if ($row->canReorder()) {
             $actions[] = array(
-                    '@' =>  array('href' => Mage::getUrl('*/sales_order_create/reorder', array('order_id'=>$row->getId()))),
+                    '@' =>  array('href' => $this->getUrl('*/sales_order_create/reorder', array('order_id'=>$row->getId()))),
                     '#' =>  Mage::helper('sales')->__('Reorder')
             );
         }

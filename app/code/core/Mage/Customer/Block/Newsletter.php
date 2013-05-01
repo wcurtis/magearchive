@@ -18,38 +18,40 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Customer front  newsletter manage block
  *
  * @category   Mage
  * @package    Mage_Customer
  */
-
 class Mage_Customer_Block_Newsletter extends Mage_Core_Block_Template
 {
-	public function __construct()
-	{
-		parent::__construct();
-		$this->setTemplate('customer/form/newsletter.phtml');
-        Mage::registry('action')->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('customer')->__('Newsletter Subscriptions'));
-	}
-	
-	public function getSubscriptionObject() 
+
+    public function __construct()
     {
-    	if(is_null($this->_subscription)) { 
-			$this->_subscription = Mage::getModel('newsletter/subscriber')->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer());
-    	}
-    	
-    	return $this->_subscription;
+        parent::__construct();
+        $this->setTemplate('customer/form/newsletter.phtml');
+        Mage::registry('action')->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('customer')->__('Newsletter Subscriptions'));
     }
-        
+
+    public function getSubscriptionObject()
+    {
+        if(is_null($this->_subscription)) {
+            $this->_subscription = Mage::getModel('newsletter/subscriber')->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer());
+        }
+
+        return $this->_subscription;
+    }
+
     public function getIsSubscribed()
     {
-    	return $this->getSubscriptionObject()->isSubscribed();
+        return $this->getSubscriptionObject()->isSubscribed();
     }
-    
+
     public function getAction()
     {
-    	return $this->getUrl('*/*/save');
+        return $this->getUrl('*/*/save');
     }
-}// Class Mage_Customer_Block_Newsletter END
+
+}

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml grid widget massaction item additional action default
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default extends Mage_Adminhtml_Block_Widget_Form implements Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Interface
 {
+
     public function createFromConfiguration(array $configuration)
     {
         $form = new Varien_Data_Form();
@@ -37,4 +39,5 @@ class Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default extend
         $this->setForm($form);
         return $this;
     }
-} // Class Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default End
+
+}

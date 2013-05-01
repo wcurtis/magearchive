@@ -26,7 +26,7 @@
  */
 class Mage_Core_Block_Html_Date extends Mage_Core_Block_Template
 {
-    public function toHtml()
+    protected function _toHtml()
     {
         $html  = '<input type="text" name="' . $this->getName() . '" id="' . $this->getId() . '" ';
         $html .= 'value="'.$this->getValue().'" class="'.$this->getClass().'" style="width:100px" /> ';

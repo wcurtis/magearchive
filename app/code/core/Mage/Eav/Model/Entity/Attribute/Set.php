@@ -32,7 +32,7 @@ class Mage_Eav_Model_Entity_Attribute_Set extends Mage_Core_Model_Abstract
             ->getResourceCollection()
             ->setAttributeSetFilter($skeletonId)
             ->load();
-        
+
         $newGroups = array();
         foreach( $groups as $group ) {
             $newGroup = clone $group;
@@ -43,14 +43,14 @@ class Mage_Eav_Model_Entity_Attribute_Set extends Mage_Core_Model_Abstract
                 ->getResourceCollection()
                 ->setAttributeGroupFilter($group->getId())
                 ->load();
-            
+
             $newAttributes = array();
             foreach( $groupAttributesCollection as $attribute ) {
                 $newAttribute = Mage::getModel('eav/entity_attribute')
                     ->setId($attribute->getId())
                     //->setAttributeGroupId($newGroup->getId())
                     ->setAttributeSetId($this->getId())
-                    ->setEntityTypeId(Mage::registry('entityType'))
+                    ->setEntityTypeId($this->getEntityTypeId())
                     ->setSortOrder($attribute->getSortOrder());
                 $newAttributes[] = $newAttribute;
             }
@@ -69,19 +69,19 @@ class Mage_Eav_Model_Entity_Attribute_Set extends Mage_Core_Model_Abstract
             foreach( $data['groups'] as $group ) {
                 $modelGroup = Mage::getModel('eav/entity_attribute_group');
                 $modelGroup->setId($group[0])
-                           ->setAttributeGroupName($group[1])
-                           ->setAttributeSetId($this->getId())
-                           ->setSortOrder($group[2]);
+                    ->setAttributeGroupName($group[1])
+                    ->setAttributeSetId($this->getId())
+                    ->setSortOrder($group[2]);
 
                 if( $data['attributes'] ) {
                     foreach( $data['attributes'] as $key => $attribute ) {
                         if( $attribute[1] == $group[0] ) {
                             $modelAttribute = Mage::getModel('eav/entity_attribute');
                             $modelAttribute->setId($attribute[0])
-                                           ->setAttributeGroupId($attribute[1])
-                                           ->setAttributeSetId($this->getId())
-                                           ->setEntityTypeId(Mage::registry('entityType'))
-                                           ->setSortOrder($attribute[2]);
+                                ->setAttributeGroupId($attribute[1])
+                                ->setAttributeSetId($this->getId())
+                                ->setEntityTypeId($this->getEntityTypeId())
+                                ->setSortOrder($attribute[2]);
                             $modelAttributeArray[] = $modelAttribute;
                         }
                     }
@@ -117,6 +117,6 @@ class Mage_Eav_Model_Entity_Attribute_Set extends Mage_Core_Model_Abstract
         }
 
         $this->setAttributeSetName($data['attribute_set_name'])
-            ->setEntityTypeId(Mage::registry('entityType'));
+            ->setEntityTypeId($this->getEntityTypeId());
     }
 }

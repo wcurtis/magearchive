@@ -130,8 +130,14 @@ function checkMagicQuotes()
  * @param integer $errline
  */
 function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
+
+    if (strpos($errstr, 'DateTimeZone::__construct')!==false) {
+        // there's no way to distinguish between caught system exceptions and warnings
+        return false;
+    }
+
     $errno = $errno & error_reporting();
-    if($errno == 0) return;
+    if($errno == 0) return false;
     if(!defined('E_STRICT'))            define('E_STRICT', 2048);
     if(!defined('E_RECOVERABLE_ERROR')) define('E_RECOVERABLE_ERROR', 4096);
 
@@ -139,11 +145,11 @@ function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
     if (stripos($errfile.$errstr, 'pear')!==false) {
          // ignore strict notices
         if ($errno == E_STRICT) {
-            return;
+            return false;
         }
         // ignore attempts to read system files when open_basedir is set
         if ($errno == E_WARNING && stripos($errstr, 'open_basedir')!==false) {
-            return;
+            return false;
         }
     }
 
@@ -197,6 +203,8 @@ function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
     }
 
     mageSendErrorFooter();
+
+    return true;
 }
 
 function mageSendErrorHeader()

@@ -83,7 +83,7 @@ class Mage_Payment_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
         if (in_array($info->getCcType(), $availableTypes)){
             if ($this->validateCcNum($ccNumber)
                 // Other credit card type number validation
-                || ($info->getCcType()=='OT' && $this->validateCcNumOther($ccNumber))) {
+                || ($this->OtherCcType($info->getCcType()) && $this->validateCcNumOther($ccNumber))) {
 
                 $ccType = 'OT';
                 $ccTypeRegExpList = array(
@@ -100,7 +100,7 @@ class Mage_Payment_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
                     }
                 }
 
-                if ($info->getCcType() != 'OT' && $ccType!=$info->getCcType()) {
+                if (!$this->OtherCcType($info->getCcType()) && $ccType!=$info->getCcType()) {
                     $errorMsg = $this->_getHelper()->__('Credit card number mismatch with credit card type');
                 }
             }
@@ -118,6 +118,11 @@ class Mage_Payment_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
         }
 
         return $this;
+    }
+
+    public function OtherCcType($type)
+    {
+        return $type=='OT';
     }
 
     /**

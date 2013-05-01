@@ -67,14 +67,14 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
 
             $methodInstance = Mage::getModel($model);
 
-            if ($methodInstance instanceof Mage_Payment_Model_Method_Cc && !$methodConfig->cctypes) {
+            if ($methodInstance instanceof Mage_Payment_Model_Method_Cc && !Mage::getStoreConfig($prefix.'cctypes')) {
                 /* if the payment method has credit card types configuration option
                    and no credit card type is enabled in configuration */
                 continue;
             }
 
             $sortOrder = (int)Mage::getStoreConfig($prefix.'sort_order');
-            $methodInstance->sort_order=$sortOrder;
+            $methodInstance->setSortOrder($sortOrder);
 //            while (isset($res[$sortOrder])) {
 //                $sortOrder++;
 //            }
@@ -83,7 +83,7 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
         }
 //        ksort($res);
         //die('!');
-        
+
         //echo '<pre>';
         //var_dump( (array)$res);
         usort($res, array($this, '_sortMethods'));
@@ -99,7 +99,7 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
             //var_dump($a->getData());
             //var_dump($a->sort_order);
             //die ();
-            
+
             return (int)$a->sort_order < (int)$b->sort_order ? -1 : ((int)$a->sort_order > (int)$b->sort_order ? 1 : 0);
         }
         return 0;

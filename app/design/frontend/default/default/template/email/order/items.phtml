@@ -67,7 +67,7 @@
                 <td align="right" style="padding:3px 9px"><?=$_order->formatPrice(0.00 - $_order->getDiscountAmount())?></td>
             </tr>
         <?endif;?>
-        <?if ($_order->getShippingAmount()):?>
+        <?if ($_order->getShippingAmount() || $_order->getShippingDescription()):?>
             <tr>
                 <td colspan="2" align="right" style="padding:3px 9px"><?=$this->__('Shipping & Handling')?></td>
                 <td align="right" style="padding:3px 9px"><?=$_order->formatPrice($_order->getShippingAmount())?></td>

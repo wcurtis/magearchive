@@ -26,7 +26,6 @@ Default layout, loads most of the pages
 
     <default>
         <block type="page/html" name="root" output="toHtml" template="page/3columns.phtml">
-            <block type="core/store" name="store" as="store"/>
 
             <block type="page/html_head" name="head" as="head">
                 <action method="addJs"><script>prototype/prototype.js</script></action>
@@ -48,8 +47,8 @@ Default layout, loads most of the pages
                 <action method="addItem"><type>css</type><name>ie7.css</name><params/><if>IE 7</if></action>
                 <action method="addItem"><type>css</type><name>ie7minus.css</name><params/><if>lt IE 7</if></action>
 
-                <action method="addItem"><type>css</type><name>lib/ds-sleight.js</name><params/><if>lt IE 7</if></action>
-                <action method="addItem"><type>css</type><name>varien/iehover-fix.js</name><params/><if>lt IE 7</if></action>
+                <action method="addItem"><type>js</type><name>lib/ds-sleight.js</name><params/><if>lt IE 7</if></action>
+                <action method="addItem"><type>js</type><name>varien/iehover-fix.js</name><params/><if>lt IE 7</if></action>
 
                 <action method="addCss"><css>print.css</css><params>media="print"</params></action>
             </block>
@@ -58,7 +57,7 @@ Default layout, loads most of the pages
                 <block type="page/html_toplinks" name="top.left.links" as="topLeftLinks"/>
 
                 <block type="page/html_toplinks" name="top.right.links" as="topRightLinks"/>
-
+                <block type="page/switch" name="store_language" as="store_language" template="page/switch/languages.phtml"/>
                 <block type="core/text_list" name="top.menu" as="topMenu"/>
             </block>
 
@@ -74,10 +73,8 @@ Default layout, loads most of the pages
             <block type="core/text_list" name="right" as="right"/>
 
             <block type="page/html_footer" name="footer" as="footer" template="page/html/footer.phtml">
-                <block type="core/store_switcher" name="store_switcher" template="core/stores.phtml"/>
-                <block type="cms/block" name="footer_links">
-                    <action method="setBlockId"><block_id>footer_links</block_id></action>
-                </block>
+                <block type="page/switch" name="store_switcher" as="store_switcher" template="page/switch/stores.phtml"/>
+                <block type="core/template_links" name="footer_links" as="footer_links" template="page/html/links.phtml"/>
             </block>
 
             <block type="core/text_list" name="before_body_end" as="before_body_end"/>
@@ -89,8 +86,6 @@ Default layout, loads most of the pages
     <print>
         <!-- Mage_Page -->
         <block type="page/html" name="root" output="toHtml" template="page/print.phtml">
-
-            <block type="core/store" name="store" as="store"/>
 
             <block type="page/html_head" name="head" as="head">
                 <action method="addJs"><script>prototype/prototype.js</script></action>

@@ -53,7 +53,7 @@ class Mage_Adminhtml_Block_System_Cache_Edit extends Mage_Adminhtml_Block_Widget
 
     public function getSaveUrl()
     {
-        return Mage::getUrl('*/*/save', array('_current'=>true));
+        return $this->getUrl('*/*/save', array('_current'=>true));
     }
 
     public function initForm()

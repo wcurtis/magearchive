@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Mage_Adminhtml_Block_Permissions_Buttons extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Permissions_Buttons extends Mage_Adminhtml_Block_Template
 {
 
     public function __construct()
@@ -33,7 +33,7 @@ class Mage_Adminhtml_Block_Permissions_Buttons extends Mage_Core_Block_Template
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('adminhtml')->__('Back'),
-                    'onclick'   => 'window.location.href=\''.Mage::getUrl('*/*/').'\'',
+                    'onclick'   => 'window.location.href=\''.$this->getUrl('*/*/').'\'',
                     'class' => 'back'
                 ))
         );
@@ -59,7 +59,7 @@ class Mage_Adminhtml_Block_Permissions_Buttons extends Mage_Core_Block_Template
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('adminhtml')->__('Delete Role'),
-                    'onclick'   => 'deleteConfirm(\'' . Mage::helper('adminhtml')->__('Are you sure you want to do this?') . '\', \'' . Mage::getUrl('*/*/delete', array('rid' => $this->getRequest()->getParam('rid'))) . '\')',
+                    'onclick'   => 'deleteConfirm(\'' . Mage::helper('adminhtml')->__('Are you sure you want to do this?') . '\', \'' . $this->getUrl('*/*/delete', array('rid' => $this->getRequest()->getParam('rid'))) . '\')',
                     'class' => 'delete'
                 ))
         );

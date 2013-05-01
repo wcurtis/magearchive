@@ -103,7 +103,7 @@ function giftMessageToogle(giftMessageIdentifier)
         </tr>
         <?endif;?>
 
-        <?if ((float) $_creditmemo->getShippingAmount()):?>
+        <?if ((float) $_creditmemo->getShippingAmount() || $_creditmemo->getShippingDescription()):?>
         <tr>
             <td colspan="6" class="a-right"><?=$this->__('Shipping')?></td>
             <td class="last a-right"><?=$_order->formatPrice($_creditmemo->getShippingAmount())?></td>

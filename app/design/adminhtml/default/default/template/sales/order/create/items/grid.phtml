@@ -63,7 +63,7 @@
                     <tr class="<?=($i%2)?'even':'odd'?>">
                         <td>
                             <?=$_item->getName()?>
-                            <div>
+                            <div  class="nobr">
                                 <strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?>
                             </div>
                             <?if($_item->getMessage()):?>

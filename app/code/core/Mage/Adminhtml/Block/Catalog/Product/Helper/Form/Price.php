@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Price extends Varien_Data_Form_Element_Text
 {
+
     public function __construct($attributes=array())
     {
         parent::__construct($attributes);
@@ -60,4 +61,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Price extends Varien_Data
 
         return number_format($value, 2, null, '');
     }
+
 }
+

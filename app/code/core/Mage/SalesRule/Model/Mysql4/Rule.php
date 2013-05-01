@@ -54,7 +54,7 @@ class Mage_SalesRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         }
 
         if ($rule->getUsesPerCoupon()>0) {
-            $usedPerCoupon = $read->fetchOne('select count(*) from salesrule_customer where rule_id=?', $ruleId);
+            $usedPerCoupon = $read->fetchOne('select count(*) from '.$this->getTable('salesrule/rule_customer').' where rule_id=?', $ruleId);
             if ($usedPerCoupon>=$rule->getUsesPerCoupon()) {
                 return $this;
             }
@@ -65,7 +65,10 @@ class Mage_SalesRule_Model_Mysql4_Rule extends Mage_Core_Model_Mysql4_Abstract
         $customerGroupIds = explode(',', $rule->getCustomerGroupIds());
 
         $fromTime = strtotime($rule->getFromDate());
-        $toTime = strtotime($rule->getToDate())+86400;
+        $toTime = strtotime($rule->getToDate());
+        if ($toTime)
+            $toTime += 86400;
+
         $couponCode = $rule->getCouponCode() ? "'".$rule->getCouponCode()."'" : 'NULL';
         $sortOrder = (int)$rule->getSortOrder();
 

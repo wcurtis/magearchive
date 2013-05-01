@@ -70,15 +70,29 @@ class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_En
     {
         $countSelect = clone $this->getSelect();
         $countSelect->reset();
-        $quote = Mage::getResourceSingleton('sales/quote_item');
-        /* @var $quote Mage_Sales_Model_Entity_Quote */
-        $attr = $quote->getAttribute('product_id');
-        /* @var $attr Mage_Eav_Model_Entity_Attribute_Abstract */
-        $tableName = $attr->getBackend()->getTable();
-        $fieldName = $attr->getBackend()->isStatic() ? 'product_id' : 'value';
+        $quoteItem = Mage::getResourceSingleton('sales/quote_item');
+        /* @var $quoteItem Mage_Sales_Model_Entity_Quote */
+        $productIdAttr = $quoteItem->getAttribute('product_id');
+        /* @var $productIdAttr Mage_Eav_Model_Entity_Attribute_Abstract */
+        $productIdAttrId = $productIdAttr->getAttributeId();
+        $productIdTableName = $productIdAttr->getBackend()->getTable();
+        $productIdFieldName = $productIdAttr->getBackend()->isStatic() ? 'product_id' : 'value';
 
-        $countSelect->from($tableName, "count({$tableName}.{$fieldName})")
-            ->where("{$tableName}.{$fieldName} = e.{$this->productEntityId}");
+        $quote = Mage::getResourceSingleton('sales/quote');
+        /* @var $quote Mage_Sales_Model_Entity_Quote */
+        $isActiveAtrr = $quote->getAttribute('is_active');
+        /* @var $attrIsActive Mage_Eav_Model_Entity_Attribute_Abstract */
+        $isActiveTableName = $isActiveAtrr->getBackend()->getTable();
+        $isActiveFieldName = $isActiveAtrr->getBackend()->isStatic() ? 'is_active' : 'value';
+
+        $countSelect->from(array("quote_items" => $productIdTableName), "count(*)")
+            ->from(array("quotes1" => $isActiveTableName), array())
+            ->from(array("quotes2" => $isActiveTableName), array())
+            ->where("quote_items.{$productIdFieldName} = e.{$this->productEntityId}")
+            ->where("quote_items.attribute_id = {$productIdAttrId}")
+            ->where("quote_items.entity_id = quotes1.entity_id")
+            ->where("quotes2.entity_id = quotes1.parent_id")
+            ->where("quotes2.is_active = 1");
 
         $this->getSelect()
             ->from("", array("carts" => "({$countSelect})"))
@@ -91,15 +105,17 @@ class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_En
     {
         $countSelect = clone $this->getSelect();
         $countSelect->reset();
-        $order = Mage::getResourceSingleton('sales/order_item');
-        /* @var $order Mage_Sales_Model_Entity_Quote */
-        $attr = $order->getAttribute('product_id');
+        $orderItem = Mage::getResourceSingleton('sales/order_item');
+        /* @var $orderItem Mage_Sales_Model_Entity_Quote */
+        $attr = $orderItem->getAttribute('product_id');
         /* @var $attr Mage_Eav_Model_Entity_Attribute_Abstract */
+        $attrId = $attr->getAttributeId();
         $tableName = $attr->getBackend()->getTable();
         $fieldName = $attr->getBackend()->isStatic() ? 'product_id' : 'value';
 
-        $countSelect->from($tableName, "count({$tableName}.{$fieldName})")
-            ->where("{$tableName}.{$fieldName} = e.{$this->productEntityId}");
+        $countSelect->from($tableName, "count(*)")
+            ->where("{$tableName}.{$fieldName} = e.{$this->productEntityId}
+                        and {$tableName}.attribute_id = {$attrId}");
 
         $this->getSelect()
             ->from("", array("orders" => "({$countSelect})"))

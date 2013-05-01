@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Adminhtml_Block_Template
 {
     protected function _construct()
     {
@@ -42,7 +42,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Info extends Mage_Core_Block_Templat
     public function getCustomerGroupName()
     {
         if ($this->getOrder()) {
-            return Mage::getModel('customer/group')->load($this->getOrder()->getCustomerGroupId())->getCode();
+            return Mage::getModel('customer/group')->load((int)$this->getOrder()->getCustomerGroupId())->getCode();
         }
         return null;
     }

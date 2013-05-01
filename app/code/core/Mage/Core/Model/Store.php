@@ -41,6 +41,7 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
     protected $_priceFilter;
 
     protected $_website;
+    protected $_group;
 
     protected $_configCache = array();
 
@@ -162,7 +163,9 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
             Mage::log('Invalid store configuration path: '.$path);
             return null;
         }
-        if (!$data->children()) {
+        return $this->_processConfigValue($fullPath, $path, $data);
+
+        if (!$data->hasChildren()) {
             $value = $this->processSubst((string)$data);
         } else {
             $value = array();
@@ -188,6 +191,45 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
     public function getWebsite()
     {
         return Mage::app()->getWebsite($this->getConfig('system/website/id'));
+    }
+
+    protected function _processConfigValue($fullPath, $path, $node)
+    {
+        if (isset($this->_configCache[$path])) {
+            return $this->_configCache[$path];
+        }
+
+        if ($node->hasChildren()) {
+            $aValue = array();
+            foreach ($node->children() as $k=>$v) {
+                $aValue[$k] = $this->_processConfigValue($fullPath.'/'.$k, $path.'/'.$k, $v);
+            }
+            $this->_configCache[$path] = $aValue;
+            return $aValue;
+        }
+
+        $sValue = (string)$node;
+        if (!empty($node['backend_model']) && !empty($sValue)) {
+            $backend = Mage::getModel((string)$node['backend_model']);
+            $backend->setPath($path)->setValue($sValue)->afterLoad();
+            $sValue = $backend->getValue();
+        }
+
+        if (is_string($sValue) && strpos($sValue, '{{')!==false) {
+            if (strpos($sValue, '{{unsecure_base_url}}')!==false) {
+                $unsecureBaseUrl = $this->getConfig('web/unsecure/base_url');
+                $sValue = str_replace('{{unsecure_base_url}}', $unsecureBaseUrl, $sValue);
+            } elseif (strpos($sValue, '{{secure_base_url}}')!==false) {
+                $secureBaseUrl = $this->getConfig('web/secure/base_url');
+                $sValue = str_replace('{{secure_base_url}}', $secureBaseUrl, $sValue);
+            } else {
+                $sValue = Mage::getConfig()->substDistroServerVars($sValue);
+            }
+        }
+
+        $this->_configCache[$path] = $sValue;
+
+        return $sValue;
     }
 
     public function processSubst($value)
@@ -301,7 +343,6 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
                 return false;
             }
             $uri = Zend_Uri::factory($secureBaseUrl);
-            list($secureScheme) = explode(':', $secureBaseUrl);
             return $uri->getScheme() == 'https'
                 && $uri->getPort() == $_SERVER['SERVER_PORT'];
         } else {
@@ -488,5 +529,41 @@ class Mage_Core_Model_Store extends Mage_Core_Model_Abstract
             }
         }
         return $this->_priceFilter;
+    }
+
+    public function getRootCategoryId()
+    {
+        if (!$this->getGroup()) {
+            return 0;
+        }
+        return $this->getGroup()->getRootCategoryId();
+    }
+
+    public function getGroup()
+    {
+        if (!$this->getGroupId()) {
+            return false;
+        }
+        if (is_null($this->_group)) {
+            $this->_group = Mage::getModel('core/store_group')->load($this->getGroupId());
+        }
+        return $this->_group;
+    }
+
+    public function getStoreInGroupCount()
+    {
+        if (!$this->getGroupId()) {
+            return 0;
+        }
+        return $this->getCollection()->addGroupFilter($this->getGroupId())->getSize();
+    }
+
+    public function isCanDelete()
+    {
+        if (!$this->getId()) {
+            return false;
+        }
+
+        return $this->getGroup()->getDefaultStoreId() != $this->getId();
     }
 }

@@ -135,37 +135,89 @@ class Mage_Paypal_ExpressController extends Mage_Core_Controller_Front_Action
 
     public function saveOrderAction()
     {
+        /*
+        * 1- create order
+        * 2- place order (call doexpress checkout)
+        * 3- save order
+        */
+        $error_message = '';
+
         try {
-            $this->getExpress()->placeOrder($this->getReview()->getQuote()->getPayment());
+            $address = $this->getReview()->getQuote()->getShippingAddress();
+            if (!$address->getShippingMethod()) {
+                if ($shippingMethod = $this->getRequest()->getParam('shipping_method')) {
+                    $this->getReview()->saveShippingMethod($shippingMethod);
+                } else {
+                    Mage::getSingleton('paypal/session')->addError(Mage::helper('paypal')->__('Please select a valid shipping method'));
+                    $this->_redirect('paypal/express/review');
+                    return;
+                }
+            }
+            $billing = $this->getReview()->getQuote()->getBillingAddress();
+            $shipping = $this->getReview()->getQuote()->getShippingAddress();
+
+            $convertQuote = Mage::getModel('sales/convert_quote');
+            /* @var $convertQuote Mage_Sales_Model_Convert_Quote */
+            $order = Mage::getModel('sales/order');
+            /* @var $order Mage_Sales_Model_Order */
+
+            $order = $convertQuote->addressToOrder($shipping);
+            $order->setBillingAddress($convertQuote->addressToOrderAddress($billing));
+            $order->setShippingAddress($convertQuote->addressToOrderAddress($shipping));
+            $order->setPayment($convertQuote->paymentToOrderPayment($this->getReview()->getQuote()->getPayment()));
+
+            foreach ($this->getReview()->getQuote()->getAllItems() as $item) {
+                   $order->addItem($convertQuote->itemToOrderItem($item));
+            }
+            /**
+              * We can use configuration data for declare new order status
+            */
+            Mage::dispatchEvent('checkout_type_onepage_save_order', array('order'=>$order, 'quote'=>$this->getReview()->getQuote()));
+
+            //customer checkout from shopping cart page
+            if (!$order->getCustomerEmail()) {
+                $order->setCustomerEmail($shipping->getEmail());
+            }
+
+            $order->place();
+
+        } catch (Mage_Core_Exception $e){
+            $error_message = $e->getMessage();
+        } catch (Exception $e){
+            if (isset($order)) {
+                $error_message = $order->getErrors();
+            } else {
+                $error_message = $e->getMessage();
+            }
+        }
+
+        if ($error_message) {
+            Mage::getSingleton('paypal/session')->addError($e->getMessage());
+            $this->_redirect('paypal/express/review');
+            return;
+        }
+
+        try {
+            $this->getExpress()->placeOrder($order->getPayment());
         } catch (Exception $e) {
             Mage::getSingleton('paypal/session')->addError($e->getMessage());
             $this->_redirect('paypal/express/review');
             return;
         }
 
-        $address = $this->getReview()->getQuote()->getShippingAddress();
-        if (!$address->getShippingMethod()) {
-            if ($shippingMethod = $this->getRequest()->getParam('shipping_method')) {
-                $this->getReview()->saveShippingMethod($shippingMethod);
-            } else {
-                Mage::getSingleton('paypal/session')->addError(Mage::helper('paypal')->__('Please select a valid shipping method'));
-                $this->_redirect('paypal/express/review');
-                return;
-            }
-        }
 
-        $result = $this->getReview()->saveOrder();
-#echo "<pre>".print_r($result,1)."</pre>";
-        if (!empty($result['success'])) {
-            $this->_redirect('checkout/onepage/success');
-        } else {
-            if (empty($result['error_messages'])) {
-                $result['error_messages'][] = Mage::helper('paypal')->__('Unknown error during order save.');
-            }
-            foreach ($result['error_messages'] as $error) {
-                Mage::getSingleton('paypal/session')->addError($error);
-            }
-            $this->_redirect('paypal/express/review');
-        }
+        $order->save();
+
+        $this->getReview()->getQuote()->setIsActive(false);
+        $this->getReview()->getQuote()->save();
+
+        $orderId = $order->getIncrementId();
+        $this->getReview()->getCheckout()->setLastQuoteId($this->getReview()->getQuote()->getId());
+        $this->getReview()->getCheckout()->setLastOrderId($order->getId());
+        $this->getReview()->getCheckout()->setLastRealOrderId($order->getIncrementId());
+
+        $order->sendNewOrderEmail();
+
+        $this->_redirect('checkout/onepage/success');
     }
 }

@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sales_Order_Create_Search_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -160,7 +160,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Search_Grid extends Mage_Adminhtml
             'header'    => Mage::helper('sales')->__('Qty To Add'),
             'name'    	=> 'qty',
             'inline_css'=> 'qty',
-            'align'     => 'center',
+            'align'     => 'right',
             'type'      => 'input',
             'validate_class' => 'validate-number',
             'index'     => 'qty',
@@ -172,7 +172,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Search_Grid extends Mage_Adminhtml
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/loadBlock', array('block'=>'search_grid', '_current' => true, 'collapse' => null));
+        return $this->getUrl('*/*/loadBlock', array('block'=>'search_grid', '_current' => true, 'collapse' => null));
     }
 
     protected function _getSelectedProducts()
@@ -191,4 +191,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Search_Grid extends Mage_Adminhtml
     {
         return Mage::getSingleton('adminhtml/giftmessage_save');
     }
+
 }
+

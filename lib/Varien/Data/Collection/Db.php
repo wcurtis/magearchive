@@ -207,8 +207,38 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
      */
     public function addFieldToFilter($field, $condition)
     {
+        $field = $this->_getMappedField($field);
         $this->_sqlSelect->where($this->_getConditionSql($field, $condition));
         return $this;
+    }
+
+    /**
+     * Try to get mapped field name for filter to collection
+     *
+     * @param string
+     * @return string
+     */
+    protected function _getMappedField($field)
+    {
+        $mappedFiled = $field;
+
+        $mapper = $this->_getMapper();
+
+        if (isset($mapper['fields'][$field])) {
+            $mappedFiled = $mapper['fields'][$field];
+        }
+
+        return $mappedFiled;
+    }
+
+    protected function _getMapper()
+    {
+        if (isset($this->_map)) {
+            return $this->_map;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

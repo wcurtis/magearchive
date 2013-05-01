@@ -36,7 +36,7 @@
                 <tr class="<?=$_i%2?'odd':'even'?>">
                     <td>
                         <?=$_item->getName()?>
-                        <div><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
+                        <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
                     </td>
                     <td><?=$this->getQtyHtml($_item->getOrderItem())?></td>
                     <td class="last">
@@ -50,7 +50,7 @@
 <table cellpadding="0" cellspacing="0" width="100%">
     <tr>
         <td>&nbsp;</td>
-        <td width="33%" style="padding-right:30px">
+        <td width="33%">
         <div class="entry-edit">
             <h4 class=""><?=Mage::helper('sales')->__('Shipment Comment')?></h4>
             <fieldset>

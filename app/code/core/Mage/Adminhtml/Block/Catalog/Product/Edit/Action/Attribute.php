@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml catalog product action attribute update
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute extends Mage_Adminhtml_Block_Widget
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -47,7 +49,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute extends Mage_Ad
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Reset'),
-                    'onclick'   => 'setLocation(\''.Mage::getUrl('*/*/*', array('_current'=>true)).'\')'
+                    'onclick'   => 'setLocation(\''.$this->getUrl('*/*/*', array('_current'=>true)).'\')'
                 ))
         );
 
@@ -101,4 +103,4 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute extends Mage_Ad
         return $this->getUrl('*/*/save');
     }
 
-} // Class Mage_Adminhtml_Block_Catalog_Product_Edit_Action_Attribute End
+}

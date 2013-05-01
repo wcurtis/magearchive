@@ -36,7 +36,7 @@
      <?foreach($this->getItemCollection() as $_item):?>
         <li>
             <div class="product-images">
-                <a href="<?=$_item->getProduct()->getProductUrl()?>"><img src="<?=$_item->getProduct()->getThumbnailUrl()?>" alt="<?=$_item->getName()?>" width="50"/></a>
+                <a href="<?=$this->helper('checkout')->getQuoteItemProductUrl($_item)?>"><img src="<?=$_item->getProduct()->getThumbnailUrl()?>" alt="<?=$_item->getName()?>" width="50"/></a>
             </div>
             <div class="product-details">
                 <a href="<?=$this->getRemoveItemUrl($_item)?>" onclick="return confirm('<?=$this->__('Are you sure you would like to remove this item from the shopping cart?')?>');" class="widget-btn"><img src="<?=$this->getSkinUrl('images/list_remove_btn.gif')?>" alt="<?=$this->__('Remove Product')?>"/></a>

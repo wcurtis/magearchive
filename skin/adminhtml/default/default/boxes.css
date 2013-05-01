@@ -67,9 +67,11 @@
 .box-left .content, .box-right content { padding:6px; }
 
 /* Basic form elements */
+td.input-ele, td.label { padding: 5px 0; }
 .input-text, textarea, select { border:1px solid #acacac; }
 .input-text, textarea, select, optgroup { font:12px arial, helvetica, sans-serif; }
 .input-text, textarea { padding:2px; }
+.multi-input {padding-bottom:2px}
 select optgroup { font-weight:bold; }
 select optgroup option { font-weight:normal; padding-left:10px}
 
@@ -283,6 +285,29 @@ BODY.html-body-popup{
 .content-header button.scalable { margin-bottom:5px; }
 .content-header .form-buttons {  text-align:right; }
 .nested-content .content-header { margin-top:-2.4em; }
+
+.content-header-floating {
+    position:fixed;
+    left:0;
+    top:0;
+    display:none;
+    border:0;
+    border-bottom:solid 1px #988753;
+    background:#fdfaa4;
+    padding:6px 8px 4px 8px;
+    opacity:.85;
+    -moz-opacity:.85;
+    filter:alpha(opacity=85);
+    width:100%;
+}
+.content-header-floating td {
+    padding-right:20px;
+}
+
+.content-header-floating button {
+    margin-top:3px;
+}
+
 /* Box Head */ /* Used when the section heading contains more than just text heading */
 .box-head {
         margin-bottom:.6em;
@@ -333,7 +358,7 @@ BODY.html-body-popup{
 .head-shipping-method { background-image:url(images/fam_lorry.gif); }
 .head-payment-method { background-image:url(images/fam_creditcards.gif); }
 
-.head-order-date { background-image:url(images/fam/calendar.png); }
+.head-order-date { background-image:url(images/fam_calendar.gif); }
 .head-customer-sales-statistics { background-image:url(images/fam_money.png); }
 
 .order-coupons .icon-head { display:none !important; }
@@ -567,6 +592,7 @@ img.attribute-global {
 .order-totals table { border: none; background: none; margin-left: auto; }
 .order-totals table td { padding:2px 10px; text-align: right; }
 .order-totals table td.last { padding:2px 6px; }
+.grand-total {color:#E66F20;}
 
 /* Ratings */
 
@@ -741,6 +767,7 @@ img.attribute-global {
 .tab-footer .totals, .tab-footer .totals tr, .tab-footer .totals td { background:transparent; }
 .tab-footer .totals .label { text-align:right; line-height:24px; }
 .tab-footer .totals .value div { width:auto; padding:2px 6px; background:#faf2de; border:1px solid #b2b0aa; color:#137a41; text-align:left; }
+
 
 .tab-footer-bottom { margin-left:25px; background:transparent url(images/db-tab-bottom-mid-bg.gif) repeat-x top; width:522px; }
 .tab-footer-left { width:3px; float:left; background:transparent url(images/db-tab-bottom-left-bg.gif) no-repeat top; }
@@ -1047,3 +1074,6 @@ td.giftmessage-single-item {
     border: 1px solid #90c898;
     background-color: #e5ffed;
 }
+
+.entry-edit table.bar { text-align:center; width:100%; }
+.entry-edit table.bar div { text-align:center; padding:15px 10px; }

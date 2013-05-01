@@ -50,59 +50,45 @@ function giftMessageToogle(giftMessageIdentifier)
 </script>
 <?endif;?>
 <? $_order = $this->getOrder() ?>
-
+<? if ($_order->getTracksCollection()->count()) : ?>
+<div style="float:right">
+<a href="#" id="linkId" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?=$this->__('Track all shipment(s)')?>"><?=$this->__('Track all shipments')?></a>
+</div>
+<?endif;?>
 <?foreach ($_order->getShipmentsCollection() as $_shipment):?>
 <br />
 <div class="head">
     <h3>Shipment #<?=$_shipment->getIncrementId();?></h3>
     <!--<a href="#">Print shipment</a>-->
 </div>
-
-<h4><?=$this->__('Items Shipped')?>
-
-<? if ($_order->getTracksCollection()->count()) : ?>
-<span class="separator">|</span>
-<a href="#" id="linkId" onclick="shipping.getShipping();return false;"><?=$this->__('Track your order')?></a>
-<span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
-    <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading...')?> &nbsp;
-</span></h4>
-<div id="shipping"></div>
-
-<script type="text/javascript">
-var Shipping = Class.create();
-Shipping.prototype = {
-    initialize: function(){
-        this.onShippingLoad = this.showShipping.bindAsEventListener(this);
-    },
-
-    getShipping: function(){
-        $('shipping-method-please-wait').show();
-        request = new Ajax.Request('<?=$this->helper('shipping')->getTrackingAjaxUrl()?>',{
-            method:     'post',
-            parameters: {order_id: <?=$_order->getId()?>},
-            onSuccess:  this.onShippingLoad,
-            onFailure:  function (){$('shipping').update("<?=$this->__('Can\'t get shipping information.')?>")},
-            onComplete: function (transport){$('shipping-method-please-wait').hide()}
-        });
-    },
-    showShipping: function (transport){
-        if (transport && transport.responseText){
-            $('shipping').update(transport.responseText)
-        } else {
-            $('shipping').update('<?=$this->__('Error in response.')?>');
-        }
-    },
-}
-var shipping = new Shipping();
-</script>
-<?else:?>
-</h4>
-<?endif;?>
+<table class="data">
+<?$tracks = $_shipment->getTracksCollection();?>
+<? if ($tracks->count()):?>
+    <tr><td colspan="2"><a href="#" id="linkId" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByShipId($_shipment->getId())?>','trackshipment','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?=$this->__('Track this shipment')?>"><?=$this->__('Track this shipment')?></a></td></tr>
+    <tr>
+    <td class="label">Tracking Number(s):</td>
+    <td>&nbsp;
+    <?
+    $i = 1;
+    $_size = $tracks->count();
+    foreach($tracks as $track):?>
+    <?if($track->isCustom()):?>
+        <?=$track->getNumber()?>
+    <?else:?>
+    <a href="#" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByTrackID($track->getEntityId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" ><?=$track->getNumber()?></a>
+    <?endif;?>
+    <?if($i!=$_size):?>, <?endif;?>
+    <?$i++;
+    endforeach;?>
+    </td>
+<? endif;?>
+</table>
+<h4><?=$this->__('Items Shipped')?></h4>
 <table cellspacing="0" class="data-table" id="my-orders-table-<?=$_shipment->getId();?>">
     <thead>
         <tr>
             <th><?=$this->__('Product Name')?></th>
-            <th class="a-center"><?=$this->__('Qty Shipped')?></th>
+            <th class="a-center" width="25%"><?=$this->__('Qty Shipped')?></th>
         </tr>
     </thead>
     <tbody>

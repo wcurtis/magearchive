@@ -17,7 +17,7 @@
  * @package    Zend_Db
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Db.php 7188 2007-12-18 16:48:27Z darby $
+ * @version    $Id: Db.php 7676 2008-01-29 14:33:24Z darby $
  */
 
 
@@ -54,7 +54,7 @@ class Zend_Db
     const AUTO_QUOTE_IDENTIFIERS = 'autoQuoteIdentifiers';
 
     /**
-     * Use the INT_TYPE, BIGINT_TYPE, and FLOAT_TYPE with the quoteType() method.
+     * Use the INT_TYPE, BIGINT_TYPE, and FLOAT_TYPE with the quote() method.
      */
     const INT_TYPE    = 0;
     const BIGINT_TYPE = 1;

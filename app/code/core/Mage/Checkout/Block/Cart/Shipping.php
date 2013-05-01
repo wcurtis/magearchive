@@ -76,4 +76,14 @@ class Mage_Checkout_Block_Cart_Shipping extends Mage_Checkout_Block_Cart_Abstrac
     {
         return $this->getQuote()->getShippingAddress()->getPostcode();
     }
+
+    public function getEstimateCity()
+    {
+        return $this->getQuote()->getShippingAddress()->getCity();
+    }
+
+    public function getCityActive()
+    {
+        return (bool)Mage::getStoreConfig('carriers/dhl/active');
+    }
 }

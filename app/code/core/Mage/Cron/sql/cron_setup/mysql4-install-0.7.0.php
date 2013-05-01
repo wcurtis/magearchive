@@ -33,9 +33,9 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 
 /*Table structure for table `cron_schedule` */
 
-DROP TABLE IF EXISTS `cron_schedule`;
+DROP TABLE IF EXISTS {$this->getTable('cron_schedule')};
 
-CREATE TABLE `cron_schedule` (
+CREATE TABLE {$this->getTable('cron_schedule')} (
   `schedule_id` int(10) unsigned NOT NULL auto_increment,
   `task_name` int(10) unsigned NOT NULL default '0',
   `schedule_status` tinyint(4) NOT NULL default '0',

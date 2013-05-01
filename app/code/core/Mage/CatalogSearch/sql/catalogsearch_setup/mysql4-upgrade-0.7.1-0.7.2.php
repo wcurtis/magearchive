@@ -22,5 +22,5 @@ $installer = $this;
 /* @var $installer Mage_Catalog_Model_Entity_Setup */
 
 $installer->run("
-    ALTER TABLE `catalogsearch_query` ADD `display_in_terms` TINYINT( 1 ) NOT NULL DEFAULT '0';
+    ALTER TABLE {$this->getTable('catalogsearch_query')} ADD `display_in_terms` TINYINT( 1 ) NOT NULL DEFAULT '0';
 ");

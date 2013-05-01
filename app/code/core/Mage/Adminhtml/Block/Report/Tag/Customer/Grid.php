@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Report_Tag_Customer_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -83,6 +83,8 @@ class Mage_Adminhtml_Block_Report_Tag_Customer_Grid extends Mage_Adminhtml_Block
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/customerDetail', array('id'=>$row->entity_id));
+        return $this->getUrl('*/*/customerDetail', array('id'=>$row->entity_id));
     }
+
 }
+

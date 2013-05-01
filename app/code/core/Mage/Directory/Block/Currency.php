@@ -47,6 +47,7 @@ class Mage_Directory_Block_Currency extends Mage_Core_Block_Template
                     Mage::app()->getStore()->getBaseCurrency(),
                     $codes
                 );
+
                 foreach ($codes as $code) {
                     if (isset($rates[$code])) {
                         $currencies[$code] = Mage::app()->getLocale()->getLocale()

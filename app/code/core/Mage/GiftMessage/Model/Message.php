@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Gift Message model
  *
@@ -82,4 +83,4 @@ class Mage_GiftMessage_Model_Message extends Mage_Core_Model_Abstract
         return self::$_allowedEntityTypes;
     }
 
-} // Class Mage_GiftMessage_Model_Message End
+}

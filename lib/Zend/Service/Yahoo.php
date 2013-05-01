@@ -18,7 +18,7 @@
  * @subpackage Yahoo
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Yahoo.php 7340 2008-01-04 16:36:18Z caomhin $
+ * @version    $Id: Yahoo.php 7555 2008-01-21 22:19:09Z caomhin $
  */
 
 
@@ -253,8 +253,7 @@ class Zend_Service_Yahoo
     {
         static $defaultOptions = array('type'     => 'all',
                                        'start'    => 1,
-                                       'sort'     => 'rank',
-                                       'language' => 'en');
+                                       'sort'     => 'rank');
 
         $options = $this->_prepareOptions($query, $options, $defaultOptions);
 
@@ -411,7 +410,6 @@ class Zend_Service_Yahoo
     {
         static $defaultOptions = array('type'     => 'all',
                                        'start'    => 1,
-                                       'language' => 'en',
                                        'license'  => 'any',
                                        'results'  => 10,
                                        'format'   => 'any');
@@ -704,7 +702,9 @@ class Zend_Service_Yahoo
             throw new Zend_Service_Exception("Invalid value for option 'start': {$options['start']}");
         }
 
-        $this->_validateLanguage($options['language']);
+        if (isset($options['language'])) {
+            $this->_validateLanguage($options['language']);
+        }
 
         $this->_validateInArray('sort', $options['sort'], array('rank', 'date'));
         $this->_validateInArray('type', $options['type'], array('all', 'any', 'phrase'));
@@ -829,7 +829,9 @@ class Zend_Service_Yahoo
             throw new Zend_Service_Exception("Invalid value for option 'start': {$options['start']}");
         }
 
-        $this->_validateLanguage($options['language']);
+        if (isset($options['language'])) {
+            $this->_validateLanguage($options['language']);
+        }
 
         $this->_validateInArray('type', $options['type'], array('all', 'any', 'phrase'));
         $this->_validateInArray('format', $options['format'], array('any', 'html', 'msword', 'pdf', 'ppt', 'rss',

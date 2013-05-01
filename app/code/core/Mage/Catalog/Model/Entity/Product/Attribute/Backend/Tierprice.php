@@ -18,77 +18,77 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog product tier price backend attribute model
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
-
 class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage_Eav_Model_Entity_Attribute_Backend_Abstract
 {
     const CUST_GROUP_ALL = 32000;
-	/**
-	 * DB connections list
-	 *
-	 * @var array
-	 */
-	protected $_connections = array();
+    /**
+     * DB connections list
+     *
+     * @var array
+     */
+    protected $_connections = array();
 
-	/**
-	 * Attribute main table
-	 *
-	 * @var string
-	 */
-	protected $_mainTable = null;
+    /**
+     * Attribute main table
+     *
+     * @var string
+     */
+    protected $_mainTable = null;
 
-	public function getMainTable()
-	{
-		if (is_null($this->_mainTable)) {
-			$this->_mainTable = Mage::getSingleton('core/resource')->getTableName('catalog/product_attribute_tier_price');
-		}
-
-		return $this->_mainTable;
-	}
-
-	public function validate($object)
-	{
-	    $tiers = $object->getData($this->getAttribute()->getName());
-	    if (empty($tiers)) {
-	        return $this;
-	    }
-	    $dup = array();
-	    foreach ($tiers as $tier) {
-	        if (!empty($tier['delete'])) {
-	            continue;
-	        }
-	        $key = $tier['cust_group'].'-'.$tier['price_qty'];
-	        if (!empty($dup[$key])) {
-	            throw Mage::exception('Mage_Catalog', Mage::helper('catalog')->__('Duplicate tier price customer group and quantity.'));
-	        }
-	        $dup[$key] = 1;
-	    }
-	    return $this;
-	}
-
-	public function afterLoad($object)
+    public function getMainTable()
     {
-    	$storeId = $object->getStoreId();
+        if (is_null($this->_mainTable)) {
+            $this->_mainTable = Mage::getSingleton('core/resource')->getTableName('catalog/product_attribute_tier_price');
+        }
+
+        return $this->_mainTable;
+    }
+
+    public function validate($object)
+    {
+        $tiers = $object->getData($this->getAttribute()->getName());
+        if (empty($tiers)) {
+            return $this;
+        }
+        $dup = array();
+        foreach ($tiers as $tier) {
+            if (!empty($tier['delete'])) {
+                continue;
+            }
+            $key = $tier['cust_group'].'-'.$tier['price_qty'];
+            if (!empty($dup[$key])) {
+                throw Mage::exception('Mage_Catalog', Mage::helper('catalog')->__('Duplicate tier price customer group and quantity.'));
+            }
+            $dup[$key] = 1;
+        }
+        return $this;
+    }
+
+    public function afterLoad($object)
+    {
+        $storeId = $object->getStoreId();
 
         $attributeId   = $this->getAttribute()->getId();
-        $entityId	   = $object->getId();
+        $entityId       = $object->getId();
         $entityIdField = $this->getEntityIdField();
 
         $select = $this->getConnection('read')->select()
-        	->from($this->getMainTable(), array(
-        	   'all_groups',
-        	   'customer_group_id AS cust_group',
-        	   'qty AS price_qty',
-        	   'value AS price'
-        	))
-        	->where('store_id = ?', $storeId)
-        	->where($entityIdField . ' = ?', $entityId)
-        	->where('attribute_id = ?', $attributeId);
+            ->from($this->getMainTable(), array(
+               'all_groups',
+               'customer_group_id AS cust_group',
+               'qty AS price_qty',
+               'value AS price'
+            ))
+            ->where('store_id = ?', $storeId)
+            ->where($entityIdField . ' = ?', $entityId)
+            ->where('attribute_id = ?', $attributeId);
 
         $data = $this->getConnection('read')->fetchAll($select);
 
@@ -151,7 +151,6 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage
             $data['entity_type_id']    = $entityTypeId;
 
 
-
             if ($tierPrice['price']<$minimalPrice) {
                 $minimalPrice = $tierPrice['price'];
             }
@@ -185,104 +184,104 @@ class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice extends Mage
 
     /*public function afterSave($object)
     {
-    	$storeId = $object->getStoreId();
+        $storeId = $object->getStoreId();
 
         $attributeId   = $this->getAttribute()->getId();
-        $entityId	   = $object->getId();
+        $entityId       = $object->getId();
         $entityTypeId  = $this->getAttribute()->getEntity()->getTypeId();
         $entityIdField = $this->getEntityIdField();
 
         $connection = $this->getConnection('write');
 
-    	$condition = array(
-    		$connection->quoteInto($entityIdField . ' = ?', $entityId),
-    		$connection->quoteInto('attribute_id = ?', $attributeId)
-    	);
+        $condition = array(
+            $connection->quoteInto($entityIdField . ' = ?', $entityId),
+            $connection->quoteInto('attribute_id = ?', $attributeId)
+        );
 
-    	if (!$this->getAttribute()->getIsGlobal()) {
-    	    $condition[] = $connection->quoteInto('store_id = ?', $storeId);
-    	}
+        if (!$this->getAttribute()->getIsGlobal()) {
+            $condition[] = $connection->quoteInto('store_id = ?', $storeId);
+        }
 
-    	$connection->delete($this->getMainTable(), $condition);
+        $connection->delete($this->getMainTable(), $condition);
 
-    	$tierPrices = $object->getData($this->getAttribute()->getName());
+        $tierPrices = $object->getData($this->getAttribute()->getName());
 
-    	if (!is_array($tierPrices)) {
-    		return;
-    	}
+        if (!is_array($tierPrices)) {
+            return;
+        }
 
-    	$minimalPrice = $object->getPrice();
+        $minimalPrice = $object->getPrice();
 
-    	return $this;
-    	foreach ($tierPrices as $tierPrice) {
-    		if( !isset($tierPrice['price_qty']) || !isset($tierPrice['value']) || strlen($storeId)==0 ) {
-    			continue;
-    		}
+        return $this;
+        foreach ($tierPrices as $tierPrice) {
+            if( !isset($tierPrice['price_qty']) || !isset($tierPrice['value']) || strlen($storeId)==0 ) {
+                continue;
+            }
 
-    		$data = array();
-    		$data[$entityIdField] 	= $entityId;
-    		$data['attribute_id'] 	= $attributeId;
-    		$data['qty']		  	= $tierPrice['price_qty'];
-    		$data['value']		  	= $tierPrice['value'];
-    		$data['tier_type']		= $tierPrice['type'];
-    		$data['entity_type_id'] = $entityTypeId;
+            $data = array();
+            $data[$entityIdField]     = $entityId;
+            $data['attribute_id']     = $attributeId;
+            $data['qty']              = $tierPrice['price_qty'];
+            $data['value']              = $tierPrice['value'];
+            $data['tier_type']        = $tierPrice['type'];
+            $data['entity_type_id'] = $entityTypeId;
 
-    		if ($tierPrice['value']<$minimalPrice) {
-    		    $minimalPrice = $tierPrice['value'];
-    		}
+            if ($tierPrice['value']<$minimalPrice) {
+                $minimalPrice = $tierPrice['value'];
+            }
 
-    		if ($this->getAttribute()->getIsGlobal()) {
-    		    foreach ($object->getStoreIds() as $storeId) {
-        		    $data['store_id'] = $storeId;
-        		    $connection->insert($this->getMainTable(), $data);
-    		    }
-    		}
-    		else {
-    		    $data['store_id'] = $storeId;
-    		    $connection->insert($this->getMainTable(), $data);
-    		}
-    	}
-    	$object->setMinimalPrice($minimalPrice);
-    	$this->getAttribute()->getEntity()->saveAttribute($object, 'minimal_price');
+            if ($this->getAttribute()->getIsGlobal()) {
+                foreach ($object->getStoreIds() as $storeId) {
+                    $data['store_id'] = $storeId;
+                    $connection->insert($this->getMainTable(), $data);
+                }
+            }
+            else {
+                $data['store_id'] = $storeId;
+                $connection->insert($this->getMainTable(), $data);
+            }
+        }
+        $object->setMinimalPrice($minimalPrice);
+        $this->getAttribute()->getEntity()->saveAttribute($object, 'minimal_price');
     }*/
 
     public function afterDelete($object)
     {
-    	if ($object->getUseDataSharing()) {
+        if ($object->getUseDataSharing()) {
             $storeId = $object->getData('store_id');
         } else {
             $storeId = $object->getStoreId();
         }
 
         $attributeId   = $this->getAttribute()->getId();
-        $entityId	   = $object->getId();
+        $entityId       = $object->getId();
         $entityTypeId  = $object->getTypeId();
         $entityIdField = $this->getEntityIdField();
 
         $connection = $this->getConnection('write');
 
-    	$condition = array(
-    		$connection->quoteInto('store_id = ?', $storeId),
-    		$connection->quoteInto($entityIdField . ' = ?', $entityId),
-    		$connection->quoteInto('attribute_id = ?', $attributeId)
-    	);
+        $condition = array(
+            $connection->quoteInto('store_id = ?', $storeId),
+            $connection->quoteInto($entityIdField . ' = ?', $entityId),
+            $connection->quoteInto('attribute_id = ?', $attributeId)
+        );
 
-    	$connection->delete($this->getMainTable(), $condition);
+        $connection->delete($this->getMainTable(), $condition);
     }
 
     /**
      * Return DB connection
      *
-     * @param	string		$type
-     * @return	Zend_Db_Adapter_Abstract
+     * @param    string        $type
+     * @return    Zend_Db_Adapter_Abstract
      */
     public function getConnection($type)
     {
-    	if (!isset($this->_connections[$type])) {
-    		$this->_connections[$type] = Mage::getSingleton('core/resource')->getConnection('catalog_' . $type);
-    	}
+        if (!isset($this->_connections[$type])) {
+            $this->_connections[$type] = Mage::getSingleton('core/resource')->getConnection('catalog_' . $type);
+        }
 
-    	return $this->_connections[$type];
+        return $this->_connections[$type];
     }
 
-}// Class Mage_Catalog_Model_Entity_Product_Attribute_Backend_Tierprice END
+}

@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Sales_Order_Create_Billing_Method_Form extends Mage_Payment_Block_Form_Container
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -73,8 +74,14 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Billing_Method_Form extends Mage_P
         return false;
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Sales_Model_Quote
+     */
     public function getQuote()
     {
         return Mage::getSingleton('adminhtml/session_quote')->getQuote();
     }
+
 }

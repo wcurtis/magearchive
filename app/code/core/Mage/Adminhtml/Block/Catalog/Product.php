@@ -24,47 +24,50 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Catalog_Product extends Mage_Adminhtml_Block_Template
 {
-    public function __construct() 
+
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('catalog/product.phtml');
     }
-    
+
     protected function _prepareLayout()
     {
-        $this->setChild('add_new_button', 
+        $this->setChild('add_new_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Add Product'),
-                    'onclick'   => "setLocation('".Mage::getUrl('*/*/new')."')",
+                    'onclick'   => "setLocation('".$this->getUrl('*/*/new')."')",
                     'class'   => 'add'
                     ))
                 );
-                
-        $this->setChild('store_switcher', 
+
+        $this->setChild('store_switcher',
             $this->getLayout()->createBlock('adminhtml/store_switcher')
                 ->setUseConfirm(false)
-                ->setSwitchUrl(Mage::getUrl('*/*/*', array('store'=>null)))
+                ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
         );
-                
+
         $this->setChild('grid', $this->getLayout()->createBlock('adminhtml/catalog_product_grid', 'product.grid'));
         return parent::_prepareLayout();
     }
-    
+
     public function getAddNewButtonHtml()
     {
         return $this->getChildHtml('add_new_button');
     }
-    
+
     public function getGridHtml()
     {
         return $this->getChildHtml('grid');
     }
-    
+
     public function getStoreSwitcherHtml()
     {
         return $this->getChildHtml('store_switcher');
     }
+
 }
+

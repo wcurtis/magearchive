@@ -79,7 +79,7 @@ originModel.prototype = {
     {
         this.reload = false;
         this.loader = new varienLoader(true);
-        this.regionsUrl = '<?=Mage::getUrl('*/json/countryRegion')?>';
+        this.regionsUrl = "<?=$this->getUrl('*/json/countryRegion')?>";
 
         this.bindCountryRegionRelation();
     },

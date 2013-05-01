@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -80,8 +80,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
             $collection->addAttributeToFilter($attributeId, array('nin'=>array(null)));
         }
 
-
-
         $this->setCollection($collection);
 
         parent::_prepareCollection();
@@ -105,7 +103,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
     {
         $product = Mage::registry('product');
         $attributes = $product->getSuperAttributes(true);
-
 
         $this->addColumn('in_products', array(
             'header_css_class' => 'a-center',
@@ -176,7 +173,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
             'index'     => 'inventory_in_stock'
         ));
 
-
         foreach ($attributes as $attribute) {
             $this->addColumn($attribute->getAttributeCode(), array(
                 'header'    => Mage::helper('catalog')->__($attribute->getFrontend()->getLabel()),
@@ -185,7 +181,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
                 'options'   => $attribute->getSourceModel() ? $this->getOptions($attribute) : ''
             ));
         }
-
 
         return parent::_prepareColumns();
     }
@@ -203,6 +198,8 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/superConfig', array('_current'=>true));
+        return $this->getUrl('*/*/superConfig', array('_current'=>true));
     }
-}// Class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid END
+
+}
+// Class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid END

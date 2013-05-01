@@ -140,7 +140,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
         /**
          * @todo : need remove agregation logic
          */
-        $timeZoneOffset = Mage::app()->getLocale()->date()->getGmtOffset();
+        $timeZoneOffset = Mage::getModel('core/date')->getGmtOffset();//Mage::app()->getLocale()->date()->getGmtOffset();
         $this->_itemObjectClass = 'Varien_Object';
         $this->_setIdFieldName('summary_id');
 
@@ -171,7 +171,7 @@ class Mage_Log_Model_Mysql4_Visitor_Collection extends Varien_Data_Collection_Db
             array('summary_id',
                 'customer_count'=>'SUM(customer_count)',
                 'visitor_count'=>'SUM(visitor_count)',
-                'add_date'=>"DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND)"
+                'add_date'=>"DATE_ADD(summary.add_date, INTERVAL $timeZoneOffset SECOND)"
         ));
 
         $this->_sqlSelect->where("DATE_SUB(summary.add_date, INTERVAL $timeZoneOffset SECOND) >= ( DATE_SUB(?, INTERVAL $timeZoneOffset SECOND) - INTERVAL {$period} {$this->_getRangeByType($type_code)} )", now() );

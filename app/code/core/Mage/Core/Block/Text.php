@@ -19,17 +19,13 @@
  */
 
 
-
-
 /**
  * Base html block
  *
- * @version    1.0
- * @date       Thu Feb 08 05:56:43 EET 2007
  */
-
 class Mage_Core_Block_Text extends Mage_Core_Block_Abstract
 {
+
     public function setText($text)
     {
         $this->setAttribute('text', $text);
@@ -50,12 +46,13 @@ class Mage_Core_Block_Text extends Mage_Core_Block_Abstract
         }
     }
 
-	public function toHtml()
-	{
-		if (!$this->_beforeToHtml()) {
-			return '';
-		}
+    protected function _toHtml()
+    {
+        if (!$this->_beforeToHtml()) {
+            return '';
+        }
 
-    	return $this->getText();
-	}
-}// Class Mage_Core_Block_List END
+        return $this->getText();
+    }
+
+}

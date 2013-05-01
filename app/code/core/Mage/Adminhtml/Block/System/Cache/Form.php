@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Cache management form page
  *
@@ -26,34 +27,34 @@
  */
 class Mage_Adminhtml_Block_System_Cache_Form extends Mage_Adminhtml_Block_Widget_Form
 {
+
     public function initForm()
     {
-        $hlp = Mage::helper('adminhtml');
         $types = array(
-            'config'     => $hlp->__('Configuration'),
-            'layout'     => $hlp->__('Layouts'),
-            'block_html' => $hlp->__('Blocks HTML output'),
-            'eav'        => $hlp->__('EAV types and attributes'),
-            'translate'  => $hlp->__('Translations'),
-            'pear'       => $hlp->__('PEAR Channels and Packages'),
+            'config'     => Mage::helper('adminhtml')->__('Configuration'),
+            'layout'     => Mage::helper('adminhtml')->__('Layouts'),
+            'block_html' => Mage::helper('adminhtml')->__('Blocks HTML output'),
+            'eav'        => Mage::helper('adminhtml')->__('EAV types and attributes'),
+            'translate'  => Mage::helper('adminhtml')->__('Translations'),
+            'pear'       => Mage::helper('adminhtml')->__('PEAR Channels and Packages'),
         );
 
         $options = array(
-            0 => $hlp->__('Disabled'),
-            1 => $hlp->__('Enabled'),
-            2 => $hlp->__('Clean and Disable'),
-            3 => $hlp->__('Clean and Enable')
+            0 => Mage::helper('adminhtml')->__('Disabled'),
+            1 => Mage::helper('adminhtml')->__('Enabled'),
+            2 => Mage::helper('adminhtml')->__('Clean and Disable'),
+            3 => Mage::helper('adminhtml')->__('Clean and Enable')
         );
 
         $form = new Varien_Data_Form();
 
         $fieldset = $form->addFieldset('cache_enable', array(
-            'legend'=>$hlp->__('Cache control')
+            'legend'=>Mage::helper('adminhtml')->__('Cache control')
         ));
 
         $fieldset->addField('refresh_all_cache', 'checkbox', array(
             'name'=>'refresh[all_cache]',
-            'label'=>$hlp->__('Refresh All Cache'),
+            'label'=>Mage::helper('adminhtml')->__('Refresh All Cache'),
             'value'=>1,
         ));
 
@@ -68,7 +69,7 @@ class Mage_Adminhtml_Block_System_Cache_Form extends Mage_Adminhtml_Block_Widget
 
         $fieldset->addField('refresh_catalog_rewrites', 'checkbox', array(
             'name'=>'refresh[catalog_rewrites]',
-            'label'=>$hlp->__('Refresh Catalog Rewrites'),
+            'label'=>Mage::helper('adminhtml')->__('Refresh Catalog Rewrites'),
             'value'=>1,
         ));
 
@@ -76,4 +77,5 @@ class Mage_Adminhtml_Block_System_Cache_Form extends Mage_Adminhtml_Block_Widget
 
         return $this;
     }
+
 }

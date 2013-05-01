@@ -47,9 +47,14 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
 
             if ($keyword = $this->getProduct()->getMetaKeyword()) {
                 $headBlock->setKeywords($keyword);
+            } elseif( $currentCategory = Mage::registry('current_category') ) {
+                $headBlock->setKeywords($this->getProduct()->getName());
             }
+
             if ($description = $this->getProduct()->getMetaDescription()) {
-                $headBlock->setDescription($description);
+                $headBlock->setDescription( ($description) );
+            } else {
+                $headBlock->setDescription( $this->getProduct()->getDescription() );
             }
         }
         $this->getLayout()->createBlock('catalog/breadcrumbs');
@@ -84,6 +89,10 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
      */
     public function getProduct()
     {
+        if (!Mage::registry('product') && $this->getProductId()) {
+            $product = Mage::getModel('catalog/product')->load($this->getProductId());
+            Mage::register('product', $product);
+        }
         return Mage::registry('product');
     }
 
@@ -95,7 +104,7 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
         //die;
         $attributes = $product->getAttributes();
         foreach ($attributes as $attribute) {
-            if ($product->getSuperAttributesIds() && in_array($attribute->getAttributeId(), $product->getSuperAttributesIds())) {
+            if ($product->getSuperAttributesIds() && (in_array($attribute->getAttributeId(), $product->getSuperAttributesIds()) || !$attribute->getUseInSuperProduct())) {
                 continue;
             }
             if ($attribute->getIsVisibleOnFront() && $attribute->getIsUserDefined()) {
@@ -169,6 +178,17 @@ class Mage_Catalog_Block_Product_View extends Mage_Catalog_Block_Product_Abstrac
 	public function canEmailToFriend()
 	{
 	    $sendToFriendModel = Mage::registry('send_to_friend_model');
-	    return $sendToFriendModel->canEmailToFriend();
+	    return $sendToFriendModel && $sendToFriendModel->canEmailToFriend();
+	}
+
+	public function getAddToCartUrl($product, $additional = array())
+	{
+	    $additional = array();
+
+	    if ($this->getRequest()->getParam('wishlist_next')){
+	        $additional['wishlist_next'] = 1;
+	    }
+
+	    return parent::getAddToCartUrl($product, $additional);
 	}
 }

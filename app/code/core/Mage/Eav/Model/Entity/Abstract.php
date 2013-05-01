@@ -49,34 +49,6 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
     protected $_config;
 
     /**
-     * Object to operate with (load, save, optionally delete)
-     *
-     * @var Varien_Object
-     */
-    protected $_object;
-
-    /**
-     * Current store id to retrieve entity for
-     *
-     * @var integer
-     */
-    protected $_storeId;
-
-    /**
-     * Current store to retrieve entity for
-     *
-     * @var Mage_Core_Model_Store
-     */
-    protected $_store;
-
-    /**
-     * Store Ids that share data for this entity
-     *
-     * @var array
-     */
-    protected $_sharedStoreIds=array();
-
-    /**
      * Attributes array by attribute id
      *
      * @var array
@@ -115,13 +87,6 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
     protected $_isPartialLoad = false;
 
     protected $_isPartialSave = false;
-
-    /**
-     * Success/error messages
-     *
-     * @var Mage_Core_Model_Message_Collection
-     */
-    protected $_messages;
 
     /**
      * Set connections for entity operations
@@ -180,8 +145,6 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
 
         if (is_string($type)) {
             $config = Mage::getSingleton('eav/config')->getEntityType($type);
-            #$config = Mage::getModel('eav/entity_type')->loadByCode($type);
-            #Mage::getConfig()->getNode("global/entities/$type");
         } elseif ($type instanceof Mage_Eav_Model_Entity_Type) {
             $config = $type;
         } else {
@@ -193,9 +156,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         }
 
         $this->_config = $config;
-
         $this->_afterSetConfig();
-
         return $this;
     }
 
@@ -210,33 +171,6 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
             throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('Entity is not initialized'));
         }
         return $this->_config;
-    }
-
-    /**
-     * Set object to work with
-     *
-     * @deprecated to be able to use entity as singleton
-     * @param Varien_Object $object
-     * @return Mage_Eav_Model_Entity_Attribute_Abstract
-     */
-    public function setObject(Varien_Object $object)
-    {
-        $this->_object = $object;
-        return $this;
-    }
-
-    /**
-     * Get object current entity's working with
-     *
-     * @deprecated to be able to use entity as singleton
-     * @return Varien_Object
-     */
-    public function getObject()
-    {
-        if (empty($this->_object)) {
-            throw Mage::exception('Mage_Eav', Mage::helper('eav')->__("Entity's object is not initialized"));
-        }
-        return $this->_object;
     }
 
     /**
@@ -257,81 +191,6 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
     public function getTypeId()
     {
         return (int)$this->getConfig()->getEntityTypeId();
-    }
-
-    public function getMessages()
-    {
-        if (empty($this->_messages)) {
-            $this->_messages = Mage::getModel('core/message_collection');
-        }
-        return $this->_messages;
-    }
-
-    /**
-     * Retrieve whether to support data sharing between stores for this entity
-     *
-     * Basically that means 2 things:
-     * - entity table has store_id field which describes the originating store
-     * - store_id is being filtered by all participating stores in share
-     *
-     * @return boolean
-     */
-    public function getUseDataSharing()
-    {
-        return $this->getConfig()->getIsDataSharing();
-    }
-
-    /**
-     * Set store for which entity will be retrieved
-     *
-     * @param integer|string|Mage_Core_Model_Store $store
-     * @return Mage_Eav_Model_Entity_Abstract
-     */
-    public function setStore($storeId=null)
-    {
-        $this->_store = Mage::app()->getStore($storeId);
-        $this->_storeId = $this->_store->getId();
-
-        $this->_sharedStoreIds = $this->getUseDataSharing() ? $this->_store->getDatashareStores($this->getConfig()->getDataSharingKey()) : false;
-        if (empty($this->_sharedStoreIds)) {
-            $this->_sharedStoreIds = array($this->_storeId);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get current store id
-     *
-     * @return integer
-     */
-    public function getStoreId()
-    {
-        if (is_null($this->_storeId)) {
-            $this->setStore();
-        }
-        return $this->_storeId;
-    }
-
-    public function getStore()
-    {
-        if (is_null($this->_store)) {
-            $this->setStore();
-        }
-        return $this->_store;
-    }
-
-    /**
-     * Enter description here...
-     *
-     * @return array|false
-     */
-    public function getSharedStoreIds()
-    {
-        if (empty($this->_sharedStoreIds)) {
-            $this->setStore();
-        }
-        return $this->_sharedStoreIds;
     }
 
     /**
@@ -437,6 +296,12 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         return $attributeInstance;
     }
 
+    /**
+     * Adding attribute to entity
+     *
+     * @param   Mage_Eav_Model_Entity_Attribute_Abstract $attribute
+     * @return  Mage_Eav_Model_Entity_Abstract
+     */
     public function addAttribute(Mage_Eav_Model_Entity_Attribute_Abstract $attribute)
     {
         $attribute->setEntity($this);
@@ -672,12 +537,49 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
     }
 
     /**
+     * Retrieve select object for loading base entity row
+     *
+     * @param   Varien_Object $object
+     * @param   mixed $rowId
+     * @return  Zend_Db_Select
+     */
+    protected function _getLoadRowSelect($object, $rowId)
+    {
+        $select = $this->_read->select()
+            ->from($this->getEntityTable())
+            ->where('entity_type_id=?', $this->getConfig()->getId())
+            ->where($this->getEntityIdField()."=?", $rowId);
+
+        /*if ($this->getUseDataSharing()) {
+            $select->where("store_id in (?)", $this->getSharedStoreIds());
+        }*/
+
+        return $select;
+    }
+
+    /**
+     * Retrieve select object for loading entity attributes values
+     *
+     * @param   Varien_Object $object
+     * @param   mixed $rowId
+     * @return  Zend_Db_Select
+     */
+    protected function _getLoadAttributesSelect($object, $table)
+    {
+        $select = $this->_read->select()
+            ->from($table)
+            ->where($this->getEntityIdField() . '=?', $object->getId());
+            /*->where("store_id=?", $storeId)*/;
+        return $select;
+    }
+
+    /**
      * Load entity's attributes into the object
      *
-     * @param Varien_Object $object
-     * @param integer $entityId
-     * @param array|null $attributes
-     * @return Mage_Eav_Model_Entity_Attribute_Abstract
+     * @param   Varien_Object $object
+     * @param   integer $entityId
+     * @param   array|null $attributes
+     * @return  Mage_Eav_Model_Entity_Abstract
      */
     public function load($object, $entityId, $attributes=array())
     {
@@ -685,22 +587,10 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
             throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('No connection available'));
         }
 
-        $select = $this->_read->select()->from($this->getEntityTable());
-        $select->where($this->getEntityIdField()."=?", $entityId);
-
-        if ($this->getUseDataSharing()) {
-            $select->where("store_id in (?)", $this->getSharedStoreIds());
-        }
+        $select = $this->_getLoadRowSelect($object, $entityId);
 
         $row = $this->_read->fetchRow($select);
         $object->setData($row);
-
-        if ($this->getUseDataSharing()) {
-            $storeId = $row['store_id'];
-        } else {
-            $storeId = $this->getStoreId();
-        }
-        $object->setData('store_id', $storeId);
 
         if (empty($attributes)) {
             $this->loadAllAttributes($object);
@@ -709,14 +599,9 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
                 $this->getAttribute($attrCode);
             }
         }
-        foreach ($this->getAttributesByTable() as $table=>$attributes) {
-            $entityIdField = current($attributes)->getBackend()->getEntityIdField();
-            #$sql = "select attribute_id, value from $table where $entityIdField=".(int)$entityId." and store_id=".$storeId;
-            $select = $this->_read->select()
-                ->from($table)
-                ->where("$entityIdField=?", $entityId)
-                ->where("store_id=?", $storeId);
 
+        foreach ($this->getAttributesByTable() as $table=>$attributes) {
+            $select = $this->_getLoadAttributesSelect($object, $table);
             $values = $this->_read->fetchAll($select);
             if (empty($values)) {
                 continue;
@@ -734,9 +619,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         }
 
         $object->setOrigData();
-
         $this->_afterLoad($object);
-
         return $this;
     }
 
@@ -764,9 +647,9 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
             $object->setEntityTypeId($this->getTypeId());
         }
 
-        if ($this->getUseDataSharing() && !$object->getStoreId()) {
+        /*if ($this->getUseDataSharing() && !$object->getStoreId()) {
             $object->setStoreId($this->getStoreId());
-        }
+        }*/
 
         if (is_null($object->getParentId())) {
             $object->setParentId(0);
@@ -801,7 +684,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         $row = array(
             'entity_type_id' => $entity->getTypeId(),
             'attribute_id' => $attribute->getId(),
-            'store_id' => $object->getStoreId(),
+            //'store_id' => $object->getStoreId(),
             $entityIdField=> $object->getData($entityIdField),
         );
         $newValue = $object->getData($attributeCode);
@@ -1086,7 +969,7 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
         $row = array(
             $entityIdField  => $object->getId(),
             'entity_type_id'=> $object->getEntityTypeId(),
-            'store_id'      => $object->getStoreId(),
+            //'store_id'      => $object->getStoreId(),
             'attribute_id'  => $attribute->getId(),
             'value'         => $value,
         );
@@ -1208,9 +1091,9 @@ abstract class Mage_Eav_Model_Entity_Abstract implements Mage_Eav_Model_Entity_I
 
         $defaultAttributes = $this->_getDefaultAttributes();
 
-        if ($this->getConfig()->getIsDataSharing()) {
+        /*if ($this->getConfig()->getIsDataSharing()) {
             $defaultAttributes[] = 'store_id';
-        }
+        }*/
 
         $defaultAttributes[] = $this->getEntityIdField();
 

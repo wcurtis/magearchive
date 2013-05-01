@@ -59,7 +59,7 @@ class Mage_Directory_Model_Mysql4_Region
         $select = $this->_read->select()
             ->from(array('region'=>$this->_regionTable))
             ->where('region.region_id=?', $regionId)
-            ->join(array('rname'=>$this->_regionNameTable), 
+            ->join(array('rname'=>$this->_regionNameTable),
                 'rname.region_id=region.region_id AND rname.locale=\''.$locale.'\'',
                 array('name'));
 
@@ -75,7 +75,23 @@ class Mage_Directory_Model_Mysql4_Region
             ->from(array('region'=>$this->_regionTable))
             ->where('region.country_id=?', $countryId)
             ->where('region.code=?', $regionCode)
-            ->join(array('rname'=>$this->_regionNameTable), 
+            ->join(array('rname'=>$this->_regionNameTable),
+                'rname.region_id=region.region_id AND rname.locale=\''.$locale.'\'',
+                array('name'));
+
+        $region->setData($this->_read->fetchRow($select));
+        return $this;
+    }
+
+    public function loadByName(Mage_Directory_Model_Region $region, $regionName, $countryId)
+    {
+        $locale = Mage::app()->getLocale()->getLocaleCode();
+
+        $select = $this->_read->select()
+            ->from(array('region'=>$this->_regionTable))
+            ->where('region.country_id=?', $countryId)
+            ->where('region.default_name=?', $regionName)
+            ->join(array('rname'=>$this->_regionNameTable),
                 'rname.region_id=region.region_id AND rname.locale=\''.$locale.'\'',
                 array('name'));
 

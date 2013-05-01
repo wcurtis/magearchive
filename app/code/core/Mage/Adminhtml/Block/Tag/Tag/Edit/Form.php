@@ -40,7 +40,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Edit_Form extends Mage_Adminhtml_Block_Widget
 
         $form = new Varien_Data_Form(array(
                                         'id' => 'edit_form',
-                                        'action' => Mage::getUrl('*/*/save', array('id' => $this->getRequest()->getParam('id'), 'ret' => Mage::registry('ret'))),
+                                        'action' => $this->getUrl('*/*/save', array('id' => $this->getRequest()->getParam('id'), 'ret' => Mage::registry('ret'))),
                                         'method' => 'post'
         ));
 
@@ -73,7 +73,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Edit_Form extends Mage_Adminhtml_Block_Widget
 
         $form->setValues($model->getData());
         $form->setUseContainer(true);
-        $form->setAction( Mage::getUrl($form->getAction(), array(
+        $form->setAction( $this->getUrl($form->getAction(), array(
             'ret' => $this->getRequest()->getParam('ret'),
             'customer_id' => $this->getRequest()->getParam('customer_id'),
             'product_id' => $this->getRequest()->getParam('product_id'),

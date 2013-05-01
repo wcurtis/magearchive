@@ -26,10 +26,10 @@
  */
 class Mage_Catalog_Model_Entity_Category_Tree extends Varien_Data_Tree_Db
 {
-    public function __construct() 
+    public function __construct()
     {
         $resource = Mage::getSingleton('core/resource');
-        
+
         parent::__construct(
             $resource->getConnection('catalog_read'),
             $resource->getTableName('catalog/category_tree'),
@@ -41,14 +41,14 @@ class Mage_Catalog_Model_Entity_Category_Tree extends Varien_Data_Tree_Db
             )
         );
     }
-    
+
     public function addCollectionData($collection)
     {
         $nodeIds = array();
         foreach ($this->getNodes() as $node) {
         	$nodeIds[] = $node->getId();
         }
-        
+
         $collection->addIdFilter($nodeIds)
             ->load();
         foreach ($collection as $category) {

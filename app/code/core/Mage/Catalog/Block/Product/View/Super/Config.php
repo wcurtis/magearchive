@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog super product configurable part block
  *
@@ -52,45 +53,45 @@
         $store = Mage::app()->getStore();
 
         foreach ($this->getAllowProducts() as $productId => $productAttributes) {
-        	foreach ($productAttributes as $attribute) {
-        	    if (!isset($options[$attribute['attribute_id']])) {
-        	        $options[$attribute['attribute_id']] = array();
-        	    }
+            foreach ($productAttributes as $attribute) {
+                if (!isset($options[$attribute['attribute_id']])) {
+                    $options[$attribute['attribute_id']] = array();
+                }
 
-        	    if (!isset($options[$attribute['attribute_id']][$attribute['value_index']])) {
-        	        $options[$attribute['attribute_id']][$attribute['value_index']] = array();
-        	    }
-        	    $options[$attribute['attribute_id']][$attribute['value_index']][] = $productId;
-        	}
+                if (!isset($options[$attribute['attribute_id']][$attribute['value_index']])) {
+                    $options[$attribute['attribute_id']][$attribute['value_index']] = array();
+                }
+                $options[$attribute['attribute_id']][$attribute['value_index']][] = $productId;
+            }
         }
 
         foreach ($this->getAllowAttributes() as $attribute) {
             $attributeId = $attribute['attribute_id'];
-        	$info = array(
-        	   'id'        => $attributeId,
-        	   'code'      => $attribute['attribute_code'],
-        	   'label'     => $attribute['label'],
-        	   'options'   => array()
-        	);
+            $info = array(
+               'id'        => $attributeId,
+               'code'      => $attribute['attribute_code'],
+               'label'     => $attribute['label'],
+               'options'   => array()
+            );
 
-        	foreach ($attribute['values'] as $value) {
-        		//$info['options'][$value['value_index']] = array(
+            foreach ($attribute['values'] as $value) {
+                //$info['options'][$value['value_index']] = array(
 
-        		if(!$this->_validateAttributeValue($attributeId, $value, $options)) {
-        		    continue;
-        		}
+                if(!$this->_validateAttributeValue($attributeId, $value, $options)) {
+                    continue;
+                }
 
-        		$info['options'][] = array(
-        		    'id'    => $value['value_index'],
+                $info['options'][] = array(
+                    'id'    => $value['value_index'],
                     'label' => $value['label'],
                     'price' => $this->_preparePrice($value['pricing_value'], $value['is_percent']),
                     'products'   => isset($options[$attributeId][$value['value_index']]) ? $options[$attributeId][$value['value_index']] : array(),
-        		);
-        	}
+                );
+            }
 
-        	if($this->_validateAttributeInfo($info)) {
-        	   $attributes[$attribute['attribute_id']] = $info;
-        	}
+            if($this->_validateAttributeInfo($info)) {
+               $attributes[$attribute['attribute_id']] = $info;
+            }
         }
 
         $config = array(
@@ -138,12 +139,17 @@
 
     protected function _preparePrice($price, $isPercent=false)
     {
-        if ($isPercent) {
-            $price = $this->getProduct()->getFinalPrice()*$price/100;
+        try {
+            if ($isPercent) {
+                $price = $this->getProduct()->getFinalPrice()*$price/100;
+            }
+            $price = Mage::app()->getStore()->convertPrice($price);
+            $price = Zend_Locale_Format::toNumber($price, array('number_format'=>'##0.00'));
+            return str_replace(',', '.', $price);
+        } catch (Exception $e) {
+            $price = Zend_Locale_Format::toNumber(0, array('number_format'=>'##0.00'));
+            return str_replace(',', '.', $price);
         }
-        $price = Mage::app()->getStore()->convertPrice($price);
-        $price = Zend_Locale_Format::toNumber($price, array('number_format'=>'##0.00'));
-        return str_replace(',', '.', $price);
     }
 
     /**
@@ -156,49 +162,49 @@
         return Mage::registry('product');
     }
 
- 	/*public function getAttributes()
- 	{
- 		if($this->getRequest()->getParam('super_attribute') && is_array($this->getRequest()->getParam('super_attribute'))) {
- 			foreach ($this->getRequest()->getParam('super_attribute') as $attributeId=>$attributeValue) {
- 				if(!empty($attributeValue) && $attribute = Mage::registry('product')->getResource()->getAttribute($attributeId)) {
- 					Mage::registry('product')->getSuperLinkCollection()
- 						->addFieldToFilter($attribute->getAttributeCode(), $attributeValue);
- 				}
- 			}
- 		}
+     /*public function getAttributes()
+     {
+         if($this->getRequest()->getParam('super_attribute') && is_array($this->getRequest()->getParam('super_attribute'))) {
+             foreach ($this->getRequest()->getParam('super_attribute') as $attributeId=>$attributeValue) {
+                 if(!empty($attributeValue) && $attribute = Mage::registry('product')->getResource()->getAttribute($attributeId)) {
+                     Mage::registry('product')->getSuperLinkCollection()
+                         ->addFieldToFilter($attribute->getAttributeCode(), $attributeValue);
+                 }
+             }
+         }
 
- 		return Mage::registry('product')->getSuperAttributes(false, true);
- 	}*/
+         return Mage::registry('product')->getSuperAttributes(false, true);
+     }*/
 
- 	public function canDisplayContainer()
- 	{
- 		return !(bool)$this->getRequest()->getParam('ajax', false);
- 	}
+     public function canDisplayContainer()
+     {
+         return !(bool)$this->getRequest()->getParam('ajax', false);
+     }
 
- 	public function getPricingValue($value)
+     public function getPricingValue($value)
     {
-    	$value = Mage::registry('product')->getPricingValue($value);
-    	$numberSign = $value >= 0 ? '+' : '-';
-    	return ' ' . $numberSign . ' ' . Mage::app()->getStore()->formatPrice(abs($value));
+        $value = Mage::registry('product')->getPricingValue($value);
+        $numberSign = $value >= 0 ? '+' : '-';
+        return ' ' . $numberSign . ' ' . Mage::app()->getStore()->formatPrice(abs($value));
     }
 
     public function isSelectedOption($value, $attribute)
     {
-    	$selected = $this->getRequest()->getParam('super_attribute', array());
-    	if(is_array($selected) && isset($selected[$attribute['attribute_id']]) && $selected[$attribute['attribute_id']]==$value['value_index']) {
-    		return true;
-    	}
+        $selected = $this->getRequest()->getParam('super_attribute', array());
+        if(is_array($selected) && isset($selected[$attribute['attribute_id']]) && $selected[$attribute['attribute_id']]==$value['value_index']) {
+            return true;
+        }
 
-    	return false;
+        return false;
     }
 
     public function getUpdateUrl()
     {
-    	return $this->getUrl('*/*/superConfig', array('_current'=>true));
+        return $this->getUrl('*/*/superConfig', array('_current'=>true));
     }
 
     public function getUpdatePriceUrl()
     {
-    	return $this->getUrl('*/*/price', array('_current'=>true));
+        return $this->getUrl('*/*/price', array('_current'=>true));
     }
- } // Class Mage_Catalog_Block_Product_View_Super_Config end
+ }

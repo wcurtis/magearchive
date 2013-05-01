@@ -84,7 +84,6 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Invoices extends Mage_Adminhtml_
             'header'    => Mage::helper('customer')->__('Amount'),
             'index'     => 'grand_total',
             'type'      => 'currency',
-            'align'     => 'right',
             'currency'  => 'order_currency_code',
         ));
 
@@ -103,7 +102,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Invoices extends Mage_Adminhtml_
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/sales_order_invoice/view',
+        return $this->getUrl('*/sales_order_invoice/view',
             array(
                 'invoice_id'=> $row->getId(),
                 'order_id'  => $row->getOrderId()
@@ -113,6 +112,6 @@ class Mage_Adminhtml_Block_Sales_Order_View_Tab_Invoices extends Mage_Adminhtml_
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/invoices', array('_current' => true));
+        return $this->getUrl('*/*/invoices', array('_current' => true));
     }
 }

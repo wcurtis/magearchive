@@ -26,13 +26,13 @@
  */
 class Mage_Adminhtml_Block_Extensions_Local_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
-	protected function _construct()
-	{
-		$this->setId('packagesGrid');
-		$this->setEmptyText(Mage::helper('adminhtml')->__('No Extensions Found'));
-		$this->setUseAjax(true);
-		$this->setSaveParametersInSession(true);
-	}
+    protected function _construct()
+    {
+        $this->setId('packagesGrid');
+        $this->setEmptyText(Mage::helper('adminhtml')->__('No Extensions Found'));
+        $this->setUseAjax(true);
+        $this->setSaveParametersInSession(true);
+    }
 
     protected function _prepareCollection()
     {
@@ -111,13 +111,15 @@ class Mage_Adminhtml_Block_Extensions_Local_Grid extends Mage_Adminhtml_Block_Wi
 
     public function getRowUrl($row)
     {
-        $url = Mage::getModel('core/url');
+        $url = Mage::getModel('adminhtml/url');
         $url->setQueryParam('id', $row->getId());
         return $url->getUrl('*/*/edit');
     }
 
     public function getGridUrl()
     {
-		return Mage::getUrl('*/*/grid', array('_current'=>true));
+        return $this->getUrl('*/*/grid', array('_current'=>true));
     }
+
 }
+

@@ -22,6 +22,6 @@ $installer = $this;
 /* @var $installer Mage_Catalog_Model_Entity_Setup */
 
 $installer->run("
-ALTER TABLE `eav_attribute` ADD `is_visible_in_advanced_search` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0';
-UPDATE `eav_attribute` SET `eav_attribute`.`is_visible_in_advanced_search` = 1 WHERE `eav_attribute`.`is_searchable` = 1;
+ALTER TABLE {$this->getTable('eav_attribute')} ADD `is_visible_in_advanced_search` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0';
+UPDATE {$this->getTable('eav_attribute')} SET {$this->getTable('eav_attribute')}.`is_visible_in_advanced_search` = 1 WHERE {$this->getTable('eav_attribute')}.`is_searchable` = 1;
 ");

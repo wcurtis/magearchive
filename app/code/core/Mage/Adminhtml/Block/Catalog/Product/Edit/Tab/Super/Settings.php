@@ -36,6 +36,14 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Settings extends Mage_
                     'class'     => 'save'
                     ))
                 );
+
+        $backButton = $this->getLayout()->createBlock('adminhtml/widget_button')
+            ->setData(array(
+                'label'     => Mage::helper('catalog')->__('Back'),
+                'onclick'   => "setLocation('".$this->getBackUrl()."')",
+                'class'     => 'back'
+            ));
+        $this->setChild('back_button', $backButton);
         return parent::_prepareLayout();
     }
 
@@ -48,8 +56,11 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Settings extends Mage_
 
         $product = Mage::registry('product');
         $attributes = $product->getAttributes();
+
+        $hasAttributes = false;
         foreach($attributes as $attribute) {
             if($product->canUseAttributeForSuperProduct($attribute)) {
+                $hasAttributes = true;
                 $fieldset->addField('attribute_'.$attribute->getAttributeId(), 'checkbox', array(
                     'label' => $attribute->getFrontend()->getLabel(),
                     'title' => $attribute->getFrontend()->getLabel(),
@@ -60,22 +71,37 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Settings extends Mage_
             }
         }
 
-        $fieldset->addField('attributes', 'hidden', array(
-                    'name'  => 'attribute_validate',
-                    'value' => '',
-                    'class' => 'validate-super-product-attributes'
-                ));
+        if ($hasAttributes) {
+            $fieldset->addField('attributes', 'hidden', array(
+                        'name'  => 'attribute_validate',
+                        'value' => '',
+                        'class' => 'validate-super-product-attributes'
+                    ));
 
+            $fieldset->addField('continue_button', 'note', array(
+                'text' => $this->getChildHtml('continue_button'),
+            ));
+        }
+        else {
+            $fieldset->addField('note_text', 'note', array(
+                'text' => $this->__('This attribute set do not have attributes which we can use for configurable product')
+            ));
+            $fieldset->addField('back_button', 'note', array(
+                'text' => $this->getChildHtml('back_button'),
+            ));
+        }
 
-        $fieldset->addField('continue_button', 'note', array(
-            'text' => $this->getChildHtml('continue_button'),
-        ));
 
         $this->setForm($form);
     }
 
     public function getContinueUrl()
     {
-        return Mage::getUrl('*/*/new', array('_current'=>true));
+        return $this->getUrl('*/*/new', array('_current'=>true));
+    }
+
+    public function getBackUrl()
+    {
+        return $this->getUrl('*/*/new', array('set'=>null, 'type'=>null));
     }
 }

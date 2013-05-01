@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Base html block
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
 {
+
     /**
      * View scripts directory
      *
@@ -40,23 +42,11 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
      */
     protected $_viewVars = array();
 
-    public function __construct()
+    public function __construct($data=array())
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->_baseUrl = Mage::getBaseUrl();
         $this->_jsUrl = Mage::getBaseUrl('js');
-    }
-
-    /**
-     * Set block template
-     *
-     * @param     string $templateName
-     * @return    Mage_Core_Block_Template
-     */
-    public function setTemplate($templateName)
-    {
-        $this->setTemplateName($templateName);
-        return $this;
     }
 
     /**
@@ -149,8 +139,10 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
             $params['_area'] = $area;
         }
 
-        $templateName = Mage::getDesign()->getTemplateFilename($this->getTemplateName(), $params);
+        $templateName = Mage::getDesign()->getTemplateFilename($this->getTemplate(), $params);
+
         $html = $this->fetchView($templateName);
+
         Varien_Profiler::stop(__METHOD__);
 
         return $html;
@@ -183,21 +175,12 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
      *
      * @return string
      */
-    public function toHtml()
+    protected function _toHtml()
     {
-        if (!($html = $this->_loadCache())) {
-
-            if (!$this->_beforeToHtml()) {
-                return '';
-            }
-
-            if (!$this->getTemplateName()) {
-                return '';
-            }
-
-            $html = $this->renderView();
-            $this->_saveCache($html);
+        if (!$this->getTemplate()) {
+            return '';
         }
+        $html = $this->renderView();
         return $html;
     }
 
@@ -232,4 +215,5 @@ class Mage_Core_Block_Template extends Mage_Core_Block_Abstract
     {
         return $this->_jsUrl.$fileName;
     }
+
 }

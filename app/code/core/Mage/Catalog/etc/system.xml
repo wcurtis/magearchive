@@ -29,27 +29,6 @@
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
-                <category translate="label">
-                    <label>Category</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>1</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>0</show_in_store>
-                    <fields>
-                        <root_id translate="label">
-                            <label>Root category</label>
-                            <frontend_type>select</frontend_type>
-                            <frontend_class>required-entry</frontend_class>
-                            <backend_model>adminhtml/system_config_backend_category</backend_model>
-                            <source_model>adminhtml/system_config_source_category</source_model>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </root_id>
-                    </fields>
-                </category>
                 <frontend translate="label">
                     <label>Frontend</label>
                     <frontend_type>text</frontend_type>
@@ -79,15 +58,15 @@
                     </fields>
                 </frontend>
                 <product translate="label">
-                    <label>Product options</label>
+                    <label>Product Options</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>5</sort_order>
+                    <sort_order>3</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
                         <default_tax_group translate="label">
-                            <label>Default tax class</label>
+                            <label>Default Tax Class</label>
                             <frontend_type>select</frontend_type>
                             <source_model>tax/class_source_product</source_model>
                             <sort_order>1</sort_order>
@@ -97,6 +76,43 @@
                         </default_tax_group>
                     </fields>
                 </product>
+                <!-- <placeholder>
+                    <label>Product Image Placeholders</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>4</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <main_image translate="label">
+                            <label>Main Image</label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_product_placeholder</backend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </main_image>
+                        <small_image translate="label">
+                            <label>Small Image</label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_product_placeholder</backend_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </small_image>
+                        <thumbnail_image translate="label">
+                            <label>Thumbnail Image</label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_product_placeholder</backend_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </thumbnail_image>
+                    </fields>
+                </placeholder> -->
                 <seo translate="label">
                     <label>Search Engine Optimizations</label>
                     <frontend_type>text</frontend_type>

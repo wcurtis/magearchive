@@ -56,10 +56,10 @@ class Mage_Wishlist_Block_Customer_Sidebar extends Mage_Core_Block_Template
 		return $this->_wishlist;
 	}
 
-	public function toHtml()
+	protected function _toHtml()
 	{
         if( sizeof($this->getWishlistItems()->getItems()) > 0 ){
-        	return parent::toHtml();
+        	return parent::_toHtml();
         } else {
             return '';
         }

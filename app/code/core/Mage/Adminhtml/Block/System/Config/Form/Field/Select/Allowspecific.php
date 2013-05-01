@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * System congifuration shipping methods allow all countries selec
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_System_Config_Form_Field_Select_Allowspecific extends Varien_Data_Form_Element_Select
 {
+
     public function getAfterElementHtml()
     {
         $javaScript = "
@@ -50,4 +52,5 @@ class Mage_Adminhtml_Block_System_Config_Form_Field_Select_Allowspecific extends
     {
         return substr($this->getId(), 0, strrpos($this->getId(), 'allowspecific')) . 'specificcountry';
     }
-} // Class Mage_Adminhtml_Block_System_Config_Form_Field_Select_Allowall End
+
+}

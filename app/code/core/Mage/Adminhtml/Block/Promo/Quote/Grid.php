@@ -25,9 +25,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Promo_Quote_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -66,7 +66,7 @@ class Mage_Adminhtml_Block_Promo_Quote_Grid extends Mage_Adminhtml_Block_Widget_
             'width'     => '150px',
             'index'     => 'coupon_code',
         ));
-        
+
         $this->addColumn('from_date', array(
             'header'    => Mage::helper('salesrule')->__('Date Start'),
             'align'     => 'left',
@@ -95,12 +95,13 @@ class Mage_Adminhtml_Block_Promo_Quote_Grid extends Mage_Adminhtml_Block_Widget_
                 0 => 'Inactive',
             ),
         ));
-        
+
         return parent::_prepareColumns();
     }
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array('id' => $row->getRuleId()));
+        return $this->getUrl('*/*/edit', array('id' => $row->getRuleId()));
     }
+
 }

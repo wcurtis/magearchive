@@ -26,12 +26,13 @@
  */
 abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adminhtml_Block_Widget
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('sales/order/create/abstract.phtml');
     }
-    
+
     /**
      * Retrieve create order model object
      *
@@ -41,7 +42,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return Mage::getSingleton('adminhtml/sales_order_create');
     }
-    
+
     /**
      * Retrieve quote session object
      *
@@ -51,7 +52,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return Mage::getSingleton('adminhtml/session_quote');
     }
-    
+
     /**
      * Retrieve quote model object
      *
@@ -61,7 +62,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return $this->_getSession()->getQuote();
     }
-    
+
     /**
      * Retrieve customer model object
      *
@@ -71,7 +72,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return $this->_getSession()->getCustomer();
     }
-    
+
     /**
      * Retrieve customer identifier
      *
@@ -81,7 +82,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return $this->_getSession()->getCustomerId();
     }
-    
+
     /**
      * Retrieve store model object
      *
@@ -91,7 +92,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return $this->_getSession()->getStore();
     }
-    
+
     /**
      * Retrieve store identifier
      *
@@ -101,7 +102,7 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return $this->_getSession()->getStoreId();
     }
-    
+
     /**
      * Retrieve formated price
      *
@@ -112,9 +113,9 @@ abstract class Mage_Adminhtml_Block_Sales_Order_Create_Abstract extends Mage_Adm
     {
         return $this->getStore()->formatPrice($value);
     }
-    
+
     public function convertPrice($value, $format=true)
     {
         return $this->getStore()->convertPrice($value, $format);
-    }    
+    }
 }

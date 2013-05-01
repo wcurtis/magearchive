@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Customer account controller
  *
@@ -266,6 +267,13 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
                 ->setData('lastname', $this->getRequest()->getParam('lastname'))
                 ->setData('email', $this->getRequest()->getParam('email'));
 
+            /*
+            we would like to preserver the existing group id
+            */
+            if (Mage::getSingleton('customer/session')->getCustomerGroupId()) {
+                $customer->setData('group_id',Mage::getSingleton('customer/session')->getCustomerGroupId());
+            }
+
             // try to change customer password if needed
             if ($this->getRequest()->getParam('change_password')) {
 
@@ -337,4 +345,4 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
         $this->_redirect('*/*/edit');
     }
 
-}// Class Mage_Customer_AccountController END
+}

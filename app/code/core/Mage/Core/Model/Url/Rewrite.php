@@ -29,6 +29,9 @@
 class Mage_Core_Model_Url_Rewrite extends Mage_Core_Model_Abstract
 {
 
+    const TYPE_CATEGORY = 1;
+    const TYPE_PRODUCT  = 2;
+    const TYPE_CUSTOM   = 3;
     protected function _construct()
     {
         $this->_init('core/url_rewrite');

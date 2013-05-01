@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -47,7 +47,7 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
 
     protected function _prepareColumns()
     {
-        $baseUrl = Mage::getUrl();
+        $baseUrl = $this->getUrl();
 
         $this->addColumn('name', array(
             'header'    => Mage::helper('tag')->__('Tag'),
@@ -86,7 +86,6 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
             'type'      => 'number',
         ));
 
-
         /*
         $this->addColumn('status', array(
             'header'    => Mage::helper('tag')->__('Status'),
@@ -119,7 +118,6 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
             'renderer'      => 'adminhtml/tag_grid_all_renderer_visible'
         ));
 
-
         $this->addColumn('actions', array(
             'header'    => Mage::helper('tag')->__('Actions'),
             'width'     => '100px',
@@ -129,16 +127,16 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
             'actions'    => array(
                 array(
                     'caption'   => Mage::helper('tag')->__('Edit Tag'),
-                    'url'       => Mage::getUrl('*/*/edit', array('ret' => 'pending', 'tag_id'=>'$tag_id')),
+                    'url'       => $this->getUrl('*/*/edit', array('ret' => 'pending', 'tag_id'=>'$tag_id')),
                 ),
                 array(
                     'caption'   => Mage::helper('tag')->__('View Products'),
-                    'url'       => Mage::getUrl('*/*/product', array('ret' => 'pending', 'tag_id'=>'$tag_id')),
+                    'url'       => $this->getUrl('*/*/product', array('ret' => 'pending', 'tag_id'=>'$tag_id')),
                 ),
 
                 array(
                     'caption'   => Mage::helper('tag')->__('View Customers'),
-                    'url'       => Mage::getUrl('*/*/customer', array('ret' => 'pending', 'tag_id'=>'$tag_id')),
+                    'url'       => $this->getUrl('*/*/customer', array('ret' => 'pending', 'tag_id'=>'$tag_id')),
                 )
             ),
         ));
@@ -148,7 +146,7 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array(
+        return $this->getUrl('*/*/edit', array(
             'tag_id' => $row->getId(),
             'ret'    => 'pending',
         ));
@@ -167,7 +165,7 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
 
     protected function _prepareMassaction()
     {
-        $this->setMassactionIdField('entity_id');
+        $this->setMassactionIdField('tag_id');
         $this->getMassactionBlock()->setFormFieldName('tag');
 
         $this->getMassactionBlock()->addItem('delete', array(
@@ -196,4 +194,5 @@ class Mage_Adminhtml_Block_Tag_Grid_Pending extends Mage_Adminhtml_Block_Widget_
 
         return $this;
     }
+
 }

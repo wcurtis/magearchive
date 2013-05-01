@@ -84,7 +84,7 @@
         </tr>
         <?endif;?>
 
-        <?if ((float) $_source->getShippingAmount()):?>
+        <?if ((float) $_source->getShippingAmount() || $_source->getShippingDescription()):?>
         <tr>
             <td><?=Mage::helper('sales')->__('Shipping')?></td>
             <td align="right"><?=$_currency->format($_source->getShippingAmount())?></td>

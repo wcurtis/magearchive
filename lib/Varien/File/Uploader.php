@@ -293,26 +293,32 @@ class Varien_File_Uploader
         if (empty($_FILES)) {
             throw new Exception('$_FILES array is empty');
         }
-        preg_match("/^(.*?)\[(.*?)\]$/", $fileId, $file);
 
-        if( count($file) > 0 && (count($file[0]) > 0) && (count($file[1]) > 0) ) {
-            array_shift($file);
+        if (is_array($fileId)) {
             $this->_uploadType = self::MULTIPLE_STYLE;
+            $this->_file = $fileId;
+        } else {
+            preg_match("/^(.*?)\[(.*?)\]$/", $fileId, $file);
 
-            $fileAttributes = $_FILES[$file[0]];
-            $tmp_var = array();
+            if( count($file) > 0 && (count($file[0]) > 0) && (count($file[1]) > 0) ) {
+                array_shift($file);
+                $this->_uploadType = self::MULTIPLE_STYLE;
 
-            foreach( $fileAttributes as $attributeName => $attributeValue ) {
-                $tmp_var[$attributeName] = $attributeValue[$file[1]];
+                $fileAttributes = $_FILES[$file[0]];
+                $tmp_var = array();
+
+                foreach( $fileAttributes as $attributeName => $attributeValue ) {
+                    $tmp_var[$attributeName] = $attributeValue[$file[1]];
+                }
+
+                $fileAttributes = $tmp_var;
+                $this->_file = $fileAttributes;
+            } elseif( count($fileId) > 0 && isset($_FILES[$fileId])) {
+                $this->_uploadType = self::SINGLE_STYLE;
+                $this->_file = $_FILES[$fileId];
+            } elseif( $fileId == '' ) {
+                throw new Exception('Invalid parameter given. A valid $_FILES[] identifier is expected.');
             }
-
-            $fileAttributes = $tmp_var;
-            $this->_file = $fileAttributes;
-        } elseif( count($fileId) > 0 && isset($_FILES[$fileId])) {
-            $this->_uploadType = self::SINGLE_STYLE;
-            $this->_file = $_FILES[$fileId];
-        } elseif( $fileId == '' ) {
-            throw new Exception('Invalid parameter given. A valid $_FILES[] identifier is expected.');
         }
     }
 

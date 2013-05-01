@@ -50,6 +50,8 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setStoreId($quote->getStoreId())
             ->setQuoteId($quote->getId())
 
+            ->setRemoteIp($quote->getRemoteIp())
+
             /**
              * Customer data
              */
@@ -61,6 +63,7 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setCustomerTaxClassId($quote->getCustomerTaxClassId())
             ->setCustomerNote($quote->getCustomerNote())
             ->setCustomerNoteNotify($quote->getCustomerNoteNotify())
+            ->setCustomerIsGuest($quote->getCustomerIsGuest())
 
             /**
              * Currency data
@@ -184,6 +187,7 @@ class Mage_Sales_Model_Convert_Quote extends Varien_Object
             ->setName($item->getName())
             ->setDescription($item->getDescription())
             ->setWeight($item->getWeight())
+            ->setIsQtyDecimal($item->getIsQtyDecimal())
             ->setQtyOrdered($item->getQty())
             ->setOriginalPrice($item->getOriginalPrice())
             ->setPrice($item->getCalculationPrice())

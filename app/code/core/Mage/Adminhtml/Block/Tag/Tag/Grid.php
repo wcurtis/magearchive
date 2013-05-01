@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -46,7 +46,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
     protected function _prepareColumns()
     {
-        $baseUrl = Mage::getUrl();
+        $baseUrl = $this->getUrl();
 
         $this->addColumn('name', array(
             'header'    => Mage::helper('tag')->__('Tag'),
@@ -85,7 +85,6 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'type'      => 'number',
         ));
 
-
         $this->addColumn('status', array(
             'header'    => Mage::helper('tag')->__('Status'),
             'width'     => '90px',
@@ -93,7 +92,6 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'type'      => 'options',
             'options'    => $this->helper('tag/data')->getStatusesArray(),
         ));
-
 
           // Collection for stores filters
         if(!$collection = Mage::registry('stores_select_collection')) {
@@ -121,16 +119,16 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'actions'    => array(
                 array(
                     'caption'   => Mage::helper('tag')->__('Edit Tag'),
-                    'url'       => Mage::getUrl('*/*/edit', array('ret' => 'all', 'tag_id'=>'$tag_id')),
+                    'url'       => $this->getUrl('*/*/edit', array('ret' => 'all', 'tag_id'=>'$tag_id')),
                 ),
                 array(
                     'caption'   => Mage::helper('tag')->__('View Products'),
-                    'url'       => Mage::getUrl('*/*/product', array('ret' => 'all', 'tag_id'=>'$tag_id')),
+                    'url'       => $this->getUrl('*/*/product', array('ret' => 'all', 'tag_id'=>'$tag_id')),
                 ),
 
                 array(
                     'caption'   => Mage::helper('tag')->__('View Customers'),
-                    'url'       => Mage::getUrl('*/*/customer', array('ret' => 'all', 'tag_id'=>'$tag_id')),
+                    'url'       => $this->getUrl('*/*/customer', array('ret' => 'all', 'tag_id'=>'$tag_id')),
                 )
             ),
         ));
@@ -140,7 +138,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array(
+        return $this->getUrl('*/*/edit', array(
             'tag_id' => $row->getId(),
             'ret'    => 'all',
         ));
@@ -159,7 +157,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
     protected function _prepareMassaction()
     {
-        $this->setMassactionIdField('entity_id');
+        $this->setMassactionIdField('tag_id');
         $this->getMassactionBlock()->setFormFieldName('tag');
 
         $this->getMassactionBlock()->addItem('delete', array(
@@ -188,4 +186,6 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
 
         return $this;
     }
+
 }
+

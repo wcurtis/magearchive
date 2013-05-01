@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Grid widget massaction single action item
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Widget_Grid_Massaction_Item extends Mage_Adminhtml_Block_Widget
 {
+
     protected $_massaction = null;
 
     /**
@@ -104,5 +106,4 @@ class Mage_Adminhtml_Block_Widget_Grid_Massaction_Item extends Mage_Adminhtml_Bl
         return $this->getChildHtml('additional_action');
     }
 
-
-} // Class Mage_Adminhtml_Block_Widget_Grid_Massaction_Item End
+}

@@ -39,6 +39,10 @@
         <div class="entry-edit">
             <h4 class="icon-head head-shipping-method"><?=Mage::helper('sales')->__('Shipping Information')?></h4>
             <fieldset>
+                 <? if ($_order->getTracksCollection()->count()) : ?>
+<a href="#" id="linkId" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?=$this->__('Track the order')?>"><?=$this->__('Track the order')?></a>
+<br/>
+<?endif;?>
                 <strong><?=$_order->getShippingDescription()?></strong>
                 (<?=$_order->formatPrice($_order->getShippingAmount())?>)
             </fieldset>

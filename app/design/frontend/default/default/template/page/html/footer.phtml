@@ -20,19 +20,9 @@
 ?>
 
 <div class="informational">
-    <?=$this->getChildHtml()?>  
-    <?if($this->hasSeoLinks()>0):?>
-       <div>
-        <ul id="footer:seo-links">
-        <?foreach($this->getSeoLink() as $item):?>                                      
-            <li><a href="<?=$item['url'];?>"><?=$item['title'];?></a></li>
-        <?endforeach;?>
-        </ul>
-        <script type="text/javascript">decorateList('footer:seo-links')</script>
-       </div>
-    <?endif;?>       
+    <?=$this->getChildHtml()?>
 </div>
 
 <p class="legality">
 <?=$this->__('Help Us to Keep Magento Healthy')?> - <a href="http://www.magentocommerce.com/bug-tracking" target="varien_external"><strong><?=$this->__('Report All Bugs')?></strong></a> <?=$this->__('(ver. %s)', Mage::getVersion())?><br />
-<?=$this->__('Magento&trade; is a registered Trademark of Irubin Consulting Inc. DBA Varien. &copy; Copyright 2007')?></p>
+<?=$this->__('Magento&trade; is a registered Trademark of Irubin Consulting Inc. DBA Varien. &copy; Copyright '.date('Y'))?></p>

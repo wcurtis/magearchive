@@ -18,7 +18,7 @@
  * @subpackage Zend_Auth_Adapter_Http
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Http.php 5601 2007-07-07 14:42:03Z thomas $
+ * @version    $Id: Http.php 7689 2008-01-29 20:59:25Z darby $
  */
 
 
@@ -168,6 +168,14 @@ class Zend_Auth_Adapter_Http implements Zend_Auth_Adapter_Interface
      */
     public function __construct(array $config)
     {
+        if (!extension_loaded('hash')) {
+            /**
+             * @see Zend_Auth_Adapter_Exception
+             */
+            require_once 'Zend/Auth/Adapter/Exception.php';
+            throw new Zend_Auth_Adapter_Exception(__CLASS__  . ' requires the \'hash\' extension');
+        }
+
         $this->_request  = null;
         $this->_response = null;
         $this->_ieNoOpaque = false;

@@ -25,15 +25,15 @@
  */
 class Mage_Paypal_Model_Standard extends Mage_Payment_Model_Method_Abstract
 {
-    const PAYMENT_TYPE_AUTH = 'Authorization';
-    const PAYMENT_TYPE_SALE = 'Sale';
+    //changing the payment to different from cc payment type and paypal payment type
+    const PAYMENT_TYPE_AUTH = 'AUTHORIZATION';
+    const PAYMENT_TYPE_SALE = 'SALE';
 
     protected $_code  = 'paypal_standard';
     protected $_formBlockType = 'paypal/standard_form';
     protected $_allowCurrencyCode = array('AUD', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'JPY', 'NOK', 'NZD', 'PLN', 'SEK', 'SGD','USD');
 
-
-    /**
+     /**
      * Get paypal session namespace
      *
      * @return Mage_Paypal_Model_Session
@@ -236,7 +236,26 @@ class Mage_Paypal_Model_Standard extends Mage_Payment_Model_Method_Abstract
               $i++;
           }
         }
-        return $sArr;
+
+        $sReq = '';
+        $rArr = array();
+        foreach ($sArr as $k=>$v) {
+            /*
+            replacing & char with and. otherwise it will break the post
+            */
+            $value =  str_replace("&","and",$v);
+            $rArr[$k] =  $value;
+            $sReq .= '&'.$k.'='.$value;
+        }
+
+        if ($this->getDebug() && $sReq) {
+            $sReq = substr($sReq, 1);
+            $debug = Mage::getModel('paypal/api_debug')
+                    ->setApiEndpoint($this->getPaypalUrl())
+                    ->setRequestBody($sReq)
+                    ->save();
+        }
+        return $rArr;
     }
 
     public function getPaypalUrl()

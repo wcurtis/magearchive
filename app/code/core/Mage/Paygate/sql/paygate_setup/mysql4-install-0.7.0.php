@@ -25,8 +25,8 @@ $installer->startSetup();
 
 $installer->run("
 
-drop table if exists `paygate_authorizenet_debug`;
-CREATE TABLE `paygate_authorizenet_debug` (
+drop table if exists {$this->getTable('paygate_authorizenet_debug')};
+CREATE TABLE {$this->getTable('paygate_authorizenet_debug')} (
   `debug_id` int(10) unsigned NOT NULL auto_increment,
   `request_body` text,
   `response_body` text,

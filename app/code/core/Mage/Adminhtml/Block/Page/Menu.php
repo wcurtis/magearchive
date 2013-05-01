@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Page_Menu extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Page_Menu extends Mage_Adminhtml_Block_Template
 {
     protected $_url;
 
@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Core_Block_Template
     {
         parent::_construct();
         $this->setTemplate('page/menu.phtml');
-        $this->_url = Mage::getModel('core/url');
+        $this->_url = Mage::getModel('adminhtml/url');
     }
 
     public function getCacheLifetime()

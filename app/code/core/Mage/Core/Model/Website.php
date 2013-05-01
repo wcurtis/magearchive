@@ -25,6 +25,8 @@
 class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
 {
     protected $_configCache = array();
+    protected $_groups = array();
+    protected $_defaultStore;
 
     public function _construct()
     {
@@ -39,7 +41,7 @@ class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
         }
         return parent::load($id, $field);
     }
-    
+
     /**
      * Load website configuration
      *
@@ -95,7 +97,7 @@ class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
         }
         return $this->_configCache[$path];
     }
-    
+
     /**
      * Retrieve website store codes
      *
@@ -112,7 +114,7 @@ class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
         }
         return $storeCodes;
     }
-    
+
     /**
      * Retrieve website stores collection
      *
@@ -123,7 +125,7 @@ class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
         return $this->_storesCollection = Mage::getResourceModel('core/store_collection')
             ->addWebsiteFilter($this->getId());
     }
-    
+
     /**
      * Retrieve website sore ids
      *
@@ -143,5 +145,39 @@ class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
         }
 
         return $ids;
+    }
+
+    public function addGroup(Mage_Core_Model_Store_Group $model) {
+        $this->_groups[spl_object_hash($model)] = $model;
+        return $this;
+    }
+
+    public function getGroups()
+    {
+        return $this->_groups;
+    }
+
+    public function getDefaultGroup()
+    {
+        if (!$this->getDefaultGroupId()) {
+            return false;
+        }
+        if (is_null($this->_defaultGroup)) {
+            $this->_defaultGroup = Mage::getModel('core/store_group')->load($this->getDefaultGroupId());
+        }
+        return $this->_defaultGroup;
+    }
+
+    public function isCanDelete()
+    {
+        if (!$this->getId()) {
+            return false;
+        }
+        return true;
+    }
+
+    public function getWebsiteGroupStore()
+    {
+        return join('-', array($this->getWebsiteId(), $this->getGroupId(), $this->getStoreId()));
     }
 }

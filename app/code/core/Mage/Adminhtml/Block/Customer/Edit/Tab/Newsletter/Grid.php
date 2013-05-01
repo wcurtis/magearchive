@@ -26,23 +26,23 @@
  */
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->setId('queueGrid');
         $this->setDefaultSort('start_at');
         $this->setDefaultDir('desc');
-       
+
         $this->setUseAjax(true);
-        
-    
+
         $this->setEmptyText(Mage::helper('customer')->__('No Newsletter Found'));
-            
+
     }
-    
+
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/newsletter', array('_current'=>true));
+        return $this->getUrl('*/*/newsletter', array('_current'=>true));
     }
 
     protected function _prepareCollection()
@@ -50,7 +50,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
         $collection = Mage::getResourceModel('newsletter/queue_collection')
             ->addTemplateInfo()
             ->addSubscriberFilter(Mage::registry('subscriber')->getId());
-            
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -65,7 +65,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
             'index'     =>  'queue_id',
             'width'     =>  10
         ));
-        
+
         $this->addColumn('start_at', array(
             'header'    =>  Mage::helper('customer')->__('Newsletter Start'),
             'type'      =>  'date',
@@ -74,7 +74,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
             'format'    =>  $datetimeFormat,
             'default'   =>  ' ---- '
         ));
-        
+
         $this->addColumn('finish_at', array(
             'header'    =>  Mage::helper('customer')->__('Newsletter Finish'),
             'type'      =>  'date',
@@ -83,7 +83,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
             'format'    =>  $datetimeFormat,
             'default'   =>  ' ---- '
         ));
-        
+
         $this->addColumn('letter_sent_at', array(
             'header'    =>  Mage::helper('customer')->__('Newsletter Received'),
             'type'      =>  'date',
@@ -92,13 +92,13 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
             'format'    =>  $datetimeFormat,
             'default'   =>  ' ---- '
         ));
-        
+
         $this->addColumn('template_subject', array(
             'header'    =>  Mage::helper('customer')->__('Subject'),
             'align'     =>  'center',
             'index'     =>  'template_subject'
         ));
-        
+
          $this->addColumn('status', array(
             'header'    =>  Mage::helper('customer')->__('Status'),
             'align'     =>  'center',
@@ -106,7 +106,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
             'index'     => 'queue_status',
             'renderer'  =>  'adminhtml/customer_edit_tab_newsletter_grid_renderer_status'
         ));
-        
+
         $this->addColumn('action', array(
             'header'    =>  Mage::helper('customer')->__('Action'),
             'align'     =>  'center',
@@ -114,8 +114,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
             'sortable'  =>  false,
             'renderer'  =>  'adminhtml/customer_edit_tab_newsletter_grid_renderer_action'
         ));
-                
-        
+
         return parent::_prepareColumns();
     }
 

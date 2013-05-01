@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Poll_Poll extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
+
     public function __construct()
     {
         $this->_controller = 'poll';
@@ -34,4 +34,5 @@ class Mage_Adminhtml_Block_Poll_Poll extends Mage_Adminhtml_Block_Widget_Grid_Co
         $this->_addButtonLabel = Mage::helper('poll')->__('Add New Poll');
         parent::__construct();
     }
+
 }

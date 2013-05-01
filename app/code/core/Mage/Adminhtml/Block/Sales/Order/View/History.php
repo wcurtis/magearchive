@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_View_History extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_View_History extends Mage_Adminhtml_Block_Template
 {
     protected function _construct()
     {

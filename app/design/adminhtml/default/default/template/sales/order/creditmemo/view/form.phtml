@@ -71,7 +71,7 @@
                     <tr class="<?=($i%2==0)?'even':'odd'?>">
                         <td>
                             <?=$_item->getName()?>
-                            <div><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
+                            <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
                         </td>
                         <td class="price"><?=$this->formatPrice($_item->getPrice())?></td>
                         <td><?=$_item->getQty()*1?></td>

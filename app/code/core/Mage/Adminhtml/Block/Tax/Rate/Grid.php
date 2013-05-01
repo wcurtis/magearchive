@@ -17,9 +17,9 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
 class Mage_Adminhtml_Block_Tax_Rate_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -76,7 +76,7 @@ class Mage_Adminhtml_Block_Tax_Rate_Grid extends Mage_Adminhtml_Block_Widget_Gri
             $this->addColumn("tax_value_{$type->getTypeId()}",
                 array(
                     'header'=>$type->getTypeName(),
-                    'align' =>'left',
+                    'align' =>'right',
                     'filter' => false,
                     'index' => "rate_value_{$type->getTypeId()}",
                     'default' => '0.00',
@@ -93,6 +93,8 @@ class Mage_Adminhtml_Block_Tax_Rate_Grid extends Mage_Adminhtml_Block_Widget_Gri
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array('rate' => $row->getTaxRateId()));
+        return $this->getUrl('*/*/edit', array('rate' => $row->getTaxRateId()));
     }
+
 }
+

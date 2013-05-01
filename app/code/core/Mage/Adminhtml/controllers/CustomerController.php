@@ -219,11 +219,11 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
             catch (Exception $e){
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
                 Mage::getSingleton('adminhtml/session')->setCustomerData($data);
-                $this->getResponse()->setRedirect(Mage::getUrl('*/customer/edit', array('id'=>$customer->getId())));
+                $this->getResponse()->setRedirect($this->getUrl('*/customer/edit', array('id'=>$customer->getId())));
                 return;
             }
         }
-        $this->getResponse()->setRedirect(Mage::getUrl('*/customer'));
+        $this->getResponse()->setRedirect($this->getUrl('*/customer'));
     }
 
     /**
@@ -252,14 +252,16 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
 
     protected function _sendUploadResponse($fileName, $content)
     {
-        header('HTTP/1.1 200 OK');
-        header('Content-Disposition: attachment; filename='.$fileName);
-        header('Last-Modified: '.date('r'));
-        header("Accept-Ranges: bytes");
-        header("Content-Length: ".sizeof($content));
-        header("Content-type: application/octet-stream");
-        echo $content;
-        exit;
+        $response = $this->getResponse();
+        $response->setHeader('HTTP/1.1 200 OK','');
+        $response->setHeader('Content-Disposition', 'attachment; filename='.$fileName);
+        $response->setHeader('Last-Modified', date('r'));
+        $response->setHeader('Accept-Ranges', 'bytes');
+        $response->setHeader('Content-Length', strlen($content));
+        $response->setHeader('Content-type', 'application/octet-stream');
+        $response->setBody($content);
+        $response->sendResponse();
+        die;
     }
 
     /**

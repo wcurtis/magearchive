@@ -51,6 +51,11 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
     protected $_canUseCheckout          = true;
     protected $_canUseForMultishipping  = true;
 
+    public function __construct()
+    {
+
+    }
+
     /**
      * Check authorise availability
      *
@@ -289,6 +294,18 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
 
         return $this;
     }
+
+    /**
+     * Cancel payment (GoogleCheckout)
+     *
+     * @param   Varien_Object $invoicePayment
+     * @return  Mage_Payment_Model_Abstract
+     */
+    public function cancel(Varien_Object $payment)
+    {
+        return $this;
+    }
+
 
     /**
      * Void payment

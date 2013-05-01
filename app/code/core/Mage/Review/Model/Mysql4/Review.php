@@ -111,7 +111,12 @@ class Mage_Review_Model_Mysql4_Review
             if(isset($data['stores'])) {
                 $condition = $this->_write->quoteInto('review_id = ?', $review->getId());
                 $this->_write->delete($this->_reviewStoreTable, $condition);
+		$insertedStoreIds = array();
                 foreach ($data['stores'] as $storeId) {
+                    if (in_array($storeId, $insertedStoreIds))
+		        continue;
+
+		    $insertedStoreIds[] = $storeId;
                     $storeInsert = array();
                     $storeInsert['store_id'] = $storeId;
                     $storeInsert['review_id'] = $review->getId();

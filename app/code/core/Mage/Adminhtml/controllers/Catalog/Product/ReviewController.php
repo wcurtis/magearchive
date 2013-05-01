@@ -104,9 +104,9 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
 
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Review was saved successfully'));
                 if( $this->getRequest()->getParam('ret') == 'pending' ) {
-                    $this->getResponse()->setRedirect(Mage::getUrl('*/*/pending'));
+                    $this->getResponse()->setRedirect($this->getUrl('*/*/pending'));
                 } else {
-                    $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+                    $this->getResponse()->setRedirect($this->getUrl('*/*/'));
                 }
                 return;
             } catch (Exception $e){
@@ -127,9 +127,9 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
 
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Review successfully deleted'));
             if( $this->getRequest()->getParam('ret') == 'pending' ) {
-                $this->getResponse()->setRedirect(Mage::getUrl('*/*/pending'));
+                $this->getResponse()->setRedirect($this->getUrl('*/*/pending'));
             } else {
-                $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+                $this->getResponse()->setRedirect($this->getUrl('*/*/'));
             }
             return;
         } catch (Exception $e){
@@ -137,6 +137,89 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
         }
 
         $this->_redirectReferer();
+    }
+
+    public function massDeleteAction()
+    {
+        $reviewsIds = $this->getRequest()->getParam('reviews');
+        if(!is_array($reviewsIds)) {
+             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Please select review(s)'));
+        } else {
+            try {
+                foreach ($reviewsIds as $reviewId) {
+                    $model = Mage::getModel('review/review')->load($reviewId);
+                    $model->delete();
+                }
+                Mage::getSingleton('adminhtml/session')->addSuccess(
+                    Mage::helper('adminhtml')->__('Total of %d record(s) were successfully deleted', count($reviewsIds))
+                );
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            }
+        }
+
+        $this->_redirect('*/*/pending');
+    }
+
+    public function massUpdateStatusAction()
+    {
+        $reviewsIds = $this->getRequest()->getParam('reviews');
+        if(!is_array($reviewsIds)) {
+             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Please select review(s)'));
+        } else {
+            $session = Mage::getSingleton('adminhtml/session');
+            /* @var $session Mage_Adminhtml_Model_Session */
+            try {
+                $status = $this->getRequest()->getParam('status');
+                foreach ($reviewsIds as $reviewId) {
+                    $model = Mage::getModel('review/review')->load($reviewId);
+                    $model->setStatusId($status)
+                        ->save()
+                        ->aggregate();
+                }
+                $session->addSuccess(
+                    Mage::helper('adminhtml')->__('Total of %d record(s) were successfully updated', count($reviewsIds))
+                );
+            }
+            catch (Mage_Core_Exception $e) {
+                $session->addException($e->getMessage());
+            }
+            catch (Exception $e) {
+                $session->addError(Mage::helper('adminhtml')->__('Error while updating selected review(s). Please try again later.'));
+            }
+        }
+
+        $this->_redirect('*/*/pending');
+    }
+
+    public function massVisibleInAction()
+    {
+        $reviewsIds = $this->getRequest()->getParam('reviews');
+        if(!is_array($reviewsIds)) {
+             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Please select review(s)'));
+        } else {
+            $session = Mage::getSingleton('adminhtml/session');
+            /* @var $session Mage_Adminhtml_Model_Session */
+            try {
+                $stores = $this->getRequest()->getParam('stores');
+                foreach ($reviewsIds as $reviewId) {
+                    $model = Mage::getModel('review/review')->load($reviewId);
+                    $model->setSelectStores($stores);
+                    $model->save();
+                }
+                $session->addSuccess(
+                    Mage::helper('adminhtml')->__('Total of %d record(s) were successfully updated', count($reviewsIds))
+                );
+            }
+            catch (Mage_Core_Exception $e) {
+                $session->addException($e->getMessage());
+            }
+            catch (Exception $e) {
+                $session->addError(Mage::helper('adminhtml')->__('Error while updating selected review(s). Please try again later.'));
+            }
+        }
+
+        $this->_redirect('*/*/pending');
     }
 
     public function productGridAction()
@@ -199,9 +282,9 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
 
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Review was successfully saved'));
                 if( $this->getRequest()->getParam('ret') == 'pending' ) {
-                    $this->getResponse()->setRedirect(Mage::getUrl('*/*/pending'));
+                    $this->getResponse()->setRedirect($this->getUrl('*/*/pending'));
                 } else {
-                    $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+                    $this->getResponse()->setRedirect($this->getUrl('*/*/'));
                 }
 
                 return;
@@ -210,7 +293,7 @@ class Mage_Adminhtml_Catalog_Product_ReviewController extends Mage_Adminhtml_Con
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
             }
         }
-        $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+        $this->getResponse()->setRedirect($this->getUrl('*/*/'));
         return;
     }
 

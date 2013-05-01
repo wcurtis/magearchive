@@ -72,7 +72,7 @@ All tags page
     <tag_customer_index>
         <update handle="customer_account"/>
         <reference name="root">
-            <action method="setHeaderTitle" translate="title"><title>My Account</title></action>
+            <action method="setHeaderTitle" translate="title" module="customer"><title>My Account</title></action>
         </reference>
         <reference name="content">
             <block type="tag/customer_tags" name="customer_tags"/>
@@ -82,7 +82,7 @@ All tags page
     <tag_customer_view>
         <update handle="customer_account"/>
         <reference name="root">
-            <action method="setHeaderTitle" translate="title"><title>My Account</title></action>
+            <action method="setHeaderTitle" translate="title" module="customer"><title>My Account</title></action>
         </reference>
         <reference name="content">
             <block type="tag/customer_view" name="customer_view"/>
@@ -92,7 +92,7 @@ All tags page
     <tag_customer_edit>
         <update handle="customer_account"/>
         <reference name="root">
-            <action method="setHeaderTitle" translate="title"><title>My Account</title></action>
+            <action method="setHeaderTitle" translate="title" module="customer"><title>My Account</title></action>
         </reference>
         <reference name="content">
             <block type="tag/customer_edit" name="customer_edit"/>

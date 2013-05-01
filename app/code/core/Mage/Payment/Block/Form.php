@@ -21,7 +21,7 @@
 /**
  * Payment method form base block
  */
-class Mage_Payment_Block_Form extends Mage_Core_Block_Template 
+class Mage_Payment_Block_Form extends Mage_Core_Block_Template
 {
     /**
      * Retrieve payment method model
@@ -31,13 +31,13 @@ class Mage_Payment_Block_Form extends Mage_Core_Block_Template
     public function getMethod()
     {
         $method = $this->getData('method');
-        
+
         if (!($method instanceof Mage_Payment_Model_Method_Abstract)) {
             Mage::throwException($this->__('Can not retrieve payment method model object.'));
         }
         return $method;
     }
-    
+
     /**
      * Retrieve payment method code
      *
@@ -47,7 +47,7 @@ class Mage_Payment_Block_Form extends Mage_Core_Block_Template
     {
         return $this->getMethod()->getCode();
     }
-    
+
     /**
      * Retrieve field value data from payment info object
      *

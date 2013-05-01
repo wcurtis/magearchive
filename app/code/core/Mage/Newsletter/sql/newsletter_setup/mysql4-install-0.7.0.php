@@ -27,9 +27,8 @@ $installer->run("
 
 /*Table structure for table `newsletter_problem` */
 
-DROP TABLE IF EXISTS `newsletter_problem`;
-
-CREATE TABLE `newsletter_problem` (
+DROP TABLE IF EXISTS {$this->getTable('newsletter_problem')};
+CREATE TABLE {$this->getTable('newsletter_problem')} (
   `problem_id` int(7) unsigned NOT NULL auto_increment,
   `subscriber_id` int(7) unsigned default NULL,
   `queue_id` int(7) unsigned NOT NULL default '0',
@@ -38,17 +37,16 @@ CREATE TABLE `newsletter_problem` (
   PRIMARY KEY  (`problem_id`),
   KEY `FK_PROBLEM_SUBSCRIBER` (`subscriber_id`),
   KEY `FK_PROBLEM_QUEUE` (`queue_id`),
-  CONSTRAINT `FK_PROBLEM_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES `newsletter_queue` (`queue_id`),
-  CONSTRAINT `FK_PROBLEM_SUBSCRIBER` FOREIGN KEY (`subscriber_id`) REFERENCES `newsletter_subscriber` (`subscriber_id`)
+  CONSTRAINT `FK_PROBLEM_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES {$this->getTable('newsletter_queue')} (`queue_id`),
+  CONSTRAINT `FK_PROBLEM_SUBSCRIBER` FOREIGN KEY (`subscriber_id`) REFERENCES {$this->getTable('newsletter_subscriber')} (`subscriber_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter problems';
 
 /*Data for the table `newsletter_problem` */
 
 /*Table structure for table `newsletter_queue` */
 
-DROP TABLE IF EXISTS `newsletter_queue`;
-
-CREATE TABLE `newsletter_queue` (
+DROP TABLE IF EXISTS {$this->getTable('newsletter_queue')};
+CREATE TABLE {$this->getTable('newsletter_queue')} (
   `queue_id` int(7) unsigned NOT NULL auto_increment,
   `template_id` int(7) unsigned NOT NULL default '0',
   `queue_status` int(3) unsigned NOT NULL default '0',
@@ -56,16 +54,15 @@ CREATE TABLE `newsletter_queue` (
   `queue_finish_at` datetime default NULL,
   PRIMARY KEY  (`queue_id`),
   KEY `FK_QUEUE_TEMPLATE` (`template_id`),
-  CONSTRAINT `FK_QUEUE_TEMPLATE` FOREIGN KEY (`template_id`) REFERENCES `newsletter_template` (`template_id`) ON DELETE CASCADE
+  CONSTRAINT `FK_QUEUE_TEMPLATE` FOREIGN KEY (`template_id`) REFERENCES {$this->getTable('newsletter_template')} (`template_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter queue';
 
 /*Data for the table `newsletter_queue` */
 
 /*Table structure for table `newsletter_queue_link` */
 
-DROP TABLE IF EXISTS `newsletter_queue_link`;
-
-CREATE TABLE `newsletter_queue_link` (
+DROP TABLE IF EXISTS {$this->getTable('newsletter_queue_link')};
+CREATE TABLE {$this->getTable('newsletter_queue_link')} (
   `queue_link_id` int(9) unsigned NOT NULL auto_increment,
   `queue_id` int(7) unsigned NOT NULL default '0',
   `subscriber_id` int(7) unsigned NOT NULL default '0',
@@ -73,30 +70,28 @@ CREATE TABLE `newsletter_queue_link` (
   PRIMARY KEY  (`queue_link_id`),
   KEY `FK_QUEUE_LINK_SUBSCRIBER` (`subscriber_id`),
   KEY `FK_QUEUE_LINK_QUEUE` (`queue_id`),
-  CONSTRAINT `FK_QUEUE_LINK_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES `newsletter_queue` (`queue_id`) ON DELETE CASCADE,
-  CONSTRAINT `FK_QUEUE_LINK_SUBSCRIBER` FOREIGN KEY (`subscriber_id`) REFERENCES `newsletter_subscriber` (`subscriber_id`) ON DELETE CASCADE
+  CONSTRAINT `FK_QUEUE_LINK_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES {$this->getTable('newsletter_queue')} (`queue_id`) ON DELETE CASCADE,
+  CONSTRAINT `FK_QUEUE_LINK_SUBSCRIBER` FOREIGN KEY (`subscriber_id`) REFERENCES {$this->getTable('newsletter_subscriber')} (`subscriber_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Newsletter queue to subscriber link';
 
 /*Data for the table `newsletter_queue_link` */
 
 /*Table structure for table `newsletter_queue_store_link` */
 
-DROP TABLE IF EXISTS `newsletter_queue_store_link`;
-
-CREATE TABLE `newsletter_queue_store_link` (
+DROP TABLE IF EXISTS {$this->getTable('newsletter_queue_store_link')};
+CREATE TABLE {$this->getTable('newsletter_queue_store_link')} (
   `queue_id` int(7) unsigned NOT NULL default '0',
   `store_id` smallint(5) unsigned NOT NULL default '0',
   PRIMARY KEY  (`queue_id`,`store_id`),
-  CONSTRAINT `FK_LINK_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES `newsletter_queue` (`queue_id`) ON DELETE CASCADE
+  CONSTRAINT `FK_LINK_QUEUE` FOREIGN KEY (`queue_id`) REFERENCES {$this->getTable('newsletter_queue')} (`queue_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `newsletter_queue_store_link` */
 
 /*Table structure for table `newsletter_subscriber` */
 
-DROP TABLE IF EXISTS `newsletter_subscriber`;
-
-CREATE TABLE `newsletter_subscriber` (
+DROP TABLE IF EXISTS {$this->getTable('newsletter_subscriber')};
+CREATE TABLE {$this->getTable('newsletter_subscriber')} (
   `subscriber_id` int(7) unsigned NOT NULL auto_increment,
   `store_id` int(3) unsigned default '0',
   `change_status_at` datetime default NULL,
@@ -113,9 +108,8 @@ CREATE TABLE `newsletter_subscriber` (
 
 /*Table structure for table `newsletter_template` */
 
-DROP TABLE IF EXISTS `newsletter_template`;
-
-CREATE TABLE `newsletter_template` (
+DROP TABLE IF EXISTS {$this->getTable('newsletter_template')};
+CREATE TABLE {$this->getTable('newsletter_template')} (
   `template_id` int(7) unsigned NOT NULL auto_increment,
   `template_code` varchar(150) default NULL,
   `template_text` text,
@@ -135,9 +129,7 @@ CREATE TABLE `newsletter_template` (
 
 /*Data for the table `newsletter_template` */
 
-insert  into `newsletter_template`(`template_id`,`template_code`,`template_text`,`template_text_preprocessed`,`template_type`,`template_subject`,`template_sender_name`,`template_sender_email`,`template_actual`,`added_at`,`modified_at`) values (1,'Great Newsletter','This is a GREAT <br> <br> Newsletter','This is a GREAT <br> <br> Newsletter',2,'Greatness','Magento','david@varien.com',0,'2007-08-29 17:30:31','2007-08-29 17:30:31'),(2,'Great Newsletter','This is a GREAT <br> <br> Newsletter','This is a GREAT <br> <br> Newsletter',2,'Greatness','Magento','david@varien.com',0,'2007-08-29 17:30:31','2007-08-29 17:30:31'),(3,'Great Newsletter','This is a GREAT <br> <br> Newsletter',NULL,2,'Greatness','Magento','david@varien.com',1,'2007-08-29 17:30:31','2007-08-29 17:30:31');
-
-
+insert  into {$this->getTable('newsletter_template')}(`template_id`,`template_code`,`template_text`,`template_text_preprocessed`,`template_type`,`template_subject`,`template_sender_name`,`template_sender_email`,`template_actual`,`added_at`,`modified_at`) values (1,'Great Newsletter','This is a GREAT <br> <br> Newsletter','This is a GREAT <br> <br> Newsletter',2,'Greatness','Magento','david@varien.com',0,'2007-08-29 17:30:31','2007-08-29 17:30:31'),(2,'Great Newsletter','This is a GREAT <br> <br> Newsletter','This is a GREAT <br> <br> Newsletter',2,'Greatness','Magento','david@varien.com',0,'2007-08-29 17:30:31','2007-08-29 17:30:31'),(3,'Great Newsletter','This is a GREAT <br> <br> Newsletter',NULL,2,'Greatness','Magento','david@varien.com',1,'2007-08-29 17:30:31','2007-08-29 17:30:31');
     ");
 
 $installer->endSetup();

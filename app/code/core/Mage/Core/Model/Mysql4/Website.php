@@ -24,14 +24,57 @@ class Mage_Core_Model_Mysql4_Website extends Mage_Core_Model_Mysql4_Abstract
     protected function _construct()
     {
         $this->_init('core/website', 'website_id');
+        $this->_uniqueFields = array(array('field' => 'code', 'title' => Mage::helper('core')->__('Website with the same code')));
     }
 
     protected function _beforeSave(Mage_Core_Model_Abstract $model)
     {
         if(!preg_match('/^[a-z]+[a-z0-9_]*$/',$model->getCode())) {
-            Mage::throwException(Mage::helper('core')->__('Code should contain only letters (a-z), numbers (0-9) or underscore(_), first character should be a letter'));
+            Mage::throwException(Mage::helper('core')->__('Website code should contain only letters (a-z), numbers (0-9) or underscore(_), first character should be a letter'));
         }
 
+        return $this;
+    }
+
+    protected function _afterSave(Mage_Core_Model_Abstract $model)
+    {
+        if ($model->getGroups()) {
+            $defaultUpdate = false;
+            $defaultId = 0;
+            if (!$model->getDefaultGroupId()) {
+                $defaultUpdate = true;
+            }
+            foreach ($model->getGroups() as $group) {
+                if ($group instanceof Mage_Core_Model_Store_Group) {
+                    $group->setWebsiteId($model->getId());
+                    $group->save();
+                    if ($defaultUpdate && !$defaultId) {
+                        $defaultId = $group->getId();
+                    }
+                }
+            }
+            if ($defaultUpdate && $defaultId) {
+                $this->_saveDefaultGroup($model->getId(), $defaultId);
+            }
+        }
+        return $this;
+    }
+
+    protected function _saveDefaultGroup($websiteId, $groupId)
+    {
+        $write = $this->_getWriteAdapter();
+        $bind = array('default_group_id'=>$groupId);
+        $condition = $write->quoteInto('website_id=?', $websiteId);
+        $this->_getWriteAdapter()->update($this->getMainTable(), $bind, $condition);
+        return $this;
+    }
+
+    protected function _afterDelete(Mage_Core_Model_Abstract $model)
+    {
+        $this->_getWriteAdapter()->delete(
+            $this->getTable('core/config_data'),
+            $this->_getWriteAdapter()->quoteInto("scope = 'websites' AND scope_id = ?", $model->getWebsiteId())
+        );
         return $this;
     }
 }

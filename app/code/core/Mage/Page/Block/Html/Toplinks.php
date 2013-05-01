@@ -51,7 +51,18 @@ class Mage_Page_Block_Html_Toplinks extends Mage_Core_Block_Template
         $this->setTemplate('page/html/top.links.phtml');
     }
 
-    function addLink($liParams, $aParams, $innerText, $position='', $beforeText='', $afterText='')
+    /**
+     * Add link
+     *
+     * @param string|array $liParams
+     * @param string|array $aParams
+     * @param string $innerText
+     * @param int $position
+     * @param string $beforeText
+     * @param string $afterText
+     * @return Mage_Page_Block_Html_Toplinks
+     */
+    public function addLink($liParams, $aParams, $innerText, $position='', $beforeText='', $afterText='')
     {
         $params = '';
         if (!empty($liParams) && is_array($liParams)) {
@@ -87,9 +98,10 @@ class Mage_Page_Block_Html_Toplinks extends Mage_Core_Block_Template
         } else {
             $this->_toplinks[] = $toplinkInfo;
         }
+        return $this;
     }
 
-    function toHtml()
+    protected function _toHtml()
     {
         if (is_array($this->_toplinks) && $this->_toplinks) {
             reset($this->_toplinks);
@@ -98,6 +110,6 @@ class Mage_Page_Block_Html_Toplinks extends Mage_Core_Block_Template
             $this->_toplinks[key($this->_toplinks)]['last'] = true;
         }
         $this->assign('toplinks', $this->_toplinks);
-        return parent::toHtml();
+        return parent::_toHtml();
     }
 }

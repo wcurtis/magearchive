@@ -43,8 +43,7 @@ class Mage_CatalogRule_Model_Observer
         if ($observer->hasCustomerGroupId()) {
             $gId = $observer->getCustomerGroupId();
         } else {
-            $custSession = Mage::getSingleton('customer/session');
-            $gId = $custSession->isLoggedIn() ? $custSession->getCustomer()->getGroupId() : 0;
+            $gId = Mage::getSingleton('customer/session')->getCustomerGroupId();
         }
 
         $product = $observer->getEvent()->getProduct();

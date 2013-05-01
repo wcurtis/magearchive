@@ -18,28 +18,29 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog product bundle option link model
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
- class Mage_Catalog_Model_Product_Bundle_Option_Link extends Mage_Core_Model_Abstract 
+ class Mage_Catalog_Model_Product_Bundle_Option_Link extends Mage_Core_Model_Abstract
  {
- 	
- 	
- 	protected function _construct()
- 	{
- 		$this->_init('catalog/product_bundle_option_link');
- 	}
- 	
- 	public function getDataForSave()
- 	{
- 		$data = array();
- 		$data['product_id'] = $this->getProductId();
- 		$data['option_id'] = $this->getOptionId();
- 		$data['discount'] = ( $this->getDiscount()=='' ? null : $this->getDiscount() );
- 		
- 		return $data;
- 	}
- } // Class Mage_Catalog_Model_Product_Bundle_Option_Link end
+
+
+     protected function _construct()
+     {
+         $this->_init('catalog/product_bundle_option_link');
+     }
+
+     public function getDataForSave()
+     {
+         $data = array();
+         $data['product_id'] = $this->getProductId();
+         $data['option_id'] = $this->getOptionId();
+         $data['discount'] = ( $this->getDiscount()=='' ? null : $this->getDiscount() );
+
+         return $data;
+     }
+ }

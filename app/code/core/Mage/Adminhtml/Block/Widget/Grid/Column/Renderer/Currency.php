@@ -42,18 +42,18 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Currency extends Mage_Adm
     {
         if ($data = $row->getData($this->getColumn()->getIndex())) {
         	$currency_code = $this->_getCurrencyCode($row);
-        	
+
         	if (!$currency_code) {
         	    return $data;
         	}
-        	
+
         	$data = floatval($data) * $this->_getRate($row);
         	$data =Mage::app()->getLocale()->currency($currency_code)->toCurrency($data);
         	return $data;
         }
         return $this->getColumn()->getDefault();
     }
-    
+
     protected function _getCurrencyCode($row)
     {
         if ($code = $this->getColumn()->getCurrencyCode()) {
@@ -64,7 +64,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Currency extends Mage_Adm
         }
         return false;
     }
-    
+
     protected function _getRate($row)
     {
         if ($rate = $this->getColumn()->getRate()) {
@@ -80,8 +80,13 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Currency extends Mage_Adm
     {
         $out = parent::renderProperty();
         if (!$this->getColumn()->getWidth()) {
-            $out.= ' width="140" ';
+            $out.= ' width="100" ';
         }
         return $out;
+    }
+
+    public function renderCss()
+    {
+        return parent::renderCss() . ' a-right';
     }
 }

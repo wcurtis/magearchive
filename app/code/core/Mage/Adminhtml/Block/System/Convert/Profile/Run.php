@@ -24,14 +24,14 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Core_Block_Abstract
+class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Adminhtml_Block_Abstract
 {
     public function getProfile()
     {
         return Mage::registry('current_convert_profile');
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         $profile = $this->getProfile();
 
@@ -56,7 +56,7 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Core_Block_Ab
         echo '</ul>';
 
         if ($profile->getId()) {
-      
+
             echo '<ul>';
 
             ob_implicit_flush();
@@ -78,7 +78,7 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Core_Block_Ab
                         break;
                     case Varien_Convert_Exception::NOTICE:
                         $img = 'fam_bullet_success.gif';
-                        $liStyle = 'background-color:DDF; ';
+                        $liStyle = 'background-color:#DDF; ';
                         break;
                 }
                 echo '<li style="'.$liStyle.'">';
@@ -94,12 +94,66 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Core_Block_Ab
     //                echo "</blockquote>";
     //            }
             }
+            /*
             echo '<li>';
             echo '<img src="'.Mage::getDesign()->getSkinUrl('images/note_msg_icon.gif').'" class="v-middle" style="margin-right:5px"/>';
             echo $this->__("Finished profile execution.");
             echo '</li>';
             echo "</ul>";
+            */
         }
+        /* test */
+
+        $sessionId = Mage::registry('current_dataflow_session_id');
+        $total =
+        $import = Mage::getResourceModel('dataflow/import');
+        $total = $import->loadTotalBySessionId($sessionId);
+        echo "<li>Total: {$total['cnt']}, Finished data:<span id='finish_data'>0</span></li>";
+        $min = $total['min'];
+        $max = $total['max'];
+        $product = new Mage_Catalog_Model_Convert_Parser_Product();
+        $adaptor = new Mage_Catalog_Model_Convert_Adapter_Product();
+        $importData = Mage::getModel('dataflow/import');
+        while ($min < $max) {
+       //for ($i = $total['min']; $i <= $total['cnt'];  $i++) {
+            $data = $import->loadBySessionId($sessionId, $min - 1);
+            if ($data) foreach($data as $index => $imported) {
+                //$importData = Mage::getModel('dataflow/import');
+                $importData->load($imported['import_id']);
+                if ($id = $importData->getId()) {
+                    $min = $id;
+                    //$product = new Mage_Catalog_Model_Convert_Parser_Product();
+                    $product->setData(unserialize($importData->getValue()));
+                    $product->parseTest();
+                    $invetory = $product->getInventoryItems();
+                    //$adaptor = new Mage_Catalog_Model_Convert_Adapter_Product();
+                    $adaptor->setData($product->getData());
+
+                    $adaptor->setInventoryItems($invetory);
+                    $adaptor->saveTest();
+                    echo '<script>document.getElementById("finish_data").innerHTML= '.$id.';</script>';
+                    $importData->setStatus(1);
+                    $importData->save();
+                    //unset($product);
+                    //unset($adaptor);
+                    //  unset($importData);
+                }
+
+            }
+            unset($data);
+            $total = $import->loadTotalBySessionId($sessionId);
+            $min = $total['min'];
+        }
+
+        unset($session_id);
+        unset($import);
+
+        echo '<li>';
+        echo '<img src="'.Mage::getDesign()->getSkinUrl('images/note_msg_icon.gif').'" class="v-middle" style="margin-right:5px"/>';
+        echo $this->__("Finished profile execution.");
+        echo '</li>';
+        echo "</ul>";
+
         echo '</body></html>';
         exit;
     }

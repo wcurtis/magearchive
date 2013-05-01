@@ -26,15 +26,22 @@
  * @category   Mage
  * @package    Mage_Usa
  */
-class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carrier_Abstract
+class Mage_Usa_Model_Shipping_Carrier_Usps
+    extends Mage_Usa_Model_Shipping_Carrier_Abstract
+    implements Mage_Shipping_Model_Carrier_Interface
 {
+
+    protected $_code = 'usps';
+
     protected $_request = null;
+
     protected $_result = null;
+
     protected $_defaultGatewayUrl = 'http://production.shippingapis.com/ShippingAPI.dll';
 
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
     {
-        if (!Mage::getStoreConfig('carriers/usps/active')) {
+        if (!$this->getConfigFlag('active')) {
             return false;
         }
 
@@ -60,28 +67,28 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
         if ($request->getUspsUserid()) {
             $userId = $request->getUspsUserid();
         } else {
-            $userId = Mage::getStoreConfig('carriers/usps/userid');
+            $userId = $this->getConfigData('userid');
         }
         $r->setUserId($userId);
 
         if ($request->getUspsContainer()) {
             $container = $request->getUspsContainer();
         } else {
-            $container = Mage::getStoreConfig('carriers/usps/container');
+            $container = $this->getConfigData('container');
         }
         $r->setContainer($container);
 
         if ($request->getUspsSize()) {
             $size = $request->getUspsSize();
         } else {
-            $size = Mage::getStoreConfig('carriers/usps/size');
+            $size = $this->getConfigData('size');
         }
         $r->setSize($size);
 
         if ($request->getUspsMachinable()) {
             $machinable = $request->getUspsMachinable();
         } else {
-            $machinable = Mage::getStoreConfig('carriers/usps/machinable');
+            $machinable = $this->getConfigData('machinable');
         }
         $r->setMachinable($machinable);
 
@@ -140,7 +147,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
                 $package->addChild('Service', $r->getService());
     //          $package->addChild('FirstClassMailType', $r->getService());
                 $package->addChild('ZipOrigination', $r->getOrigPostal());
-                $package->addChild('ZipDestination', $r->getDestPostal());
+                //only 5 chars avaialble
+                $package->addChild('ZipDestination', substr($r->getDestPostal(),0,5));
                 $package->addChild('Pounds', $r->getWeightPounds());
                 $package->addChild('Ounces', $r->getWeightOunces());
                 $package->addChild('Container', $r->getContainer());
@@ -168,7 +176,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
         }
 
         try {
-            $url = Mage::getStoreConfig('carriers/usps/gateway_url');
+            $url = $this->getConfigData('gateway_url');
             if (!$url) {
                 $url = $this->_defaultGatewayUrl;
             }
@@ -203,7 +211,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
                             $errorTitle = 'Unknown error';
                         }
                         $r = $this->_rawRequest;
-                        $allowedMethods = explode(",", Mage::getStoreConfig('carriers/usps/allowed_methods'));
+                        $allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
                         $allMethods = $this->getCode('method');
                         $newMethod = false;
                         if ($r->getDestCountryId() == self::USA_COUNTRY_ID) {
@@ -237,6 +245,10 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
                                 asort($priceArr);
                             }
                         }
+                        /*
+                        * following if statement is obsolete
+                        * we don't have adminhtml/config resoure model
+                        */
                         if (false && $newMethod) {
                             sort($allMethods);
                             $insert['usps']['fields']['methods']['value'] = $allMethods;
@@ -253,14 +265,14 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
         if (empty($priceArr)) {
             $error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('usps');
-            $error->setCarrierTitle(Mage::getStoreConfig('carriers/usps/title'));
+            $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($errorTitle);
             $result->append($error);
         } else {
             foreach ($priceArr as $method=>$price) {
                 $rate = Mage::getModel('shipping/rate_result_method');
                 $rate->setCarrier('usps');
-                $rate->setCarrierTitle(Mage::getStoreConfig('carriers/usps/title'));
+                $rate->setCarrierTitle($this->getConfigData('title'));
                 $rate->setMethod($method);
                 $rate->setMethodTitle($method);
                 $rate->setCost($costArr[$method]);
@@ -274,12 +286,12 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
     public function getMethodPrice($cost, $method='')
     {
         $r = $this->_rawRequest;
-        if (Mage::getStoreConfig('carriers/usps/cutoff_cost') != ''
-         && $method == Mage::getStoreConfig('carriers/usps/free_method')
-         && Mage::getStoreConfig('carriers/usps/cutoff_cost') <= $r->getValue()) {
+        if ($this->getConfigData('cutoff_cost') != ''
+         && $method == $this->getConfigData('free_method')
+         && $this->getConfigData('cutoff_cost') <= $r->getValue()) {
              $price = '0.00';
         } else {
-            $price = $cost + Mage::getStoreConfig('carriers/usps/handling');
+            $price = $cost + $this->getConfigData('handling');
         }
         return $price;
     }
@@ -370,7 +382,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
 
         );
 
-        $methods = Mage::getStoreConfig('carriers/usps/methods');
+        $methods = $this->getConfigData('methods');
         if (!empty($methods)) {
             $codes['method'] = explode(",", $methods);
         } else {
@@ -409,7 +421,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
     {
         $r = new Varien_Object();
 
-        $userId = Mage::getStoreConfig('carriers/usps/userid');
+        $userId = $this->getConfigData('userid');
         $r->setUserId($userId);
 
         $this->_rawTrackRequest = $r;
@@ -432,7 +444,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
              $request = $xml->asXML();
 
              try {
-                $url = Mage::getStoreConfig('carriers/usps/gateway_url');
+                $url = $this->getConfigData('gateway_url');
                 if (!$url) {
                     $url = $this->_defaultGatewayUrl;
                 }
@@ -459,14 +471,15 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
             if (strpos(trim($response), '<?xml')===0) {
                 $xml = simplexml_load_string($response);
                 if (is_object($xml)) {
-                    if (is_object($xml->Number) && is_object($xml->Description) && (string)$xml->Description!='') {
+                    if (isset($xml->Number) && isset($xml->Description) && (string)$xml->Description!='') {
                         $errorTitle = (string)$xml->Description;
-                    } elseif (is_object($xml->TrackInfo) && is_object($xml->TrackInfo->Error) && is_object($xml->TrackInfo->Error->Description) && (string)$xml->TrackInfo->Error->Description!='') {
+                    } elseif (isset($xml->TrackInfo) && isset($xml->TrackInfo->Error) && isset($xml->TrackInfo->Error->Description) && (string)$xml->TrackInfo->Error->Description!='') {
                         $errorTitle = (string)$xml->TrackInfo->Error->Description;
                     } else {
                         $errorTitle = 'Unknown error';
                     }
-                    if(is_object($xml->TrackInfo) && is_object($xml->TrackInfo->TrackSummary)){
+
+                    if(isset($xml->TrackInfo) && isset($xml->TrackInfo->TrackSummary)){
                        $resultArr['tracksummary'] = (string)$xml->TrackInfo->TrackSummary;
 
                     }
@@ -479,17 +492,17 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
         }
         $defaults = $this->getDefaults();
 
-        if($resultArr){
+        if ($resultArr) {
              $tracking = Mage::getModel('shipping/tracking_result_status');
              $tracking->setCarrier('usps');
-             $tracking->setCarrierTitle(Mage::getStoreConfig('carriers/usps/title'));
+             $tracking->setCarrierTitle($this->getConfigData('title'));
              $tracking->setTracking($trackingvalue);
              $tracking->setTrackSummary($resultArr['tracksummary']);
              $this->_result->append($tracking);
-         }else{
+         } else {
             $error = Mage::getModel('shipping/tracking_result_error');
             $error->setCarrier('usps');
-            $error->setCarrierTitle(Mage::getStoreConfig('carriers/usps/title'));
+            $error->setCarrierTitle($this->getConfigData('title'));
             $error->setTracking($trackingvalue);
             $error->setErrorMessage($errorTitle);
             $this->_result->append($error);
@@ -518,10 +531,19 @@ class Mage_Usa_Model_Shipping_Carrier_Usps extends Mage_Usa_Model_Shipping_Carri
         return $statuses;
     }
 
-    public function isTrackingAvailable()
+    /**
+     * Get allowed shipping methods
+     *
+     * @return array
+     */
+    public function getAllowedMethods()
     {
-        return true;
+        $allowed = explode(',', $this->getConfigData('allowed_methods'));
+        $arr = array();
+        foreach ($allowed as $k) {
+            $arr[$k] = $k;
+        }
+        return $arr;
     }
-
 
 }

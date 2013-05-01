@@ -31,10 +31,15 @@ class Mage_Core_Model_Resource_Setup
     protected $_resourceConfig = null;
     protected $_connectionConfig = null;
     protected $_moduleConfig = null;
+
+    /**
+     * Setup Connection
+     *
+     * @var Zend_Db_Adapter_Abstract
+     */
     protected $_conn = null;
     protected $_tables = array();
     protected $_setupCache = array();
-
 
     public function __construct($resourceName)
     {
@@ -65,10 +70,11 @@ class Mage_Core_Model_Resource_Setup
 
     public function getTable($tableName) {
         if (!isset($this->_tables[$tableName])) {
+            $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
             if (Mage::registry('resource')) {
-                $this->_tables[$tableName] = Mage::registry('resource')->getTableName($tableName);
+                $this->_tables[$tableName] = $tablePrefix . Mage::registry('resource')->getTableName($tableName);
             } else {
-                $this->_tables[$tableName] = str_replace('/', '_', $tableName);
+                $this->_tables[$tableName] = $tablePrefix . str_replace('/', '_', $tableName);
             }
         }
         return $this->_tables[$tableName];
@@ -469,20 +475,6 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 SET SQL_MODE=IFNULL(@OLD_SQL_MODE,'');
 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS,0);
 ");
-        return $this;
-    }
-
-    public function installModuleSystemDefaults()
-    {
-        $moduleName = (string)$this->_resourceConfig->setup->module;
-        $config = Mage::getModel('core/config_system')->load($moduleName);
-        if ($defaultValues = $config->getDefaultValues()) {
-            foreach ($defaultValues as $path => $value) {
-                if ($value) {
-                    $this->setConfigData($path, $value);
-                }
-            }
-        }
         return $this;
     }
 }

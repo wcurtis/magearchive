@@ -27,6 +27,7 @@
 class Mage_Adminhtml_Block_Extensions_Remote_Edit_Tab_Package
     extends Mage_Adminhtml_Block_Extensions_Remote_Edit_Tab_Abstract
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -47,4 +48,6 @@ class Mage_Adminhtml_Block_Extensions_Remote_Edit_Tab_Package
     {
         return Mage::getModel('adminhtml/extension')->getMaintainerRoles();
     }
+
 }
+

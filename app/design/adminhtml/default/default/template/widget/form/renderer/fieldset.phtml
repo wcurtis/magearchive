@@ -22,6 +22,8 @@
 <div>
     <h4 class="icon-head head-edit-form fieldset-legend"><?=$_element->getLegend()?></h4>
     <fieldset id="<?=$_element->getHtmlId()?>"<?=$_element->serialize(array('class'))?>>
+        <table cellspacing="0" class="form-list">
     <?=$_element->getChildrenHtml()?>
+        </table>
     </fieldset>
 </div>

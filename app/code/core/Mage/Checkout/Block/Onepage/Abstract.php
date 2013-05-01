@@ -132,14 +132,17 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
 
     public function getCountryHtmlSelect($type)
     {
+        $countryId = $this->getAddress()->getCountryId();
+        if (is_null($countryId)) {
+            $countryId = Mage::getStoreConfig('general/country/default');
+        }
         $select = $this->getLayout()->createBlock('core/html_select')
             ->setName($type.'[country_id]')
             ->setId($type.':country_id')
             ->setTitle(Mage::helper('checkout')->__('Country'))
             ->setClass('validate-select')
-            ->setValue($this->getAddress()->getCountryId())
+            ->setValue($countryId)
             ->setOptions($this->getCountryCollection()->toOptionArray());
-
         if ($type==='shipping') {
             $select->setExtraParams('onchange="shipping.setSameAsBilling(false);"');
         }

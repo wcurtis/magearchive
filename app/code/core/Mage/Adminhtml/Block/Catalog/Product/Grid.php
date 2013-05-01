@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -158,11 +159,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
                 'index' => 'price',
         ));
 
-
         $this->addColumn('qty',
             array(
                 'header'=> Mage::helper('catalog')->__('Qty'),
-                'width' => '130px',
+                'width' => '100px',
                 'type'  => 'number',
                 'index' => 'qty',
         ));
@@ -192,19 +192,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
                 'type'  => 'options',
                 'options' => $statuses,
         ));
-        /*$this->addColumn('rating',
-            array(
-                'header'=> Mage::helper('catalog')->__('Rating'),
-                'width' => '100px',
-                'index' => 'rating',
-        ));*/
-        /*$this->addColumn('category',
-            array(
-                'header'=> Mage::helper('catalog')->__('Categories'),
-                'width' => '150px',
-                'filter'=> false,
-                'index' => 'category',
-        ));*/
 
         $this->addColumn('stores',
             array(

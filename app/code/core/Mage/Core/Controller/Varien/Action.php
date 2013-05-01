@@ -37,6 +37,7 @@ abstract class Mage_Core_Controller_Varien_Action
     const PARAM_NAME_ERROR_URL          = 'error_url';
     const PARAM_NAME_REFERER_URL        = 'referer_url';
     const PARAM_NAME_BASE64_URL         = 'r64';
+    const PARAM_NAME_URL_ENCODED        = 'uenc';
 
     /**
      * Request object
@@ -534,6 +535,9 @@ abstract class Mage_Core_Controller_Varien_Action
         }
         if ($url = $this->getRequest()->getParam(self::PARAM_NAME_BASE64_URL)) {
             $refererUrl = base64_decode($url);
+        }
+        if ($url = $this->getRequest()->getParam(self::PARAM_NAME_URL_ENCODED)) {
+            $refererUrl = Mage::helper('core')->urlDecode($url);
         }
         return $refererUrl;
     }

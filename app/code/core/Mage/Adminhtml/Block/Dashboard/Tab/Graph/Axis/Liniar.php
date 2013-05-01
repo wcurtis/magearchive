@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml Dashboard graph liniar axis
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Dashboard_Tab_Graph_Axis_Liniar extends Mage_Adminhtml_Block_Dashboard_Tab_Graph_Axis_Abstract
 {
+
     protected $_chachedMaximumValue = null;
     protected $_maximumStepValue = null;
 
@@ -68,8 +70,6 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Graph_Axis_Liniar extends Mage_Adminhtm
             }
         }
 
-
-
         return $this->_chachedMaximumValue;
     }
 
@@ -90,7 +90,6 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Graph_Axis_Liniar extends Mage_Adminhtm
 
         return $this->getDat('period');
     }
-
 
     public function getMaximumStepValue()
     {
@@ -134,4 +133,4 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Graph_Axis_Liniar extends Mage_Adminhtm
         return max($values);
     }
 
-} // Class Mage_Adminhtml_Block_Dashboard_Tab_Graph_Axis_Liniar end
+}

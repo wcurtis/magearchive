@@ -45,7 +45,7 @@
     </ul>
 </fieldset>
 <p>
-    <input type="checkbox" name="change_password" id="change_password" value="1" onchange="setPasswordForm(this.checked)" title="<?=$this->__('Change Password')?>" <?if($this->getCustomer()->getChangePassword()==1):?>checked <?endif;?>/> <label for="change_password"><?=$this->__('Change Password')?></label>
+    <input type="checkbox" name="change_password" id="change_password" value="1" onclick="setPasswordForm(this.checked)" title="<?=$this->__('Change Password')?>" <?if($this->getCustomer()->getChangePassword()==1):?>checked <?endif;?>/> <label for="change_password"><?=$this->__('Change Password')?></label>
 </p>
 <fieldset class="group-select" style="display:none">
     <h4 class="legend"><?=$this->__('Change Password')?></h4>
@@ -77,15 +77,15 @@
     var dataForm = new VarienForm('form-validate', true);
     function setPasswordForm(arg){
         if(arg){
-            $('current_password').up(3).show(); 
-            $('current_password').addClassName('required-entry');  
-            $('password').addClassName('required-entry');   
-            $('confirmation').addClassName('required-entry');  
-            
+            $('current_password').up(3).show();
+            $('current_password').addClassName('required-entry');
+            $('password').addClassName('required-entry');
+            $('confirmation').addClassName('required-entry');
+
         }else{
-            $('current_password').up(3).hide(); 
-            $('current_password').removeClassName('required-entry');  
-            $('password').removeClassName('required-entry');   
+            $('current_password').up(3).hide();
+            $('current_password').removeClassName('required-entry');
+            $('password').removeClassName('required-entry');
             $('confirmation').removeClassName('required-entry');
         }
     }

@@ -24,7 +24,7 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
-ALTER TABLE `salesrule`
+ALTER TABLE {$this->getTable('salesrule')}
     CHANGE `uses_per_coupon` `uses_per_coupon` int (11) DEFAULT '0' NOT NULL ,
     CHANGE `uses_per_customer` `uses_per_customer` int (11) DEFAULT '0' NOT NULL;
 ");

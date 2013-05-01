@@ -25,19 +25,28 @@
  * @category   Mage
  * @package    Mage_Usa
  */
-class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrier_Abstract
+class Mage_Usa_Model_Shipping_Carrier_Dhl
+    extends Mage_Usa_Model_Shipping_Carrier_Abstract
+    implements Mage_Shipping_Model_Carrier_Interface
 {
+
+    protected $_code = 'dhl';
+
     protected $_request = null;
+
     protected $_result = null;
+
     protected $_errors = array();
+
     protected $_dhlRates = array();
+
     protected $_defaultGatewayUrl = 'https://eCommerce.airborne.com/ApiLandingTest.asp';
 
     const SUCCESS_CODE = 203;
 
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
     {
-        if (!Mage::getStoreConfig('carriers/dhl/active')) {
+        if (!$this->getConfigFlag('active')) {
             return false;
         }
         $this->process($request);
@@ -57,63 +66,63 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         if ($request->getDhlId()) {
             $id = $request->getDhlId();
         } else {
-            $id = Mage::getStoreConfig('carriers/dhl/id');
+            $id = $this->getConfigData('id');
         }
         $r->setId($id);
 
         if ($request->getDhlPassword()) {
             $password = $request->getDhlPassword();
         } else {
-            $password = Mage::getStoreConfig('carriers/dhl/password');
+            $password = $this->getConfigData('password');
         }
         $r->setPassword($password);
 
         if ($request->getDhlAccount()) {
             $accountNbr = $request->getDhlAccount();
         } else {
-            $accountNbr = Mage::getStoreConfig('carriers/dhl/account');
+            $accountNbr = $this->getConfigData('account');
         }
         $r->setAccountNbr($accountNbr);
 
         if ($request->getDhlShippingKey()) {
             $shippingKey = $request->getDhlShippingKey();
         } else {
-            $shippingKey = Mage::getStoreConfig('carriers/dhl/shipping_key');
+            $shippingKey = $this->getConfigData('shipping_key');
         }
         $r->setShippingKey($shippingKey);
 
         if ($request->getDhlShippingIntlKey()) {
             $shippingKey = $request->getDhlShippingIntlKey();
         } else {
-            $shippingKey = Mage::getStoreConfig('carriers/dhl/shipping_intlkey');
+            $shippingKey = $this->getConfigData('shipping_intlkey');
         }
         $r->setShippingIntlKey($shippingKey);
 
         if ($request->getDhlShipmentType()) {
             $shipmentType = $request->getDhlShipmentType();
         } else {
-            $shipmentType = Mage::getStoreConfig('carriers/dhl/shipment_type');
+            $shipmentType = $this->getConfigData('shipment_type');
         }
         $r->setShipmentType($shipmentType);
 
         if($request->getDhlDutiable()){
             $shipmentDutible = $request->getDhlDutiable();
         }else{
-            $shipmentDutible = Mage::getStoreConfig('carriers/dhl/dutiable');
+            $shipmentDutible = $this->getConfigData('dutiable');
         }
         $r->setDutiable($shipmentDutible);
 
         if($request->getDhlDutyPaymentType()){
             $dutypaytype = $request->getDhlDutyPaymentType();
         }else{
-          $dutypaytype = Mage::getStoreConfig('carriers/dhl/dutypaymenttype');
+          $dutypaytype = $this->getConfigData('dutypaymenttype');
         }
         $r->setDutyPaymentType($dutypaytype);
 
         if($request->getDhlContentDesc()){
            $contentdesc = $request->getDhlContentDesc();
         }else{
-          $contentdesc = Mage::getStoreConfig('carriers/dhl/contentdesc');
+          $contentdesc = $this->getConfigData('contentdesc');
         }
         $r->setContentDesc($contentdesc);
 
@@ -124,7 +133,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         if ($request->getOrigCountry()) {
             $origCountry = $request->getOrigCountry();
         } else {
-            $origCountry = Mage::getStoreConfig('shipping/origin/country_id');
+            $origCountry = Mage::getStoreConfig('shipping/origin/country_id', $this->getStore());
         }
         $r->setOrigCountry($origCountry);
 
@@ -144,7 +153,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
             ->setDestState( Mage::getModel('usa/postcode')->getStateByPostcode($request->getDestPostcode()) );
 
         $this->_rawRequest = $r;
-        $methods = explode(',', Mage::getStoreConfig('carriers/dhl/allowed_methods'));
+        $methods = explode(',', $this->getConfigData('allowed_methods'));
 
         $internationcode=$this->getCode('international_searvice');
 
@@ -167,7 +176,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         foreach ($this->_errors as $errorText) {
         	$error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('dhl');
-            $error->setCarrierTitle(Mage::getStoreConfig('carriers/dhl/title'));
+            $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($errorText);
             $result->append($error);
         }
@@ -175,7 +184,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         foreach($this->_dhlRates as $method => $data) {
             $rate = Mage::getModel('shipping/rate_result_method');
             $rate->setCarrier('dhl');
-            $rate->setCarrierTitle(Mage::getStoreConfig('carriers/dhl/title'));
+            $rate->setCarrierTitle($this->getConfigData('title'));
             $rate->setMethod($method);
             $rate->setMethodTitle($data['term']);
             $rate->setCost($data['price_total']);
@@ -252,7 +261,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         $request = $xml->asXML();
 
         try {
-            $url = Mage::getStoreConfig('carriers/dhl/gateway_url');
+            $url = $this->getConfigData('gateway_url');
             if (!$url) {
                 $url = $this->_defaultGatewayUrl;
             }
@@ -338,12 +347,12 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
     public function getMethodPrice($cost, $method='')
     {
         $r = $this->_rawRequest;
-        if (Mage::getStoreConfig('carriers/dhl/cutoff_cost') != ''
-         && $method == Mage::getStoreConfig('carriers/dhl/free_method')
-         && Mage::getStoreConfig('carriers/dhl/cutoff_cost') <= $r->getValue()) {
+        if ($this->getConfigData('cutoff_cost') != ''
+         && $method == $this->getConfigData('free_method')
+         && $this->getConfigData('cutoff_cost') <= $r->getValue()) {
              $price = '0.00';
         } else {
-            $price = $cost + Mage::getStoreConfig('carriers/dhl/handling');
+            $price = $cost + $this->getConfigData('handling');
         }
         return $price;
     }
@@ -432,10 +441,10 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
     {
         $r = new Varien_Object();
 
-        $id = Mage::getStoreConfig('carriers/dhl/id');
+        $id = $this->getConfigData('id');
         $r->setId($id);
 
-        $password = Mage::getStoreConfig('carriers/dhl/password');
+        $password = $this->getConfigData('password');
         $r->setPassword($password);
 
         $this->_rawTrackRequest = $r;
@@ -471,15 +480,13 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
             foreach($trackings as $tracking){
                $track->addChild('Shipment')->addChild('TrackingNbr',$tracking);
             }
-
          $request = $xml->asXML();
-
          /*
          * tracking api cannot process from 3pm to 5pm PST time on Sunday
          * DHL Airborne conduts a maintainance during that period.
          */
          try {
-            $url = Mage::getStoreConfig('carriers/dhl/gateway_url');
+            $url = $this->getConfigData('gateway_url');
             if (!$url) {
                 $url = $this->_defaultGatewayUrl;
             }
@@ -505,7 +512,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
          $errorArr=array();
          $trackingserror=array();
          $tracknum='';
-          if (strlen(trim($response))>0) {
+         if (strlen(trim($response))>0) {
             if (strpos(trim($response), '<?xml')===0) {
                  $xml = simplexml_load_string($response);
                  if (is_object($xml)) {
@@ -538,12 +545,63 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
                                         * Code 0== airbill  found
                                         */
                                         $rArr['service']=(string)$txml->Service->Desc;
-                                        if($txml->Delivery){
-                                            $rArr['deliverydate']=(string)$txml->Delivery->Date;
-                                            $rArr['deliverytime']=(string)$txml->Delivery->Time.':00';
+                                        if(isset($txml->Weight))
+                                            $rArr['weight']=(string)$txml->Weight." lbs";
+                                        if (isset($txml->Delivery)) {
+                                            $rArr['deliverydate'] = (string)$txml->Delivery->Date;
+                                            $rArr['deliverytime'] = (string)$txml->Delivery->Time.':00';
                                             $rArr['status'] = Mage::helper('usa')->__('Delivered');
-                                        }else{
+                                            if (isset($txml->Delivery->Location->Desc)) {
+                                                $rArr['deliverylocation'] = (string)$txml->Delivery->Location->Desc;
+                                            }
+                                        } elseif (isset($txml->Pickup)) {
+                                            $rArr['deliverydate'] = (string)$txml->Pickup->Date;
+                                            $rArr['deliverytime'] = (string)$txml->Pickup->Time.':00';
+                                            $rArr['status'] = Mage::helper('usa')->__('Shipment picked up');
+                                        } else {
                                              $rArr['status']=(string)$txml->ShipmentType->Desc.Mage::helper('usa')->__(' was not delivered nor scanned');
+                                        }
+
+                                        $packageProgress = array();
+                                        if (isset($txml->TrackingHistory) && isset($txml->TrackingHistory->Status)) {
+
+                                            foreach ($txml->TrackingHistory->Status as $thistory) {
+                                                  $tempArr=array();
+                                                  $tempArr['activity'] = (string)$thistory->StatusDesc;
+                                                  $tempArr['deliverydate'] = (string)$thistory->Date;//YYYY-MM-DD
+                                                  $tempArr['deliverytime'] = (string)$thistory->Time.':00';//HH:MM:ss
+                                                  $addArr=array();
+                                                  if (isset($thistory->Location->City)) {
+                                                    $addArr[] = (string)$thistory->Location->City;
+                                                  }
+                                                  if (isset($thistory->Location->State)) {
+                                                    $addArr[] = (string)$thistory->Location->State;
+                                                  }
+                                                  if (isset($thistory->Location->CountryCode)) {
+                                                    $addArr[] = (string)$thistory->Location->Country;
+                                                  }
+                                                  if ($addArr) {
+                                                    $tempArr['deliverylocation']=implode(', ',$addArr);
+                                                  }elseif(isset($thistory['final_delivery']) && (string)$thistory['final_delivery']==='true'){
+                                                      /*
+                                                      if the history is final delivery, there is no informationabout city, state and country
+                                                      */
+                                                      $addArr=array();
+                                                      if (isset($txml->Receiver->City)) {
+                                                        $addArr[] = (string)$txml->Receiver->City;
+                                                      }
+                                                      if (isset($thistory->Receiver->State)) {
+                                                        $addArr[] = (string)$txml->Receiver->State;
+                                                      }
+                                                      if (isset($thistory->Receiver->CountryCode)) {
+                                                        $addArr[] = (string)$txml->Receiver->Country;
+                                                      }
+                                                      $tempArr['deliverylocation']=implode(', ',$addArr);
+                                                  }
+                                                  $packageProgress[] = $tempArr;
+                                            }
+                                            $rArr['progressdetail'] = $packageProgress;
+
                                         }
                                         $resultArr[$tracknum]=$rArr;
                                     }else{
@@ -572,7 +630,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
             foreach ($errorArr as $t=>$r) {
             	$error = Mage::getModel('shipping/tracking_result_error');
                 $error->setCarrier('dhl');
-                $error->setCarrierTitle(Mage::getStoreConfig('carriers/dhl/title'));
+                $error->setCarrierTitle($this->getConfigData('title'));
                 $error->setTracking($t);
                 $error->setErrorMessage($r);
                 $result->append($error);
@@ -581,7 +639,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
             foreach($resultArr as $t => $data) {
                 $tracking = Mage::getModel('shipping/tracking_result_status');
                 $tracking->setCarrier('dhl');
-                $tracking->setCarrierTitle(Mage::getStoreConfig('carriers/dhl/title'));
+                $tracking->setCarrierTitle($this->getConfigData('title'));
                 $tracking->setTracking($t);
                 $tracking->addData($data);
                 /*
@@ -596,7 +654,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
               foreach($trackings as $t){
                 $error = Mage::getModel('shipping/tracking_result_error');
                 $error->setCarrier('dhl');
-                $error->setCarrierTitle(Mage::getStoreConfig('carriers/dhl/title'));
+                $error->setCarrierTitle($this->getConfigData('title'));
                 $error->setTracking($t);
                 $error->setErrorMessage($errorTitle);
                 $result->append($error);
@@ -630,8 +688,18 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl extends Mage_Usa_Model_Shipping_Carrie
         return $statuses;
     }
 
-    public function isTrackingAvailable()
+    /**
+     * Get allowed shipping methods
+     *
+     * @return array
+     */
+    public function getAllowedMethods()
     {
-        return true;
+        $allowed = explode(',', $this->getConfigData('allowed_methods'));
+        $arr = array();
+        foreach ($allowed as $k) {
+            $arr[$k] = $this->getCode('service', $k);
+        }
+        return $arr;
     }
 }

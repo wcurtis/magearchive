@@ -25,4 +25,9 @@ class Mage_Core_Model_Config_Data extends Mage_Core_Model_Abstract
     {
         $this->_init('core/config_data');
     }
+
+    public function afterLoad()
+    {
+        $this->_afterLoad();
+    }
 }

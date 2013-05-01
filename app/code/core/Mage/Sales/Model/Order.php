@@ -92,6 +92,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     const STATE_COMPLETE   = 'complete';
     const STATE_CLOSED     = 'closed';
     const STATE_CANCELED   = 'canceled';
+    const STATE_HOLDED     = 'holded';
 
     protected $_eventPrefix = 'sales_order';
     protected $_eventObject = 'order';
@@ -117,9 +118,14 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
 
     public function loadByIncrementId($incrementId)
     {
+        return $this->loadByAttribute('increment_id', $incrementId);
+    }
+
+    public function loadByAttribute($attribute, $value)
+    {
         $collection = $this->getCollection()
             ->addAttributeToSelect('*')
-            ->addAttributeToFilter('increment_id', $incrementId)
+            ->addAttributeToFilter($attribute, $value)
             ->load()
                 ->getItems();
         if (sizeof($collection)) {
@@ -150,7 +156,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canCancel()
     {
-        if ($this->getIsHold()) {
+        if ($this->canUnhold()) {
             return false;
         }
 
@@ -175,7 +181,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canInvoice()
     {
-        if ($this->getIsHold()) {
+        if ($this->canUnhold()) {
             return false;
         }
 
@@ -200,7 +206,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canCreditmemo()
     {
-        if ($this->getIsHold()) {
+        if ($this->canUnhold()) {
             return false;
         }
 
@@ -212,11 +218,20 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         /**
          * need use int, becose $a=762.73;$b=762.73; $a-$b!=0;
          */
-        $paidCompare = (int) $this->getTotalPaid() * 1000000;
-        $refundedCompare = (int) $this->getTotalRefunded() * 1000000;
+        $paidCompare = (int) ($this->getTotalPaid() * 1000000);
+        $refundedCompare = (int) ($this->getTotalRefunded() * 1000000);
         if ($paidCompare>$refundedCompare) {
             return true;
         }
+        /**
+         * Moshe: another solution
+         */
+        /*
+        if (abs($this->getTotalPaid()-$this->getTotalRefunded())<.0001) {
+            return true;
+        }
+        */
+
         return false;
     }
 
@@ -229,11 +244,12 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
     {
         if ($this->getState() === self::STATE_CANCELED ||
             $this->getState() === self::STATE_COMPLETE ||
-            $this->getState() === self::STATE_CLOSED ) {
+            $this->getState() === self::STATE_CLOSED ||
+            $this->getState() === self::STATE_HOLDED) {
             return false;
         }
 
-        return !$this->getIsHold();
+        return true;
     }
 
     /**
@@ -243,7 +259,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canUnhold()
     {
-        return $this->getIsHold();
+        return $this->getState() === self::STATE_HOLDED;
     }
 
     /**
@@ -253,7 +269,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canShip()
     {
-        if ($this->getIsHold()) {
+        if ($this->canUnhold()) {
             return false;
         }
 
@@ -272,7 +288,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canEdit()
     {
-        if ($this->getIsHold()) {
+        if ($this->canUnhold()) {
             return false;
         }
 
@@ -291,22 +307,26 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canReorder()
     {
-        if ($this->getIsHold()) {
+        if ($this->canUnhold()) {
             return false;
         }
 
+        $products = array();
         foreach ($this->getItemsCollection() as $item) {
             $products[] = $item->getProductId();
         }
-        $productsCollection = Mage::getModel('catalog/product')
-            ->getCollection()
-            ->addIdFilter($products)
-            ->load();
-        foreach ($productsCollection as $product) {
-            if ($product->isSalable()) {
-                return true;
+        $productsCollection = Mage::getModel('catalog/product')->getCollection();
+
+        if (!empty($products)) {
+            $productsCollection->addIdFilter($products)
+                ->load();
+            foreach ($productsCollection as $product) {
+                if ($product->isSalable()) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
@@ -469,13 +489,17 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
 
     public function hold()
     {
-        $this->setIsHold(true);
+        //$this->setIsHold(true);
+        $this->setHoldBeforeState($this->getState());
+        $this->setHoldBeforeStatus($this->getStatus());
+        $this->setState(self::STATE_HOLDED, true);
         return $this;
     }
 
     public function unhold()
     {
-        $this->setIsHold(false);
+        //$this->setIsHold(false);
+        $this->setState($this->getHoldBeforeState(), $this->getHoldBeforeStatus());
         return $this;
     }
 
@@ -1104,7 +1128,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         }
 
         if ($this->getState() !== self::STATE_CANCELED
-            && !$this->getIsHold()
+            && !$this->canUnhold()
             && !$this->canInvoice()
             && !$this->canShip()) {
             if ($this->canCreditmemo()) {

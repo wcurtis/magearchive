@@ -45,6 +45,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Add extends Mage_Adminhtml_Block_Widget_Fo
             toggleParentVis("add_urlrewrite_category");
             toggleVis("save_button");
             toggleVis("reset_button");
+            document.getElementById("urlrewrite_container").style.display="block";
         ';
 
         $this->_formInitScripts[] = '
@@ -86,10 +87,9 @@ class Mage_Adminhtml_Block_Urlrewrite_Add extends Mage_Adminhtml_Block_Widget_Fo
                     updateRating: function() {
                         var typeDom = $("type");
                         // 2 : product
-
                         if (typeDom.options[typeDom.options.selectedIndex].value == 1) {
 
-                            urlrewrite.categoryInfoUrl = "' . Mage::getUrl('*/urlrewrite/getCategoryInfo') . '";
+                            urlrewrite.categoryInfoUrl = "' . $this->getUrl('*/urlrewrite/getCategoryInfo') . '";
                             var con = new Ext.lib.Ajax.request(\'POST\', urlrewrite.categoryInfoUrl, {success:urlrewrite.loadCategory,failure:urlrewrite.reqFailure});
                         	toggleParentVis("add_urlrewrite_category");
                         	toggleParentVis("add_urlrewrite_type");
@@ -112,7 +112,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Add extends Mage_Adminhtml_Block_Widget_Fo
                         } else if( response.id ){
                             $("product_id").value = response.id;
 
-                            $("product_name").innerHTML = \'<a href="' . Mage::getUrl('*/catalog_product/edit') . 'id/\' + response.id + \'" target="_blank">\' + response.name + \'</a>\';
+                            $("product_name").innerHTML = \'<a href="' . $this->getUrl('*/catalog_product/edit') . 'id/\' + response.id + \'" target="_blank">\' + response.name + \'</a>\';
                             $("id_path").value = "product/" + response.id;
                             $("request_path").value = response.url_key + ".html";
                             $("target_path").value = "catalog/product/view/id/" + response.id;
@@ -142,6 +142,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Add extends Mage_Adminhtml_Block_Widget_Fo
 
              Event.observe(window, \'load\', function(){
                  Event.observe($("type"), \'change\', urlrewrite.updateRating);
+                 $$(\'.content-header-floating\').each(function (el) { el.remove(); });
            });
 
            // toggle element in parent

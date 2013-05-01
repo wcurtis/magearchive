@@ -51,7 +51,13 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Account extends Mage_Adminhtm
     protected function _prepareForm()
     {
         if (!$this->_form) {
-            $display = array('email', 'group_id');
+            if ($this->getQuote()->getCustomerIsGuest()) {
+                $display = array('email');
+            }
+            else {
+                $display = array('email', 'group_id');
+            }
+
             $this->_form = new Varien_Data_Form();
             $customerModel = Mage::getModel('customer/customer');
 

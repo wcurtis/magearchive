@@ -26,25 +26,82 @@
  */
 class Mage_Core_Block_Store_Switcher extends Mage_Core_Block_Template
 {
+    protected $_groups = array();
+    protected $_stores = array();
+    protected $_loaded = false;
+
+    public function __construct()
+    {
+        $this->_loadData();
+        $this->setStores(array());
+        $this->setLanguages(array());
+        return parent::__construct();
+    }
+
+    protected function _loadData()
+    {
+        if ($this->_loaded) {
+            return $this;
+        }
+
+        $websiteId = Mage::app()->getStore()->getWebsiteId();
+        $storeCollection = Mage::getModel('core/store')
+            ->getCollection()
+            ->addWebsiteFilter($websiteId);
+        $groupCollection = Mage::getModel('core/store_group')
+            ->getCollection()
+            ->addWebsiteFilter($websiteId);
+        foreach ($groupCollection as $group) {
+            $this->_groups[$group->getId()] = $group;
+        }
+        foreach ($storeCollection as $store) {
+            if (!$store->getIsActive()) {
+                continue;
+            }
+            $store->setLocaleCode(Mage::getStoreConfig('general/locale/code', $store->getId()));
+            $this->_stores[$store->getGroupId()][$store->getId()] = $store;
+        }
+
+        $this->_loaded = true;
+
+        return $this;
+    }
+
     public function getStoreCount()
     {
-        return $this->getStores()->getSize();
-    }
-    
-    public function getStores()
-    {
-        $stores = $this->getData('stores');
-        if (is_null($stores)) {
-            $stores = Mage::app()->getStore()
-                ->getWebsite()
-                    ->getStoreCollection()
-                        ->load();
-            $this->setData('stores', $stores);
+        $stores = array();
+        $localeCode = Mage::getStoreConfig('general/locale/code');
+        foreach ($this->_groups as $group) {
+            if (!isset($this->_stores[$group->getId()])) {
+                continue;
+            }
+            $useStore = false;
+            foreach ($this->_stores[$group->getId()] as $store) {
+                if ($store->getLocaleCode() == $localeCode) {
+                    $useStore = true;
+                    $stores[] = $store;
+                }
+            }
+            if (!$useStore && isset($this->_stores[$group->getId()][$group->getDefaultStoreId()])) {
+                $stores[] = $this->_stores[$group->getId()][$group->getDefaultStoreId()];
+            }
         }
-        
-        return $stores;
+
+        $this->setStores($stores);
+        return count($this->getStores());
     }
-    
+
+    public function getLanguageCount()
+    {
+        $groupId = Mage::app()->getStore()->getGroupId();
+        if (!isset($this->_stores[$groupId])) {
+            $this->setLanguages(array());
+            return 0;
+        }
+        $this->setLanguages($this->_stores[$groupId]);
+        return count($this->getLanguages());
+    }
+
     public function getCurrentStoreId()
     {
         return Mage::app()->getStore()->getId();

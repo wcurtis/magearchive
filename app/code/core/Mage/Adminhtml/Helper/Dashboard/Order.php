@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Helper_Dashboard_Order extends Mage_Adminhtml_Helper_Dashboard_Abstract
 {
+
     protected function _initCollection()
     {
         $this->_collection = Mage::getResourceSingleton('reports/order_collection')
@@ -38,4 +38,5 @@ class Mage_Adminhtml_Helper_Dashboard_Order extends Mage_Adminhtml_Helper_Dashbo
 
         $this->_collection->load();
     }
-} // Class Mage_Adminhtml_Helper_Dashboard_Order end
+
+}

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog super product group block
  *
@@ -26,27 +27,27 @@
  */
  class Mage_Catalog_Block_Product_View_Super_Group extends Mage_Core_Block_Template
  {
- 	protected $_filter = null;
+     protected $_filter = null;
 
- 	public function getItems()
- 	{
- 		return Mage::registry('product')->getSuperGroupProductsLoaded();
- 	}
+     public function getItems()
+     {
+         return Mage::registry('product')->getSuperGroupProductsLoaded();
+     }
 
- 	public function filterQty($qty)
- 	{
- 		if(empty($qty)) {
- 			return '';
- 		}
- 		return $this->getFilter()->filter($qty);
- 	}
+     public function filterQty($qty)
+     {
+         if(empty($qty)) {
+             return '';
+         }
+         return $this->getFilter()->filter($qty);
+     }
 
- 	public function getFilter()
- 	{
- 		if(is_null($this->_filter)) {
- 			$this->_filter = new Zend_Filter_Int();
- 		}
+     public function getFilter()
+     {
+         if(is_null($this->_filter)) {
+             $this->_filter = new Zend_Filter_Int();
+         }
 
- 		return $this->_filter;
- 	}
- } // Class Mage_Catalog_Block_Product_View_Super_Group end
+         return $this->_filter;
+     }
+ }

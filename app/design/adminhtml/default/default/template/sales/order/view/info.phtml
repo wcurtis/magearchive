@@ -72,10 +72,12 @@
                 <td class="label"><label><?=Mage::helper('sales')->__('Email')?></label></td>
                 <td class="input-ele"><a href="mailto:<?=$_order->getCustomerEmail()?>"><strong><?=$_order->getCustomerEmail()?></strong></a></td>
             </tr>
+            <?if ($_groupName=$this->getCustomerGroupName()) :?>
             <tr>
                 <td class="label"><label><?=Mage::helper('sales')->__('Customer Group')?></label></td>
-                <td class="input-ele"><strong><?=$this->getCustomerGroupName()?></strong></td>
+                <td class="input-ele"><strong><?=$_groupName?></strong></td>
             </tr>
+            <?endif;?>
             </table>
         </fieldset>
     </div>

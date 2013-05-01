@@ -21,7 +21,7 @@
 
 class Mage_Core_Block_Text_Tag_Meta extends Mage_Core_Block_Text
 {
-    public function toHtml()
+    protected function _toHtml()
     {
         if (!$this->getContentType()) {
             $this->setContentType('text/html; charset=utf-8');
@@ -32,7 +32,7 @@ class Mage_Core_Block_Text_Tag_Meta extends Mage_Core_Block_Text
         $this->addText('<meta name="description" content="'.$this->getDescription().'"/>'."\n");
         $this->addText('<meta name="keywords" content="'.$this->getKeywords().'"/>'."\n");
         $this->addText('<meta name="robots" content="'.$this->getRobots().'"/>'."\n");
-        
-        return parent::toHtml();
+
+        return parent::_toHtml();
     }
 }

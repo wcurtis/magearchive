@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Gift Message Observer Model
  *
@@ -165,4 +166,5 @@ class Mage_GiftMessage_Model_Observer extends Varien_Object
 
         return $this;
     }
-} // Class Mage_GiftMessage_Model_Observer End
+
+}

@@ -116,9 +116,9 @@ class Mage_Adminhtml_Block_Rating_Edit_Tab_Form extends Mage_Adminhtml_Block_Wid
 
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
-        return $this->_getWarningHtml() . parent::toHtml();
+        return $this->_getWarningHtml() . parent::_toHtml();
     }
 
     protected function _getWarningHtml()

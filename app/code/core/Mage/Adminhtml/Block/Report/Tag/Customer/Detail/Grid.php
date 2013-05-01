@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Report_Tag_Customer_Detail_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -64,7 +64,6 @@ class Mage_Adminhtml_Block_Report_Tag_Customer_Detail_Grid extends Mage_Adminhtm
             'index'     =>'tag_name'
         ));
 
-
          // Collection for stores filters
         if(!$collection = Mage::registry('stores_select_collection')) {
             $collection =  Mage::app()->getStore()->getResourceCollection()
@@ -92,7 +91,6 @@ class Mage_Adminhtml_Block_Report_Tag_Customer_Detail_Grid extends Mage_Adminhtm
             'options'    => $stores
         ));
 
-
         $this->addColumn('created_at', array(
             'header'    =>Mage::helper('reports')->__('Added'),
             'sortable'  => false,
@@ -107,4 +105,6 @@ class Mage_Adminhtml_Block_Report_Tag_Customer_Detail_Grid extends Mage_Adminhtm
 
         return parent::_prepareColumns();
     }
+
 }
+

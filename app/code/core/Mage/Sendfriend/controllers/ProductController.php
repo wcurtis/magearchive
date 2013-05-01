@@ -73,6 +73,8 @@ class Mage_Sendfriend_ProductController extends Mage_Core_Controller_Front_Actio
 
         $this->_initLayoutMessages('catalog/session');
         $this->renderLayout();
+
+        Mage::dispatchEvent('sendfriend_product', array('product'=>$product));
     }
 
     public function sendmailAction()

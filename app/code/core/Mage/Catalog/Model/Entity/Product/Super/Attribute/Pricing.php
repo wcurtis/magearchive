@@ -18,17 +18,19 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog super product attribute pricing
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
-
 class Mage_Catalog_Model_Entity_Product_Super_Attribute_Pricing extends Mage_Core_Model_Mysql4_Abstract
 {
-	protected function _construct()
-	{
-		$this->_init('catalog/product_super_attribute_pricing', 'value_id');
-	}
-}// Class Mage_Catalog_Model_Entity_Product_Super_Attribute_Pricing END
+
+    protected function _construct()
+    {
+        $this->_init('catalog/product_super_attribute_pricing', 'value_id');
+    }
+
+}

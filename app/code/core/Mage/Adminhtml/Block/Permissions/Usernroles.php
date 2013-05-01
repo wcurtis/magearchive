@@ -17,15 +17,17 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+class Mage_Adminhtml_Block_Permissions_UsernRoles extends Mage_Adminhtml_Block_Template
+{
 
-class Mage_Adminhtml_Block_Permissions_UsernRoles extends Mage_Core_Block_Template {
     public function __construct() {
         parent::__construct();
-		$userCollection = Mage::getModel("permissions/users")->getCollection()->load();
-		$rolesCollection = Mage::getModel("permissions/roles")->getCollection()->load();
-		
+        $userCollection = Mage::getModel("permissions/users")->getCollection()->load();
+        $rolesCollection = Mage::getModel("permissions/roles")->getCollection()->load();
+
         $this->setTemplate('permissions/usernroles.phtml')
-        	->assign('users', $userCollection)
-        	->assign('roles', $rolesCollection);
+            ->assign('users', $userCollection)
+            ->assign('roles', $rolesCollection);
     }
+
 }

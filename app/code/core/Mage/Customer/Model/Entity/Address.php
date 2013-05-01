@@ -26,7 +26,7 @@
  */
 class Mage_Customer_Model_Entity_Address extends Mage_Eav_Model_Entity_Abstract
 {
-    public function __construct() 
+    public function __construct()
     {
         $resource = Mage::getSingleton('core/resource');
         $this->setType('customer_address')->setConnection(
@@ -34,13 +34,13 @@ class Mage_Customer_Model_Entity_Address extends Mage_Eav_Model_Entity_Abstract
             $resource->getConnection('customer_write')
         );
     }
-    
+
     protected function _afterSave(Varien_Object $address)
     {
         if ($address->getId() && ($address->getIsDefaultBilling() || $address->getIsDefaultShipping())) {
             $customer = Mage::getModel('customer/customer')
                 ->load($address->getCustomerId());
-                
+
             if ($address->getIsDefaultBilling()) {
                 $customer->setDefaultBilling($address->getId());
             }
@@ -51,12 +51,12 @@ class Mage_Customer_Model_Entity_Address extends Mage_Eav_Model_Entity_Abstract
         }
         return $this;
     }
-    
+
     public function getCustomerId($object)
     {
         return $object->getData('customer_id') ? $object->getData('customer_id') :$object->getParentId();
     }
-    
+
     public function setCustomerId($object, $id)
     {
         $object->setParentId($id);

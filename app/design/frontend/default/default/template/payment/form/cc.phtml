@@ -31,6 +31,7 @@
             <div class="input-box">
                 <label for="<?=$_code?>_cc_type"><?=$this->__('Credit Card Type')?> <span class="required">*</span></label><br/>
                 <select id="<?=$_code?>_cc_type" name="payment[cc_type]" class="required-entry validate-cc-type-select">
+                    <option value=""></option>
                 <?$_ccType = $this->getInfoData('cc_type')?>
                 <?foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName):?>
                     <option value="<?=$_typeCode?>" <?if($_typeCode==$_ccType):?>selected<?endif?>><?=$_typeName?></option>

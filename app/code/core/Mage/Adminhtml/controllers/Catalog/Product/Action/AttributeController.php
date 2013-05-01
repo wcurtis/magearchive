@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml catalog product action attribute update controller
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adminhtml_Controller_Action
 {
+
     protected function _construct()
     {
         // Define module dependent translate
@@ -51,7 +53,7 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
         $this->_addLeft(
                 $this->getLayout()->createBlock('adminhtml/store_switcher')
                     ->setDefaultStoreName($this->__('Default Values'))
-                    ->setSwitchUrl(Mage::getUrl('*/*/*', array('_current'=>true, 'store'=>null)))
+                    ->setSwitchUrl($this->getUrl('*/*/*', array('_current'=>true, 'store'=>null)))
         );
 
         $this->_addLeft(
@@ -67,7 +69,6 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
 
         $this->renderLayout();
     }
-
 
     public function saveAction()
     {
@@ -149,4 +150,5 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
     {
         return Mage::helper('adminhtml/catalog_product_edit_action_attribute');
     }
-} // Class Mage_Adminhtml_Catalog_Product_Action_AttributeController End
+
+}

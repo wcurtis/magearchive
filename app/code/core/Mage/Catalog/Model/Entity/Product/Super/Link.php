@@ -18,20 +18,21 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog super product link model resource
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
-
 class Mage_Catalog_Model_Entity_Product_Super_Link extends Mage_Core_Model_Mysql4_Abstract
 {
+
     protected function _construct()
     {
         $this->_init('catalog/product_super_link','link_id');
     }
-    
+
     public function loadByProduct($link, $productId, $parentId)
     {
         $read = $this->_getReadAdapter();
@@ -50,4 +51,5 @@ class Mage_Catalog_Model_Entity_Product_Super_Link extends Mage_Core_Model_Mysql
         $this->_afterLoad($link);
         return true;
     }
-}// Class Mage_Catalog_Model_Entity_Product_Super_Link END
+
+}

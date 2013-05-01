@@ -222,7 +222,7 @@ class Mage_Adminhtml_DashboardController extends Mage_Adminhtml_Controller_Actio
 
         foreach( $cartItems as $cartItem ) {
             $itemObject->addData($cartItem);
-            $itemObject->setUrl(Mage::getUrl('catalog/product/view', array('id'=>$itemObject->getProductId())));
+            $itemObject->setUrl($this->getUrl('catalog/product/view', array('id'=>$itemObject->getProductId())));
             $itemsXML.= $itemObject->toXml(array('price', 'qty', 'row_total', 'name', 'url'), "item", false, true);
         }
 

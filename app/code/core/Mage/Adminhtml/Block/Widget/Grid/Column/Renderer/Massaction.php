@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Grid widget column renderer massaction
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Massaction extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Checkbox
 {
+
     public function renderHeader()
     {
         return '&nbsp;';//'<input type="checkbox" id="' . $this->getColumn()->getGrid()->getHtmlId() . '-checkbox-all" onclick="'.$this->getColumn()->getGrid()->getMassactionBlock()->getJsObjectName().'.checkCheckboxes(this)" class="checkbox" title="'.$this->__('Select All').'"/>';
@@ -36,10 +38,19 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Massaction extends Mage_A
         $out = 'class="a-center"';
         return $out;
     }
+    
+    public function render(Varien_Object $row)
+    {
+        if ($this->getColumn()->getGrid()->getMassactionIdFieldOnlyIndexValue()){
+	    $this->setNoObjectId(true);
+	}
+        return parent::render($row);
+    }
+    // 
 
     protected function _getCheckboxHtml($value, $checked)
     {
         return '<input type="checkbox" name="'.$this->getColumn()->getName().'" value="' . $value . '" class="massaction-checkbox"'.$checked.'/>';
     }
 
-} // Class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Massaction End
+}

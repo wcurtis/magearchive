@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Shipment_Create_Items extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Shipment_Create_Items extends Mage_Adminhtml_Block_Template
 {
     /**
      * Initialize template

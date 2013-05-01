@@ -24,15 +24,15 @@
  */
 class Mage_Adminhtml_Block_Sales_Order_Create_Header extends Mage_Adminhtml_Block_Sales_Order_Create_Abstract
 {
-    public function toHtml()
+    protected function _toHtml()
     {
         if ($this->_getSession()->getOrder()->getId()) {
-            return '<h3>'.Mage::helper('sales')->__('Edit Order #%s', $this->_getSession()->getOrder()->getIncrementId()).'</h3>';
+            return '<h3 class="icon-head head-sales-order">'.Mage::helper('sales')->__('Edit Order #%s', $this->_getSession()->getOrder()->getIncrementId()).'</h3>';
         }
 
         $customerId = $this->getCustomerId();
         $storeId    = $this->getStoreId();
-        $out = '<h3>';
+        $out = '<h3 class="icon-head head-sales-order">';
         if ($customerId && $storeId) {
             $out.= Mage::helper('sales')->__('Create New Order for %s in %s', $this->getCustomer()->getName(), $this->getStore()->getName());
         }

@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Adminhtml_Block_Widget_Container
 {
+
     protected $_stores;
     protected $_attributes;
     protected $_addMapButtonHtml;
@@ -206,4 +207,6 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_Wizard extends Mage_Admin
         }
         return $this->_shortDateFormat;
     }
+
 }
+

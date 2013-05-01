@@ -49,6 +49,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </cctypes>
+                        <useccv translate="label">
+                            <label>Credit Card Verification</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </useccv>
                         <email_customer translate="label">
                             <label>Email customer</label>
                             <frontend_type>select</frontend_type>
@@ -61,6 +70,7 @@
                         <login translate="label">
                             <label>API Login ID</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -120,6 +130,7 @@
                         <trans_key translate="label">
                             <label>Transaction key</label>
                             <frontend_type>password</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -143,7 +154,7 @@
                             <show_in_store>0</show_in_store>
                         </cgi_url>
                         <allowspecific translate="label">
-                            <label>Payment to applicable countries</label>
+                            <label>payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>50</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -152,7 +163,7 @@
                             <show_in_store>1</show_in_store>
                         </allowspecific>
                         <specificcountry translate="label">
-                            <label>Payment to Specific countries</label>
+                            <label>payment from Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>51</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -160,6 +171,22 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </specificcountry>
+                        <min_order_total>
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>98</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total>
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>99</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
                         <model>
                         </model>
                     </fields>
@@ -190,6 +217,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </cctypes>
+                        <useccv translate="label">
+                            <label>Credit Card Verification</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </useccv>
                         <order_status translate="label">
                             <label>New order status</label>
                             <frontend_type>select</frontend_type>
@@ -210,6 +246,7 @@
                         <pwd translate="label">
                             <label>Password</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -250,6 +287,7 @@
                         <user translate="label">
                             <label>User</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -290,7 +328,7 @@
                             <show_in_store>0</show_in_store>
                         </debug>
                         <allowspecific translate="label">
-                            <label>Payment to applicable countries</label>
+                            <label>payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>50</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -299,7 +337,7 @@
                             <show_in_store>1</show_in_store>
                         </allowspecific>
                         <specificcountry translate="label">
-                            <label>Payment to Specific countries</label>
+                            <label>payment from Specific countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>51</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -307,6 +345,22 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </specificcountry>
+                        <min_order_total>
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>98</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total>
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>99</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
                     </fields>
                 </verisign>
             </groups>

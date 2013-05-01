@@ -24,7 +24,6 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Wishlist extends Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Abstract
 {
 
@@ -60,9 +59,11 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Wishlist extends Mage_Admi
         }
         return $collection;
     }
-    
+
     public function getItemId($item)
     {
         return $item->getWishlistItemId();
     }
+
 }
+

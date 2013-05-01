@@ -64,8 +64,8 @@ class Mage_Adminhtml_Block_Cms_Page_Edit_Tab_Main extends Mage_Adminhtml_Block_W
 
     	$fieldset->addField('store_id', 'select', array(
             'name'      => 'store_id',
-            'label'     => Mage::helper('cms')->__('Store'),
-            'title'     => Mage::helper('cms')->__('Store'),
+            'label'     => Mage::helper('cms')->__('Store View'),
+            'title'     => Mage::helper('cms')->__('Store View'),
             'required'  => true,
             'options'    => $stores,
         ));

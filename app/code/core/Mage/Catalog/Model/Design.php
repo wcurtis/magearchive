@@ -53,7 +53,7 @@ class Mage_Catalog_Model_Design extends Mage_Core_Model_Abstract
                 if ($application && $application != 1 && $application != 4)
                     $error = 1;
 
-                $calledFrom = 0;
+                //$calledFrom = 0;
                 break;
 
             default:

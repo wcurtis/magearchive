@@ -22,7 +22,7 @@
  * Customer model
  *
  */
-class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements Mage_Core_Model_Shared_Interface
+class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
 {
     const XML_PATH_REGISTER_EMAIL_TEMPLATE  = 'customer/create_account/email_template';
     const XML_PATH_REGISTER_EMAIL_IDENTITY  = 'customer/create_account/email_identity';
@@ -34,6 +34,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
     protected $_eventObject = 'customer';
 
     protected $_addressCollection;
+    protected $_isAddressCollectionLoaded;
     protected $_store;
 
     function _construct()
@@ -41,12 +42,10 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
         $this->_init('customer/customer');
     }
 
-    /**
-     * @todo remove public access to resource
-     */
-    public function getResource()
+    public function __destruct()
     {
-        return $this->_getResource();
+        unset($this->_addressCollection);
+        unset($this->_loadedAddressCollection);
     }
 
     /**
@@ -76,15 +75,23 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
         return $this;
     }
 
+
     /**
-     * Save customer
+     * Processing object before save data
      *
-     * @return Mage_Customer_Model_Customer
+     * @return Mage_Core_Model_Abstract
      */
-    public function save()
+    protected function _beforeSave()
     {
+        parent::_beforeSave();
+
+        $storeId = $this->getStoreId();
+        if (is_null($storeId)) {
+            $this->setStoreId(Mage::app()->getStore()->getId());
+        }
+
         $this->getGroupId();
-        return parent::save();
+        return $this;
     }
 
     /**
@@ -159,13 +166,11 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
      */
     public function getLoadedAddressCollection()
     {
-        $collection = $this->getData('loaded_address_collection');
-        if (is_null($collection)) {
-            $collection = Mage::getResourceModel('customer/address_collection')
-                ->setCustomerFilter($this)
+        $collection = $this->getAddressCollection();
+        if (!$this->_isAddressCollectionLoaded) {
+            $collection->setCustomerFilter($this)
                 ->addAttributeToSelect('*')
                 ->load();
-            $this->setData('loaded_address_collection', $collection);
         }
 
         return $collection;
@@ -397,8 +402,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
     {
         if (!$this->getData('group_id')) {
             $storeId = $this->getStoreId() ? $this->getStoreId() : Mage::app()->getStore()->getId();
-            $this->setData('group_id', Mage::getStoreConfig(
-                Mage_Customer_Model_Group::XML_PATH_DEFAULT_ID, $storeId));
+            $this->setData('group_id', Mage::getStoreConfig(Mage_Customer_Model_Group::XML_PATH_DEFAULT_ID, $storeId));
         }
         return $this->getData('group_id');
     }
@@ -430,8 +434,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
         else {
             $storeId = $store;
         }
-        $availableStores = $this->getStore()->getWebsite()->getStoresIds();
-
+        $availableStores = $this->getSharedStoreIds();
         return in_array($storeId, $availableStores);
     }
 
@@ -443,7 +446,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
     public function getStore()
     {
         if (is_null($this->_store)) {
-            $this->_store = Mage::getModel('core/store')->load($this->getStoreId());
+            $this->_store = Mage::app()->getStore($this->getStoreId());
         }
         return $this->_store;
     }
@@ -455,7 +458,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
      */
     public function getSharedStoreIds()
     {
-        return $this->_getResource()->getSharedStoreIds();
+        return $this->getStore()->getWebsite()->getStoresIds();
     }
 
     /**
@@ -484,24 +487,10 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract implements M
      */
     public function setStoreId($storeId)
     {
-        $this->_getResource()->setStore($storeId);
         $this->setData('store_id', $storeId);
         if (! is_null($this->_store) && ($this->_store->getId() != $storeId)) {
             $this->_store = null;
         }
-        return $this;
-    }
-
-    /**
-     * Customer delete
-     *
-     * @return Mage_Customer_Model_Customer
-     */
-    public function delete()
-    {
-        $customerId = $this->getId();
-        parent::delete();
-        Mage::dispatchEvent('customer_model_delete', array('customer_id'=>$customerId, 'customer'=>$this));
         return $this;
     }
 }

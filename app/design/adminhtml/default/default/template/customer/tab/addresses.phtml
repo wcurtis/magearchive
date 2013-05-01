@@ -430,7 +430,7 @@ addressesModel.prototype = {
         if(serverResponse){
             var data = eval('(' + serverResponse + ')');
             var value = this.regionElement.value;
-            var reqLabel = this.regionElement.previous(0).getElementsByClassName('required');
+            var reqLabel = this.regionElement.parentNode.previous(0).getElementsByClassName('required');
             if (data.length) {
                 var html = '<select name="'+this.regionElement.name+'" id="'+this.regionElement.id+'" class="required-entry select" title="'+this.regionElement.title+'">';
                 html+= '<option value=""></option>';

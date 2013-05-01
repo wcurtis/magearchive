@@ -27,7 +27,7 @@ if (!Mage::app()->isInstalled()) {
 }
 
 try {
-    Mage::getConfig()->loadEventObservers('crontab');
+    Mage::getConfig()->init()->loadEventObservers('crontab');
     Mage::dispatchEvent('default');
 } catch (Exception $e) {
     Mage::printException($e);

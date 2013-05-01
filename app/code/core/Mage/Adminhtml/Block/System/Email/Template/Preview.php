@@ -24,35 +24,36 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
- 
-class Mage_Adminhtml_Block_System_Email_Template_Preview extends Mage_Adminhtml_Block_Widget 
+class Mage_Adminhtml_Block_System_Email_Template_Preview extends Mage_Adminhtml_Block_Widget
 {
-    public function toHtml() 
+
+    protected function _toHtml()
     {
         $template = Mage::getModel('core/email_template');
         if($id = (int)$this->getRequest()->getParam('id')) {
             $template->load($id);
-        } else { 
+        } else {
             $template->setTemplateType($this->getRequest()->getParam('type'));
-            $template->setTemplateText($this->getRequest()->getParam('text'));    
+            $template->setTemplateText($this->getRequest()->getParam('text'));
         }
-        
+
         Varien_Profiler::start("email_template_proccessing");
         $vars = array();
-        
+
         if($this->getRequest()->getParam('subscriber')) {
         	$vars['subscriber'] = Mage::getModel('newsletter/subscriber')
         		->load($this->getRequest()->getParam('subscriber'));
         }
-        
+
         $templateProcessed = $template->getProcessedTemplate($vars, true);
-        
+
         if($template->isPlain()) {
             $templateProcessed = "<pre>" . htmlspecialchars($templateProcessed) . "</pre>";
         }
-        
+
         Varien_Profiler::stop("email_template_proccessing");
-        
+
         return $templateProcessed;
     }
+
 }

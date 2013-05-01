@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Tag_Product_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -89,6 +89,7 @@ class Mage_Adminhtml_Block_Tag_Product_Grid extends Mage_Adminhtml_Block_Widget_
 
     protected function getRowUrl($row)
     {
-        return Mage::getUrl('*/catalog_product/edit', array('id' => $row->getProductId()));
+        return $this->getUrl('*/catalog_product/edit', array('id' => $row->getProductId()));
     }
+
 }

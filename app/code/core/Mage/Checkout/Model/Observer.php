@@ -30,9 +30,20 @@ class Mage_Checkout_Model_Observer
     {
         Mage::getSingleton('checkout/session')->unsetAll();
     }
-    
+
     public function loadCustomerQuote()
     {
-        Mage::getSingleton('checkout/session')->loadCustomerQuote();
+        try {
+            Mage::getSingleton('checkout/session')->loadCustomerQuote();
+        }
+        catch (Mage_Core_Exception $e) {
+            Mage::getSingleton('checkout/session')->addError($e->getMessage());
+        }
+        catch (Exception $e) {
+            Mage::getSingleton('checkout/session')->addException(
+                $e,
+                Mage::helper('checkout')->__('Load customer quote error')
+            );
+        }
     }
 }

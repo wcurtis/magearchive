@@ -26,9 +26,9 @@
  */
 abstract class Mage_Catalog_Block_Product_Abstract extends Mage_Core_Block_Template
 {
-    public function getAddToCartUrl($product)
+    public function getAddToCartUrl($product, $additional = array())
     {
-        return $this->helper('checkout/cart')->getAddUrl($product);
+        return $this->helper('checkout/cart')->getAddUrl($product, $additional);
     }
 
     public function getAddToWishlistUrl($product)

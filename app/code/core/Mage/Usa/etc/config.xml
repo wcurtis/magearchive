@@ -111,7 +111,7 @@
     <default>
         <carriers>
             <dhl>
-                <account>MAGENTO</account>
+                <account></account>
                 <active>0</active>
                 <sallowspecific>0</sallowspecific>
                 <allowed_methods>E,N,S,G</allowed_methods>
@@ -120,16 +120,17 @@
                 <dutypaymenttype>R</dutypaymenttype>
                 <free_method>G</free_method>
                 <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
-                <id>MAGENTO</id>
+                <id backend_model="adminhtml/system_config_backend_encrypted"></id>
                 <model>usa/shipping_carrier_dhl</model>
-                <password>123123</password>
+                <password backend_model="adminhtml/system_config_backend_encrypted"></password>
                 <shipment_type>P</shipment_type>
-                <shipping_key></shipping_key>
+                <shipping_key backend_model="adminhtml/system_config_backend_encrypted"></shipping_key>
+                <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"></shipping_intlkey>
                 <title>DHL</title>
             </dhl>
 
             <fedex>
-                <account>MAGENTO</account>
+                <account backend_model="adminhtml/system_config_backend_encrypted"></account>
                 <active>0</active>
                 <sallowspecific>0</sallowspecific>
                 <allowed_methods>PRIORITYOVERNIGHT,STANDARDOVERNIGHT,FIRSTOVERNIGHT,FEDEX2DAY,FEDEXEXPRESSSAVER,INTERNATIONALPRIORITY,INTERNATIONALECONOMY,INTERNATIONALFIRST,FEDEX1DAYFREIGHT,FEDEX2DAYFREIGHT,FEDEX3DAYFREIGHT,FEDEXGROUND,GROUNDHOMEDELIVERY,INTERNATIONALPRIORITY FREIGHT,INTERNATIONALECONOMY FREIGHT,EUROPEFIRSTINTERNATIONALPRIORITY</allowed_methods>
@@ -144,6 +145,7 @@
             </fedex>
 
             <ups>
+                <access_license_number backend_model="adminhtml/system_config_backend_encrypted"/>
                 <active>0</active>
                 <sallowspecific>0</sallowspecific>
                 <allowed_methods>1DM,1DML,1DA,1DAL,1DAPI,1DP,1DPL,2DM,2DML,2DA,2DAL,3DS,GND,GNDCOM,GNDRES,STD,XPR,WXS,XPRL,XDM,XDML,XPD</allowed_methods>
@@ -159,6 +161,8 @@
                 <title>United Parcel Service</title>
                 <tracking_xml_url>https://www.ups.com/ups.app/xml/Track</tracking_xml_url>
                 <unit_of_measure>LBS</unit_of_measure>
+                <username backend_model="adminhtml/system_config_backend_encrypted"/>
+                <password backend_model="adminhtml/system_config_backend_encrypted"/>
             </ups>
 
             <usps>
@@ -175,7 +179,7 @@
                 <model>usa/shipping_carrier_usps</model>
                 <size>REGULAR</size>
                 <title>United States Postal Service</title>
-                <userid></userid>
+                <userid backend_model="adminhtml/system_config_backend_encrypted"/>
             </usps>
         </carriers>
     </default>

@@ -61,9 +61,20 @@ class Mage_Sales_Model_Quote_Address_Total_Subtotal extends Mage_Sales_Model_Quo
     	$product = $quoteItem->getProduct();
     	$superProduct = $quoteItem->getSuperProduct();
 
-    	if (!$product || !$product->isVisibleInCatalog() || ($superProduct && !$superProduct->isVisibleInCatalog())) {
-            return false;
-        }
+    	/**
+    	 * Quote super mode flag meen whot we work with quote
+    	 * without restriction
+    	 */
+    	if ($item->getQuote()->getIsSuperMode()) {
+            if (!$product) {
+                return false;
+            }
+    	}
+    	else {
+        	if (!$product || !$product->isVisibleInCatalog() || ($superProduct && !$superProduct->isVisibleInCatalog())) {
+                return false;
+            }
+    	}
 
     	$item->setPrice($product->getFinalPrice($quoteItem->getQty()));
     	$item->calcRowTotal();

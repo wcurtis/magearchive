@@ -1,0 +1,55 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<table cellspacing="0" id="details-table" class="data-table nested-data-table">
+    <col/>
+    <col width="70"/>
+    <col width="30"/>
+    <col width="70"/>
+    <thead>
+        <tr>
+            <th><?=$this->__('Product Name')?></th>
+            <th class="a-right"><?=$this->__('Price')?></th>
+            <th class="a-center"><?=$this->__('Qty')?></th>
+            <th class="a-right"><?=$this->__('Subtotal')?></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?foreach ($this->getItems() as $_item):?>
+        <tr>
+            <td>
+                <?=$this->helper('checkout')->getQuoteItemProductName($_item)?>
+                <?=$this->helper('checkout')->getQuoteItemProductDescription($_item)?>
+            </td>
+            <td class="a-right"><?=$_item->getPrice()?></td>
+            <td class="a-center"><?=$_item->getQty()?></td>
+            <td class="a-right"><?=$_item->getRowTotal()?></td>
+        </tr>
+    <?endforeach;?>
+    </tbody>
+    <tfoot>
+    <?foreach ($this->getTotals() as $_total):?>
+        <tr>
+            <td colspan="3" class="a-right"><?=$_total->getTitle()?></td>
+            <td class="a-right"><?=$_total->getValue()?></td>
+        </tr>
+    <?endforeach;?>
+    </tfoot>
+</table>

@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Store_Switcher extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Store_Switcher extends Mage_Adminhtml_Block_Template
 {
     protected $_storeIds;
 
@@ -56,7 +56,7 @@ class Mage_Adminhtml_Block_Store_Switcher extends Mage_Core_Block_Template
         if ($url = $this->getData('switch_url')) {
             return $url;
         }
-        return Mage::getUrl('*/*/*', array('_current'=>true, 'store'=>null));
+        return $this->getUrl('*/*/*', array('_current'=>true, 'store'=>null));
     }
 
     public function getStoreId()

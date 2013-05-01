@@ -183,6 +183,22 @@ class Mage_Customer_Model_Address_Abstract extends Mage_Core_Model_Abstract
     	return $this->getData('region_code');
     }
 
+    public function getRegionId()
+    {
+        $regionId = $this->getData('region_id');
+        $region   = $this->getData('region');
+        if (!$regionId) {
+            if (is_numeric($region)) {
+                $this->setData('region_id', $region);
+                $this->unsRegion();
+            } else {
+                $regionModel = Mage::getModel('directory/region')->loadByCode($this->getRegionCode(), $this->getCountryId());
+                $this->setData('region_id', $regionModel->getId());
+            }
+        }
+        return $this->getData('region_id');
+    }
+
     public function getCountry()
     {
     	/*if ($this->getData('country_id') && !$this->getData('country')) {

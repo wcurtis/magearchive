@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Core>
-             <version>0.7.2</version>
+             <version>0.7.5</version>
         </Mage_Core>
     </modules>
 
@@ -36,15 +36,15 @@
                     <email_template>
                         <table>core_email_template</table>
                     </email_template>
-                    <language>
-                        <table>core_language</table>
-                    </language>
                     <translate>
                         <table>core_translate</table>
                     </translate>
                     <session>
                         <table>core_session</table>
                     </session>
+                    <store_group>
+                        <table>core_store_group</table>
+                    </store_group>
                     <layout_update>
                         <table>core_layout_update</table>
                     </layout_update>
@@ -102,6 +102,26 @@
       </layout>
     </frontend>
     <adminhtml>
+        <events>
+            <catalog_controller_product_delete>
+                <observers>
+                    <url_rewrite>
+                        <type>model</type>
+                        <class>core/observer</class>
+                        <method>removeProductRewrites</method>
+                    </url_rewrite>
+                </observers>
+            </catalog_controller_product_delete>
+            <catalog_controller_category_delete>
+                <observers>
+                    <url_rewrite>
+                        <type>model</type>
+                        <class>core/observer</class>
+                        <method>removeCategoryRewrites</method>
+                    </url_rewrite>
+                </observers>
+            </catalog_controller_category_delete>
+        </events>
         <translate>
             <modules>
                 <Mage_Core>

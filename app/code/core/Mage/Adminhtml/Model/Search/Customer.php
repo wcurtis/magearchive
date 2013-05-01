@@ -43,7 +43,7 @@ class Mage_Adminhtml_Model_Search_Customer extends Varien_Object
                 'type'          => 'Customer',
                 'name'          => $customer->getFirstname().' '.$customer->getLastname(),
                 'description'   => Mage::helper('adminhtml')->__('No description'),
-                'url'           => Mage::getUrl('*/customer/edit', array('id'=>$customer->getId())),
+                'url'           => $this->getUrl('*/customer/edit', array('id'=>$customer->getId())),
             );
         }
         

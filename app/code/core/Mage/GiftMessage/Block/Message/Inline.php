@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Gift message inline edit form
  *
@@ -26,6 +27,7 @@
  */
 class Mage_GiftMessage_Block_Message_Inline extends Mage_Core_Block_Template
 {
+
     protected $_entity = null;
     protected $_type   = null;
     protected $_giftMessage = null;
@@ -147,4 +149,5 @@ class Mage_GiftMessage_Block_Message_Inline extends Mage_Core_Block_Template
     {
         return $this->htmlEscape(trim($value)!='' ? $value : $defaultValue);
     }
-} // Class Mage_GiftMessage_Block_Message_Inline End
+
+}

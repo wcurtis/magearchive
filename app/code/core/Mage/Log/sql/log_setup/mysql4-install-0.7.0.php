@@ -25,8 +25,8 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `log_customer`;
-CREATE TABLE `log_customer` (
+DROP TABLE IF EXISTS {$this->getTable('log_customer')};
+CREATE TABLE {$this->getTable('log_customer')} (
   `log_id` int(10) unsigned NOT NULL auto_increment,
   `visitor_id` bigint(20) unsigned default NULL,
   `customer_id` int(11) NOT NULL default '0',
@@ -35,8 +35,8 @@ CREATE TABLE `log_customer` (
   PRIMARY KEY  (`log_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Customers log information';
 
-DROP TABLE IF EXISTS `log_quote`;
-CREATE TABLE `log_quote` (
+DROP TABLE IF EXISTS {$this->getTable('log_quote')};
+CREATE TABLE {$this->getTable('log_quote')} (
   `quote_id` int(10) unsigned NOT NULL default '0',
   `visitor_id` bigint(20) unsigned default NULL,
   `created_at` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -44,8 +44,8 @@ CREATE TABLE `log_quote` (
   PRIMARY KEY  (`quote_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Quote log data';
 
-DROP TABLE IF EXISTS `log_summary`;
-CREATE TABLE `log_summary` (
+DROP TABLE IF EXISTS {$this->getTable('log_summary')};
+CREATE TABLE {$this->getTable('log_summary')} (
   `summary_id` bigint(20) unsigned NOT NULL auto_increment,
   `type_id` smallint(5) unsigned default NULL,
   `visitor_count` int(11) NOT NULL default '0',
@@ -54,8 +54,8 @@ CREATE TABLE `log_summary` (
   PRIMARY KEY  (`summary_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Summary log information';
 
-DROP TABLE IF EXISTS `log_summary_type`;
-CREATE TABLE `log_summary_type` (
+DROP TABLE IF EXISTS {$this->getTable('log_summary_type')};
+CREATE TABLE {$this->getTable('log_summary_type')} (
   `type_id` smallint(5) unsigned NOT NULL auto_increment,
   `type_code` varchar(64) NOT NULL default '',
   `period` smallint(5) unsigned NOT NULL default '0',
@@ -63,27 +63,27 @@ CREATE TABLE `log_summary_type` (
   PRIMARY KEY  (`type_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Type of summary information';
 
-insert  into `log_summary_type` (`type_id`,`type_code`,`period`,`period_type`) values
+insert  into {$this->getTable('log_summary_type')} (`type_id`,`type_code`,`period`,`period_type`) values
     (1,'hour',1,'HOUR'),(2,'day',1,'DAY')
 /* ,(3,'week',1,'WEEK'),(4,'month',1,'MONTH') */;
 
-DROP TABLE IF EXISTS `log_url`;
-CREATE TABLE `log_url` (
+DROP TABLE IF EXISTS {$this->getTable('log_url')};
+CREATE TABLE {$this->getTable('log_url')} (
   `url_id` bigint(20) unsigned NOT NULL default '0',
   `visitor_id` bigint(20) unsigned default NULL,
   `visit_time` datetime NOT NULL default '0000-00-00 00:00:00'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='URL visiting history';
 
-DROP TABLE IF EXISTS `log_url_info`;
-CREATE TABLE `log_url_info` (
+DROP TABLE IF EXISTS {$this->getTable('log_url_info')};
+CREATE TABLE {$this->getTable('log_url_info')} (
   `url_id` bigint(20) unsigned NOT NULL auto_increment,
   `url` varchar(255) NOT NULL default '',
   `referer` varchar(255) default NULL,
   PRIMARY KEY  (`url_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Detale information about url visit';
 
-DROP TABLE IF EXISTS `log_visitor`;
-CREATE TABLE `log_visitor` (
+DROP TABLE IF EXISTS {$this->getTable('log_visitor')};
+CREATE TABLE {$this->getTable('log_visitor')} (
   `visitor_id` bigint(20) unsigned NOT NULL auto_increment,
   `session_id` char(64) NOT NULL default '',
   `first_visit_at` datetime default NULL,
@@ -92,8 +92,8 @@ CREATE TABLE `log_visitor` (
   PRIMARY KEY  (`visitor_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='System visitors log';
 
-DROP TABLE IF EXISTS `log_visitor_info`;
-CREATE TABLE `log_visitor_info` (
+DROP TABLE IF EXISTS {$this->getTable('log_visitor_info')};
+CREATE TABLE {$this->getTable('log_visitor_info')} (
   `visitor_id` bigint(20) unsigned NOT NULL default '0',
   `http_referer` varchar(255) default NULL,
   `http_user_agent` varchar(255) default NULL,

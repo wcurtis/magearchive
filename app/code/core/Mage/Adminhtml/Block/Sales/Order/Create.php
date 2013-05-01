@@ -41,14 +41,14 @@ class Mage_Adminhtml_Block_Sales_Order_Create extends Mage_Adminhtml_Block_Widge
         $this->_updateButton('save', 'onclick', "order.submit()");
 
         $this->_removeButton('back');
-        
+
         $confirm = Mage::helper('sales')->__('Are you sure you want to cancel this order?');
         $this->_updateButton('reset', 'label', Mage::helper('sales')->__('Cancel'));
         $this->_updateButton('reset', 'class', 'cancel');
         $this->_updateButton('reset', 'onclick', 'deleteConfirm(\''.$confirm.'\', \'' . $this->getCancelUrl() . '\')');
 
     }
-    
+
     public function getHeaderHtml()
     {
         $out = '<div id="order:header">';
@@ -61,18 +61,18 @@ class Mage_Adminhtml_Block_Sales_Order_Create extends Mage_Adminhtml_Block_Widge
     {
         return 'width: 70%;';
     }
-    
+
     public function getCancelUrl()
     {
         if (Mage::getSingleton('adminhtml/session_quote')->getOrder()->getId()) {
-            $url = Mage::getUrl('*/sales_order/view', array(
+            $url = $this->getUrl('*/sales_order/view', array(
                 'order_id'=>Mage::getSingleton('adminhtml/session_quote')->getOrder()->getId()
             ));
         }
         else {
-            $url = Mage::getUrl('*/*/cancel');
+            $url = $this->getUrl('*/*/cancel');
         }
-        
+
         return $url;
     }
 

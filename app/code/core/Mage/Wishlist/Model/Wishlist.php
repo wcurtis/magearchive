@@ -18,15 +18,16 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Wishlist model
  *
  * @category   Mage
  * @package    Mage_Wishlist
  */
-
-class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract implements Mage_Core_Model_Shared_Interface
+class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
 {
+
     protected $_itemCollection = null;
 
     /**
@@ -174,4 +175,4 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract implements M
         return $this->_getResource()->fetchItemsCount($this);
     }
 
-}// Class Mage_Wishlist_Model_Wishlist END
+}

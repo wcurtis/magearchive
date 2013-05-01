@@ -19,15 +19,10 @@
  */
 
 
-
-
 /**
  * Base html block
  *
- * @version    1.0 
- * @date       Thu Feb 08 05:56:43 EET 2007
  */
-
 class Mage_Core_Block_Text_List_Link extends Mage_Core_Block_Text
 {
     function setLink($liParams, $aParams, $innerText, $afterText='')
@@ -40,7 +35,7 @@ class Mage_Core_Block_Text_List_Link extends Mage_Core_Block_Text
         return $this;
     }
 
-    function toHtml()
+    protected function _toHtml()
     {
         $this->setText('<li');
         $params = $this->getLiParams();
@@ -63,7 +58,8 @@ class Mage_Core_Block_Text_List_Link extends Mage_Core_Block_Text
         }
 
         $this->addText('>'.$this->getInnerText().'</a>'.$this->getAfterText().'</li>'."\r\n");
-        
-        return parent::toHtml();
+
+        return parent::_toHtml();
     }
-}// Class Mage_Core_Block_List END
+
+}

@@ -56,7 +56,7 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
 
         $this->_setActiveMenu('system/config');
 
-        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('System'), Mage::helper('adminhtml')->__('System'), Mage::getUrl('*/system'));
+        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('System'), Mage::helper('adminhtml')->__('System'), $this->getUrl('*/system'));
 
         $this->getLayout()->getBlock('left')
             ->append($this->getLayout()->createBlock('adminhtml/system_config_tabs')->initTabs());
@@ -72,13 +72,19 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
     {
         $session = Mage::getSingleton('adminhtml/session');
         /* @var $session Mage_Adminhtml_Model_Session */
+
+        $groups = $this->getRequest()->getPost('groups');
+
+        if (isset($_FILES['groups']['name']) && is_array($_FILES['groups']['name'])) {
+            $groups += $_FILES['groups']['name'];
+        }
         try {
             Mage::app()->removeCache('config_global');
             Mage::getModel('adminhtml/config_data')
                 ->setSection($this->getRequest()->getParam('section'))
                 ->setWebsite($this->getRequest()->getParam('website'))
                 ->setStore($this->getRequest()->getParam('store'))
-                ->setGroups($this->getRequest()->getPost('groups'))
+                ->setGroups($groups)
                 ->save();
 
             $session->addSuccess(Mage::helper('adminhtml')->__('Configuration successfully saved'));
@@ -89,7 +95,7 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
             }
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('adminhtml')->__('Error while saving this configuration. Please try again later.'));
+            $session->addException($e, Mage::helper('adminhtml')->__('Error while saving this configuration: '.$e->getMessage()));
         }
 
         $this->_redirect('*/*/edit', array('_current' => array('section', 'website', 'store')));

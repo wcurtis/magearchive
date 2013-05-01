@@ -128,6 +128,16 @@
     </adminhtml>
 
     <default>
+        <paypal>
+            <wpp>
+                <api_password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <api_signature backend_model="adminhtml/system_config_backend_encrypted"/>
+                <api_username backend_model="adminhtml/system_config_backend_encrypted"/>
+            </wpp>
+            <wps>
+                <business_account backend_model="adminhtml/system_config_backend_encrypted"/>
+            </wps>
+        </paypal>
         <payment>
             <paypal_express>
                 <payment_action>Authorization</payment_action>

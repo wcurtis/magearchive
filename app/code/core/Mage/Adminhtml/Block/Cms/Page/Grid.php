@@ -24,7 +24,6 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
 
@@ -45,7 +44,7 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
 
     protected function _prepareColumns()
     {
-        $baseUrl = Mage::getUrl();
+        $baseUrl = $this->getUrl();
 
         $this->addColumn('title', array(
             'header'=>Mage::helper('cms')->__('Title'),
@@ -73,7 +72,7 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
         $stores[0] = Mage::helper('cms')->__('All stores');
 
         $this->addColumn('store_id', array(
-            'header'=>Mage::helper('cms')->__('Store'),
+            'header'=>Mage::helper('cms')->__('Store View'),
             'index'=>'store_id',
             'type' => 'options',
             'options' => $stores,
@@ -121,7 +120,7 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array('page_id' => $row->getId()));
+        return $this->getUrl('*/*/edit', array('page_id' => $row->getId()));
     }
 
 }

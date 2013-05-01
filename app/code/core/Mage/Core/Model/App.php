@@ -171,12 +171,19 @@ class Mage_Core_Model_App
         $this->setErrorHandler(self::DEFAULT_ERROR_HANDLER);
         date_default_timezone_set(Mage_Core_Model_Locale::DEFAULT_TIMEZONE);
 
-        if (!empty($_COOKIE['store'])) {
-            $store = $_COOKIE['store'];
-        }
-
-        $this->_defaultStore = $store;
         $this->_config  = Mage::getConfig()->init($etcDir);
+        $this->_defaultStore = $store;
+
+        $cookie = Mage::getSingleton('core/cookie');
+        if (isset($_GET['store'])) {
+            $this->_defaultStore = $_GET['store'];
+            $cookie->set('store', $this->_defaultStore);
+        } else {
+            $store = $cookie->get('store');
+            if (!empty($store)) {
+                $this->_defaultStore = $store;
+            }
+        }
 
 		Varien_Profiler::stop('app/construct');
 		return $this;
@@ -270,9 +277,9 @@ class Mage_Core_Model_App
         } elseif ($id instanceof Mage_Core_Model_Store) {
             return $id;
         }
-
         if (empty($this->_stores[$id])) {
             $store = Mage::getModel('core/store');
+            /* @var $store Mage_Core_Model_Store */
             if (is_numeric($id)) {
                 $store->load($id);
                 if (!$store->hasStoreId()) {

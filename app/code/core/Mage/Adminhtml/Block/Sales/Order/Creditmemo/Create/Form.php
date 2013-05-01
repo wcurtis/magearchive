@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Form extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Form extends Mage_Adminhtml_Block_Template
 {
     protected function _construct()
     {
@@ -64,6 +64,6 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Form extends Mage_Core_
 
     public function getSaveUrl()
     {
-        return Mage::getUrl('*/*/save', array('order_id' => $this->getCreditmemo()->getOrderId()));
+        return $this->getUrl('*/*/save', array('_current' => true));
     }
 }

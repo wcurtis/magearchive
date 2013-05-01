@@ -23,7 +23,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Tree_Group extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Tree_Group extends Mage_Adminhtml_Block_Template
 {
     protected function _construct()
     {

@@ -229,6 +229,12 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
 
     protected function _generateAction($node, $parent)
     {
+        if (isset($node['ifconfig']) && ($configPath = (string)$node['ifconfig'])) {
+            if (!Mage::getStoreConfigFlag($configPath)) {
+                return $this;
+            }
+        }
+
         $method = (string)$node['method'];
         if (!empty($node['block'])) {
             $parentName = (string)$node['block'];
@@ -243,8 +249,23 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
             $block = $this->getBlock($parentName);
         }
         if (!empty($block)) {
+
             $args = (array)$node->children();
             unset($args['@attributes']);
+
+            foreach ($args as $key => $arg) {
+                if (($arg instanceof Mage_Core_Model_Layout_Element)) {
+                    if (isset($arg['helper'])) {
+                        $helperName = explode('/', (string)$arg['helper']);
+                        $helperMethod = array_pop($helperName);
+                        $helperName = implode('/', $helperName);
+                        $arg = $arg->asArray();
+                        unset($arg['@']);
+                        $args[$key] = call_user_func_array(array(Mage::helper($helperName), $helperMethod), $arg);
+                    }
+                }
+            }
+
             if (isset($node['json'])) {
                 $json = explode(' ', (string)$node['json']);
                 foreach ($json as $arg) {
@@ -274,7 +295,7 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
             $items = explode(' ', (string)$node['translate']);
             foreach ($items as $arg) {
                 if (isset($node['module'])) {
-                    $args[$arg] = Mage::helper($node['module'])->__($args[$arg]);
+                    $args[$arg] = Mage::helper((string)$node['module'])->__($args[$arg]);
                 }
                 else {
                     $args[$arg] = __($args[$arg]);
@@ -322,7 +343,6 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
         }
 
         $block = new $className();
-
         if (empty($name) || '.'===$name{0}) {
             $block->setIsAnonymous(true);
             if (!empty($name)) {
@@ -334,10 +354,10 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
             Mage::throwException(Mage::helper('core')->__('Block with name "%s" already exists', $name));
         }
 
-        $block->setType($type)
-            ->setNameInLayout($name)
-            ->addData($attributes)
-            ->setLayout($this);
+        $block->setType($type);
+        $block->setNameInLayout($name);
+        $block->addData($attributes);
+        $block->setLayout($this);
 
         $this->_blocks[$name] = $block;
 
@@ -417,6 +437,7 @@ class Mage_Core_Model_Layout extends Varien_Simplexml_Config
                 $out .= $this->getBlock($callback[0])->$callback[1]();
             }
         }
+
         return $out;
     }
 

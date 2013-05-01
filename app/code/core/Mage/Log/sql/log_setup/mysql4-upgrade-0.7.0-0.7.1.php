@@ -20,7 +20,7 @@
 
 
 $this->run("
-ALTER TABLE `log_summary` ADD `store_id` SMALLINT( 5 ) UNSIGNED NOT NULL AFTER `summary_id` ;
-ALTER TABLE `log_customer` ADD `store_id` SMALLINT( 5 ) UNSIGNED NOT NULL ;
-ALTER TABLE `log_visitor` ADD `store_id` SMALLINT( 5 ) UNSIGNED NOT NULL ;
+ALTER TABLE {$this->getTable('log_summary')} ADD `store_id` SMALLINT( 5 ) UNSIGNED NOT NULL AFTER `summary_id` ;
+ALTER TABLE {$this->getTable('log_customer')} ADD `store_id` SMALLINT( 5 ) UNSIGNED NOT NULL ;
+ALTER TABLE {$this->getTable('log_visitor')} ADD `store_id` SMALLINT( 5 ) UNSIGNED NOT NULL ;
 ");

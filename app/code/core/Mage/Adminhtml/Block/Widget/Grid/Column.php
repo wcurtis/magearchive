@@ -80,6 +80,11 @@ class Mage_Adminhtml_Block_Widget_Grid_Column extends Mage_Adminhtml_Block_Widge
         return $this->_cssClass;
     }
 
+    public function getCssProperty()
+    {
+        return $this->getRenderer()->renderCss();
+    }
+
     public function getHeaderCssClass()
     {
         $class = $this->getData('header_css_class');

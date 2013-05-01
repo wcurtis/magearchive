@@ -105,6 +105,14 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Paypal>
+        <Mage_PaypalUk>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_PaypalUk>
+        <Mage_GoogleCheckout>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_GoogleCheckout>
         <Mage_Reports>
             <active>true</active>
             <codePool>core</codePool>
@@ -173,5 +181,21 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Sendfriend>
+        <Mage_Media>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_Media>
+         <Mage_Sitemap>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_Sitemap>
+        <Mage_Contacts>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_Contacts>
+        <Mage_Dataflow>
+            <active>true</active>
+            <codePool>core</codePool>
+        </Mage_Dataflow>
     </modules>
 </config>

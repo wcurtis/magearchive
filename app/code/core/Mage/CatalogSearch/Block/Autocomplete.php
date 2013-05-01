@@ -23,22 +23,22 @@
  */
 class Mage_CatalogSearch_Block_Autocomplete extends Mage_Core_Block_Abstract
 {
-    public function toHtml()
+    protected function _toHtml()
     {
         $html = '';
-        
+
 		if (!$this->_beforeToHtml()) {
 			return $html;
 		}
-        
+
 		$collection = $this->helper('catalogSearch')->getSuggestCollection();
 		if (!$collection->getSize()) {
 		    return $html;
 		}
-		
+
 		$query = $this->helper('catalogSearch')->getQueryText();
 		$counter=0;
-		
+
 		$html = '<ul><li style="display:none"></li>';
 		$itemsHtml = '';
 		$firstHtml = '';
@@ -52,10 +52,10 @@ class Mage_CatalogSearch_Block_Autocomplete extends Mage_Core_Block_Abstract
                 $itemsHtml.= '<div style="float:right">'.$item->getNumResults().'</div>'.$item->getQueryText().'</li>';
 		    }
 		}
-		
+
 		$html.= $firstHtml.$itemsHtml;
 		$html.= '</ul>';
-        
+
         return $html;
     }
 }

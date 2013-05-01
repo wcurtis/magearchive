@@ -17,9 +17,9 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
 class Mage_Adminhtml_Block_Permissions_Tab_Useredit extends Mage_Adminhtml_Block_Widget_Form
 {
+
     protected function _prepareForm()
     {
         $form = new Varien_Data_Form();
@@ -134,17 +134,16 @@ class Mage_Adminhtml_Block_Permissions_Tab_Useredit extends Mage_Adminhtml_Block
                 'value'		=> '1',
                 'values'	=> array(
                 	array(
-	                	'label' => Mage::helper('adminhtml')->__('Active'),
-	                	'value'	=> '1',
+                    	'label' => Mage::helper('adminhtml')->__('Active'),
+                    	'value'	=> '1',
                 	),
                 	array(
-	                	'label' => Mage::helper('adminhtml')->__('Inactive'),
-	                	'value' => '0',
+                    	'label' => Mage::helper('adminhtml')->__('Inactive'),
+                    	'value' => '0',
                 	),
                 ),
             )
         );
-
 
         $data = $user->getData();
 
@@ -154,4 +153,6 @@ class Mage_Adminhtml_Block_Permissions_Tab_Useredit extends Mage_Adminhtml_Block
 
         $this->setForm($form);
     }
+
 }
+

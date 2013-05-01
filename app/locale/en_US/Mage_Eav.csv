@@ -25,7 +25,6 @@
 "Invalid foreign key","Invalid foreign key"
 "Invalid joined fields","Invalid joined fields"
 "Invalid object supplied","Invalid object supplied"
-"Invalid store id supplied","Invalid store id supplied"
 "Invalid store specified","Invalid store specified"
 "Joined field or attribute expression with this alias is already declared","Joined field or attribute expression with this alias is already declared"
 "Joined field with this alias (%s) is already declared","Joined field with this alias (%s) is already declared"

@@ -69,6 +69,22 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
 
         $this->loadFile($etcDir.DS.'local.xml');
 
+        // check if local modules are disabled
+        $disableLocalModules = (string)$this->getNode('global/disable_local_modules');
+        $disableLocalModules = !empty($disableLocalModules) && (('true' === $disableLocalModules) || ('1' === $disableLocalModules));
+        if ($disableLocalModules) {
+            /**
+             * Reset include path
+             */
+            set_include_path(
+                // excluded '/app/code/local'
+                BP . '/app/code/community' . PS .
+                BP . '/app/code/core' . PS .
+                BP . '/lib' . PS .
+                Mage::registry('original_include_path')
+            );
+        }
+
         Varien_Profiler::start('config/load-cache');
 
         if (Mage::app()->isInstalled()) {
@@ -106,9 +122,6 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
                 $this->extend($mergeConfig);
             }
         }
-//        $configFile = Mage::getBaseDir('etc').DS.'modules.xml';
-//        $mergeConfig->loadFile($configFile);
-//        $this->extend($mergeConfig);
 
         Varien_Profiler::stop('config/load-base');
 
@@ -144,6 +157,9 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
         $modules = $this->getNode('modules')->children();
         foreach ($modules as $modName=>$module) {
             if ($module->is('active')) {
+                if ($disableLocalModules && ('local' === (string)$module->codePool)) {
+                    continue;
+                }
                 $configFile = $this->getModuleDir('etc', $modName).DS.'config.xml';
                 if ($mergeConfig->loadFile($configFile)) {
                     $this->extend($mergeConfig, true);
@@ -241,7 +257,7 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
                 $hostArr = explode(':', $_SERVER['HTTP_HOST']);
                 $host = $hostArr[0];
                 $port = isset($hostArr[1]) && (!$secure && $hostArr[1]!=80 || $secure && $hostArr[1]!=443) ? ':'.$hostArr[1] : '';
-                $path = Mage::app()->getRequest()->getBasePath(); 
+                $path = Mage::app()->getRequest()->getBasePath();
 
                 $baseUrl = $scheme.$host.$port.rtrim($path, '/').'/';
             } else {
@@ -589,7 +605,15 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
     public function getResourceModelInstance($modelClass='', $constructArguments=array())
     {
         $classArr = explode('/', $modelClass);
-        $resourceModel = (string)$this->getNode('global/models/'.$classArr[0].'/resourceModel');
+
+        $resourceModel = false;
+        if ($this->getNode('global/models/'.$modelClass.'/resourceModel')) {
+            $resourceModel = (string) $this->getNode('global/models/'.$modelClass.'/resourceModel');
+        }
+        elseif ($this->getNode('global/models/'.$classArr[0].'/resourceModel')) {
+        	$resourceModel = (string) $this->getNode('global/models/'.$classArr[0].'/resourceModel');
+        }
+
         if (!$resourceModel) {
             return false;
         }
@@ -697,4 +721,5 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
 
         return $this->_secureUrlCache[$url];
     }
+
 }

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml order creating gift message item form
  *
@@ -62,6 +63,11 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
         return $this->_entity;
     }
 
+    protected function _getSession()
+    {
+        return Mage::getSingleton('adminhtml/session_quote');
+    }
+
     /**
      * Retrive default value for giftmessage sender
      *
@@ -73,11 +79,17 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
             return '';
         }
 
-        if($this->getEntity()->getQuote()) {
-            return $this->getEntity()->getQuote()->getBillingAddress()->getName();
+        if($this->_getSession()->getCustomer()->getId()) {
+            return $this->_getSession()->getCustomer()->getName();
         }
 
-        return $this->getEntity()->getBillingAddress()->getName();
+        $object = $this->getEntity();
+
+        if ($this->getEntity()->getQuote()) {
+            $object = $this->getEntity()->getQuote();
+        }
+
+        return $object->getBillingAddress()->getName();
     }
 
     /**
@@ -139,7 +151,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
                              .  '\', \'' . $this->_getFieldId('recipient') . '\']);'
             )
         );
-
 
         // Set default sender and recipient from billing and shipping adresses
         if(!$this->getMessage()->getSender()) {
@@ -235,4 +246,4 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
         return $this;
     }
 
-} // Class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form End
+}

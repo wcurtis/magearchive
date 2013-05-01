@@ -115,9 +115,9 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
 
     protected static $_urlModel;
 
-    public function __construct($attributes=array())
+    public function __construct($data=array())
     {
-        parent::__construct($attributes);
+        parent::__construct($data);
 
         if (Mage::registry('controller')) {
             $this->_request = Mage::registry('controller')->getRequest();
@@ -180,7 +180,9 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
     public function setLayout(Mage_Core_Model_Layout $layout)
     {
         $this->_layout = $layout;
+        Mage::dispatchEvent('core_block_abstract_prepare_layout_before', array('block' => $this));
         $this->_prepareLayout();
+        Mage::dispatchEvent('core_block_abstract_prepare_layout_after', array('block' => $this));
         return $this;
     }
 
@@ -390,11 +392,17 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      * @param   boolean $useCache
      * @return  string
      */
-    public function getChildHtml($name='', $useCache=true)
+    public function getChildHtml($name='', $useCache=true, $sorted=false)
     {
         if ('' === $name) {
-            $children = $this->getChild();
-
+            if ($sorted) {
+                $children = array();
+                foreach ($this->getSortedChildren() as $childName) {
+                    $children[] = $this->getChild($childName);
+                }
+            } else {
+                $children = $this->getChild();
+            }
             $out = '';
             foreach ($children as $child) {
                 $out .= $this->_getChildHtml($child->getBlockAlias(), $useCache);
@@ -419,6 +427,7 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         }
 
         $child = $this->getChild($name);
+
         if (!$child) {
             $html = '';
         } else {
@@ -517,47 +526,77 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
         return $this;
     }
 
-    /**
-     * Before rendering html
-     *
-     * If returns false html is rendered empty
-     *
-     * @return boolean
-     */
+    protected function _toHtml()
+    {
+        return '';
+    }
+
     protected function _beforeToHtml()
     {
-        if (Mage::getStoreConfig('advanced/modules_disable_output/'.$this->getModuleName())) {
-            return false;
-        }
-        return true;
+        return $this;
     }
 
-
-    public function toHtml()
+    final public function toHtml()
     {
+        Mage::dispatchEvent('core_block_abstract_to_html_before', array('block' => $this));
 
+        if (Mage::getStoreConfig('advanced/modules_disable_output/'.$this->getModuleName())) {
+            return '';
+        }
+
+        if (!($html = $this->_loadCache())) {
+            $this->_beforeToHtml();
+            $html = $this->_toHtml();
+            $this->_saveCache($html);
+        }
+
+        Mage::dispatchEvent('core_block_abstract_to_html_after', array('block' => $this));
+
+        return $html;
     }
 
     /**
-     * Generate url by action data and parameters
+     * Enter description here...
      *
-     * @param   string $params
-     * @param   array $params2
-     * @return  string
+     * @return string
      */
-    public function getUrl($params='', $params2=array())
+    protected function _getUrlModelClass()
     {
-        return Mage::getUrl($params, $params2);
-        #return Mage::registry('controller')->getUrl($params, $params2);
-        if (!self::$_urlModel) {
-            self::$_urlModel = Mage::getModel('core/url');
-        }
-        return self::$_urlModel->getUrl($params, $params2);
+        return 'core/url';
     }
 
-    public function getUrlBase64($params='', $params2=array())
+    /**
+     * Enter description here...
+     *
+     * @return Mage_Core_Model_Url
+     */
+    protected function _getUrlModel()
     {
-        return base64_encode($this->getUrl($params, $params2));
+        return Mage::getModel($this->_getUrlModelClass());;
+    }
+
+    /**
+     * Generate url by route and parameters
+     *
+     * @param   string $route
+     * @param   array $params
+     * @return  string
+     */
+    public function getUrl($route='', $params=array())
+    {
+        return $this->_getUrlModel()->getUrl($route, $params);
+    }
+
+    /**
+     * Generate base64-encoded url by route and parameters
+     *
+     * @param   string $route
+     * @param   array $params
+     * @return  string
+     */
+    public function getUrlBase64($route='', $params=array())
+    {
+        return base64_encode($this->getUrl($route, $params));
     }
 
     /**

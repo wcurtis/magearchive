@@ -42,7 +42,7 @@
                 <?if ($_track->isCustom()):?>
                 <?=$_track->getNumber()?>
                 <?else:?>
-                <a href="#" onclick="submitAndReloadArea($('shipment_tracking_info_response_<?=$_track->getId()?>'), '<?=$this->getTrackInfoUrl($_track)?>');return false">
+                <a href="#" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByTrackID($_track->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" >
                     <?=$_track->getNumber()?>
                 </a>
                 <div id="shipment_tracking_info_response_<?=$_track->getId()?>"></div>

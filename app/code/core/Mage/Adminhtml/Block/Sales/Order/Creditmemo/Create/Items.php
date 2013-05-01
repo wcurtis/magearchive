@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Adminhtml_Block_Template
 {
     /**
      * Initialize template
@@ -63,14 +63,14 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Core
         );
 
         if ($this->getCreditmemo()->canRefund()) {
-            /*$this->setChild(
+            $this->setChild(
                 'submit_offline',
                 $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
                     'label'     => Mage::helper('sales')->__('Refund Offline'),
                     'class'     => 'save submit-button',
                     'onclick'   => 'editForm.submit()',
                 ))
-            );*/
+            );
         }
 
 
@@ -79,6 +79,17 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items extends Mage_Core
             ->setSource($this->getCreditmemo())
             ->setCurrency($this->getCreditmemo()->getOrder()->getOrderCurrency());
         $this->setChild('totals', $totalsBlock);
+
+        $orderPayment = $this->getCreditmemo()->getOrder()->getPayment();
+        $totalsBarBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totalbar')
+            ->setOrder($this->getCreditmemo()->getOrder())
+            ->addTotal(Mage::helper('sales')->__('Paid Amount'), $orderPayment->getAmountPaid())
+            ->addTotal(Mage::helper('sales')->__('Refund Amount'), $orderPayment->getAmountRefunded())
+            ->addTotal(Mage::helper('sales')->__('Shipping Amount'), $orderPayment->getShippingCaptured())
+            ->addTotal(Mage::helper('sales')->__('Shipping Refund'), $orderPayment->getShippingRefunded())
+            ->addTotal(Mage::helper('sales')->__('Order Grand Total'), $this->getCreditmemo()->getOrder()->getGrandTotal(), true);
+
+        $this->setChild('totals_bar', $totalsBarBlock);
 
         return parent::_prepareLayout();
     }

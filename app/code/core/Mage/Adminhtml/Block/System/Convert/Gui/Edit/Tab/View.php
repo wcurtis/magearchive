@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_View extends Mage_Adminhtml_Block_Widget_Form
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -48,11 +49,12 @@ class Mage_Adminhtml_Block_System_Convert_Gui_Edit_Tab_View extends Mage_Adminht
             'readonly' => 'readonly',
         ));
 
-
         $form->setValues($model->getData());
 
         $this->setForm($form);
 
         return $this;
     }
+
 }
+

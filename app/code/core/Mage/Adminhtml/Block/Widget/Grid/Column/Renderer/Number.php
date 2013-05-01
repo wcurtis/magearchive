@@ -32,7 +32,8 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Number extends Mage_Admin
     {
         $data = parent::_getValue($row);
         if (!is_null($data)) {
-        	return $data * 1;
+            $value = $data * 1;
+        	return $value ? $value: '0'; // fixed for showing zero in grid
         }
         return $this->getColumn()->getDefault();
     }
@@ -41,9 +42,14 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Number extends Mage_Admin
     {
         $out = parent::renderProperty();
         if ($this->getColumn()->getGrid()->getFilterVisibility()) {
-            $out.= ' width="140px" ';
+            $out.= ' width="100px" ';
         }
         return $out;
+    }
+
+    public function renderCss()
+    {
+        return parent::renderCss() . ' a-right';
     }
 
 }

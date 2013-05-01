@@ -24,17 +24,16 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
-class Mage_Adminhtml_Block_Report_Wishlist extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Report_Wishlist extends Mage_Adminhtml_Block_Template
 {
+
     public $wishlists_count;
     public $items_bought;
     public $shared_count;
     public $referrals_count;
     public $conversions_count;
     public $customer_with_wishlist;
-    
-    
+
     public function __construct()
     {
         parent::__construct();
@@ -42,18 +41,19 @@ class Mage_Adminhtml_Block_Report_Wishlist extends Mage_Core_Block_Template
     }
 
     public function _beforeToHtml()
-    {      
+    {
         $this->setChild('grid', $this->getLayout()->createBlock('adminhtml/report_wishlist_grid', 'report.grid'));
 
         $collection = Mage::getResourceModel('reports/wishlist_collection');
-                      
+
         list($this->customer_with_wishlist, $this->wishlists_count) = $collection->getWishlistCustomerCount();
-        
+
         $this->items_bought = 0;
         $this->shared_count = $collection->getSharedCount();
         $this->referrals_count = 0;
         $this->conversions_count = 0;
-                
+
         return $this;
-    }   
+    }
+
 }

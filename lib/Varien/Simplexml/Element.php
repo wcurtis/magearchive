@@ -66,6 +66,51 @@ class Varien_Simplexml_Element extends SimpleXMLElement
         return $parent;
     }
 
+    public function hasChildren()
+    {
+        if (!$this->children()) {
+            return false;
+        }
+
+        // simplexml bug: @attributes is in children() but invisible in foreach
+        foreach ($this->children() as $k=>$child) {
+            return true;
+        }
+        return false;
+    }
+/*
+    public function addAttribute($name, $value=null, $namespace=null)
+    {
+        if (is_null($value)) {
+            return parent::addAttribute($name);
+        } else {
+            if (!is_null($value)) {
+                $value = $this->xmlentities($value);
+            }
+            if (!is_null($namespace)) {
+                return parent::addAttribute($name, $value, $namespace);
+            } else {
+                return parent::addAttribute($name, $value);
+            }
+        }
+    }
+
+    public function addChild($name, $value=null, $namespace=null)
+    {
+        if (is_null($value)) {
+            return parent::addChild($name);
+        } else {
+            if (!is_null($value)) {
+                $value = $this->xmlentities($value);
+            }
+            if (!is_null($namespace)) {
+                return parent::addChild($name, $value, $namespace);
+            } else {
+                return parent::addChild($name, $value);
+            }
+        }
+    }
+*/
     /**
      * Find a descendant of a node by path
      *
@@ -162,9 +207,9 @@ class Varien_Simplexml_Element extends SimpleXMLElement
 	        }
 	    }
 
-	    if ($children = $this->children()) {
+	    if ($this->hasChildren()) {
 	        $out .= '>'.$nl;
-	        foreach ($children as $child) {
+	        foreach ($this->children() as $child) {
 	            $out .= $child->asNiceXml('', is_numeric($level) ? $level+1 : true);
 	        }
 	        $out .= $pad.'</'.$this->getName().'>'.$nl;
@@ -202,8 +247,9 @@ class Varien_Simplexml_Element extends SimpleXMLElement
 	public function xmlentities($value='')
 	{
 	    if (empty($value)) {
-	        $value = (string)$this;
+	        $value = $this;
 	    }
+	    $value = (string)$value;
 
         $value = str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&apos;', '&lt;', '&gt;'), $value);
 
@@ -221,13 +267,13 @@ class Varien_Simplexml_Element extends SimpleXMLElement
         if ($source->children()) {
             $child = $this->addChild($source->getName());
         } else {
-            $child = $this->addChild($source->getName(), (string)$source);
+            $child = $this->addChild($source->getName(), $this->xmlentities($source));
         }
         $child->setParent($this);
 
         $attributes = $source->attributes();
         foreach ($attributes as $key=>$value) {
-            $child->addAttribute($key, (string)$value);
+            $child->addAttribute($key, $this->xmlentities($value));
         }
 
         foreach ($source as $sourceChild) {
@@ -277,7 +323,7 @@ class Varien_Simplexml_Element extends SimpleXMLElement
         // here we have children of our source node
         $sourceChildren = $source->children();
 
-        if (!$sourceChildren) {
+        if (!$source->hasChildren()) {
             // handle string node
             if (isset($this->$sourceName)) {
                 // if target already has children return without regard
@@ -291,11 +337,10 @@ class Varien_Simplexml_Element extends SimpleXMLElement
                 }
             }
 
-            $targetChild = $this->addChild($sourceName, (string)$source->xmlentities());
-
+            $targetChild = $this->addChild($sourceName, $source->xmlentities());
             $targetChild->setParent($this);
             foreach ($source->attributes() as $key=>$value) {
-                $targetChild->addAttribute($key, $value);
+                $targetChild->addAttribute($key, $this->xmlentities($value));
             }
             return $this;
         }
@@ -309,7 +354,7 @@ class Varien_Simplexml_Element extends SimpleXMLElement
             $targetChild = $this->addChild($sourceName);
             $targetChild->setParent($this);
             foreach ($source->attributes() as $key=>$value) {
-                $targetChild->addAttribute($key, $value);
+                $targetChild->addAttribute($key, $this->xmlentities($value));
             }
         }
 

@@ -58,7 +58,7 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
         $this->loadLayout();
         $this->_setActiveMenu('customer/group');
         $this->_addBreadcrumb(Mage::helper('customer')->__('Customers'), Mage::helper('customer')->__('Customers'));
-        $this->_addBreadcrumb(Mage::helper('customer')->__('Customer Groups'), Mage::helper('customer')->__('Customer Groups'), Mage::getUrl('*/customer_group'));
+        $this->_addBreadcrumb(Mage::helper('customer')->__('Customer Groups'), Mage::helper('customer')->__('Customer Groups'), $this->getUrl('*/customer_group'));
 
         if (Mage::registry('current_group')->getId()) {
             $this->_addBreadcrumb(Mage::helper('customer')->__('Edit Group'), Mage::helper('customer')->__('Edit Customer Groups'));
@@ -98,12 +98,12 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
                     ->save();
 
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('customer')->__('Customer Group was successfully saved'));
-                $this->getResponse()->setRedirect(Mage::getUrl('*/customer_group'));
+                $this->getResponse()->setRedirect($this->getUrl('*/customer_group'));
                 return;
             } catch (Exception $e) {
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
                 Mage::getSingleton('adminhtml/session')->setCustomerGroupData($customerGroup->getData());
-                $this->getResponse()->setRedirect(Mage::getUrl('*/customer_group/edit', array('id' => $id)));
+                $this->getResponse()->setRedirect($this->getUrl('*/customer_group/edit', array('id' => $id)));
                 return;
             }
         } else {
@@ -124,11 +124,11 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
                 $customerGroup->delete();
 
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('customer')->__('Customer Group was successfully deleted'));
-                $this->getResponse()->setRedirect(Mage::getUrl('*/customer_group'));
+                $this->getResponse()->setRedirect($this->getUrl('*/customer_group'));
                 return;
             } catch (Exception $e) {
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
-                $this->getResponse()->setRedirect(Mage::getUrl('*/customer_group/edit', array('id' => $id)));
+                $this->getResponse()->setRedirect($this->getUrl('*/customer_group/edit', array('id' => $id)));
                 return;
             }
         }

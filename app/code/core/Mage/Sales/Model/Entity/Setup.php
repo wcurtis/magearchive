@@ -33,6 +33,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'type'=>'static',
                         'backend'=>'sales_entity/quote_attribute_backend_parent'),
                     'is_active' => array('type'=>'static', 'visible'=>false),
+                    'store_id'  => array('type'=>'static'),
                     'remote_ip' => array('visible'=>false),
                     'checkout_method' => array(),
                     'password_hash' => array(),
@@ -64,6 +65,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'customer_lastname' => array('type'=>'varchar', 'visible'=>false),
                     'customer_note' => array('type'=>'text', 'visible'=>false),
                     'customer_note_notify' => array('type'=>'int', 'visible'=>false),
+                    'customer_is_guest' => array('type'=>'int', 'visible'=>false),
                 ),
             ),
             'quote_address' => array(
@@ -140,6 +142,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'weight' => array('type'=>'decimal'),
                     'free_shipping' => array('type'=>'int'),
                     'qty' => array('type'=>'decimal'),
+                    'is_qty_decimal' => array('type'=>'int'),
                     'price' => array('type'=>'decimal'),
                     'discount_percent' => array('type'=>'decimal'),
                     'discount_amount' => array('type'=>'decimal'),
@@ -168,6 +171,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'weight' => array('type'=>'decimal'),
                     'free_shipping' => array('type'=>'int'),
                     'qty' => array('type'=>'decimal'),
+                    'is_qty_decimal' => array('type'=>'int'),
                     'price' => array('type'=>'decimal'),
                     'discount_percent' => array('type'=>'decimal'),
                     'discount_amount' => array('type'=>'decimal'),
@@ -186,7 +190,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'parent_id' => array(
                         'type'=>'static',
                         'backend'=>'sales_entity/quote_attribute_backend_child'),
-                    'customer_payment_id' => array('type'=>'int'),
                     'method' => array(),
                     'additional_data' => array('type'=>'text'),
                     'po_number' => array(),
@@ -197,6 +200,9 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'cc_exp_month' => array('type'=>'int'),
                     'cc_exp_year' => array('type'=>'int'),
                     'cc_cid_enc' => array(),
+                    'cc_ss_issue' => array(),
+                    'cc_ss_start_month' => array('type'=>'int'),
+                    'cc_ss_start_year' => array('type'=>'int'),
                 ),
             ),
 
@@ -210,17 +216,21 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'type'=>'static',
                         'backend'=>'sales_entity/order_attribute_backend_parent'
                     ),
-
+                    'store_id'  => array('type'=>'static'),
                     'remote_ip' => array(),
 
                     'status'    => array('type'=>'varchar'),
                     'state'     => array('type'=>'varchar'),
-                    'is_hold'   => array('type'=>'int'),
+                    'hold_before_status' => array('type'=>'varchar'),
+                    'hold_before_state'  => array('type'=>'varchar'),
 
                     'relation_parent_id'        => array('type'=>'varchar'),
                     'relation_parent_real_id'   => array('type'=>'varchar'),
                     'relation_child_id'         => array('type'=>'varchar'),
                     'relation_child_real_id'    => array('type'=>'varchar'),
+
+                    'ext_order_id'         => array('type'=>'varchar'),
+                    'ext_customer_id'      => array('type'=>'varchar'),
 
                     'quote_id' => array('type'=>'int'),
                     'quote_address_id' => array('type'=>'int'),
@@ -256,6 +266,9 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'total_due'     => array('type'=>'decimal'),
                     'total_refunded'=> array('type'=>'decimal'),
                     'total_qty_ordered' => array('type'=>'decimal'),
+                    'total_canceled'=> array('type'=>'decimal'),
+                    'adjustment_positive' => array('type'=>'decimal'),
+                    'adjustment_negative' => array('type'=>'decimal'),
 
                     'customer_id'       => array('type'=>'int', 'visible'=>false),
                     'customer_group_id' => array('type'=>'int', 'visible'=>false),
@@ -264,6 +277,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'customer_lastname' => array('type'=>'varchar', 'visible'=>false),
                     'customer_note'     => array('type'=>'text', 'visible'=>false),
                     'customer_note_notify' => array('type'=>'int', 'visible'=>false),
+                    'customer_is_guest' => array('type'=>'int', 'visible'=>false),
                 ),
             ),
             'order_address' => array(
@@ -306,6 +320,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'description'       => array('type'=>'text'),
                     'weight'            => array('type'=>'decimal'),
 
+                    'is_qty_decimal'    => array('type'=>'int'),
                     'qty_ordered'       => array('type'=>'decimal'),
                     'qty_backordered'   => array('type'=>'decimal'),
                     'qty_invoiced'      => array('type'=>'decimal'),
@@ -342,7 +357,6 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'backend'=>'sales_entity/order_attribute_backend_child'
                     ),
                     'quote_payment_id'      => array('type'=>'int'),
-                    'customer_payment_id'   => array('type'=>'int'),
                     'method'                => array(),
                     'additional_data'       => array('type'=>'text'),
 
@@ -354,6 +368,10 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     'cc_owner'      => array(),
                     'cc_exp_month'  => array(),
                     'cc_exp_year'   => array(),
+
+                    'cc_ss_issue' => array(),
+                    'cc_ss_start_month' => array(),
+                    'cc_ss_start_year' => array(),
 
                     'cc_status'             => array(),
                     'cc_status_description' => array(),
@@ -409,6 +427,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'backend'=>'sales_entity/order_invoice_attribute_backend_parent'
                     ),
                     'state'    => array('type'=>'int'),
+                    'is_used_for_refund' => array('type'=>'int'),
                     'transaction_id' => array(),
 
 
@@ -557,6 +576,7 @@ class Mage_Sales_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                         'backend'=>'sales_entity/order_creditmemo_attribute_backend_parent'
                     ),
                     'state'         => array('type'=>'int'),
+                    'invoice_id'    => array('type'=>'int'),
                     'transaction_id'=> array(),
 
                     'order_id'      => array('type'=>'int'),

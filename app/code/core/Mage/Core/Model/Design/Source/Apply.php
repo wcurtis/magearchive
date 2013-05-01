@@ -27,8 +27,8 @@ class Mage_Core_Model_Design_Source_Apply extends Mage_Eav_Model_Entity_Attribut
             $optionArray = array(
                 1=>Mage::helper('core')->__('All'),
                 Mage::helper('core')->__('This category only'),
-                Mage::helper('core')->__('This category and it\'s products'),
-                Mage::helper('core')->__('This category and it\'s child categories')
+                Mage::helper('core')->__('This category and its products'),
+                Mage::helper('core')->__('This category and its child categories')
                 );
 
             foreach ($optionArray as $k=>$label) {

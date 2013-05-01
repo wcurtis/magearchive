@@ -38,8 +38,15 @@ class Mage_Adminhtml_Model_Config extends Varien_Simplexml_Config
             $config = Mage::getConfig();
             $modules = $config->getNode('modules')->children();
 
+            // check if local modules are disabled
+            $disableLocalModules = (string)$config->getNode('global/disable_local_modules');
+            $disableLocalModules = !empty($disableLocalModules) && (('true' === $disableLocalModules) || ('1' === $disableLocalModules));
+
             foreach ($modules as $modName=>$module) {
                 if ($module->is('active')) {
+                    if ($disableLocalModules && ('local' === (string)$module->codePool)) {
+                        continue;
+                    }
                     $configFile = $config->getModuleDir('etc', $modName).DS.'system.xml';
                     if ($mergeConfig->loadFile($configFile)) {
                         $config->extend($mergeConfig, true);

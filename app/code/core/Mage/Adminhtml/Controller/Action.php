@@ -99,7 +99,6 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
 
     public function preDispatch()
     {
-
         Mage::getDesign()->setArea('adminhtml')
             ->setPackageName('default')
             ->setTheme('default');
@@ -191,7 +190,7 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
      */
     protected function _redirectReferer($defaultUrl=null)
     {
-        $defaultUrl = empty($defaultUrl) ? Mage::getUrl('*') : $defaultUrl;
+        $defaultUrl = empty($defaultUrl) ? $this->getUrl('*') : $defaultUrl;
         parent::_redirectReferer($defaultUrl);
         return $this;
     }
@@ -213,5 +212,29 @@ class Mage_Adminhtml_Controller_Action extends Mage_Core_Controller_Varien_Actio
             ->setHeader('Content-Length', sizeof($content))
             ->setHeader('Content-type', $contentType, true)
             ->setBody($content);
+    }
+
+    /**
+     * Set redirect into responce
+     *
+     * @param   string $path
+     * @param   array $arguments
+     */
+    protected function _redirect($path, $arguments=array())
+    {
+        $this->getResponse()->setRedirect($this->getUrl($path, $arguments));
+        return $this;
+    }
+
+    /**
+     * Generate url by route and parameters
+     *
+     * @param   string $route
+     * @param   array $params
+     * @return  string
+     */
+    public function getUrl($route='', $params=array())
+    {
+        return Mage::helper('adminhtml')->getUrl($route, $params);
     }
 }

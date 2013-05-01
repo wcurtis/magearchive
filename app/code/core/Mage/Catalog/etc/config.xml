@@ -351,10 +351,6 @@
 
     <default>
         <catalog>
-            <category>
-                <root_id></root_id>
-            </category>
-
             <frontend>
                 <list_mode>grid-list</list_mode>
                 <product_per_page>9</product_per_page>

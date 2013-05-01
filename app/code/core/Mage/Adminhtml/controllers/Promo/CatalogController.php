@@ -66,7 +66,7 @@ class Mage_Adminhtml_Promo_CatalogController extends Mage_Adminhtml_Controller_A
         Mage::register('current_promo_catalog_rule', $model);
 
         $block = $this->getLayout()->createBlock('adminhtml/promo_catalog_edit')
-            ->setData('action', Mage::getUrl('*/promo_catalog/save'));
+            ->setData('action', Mage::helper('adminhtml')->getUrl('*/promo_catalog/save'));
 
         $this->_initAction();
 

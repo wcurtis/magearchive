@@ -18,15 +18,16 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Wishlist sidebar block
  *
  * @category   Mage
  * @package    Mage_Checkout
  */
-
 class Mage_Checkout_Block_Cart_Sidebar extends Mage_Core_Block_Template
 {
+
     public function getItemCollection()
     {
 
@@ -86,4 +87,5 @@ Varien_Profiler::stop('TEST1: '.__METHOD__);
     {
         return $this->getUrl('checkout/cart/moveToWishlist',array('id'=>$item->getId()));
     }
-}// Class Mage_Wishlist_Block_Customer_Sidebar END
+
+}

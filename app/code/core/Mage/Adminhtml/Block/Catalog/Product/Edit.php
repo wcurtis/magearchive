@@ -26,20 +26,20 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Widget
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('catalog/product/edit.phtml');
         $this->setId('product_edit');
     }
-    
+
     protected function _prepareLayout()
     {
         $this->setChild('back_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Back'),
-                    'onclick'   => 'setLocation(\''.Mage::getUrl('*/*/', array('store'=>$this->getRequest()->getParam('store', 0))).'\')',
+                    'onclick'   => 'setLocation(\''.$this->getUrl('*/*/', array('store'=>$this->getRequest()->getParam('store', 0))).'\')',
                     'class' => 'back'
                 ))
         );
@@ -48,7 +48,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Reset'),
-                    'onclick'   => 'setLocation(\''.Mage::getUrl('*/*/*', array('_current'=>true)).'\')'
+                    'onclick'   => 'setLocation(\''.$this->getUrl('*/*/*', array('_current'=>true)).'\')'
                 ))
         );
 
@@ -61,7 +61,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
                 ))
         );
 
-        
+
         $this->setChild('save_and_edit_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
@@ -115,7 +115,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
     {
         return $this->getChildHtml('delete_button');
     }
-    
+
     public function getDuplicateButtonHtml()
     {
         return $this->getChildHtml('duplicate_button');
@@ -125,17 +125,17 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
     {
         return $this->getUrl('*/*/validate', array('_current'=>true));
     }
-    
+
     public function getSaveUrl()
     {
         return $this->getUrl('*/*/save', array('_current'=>true));
     }
-    
+
     public function getProductId()
     {
         return Mage::registry('product')->getId();
     }
-    
+
     public function getProductSetId()
     {
         $setId = false;
@@ -144,86 +144,86 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
         }
         return $setId;
     }
-    
+
     public function getRelatedProductsJSON()
     {
         $result = array();
-        
+
         foreach (Mage::registry('product')->getRelatedProductsLoaded() as $product) {
             $result[$product->getEntityId()] = $product->toArray(
                 $product->getAttributeCollection()->getAttributeCodes()
             );
         }
-        
+
         if(!empty($result)) {
             return Zend_Json_Encoder::encode($result);
         }
-        
+
         return '{}';
     }
-    
-    
+
+
     public function getUpSellProductsJSON()
     {
         $result = array();
-        
+
         foreach (Mage::registry('product')->getUpSellProductsLoaded() as $product) {
             $result[$product->getEntityId()] = $product->toArray(
                 $product->getAttributeCollection()->getAttributeCodes()
             );
         }
-        
+
         if(!empty($result)) {
             return Zend_Json_Encoder::encode($result);
         }
-        
+
         return '{}';
     }
 
     public function getCrossSellProductsJSON()
     {
         $result = array();
-        
+
         foreach (Mage::registry('product')->getCrossSellProductsLoaded() as $product) {
             $result[$product->getEntityId()] = $product->toArray(
                 $product->getAttributeCollection()->getAttributeCodes()
             );
         }
-        
+
         if(!empty($result)) {
             return Zend_Json_Encoder::encode($result);
         }
-        
+
         return '{}';
     }
-    
+
     public function getSuperGroupProductJSON()
     {
         $result = array();
-        
+
         foreach (Mage::registry('product')->getSuperGroupProductsLoaded() as $product) {
             $result[$product->getEntityId()] = $product->toArray(
                 $product->getAttributeCollection()->getAttributeCodes()
             );
         }
-        
+
         if(!empty($result)) {
             return Zend_Json_Encoder::encode($result);
         }
-        
+
         return '{}';
     }
-    
+
     public function getProduct()
     {
          return Mage::registry('product');
     }
-    
-    public function getIsSuperGroup() 
+
+    public function getIsSuperGroup()
     {
         return Mage::registry('product')->isSuperGroup();
     }
-    
+
     public function getDeleteUrl()
     {
         return $this->getUrl('*/*/delete', array('_current'=>true));
@@ -233,7 +233,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
     {
         return $this->getUrl('*/*/duplicate', array('_current'=>true));
     }
-    
+
     public function getHeader()
     {
         $header = '';
@@ -248,7 +248,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
         }
         return $header;
     }
-    
+
     public function getAttributeSetName()
     {
         if ($setId = Mage::registry('product')->getAttributeSetId()) {
@@ -258,14 +258,18 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit extends Mage_Adminhtml_Block_Wid
         }
         return '';
     }
-    
+
     public function getIsConfigured()
     {
         if (!($superAttributes = Mage::registry('product')->getSuperAttributesIds())) {
             $superAttributes = false;
         }
-                
+
         return !Mage::registry('product')->isSuperConfig() || $superAttributes !== false;
     }
-    
+
+    public function getSelectedTabId()
+    {
+        return addslashes(htmlspecialchars($this->getRequest()->getParam('tab')));
+    }
 }

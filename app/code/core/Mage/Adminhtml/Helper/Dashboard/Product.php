@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Helper_Dashboard_Product extends Mage_Adminhtml_Helper_Dashboard_Abstract
 {
+
     protected function _initCollection()
     {
         $this->_collection = array(
@@ -36,4 +37,6 @@ class Mage_Adminhtml_Helper_Dashboard_Product extends Mage_Adminhtml_Helper_Dash
             array('name'=>'Product 5', 'avarage'=>263, 'salary'=>566)
            );
     }
-} // Class Mage_Adminhtml_Helper_Dashboard_Product end
+
+}
+ // Class Mage_Adminhtml_Helper_Dashboard_Product end

@@ -68,27 +68,36 @@ class Mage_Sales_Model_Entity_Sale_Collection extends Varien_Object implements I
 
     public function load($printQuery = false, $logQuery = false)
     {
-
-        $this->_select = new Zend_Db_Select($this->_read);
-        $this->getSelect()->from(array('paid' => $this->getAttribute('total_paid')->getBackend()->getTable()),
-                array('store_id', 'lifetime' => 'sum(paid.value * rate.value)', 'avgsale' => 'avg(paid.value * rate.value)', 'num_orders' => 'count(paid.entity_id)'))
+        $this->_select = $this->_read->select();
+        $entityTable= $this->getEntity()->getEntityTable();
+        $paidTable  = $this->getAttribute('grand_total')->getBackend()->getTable();
+        $rateTable  = $this->getAttribute('store_to_order_rate')->getBackend()->getTable();
+        $idField    = $this->getEntity()->getIdFieldName();
+        $this->getSelect()
+            ->from(array('sales' => $entityTable),  array('store_id'))
+            ->join(array('paid' => $paidTable),
+                'paid.' . $idField . '=sales.' . $idField
+                . ' and paid.attribute_id='. $this->getAttribute('grand_total')->getId(),
+                array(
+                    'lifetime'  => 'sum(paid.value * rate.value)',
+                    'avgsale'   => 'avg(paid.value * rate.value)',
+                    'num_orders'=> 'count(paid.entity_id)'
+                )
+            )
             ->join(
-                array('rate' => $this->getAttribute('store_to_order_rate')->getBackend()->getTable()),
-                'rate.' . $this->getEntity()->getIdFieldName() . '=paid.' . $this->getEntity()->getIdFieldName()
-                . ' and rate.entity_type_id='. $this->getEntity()->getTypeId()
+                array('rate' => $rateTable),
+                'rate.' . $idField . '=sales.' . $idField
                 . ' and rate.attribute_id='. $this->getAttribute('store_to_order_rate')->getId(),
                 array('value')
             )
-            ->where('paid.entity_type_id=?', $this->getEntity()->getTypeId())
-            ->where('paid.attribute_id=?', $this->getAttribute('total_paid')->getId())
-            ->group('paid.store_id')
+            ->where('sales.entity_type_id=?', $this->getEntity()->getTypeId())
+            ->group('sales.store_id')
         ;
         if ($this->_customer instanceof Mage_Customer_Model_Customer) {
             $this->getSelect()
                 ->join(
                     array('customer' => $this->getAttribute('customer_id')->getBackend()->getTable()),
-                    'customer.' . $this->getEntity()->getIdFieldName() . '=paid.' . $this->getEntity()->getIdFieldName()
-                    . ' and customer.entity_type_id='. $this->getEntity()->getTypeId()
+                    'customer.' . $idField . '=sales.' . $idField
                     . ' and customer.attribute_id='. $this->getAttribute('customer_id')->getId(),
                     array('value')
                 )
@@ -100,7 +109,7 @@ class Mage_Sales_Model_Entity_Sale_Collection extends Varien_Object implements I
         try {
             $values = $this->_read->fetchAll($this->getSelect()->__toString());
         } catch (Exception $e) {
-            $this->printLogQuery(true, true, $sql);
+            $this->printLogQuery(true, true, $this->getSelect()->__toString());
             throw $e;
         }
         $stores = Mage::getResourceModel('core/store_collection')->setWithoutDefaultFilter()->load()->toOptionHash();

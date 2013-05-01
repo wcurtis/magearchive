@@ -23,7 +23,6 @@
     <sections>
         <customer translate="label" module="customer">
             <label>Customers</label>
-            <frontend_type>text</frontend_type>
             <sort_order>80</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
@@ -31,7 +30,6 @@
             <groups>
                 <create_account translate="label">
                     <label>Create New Account Options</label>
-                    <frontend_type>text</frontend_type>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>

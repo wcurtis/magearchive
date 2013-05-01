@@ -18,108 +18,114 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
+/**
+ * Google Analytics block
+ *
+ * @category   Mage
+ * @package    Mage_GoogleAnalytics
+ */
 class Mage_GoogleAnalytics_Block_Ga extends Mage_Core_Block_Text
 {
-	public function getQuoteOrdersHtml()
-	{
-		$quote = $this->getQuote();
-		if (!$quote) {
-			return '';
-		}
 
-		if ($quote instanceof Mage_Sales_Model_Quote) {
-			$quoteId = $quote->getId();
-		} else {
-			$quoteId = $quote;
-		}
+    public function getQuoteOrdersHtml()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return '';
+        }
 
-		if (!$quoteId) {
-			return '';
-		}
+        if ($quote instanceof Mage_Sales_Model_Quote) {
+            $quoteId = $quote->getId();
+        } else {
+            $quoteId = $quote;
+        }
 
-		$orders = Mage::getResourceModel('sales/order_collection')
-			->addAttributeToFilter('quote_id', $quoteId)
-			->load();
+        if (!$quoteId) {
+            return '';
+        }
 
-		$html = '';
-		foreach ($orders as $order) {
-			$html .= $this->setOrder($order)->getOrderHtml();
-		}
+        $orders = Mage::getResourceModel('sales/order_collection')
+            ->addAttributeToFilter('quote_id', $quoteId)
+            ->load();
 
-		return $html;
-	}
+        $html = '';
+        foreach ($orders as $order) {
+            $html .= $this->setOrder($order)->getOrderHtml();
+        }
 
-	public function getOrderHtml()
-	{
+        return $html;
+    }
 
-		$order = $this->getOrder();
-		if (!$order) {
-			return '';
-		}
+    public function getOrderHtml()
+    {
 
-		if (!$order instanceof Mage_Sales_Model_Order) {
-			$order = Mage::getModel('sales/order')->load($order);
-		}
+        $order = $this->getOrder();
+        if (!$order) {
+            return '';
+        }
 
-		if (!$order) {
-			return '';
-		}
+        if (!$order instanceof Mage_Sales_Model_Order) {
+            $order = Mage::getModel('sales/order')->load($order);
+        }
 
-		$address = $order->getBillingAddress();
+        if (!$order) {
+            return '';
+        }
 
-		$html  = '<script type="text/javascript">' . "\n";
-		$html .= 'pageTracker._addTrans(';
-		$html .= '"' . $order->getIncrementId() . '",';
-		$html .= '"' . $order->getAffiliation() . '",';
-		$html .= '"' . $order->getGrandTotal() . '",';
-		$html .= '"' . $order->getTaxAmount() . '",';
-		$html .= '"' . $order->getShippingAmount() . '",';
-		$html .= '"' . $order->getCity() . '",';
-		$html .= '"' . $order->getRegion() . '",';
-		$html .= '"' . $order->getCountry() . '"';
-		$html .= ');' . "\n";
+        $address = $order->getBillingAddress();
 
-		foreach ($order->getAllItems() as $item) {
-		    $html .= 'pageTracker._addItem(';
-		    $html .= '"' . $order->getIncrementId() . '",';
-		    $html .= '"' . $item->getSku() . '",';
-		    $html .= '"' . $item->getName() . '",';
-		    $html .= '"' . $item->getCategory() . '",';
-		    $html .= '"' . $item->getPrice() . '",';
-		    $html .= '"' . $item->getQtyOrdered() . '"';
-		    $html .= ');' . "\n";
-		}
+        $html  = '<script type="text/javascript">' . "\n";
+        $html .= 'pageTracker._addTrans(';
+        $html .= '"' . $order->getIncrementId() . '",';
+        $html .= '"' . $order->getAffiliation() . '",';
+        $html .= '"' . $order->getGrandTotal() . '",';
+        $html .= '"' . $order->getTaxAmount() . '",';
+        $html .= '"' . $order->getShippingAmount() . '",';
+        $html .= '"' . $address->getCity() . '",';
+        $html .= '"' . $address->getRegion() . '",';
+        $html .= '"' . $address->getCountry() . '"';
+        $html .= ');' . "\n";
 
-		$html .= 'pageTracker._trackTrans();' . "\n";
-		$html .= '</script>';
+        foreach ($order->getAllItems() as $item) {
+            $html .= 'pageTracker._addItem(';
+            $html .= '"' . $order->getIncrementId() . '",';
+            $html .= '"' . $item->getSku() . '",';
+            $html .= '"' . $item->getName() . '",';
+            $html .= '"' . $item->getCategory() . '",';
+            $html .= '"' . $item->getPrice() . '",';
+            $html .= '"' . $item->getQtyOrdered() . '"';
+            $html .= ');' . "\n";
+        }
 
-		return $html;
-	}
+        $html .= 'pageTracker._trackTrans();' . "\n";
+        $html .= '</script>';
 
-	public function getAccount()
-	{
-		if (!$this->hasData('account')) {
-			$this->setAccount(Mage::getStoreConfig('google/analytics/account'));
-		}
-		return $this->getData('account');
-	}
+        return $html;
+    }
 
-	public function getPageName()
-	{
-		if (!$this->hasData('page_name')) {
-			$this->setPageName($this->getRequest()->getPathInfo());
-		}
-		return $this->getData('page_name');
-	}
+    public function getAccount()
+    {
+        if (!$this->hasData('account')) {
+            $this->setAccount(Mage::getStoreConfig('google/analytics/account'));
+        }
+        return $this->getData('account');
+    }
 
-	public function toHtml()
-	{
-		if (!Mage::getStoreConfig('google/analytics/active')) {
-			return '';
-		}
+    public function getPageName()
+    {
+        if (!$this->hasData('page_name')) {
+            $this->setPageName($this->getRequest()->getPathInfo());
+        }
+        return $this->getData('page_name');
+    }
 
-		$this->addText('
+    protected function _toHtml()
+    {
+        if (!Mage::getStoreConfigFlag('google/analytics/active')) {
+            return '';
+        }
+
+        $this->addText('
 <!-- BEGIN GOOGLE ANALYTICS CODE -->
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol)
@@ -133,15 +139,16 @@ pageTracker._initData();
 pageTracker._trackPageview("' . $this->getPageName() . '");
 </script>
 <!-- END GOOGLE ANALYTICS CODE -->
-		');
+        ');
 
-		$this->addText($this->getQuoteOrdersHtml());
+        $this->addText($this->getQuoteOrdersHtml());
 
-		if ($this->getGoogleCheckout()) {
-		    $protocol = Mage::app()->getStore()->isCurrentlySecure() ? 'https' : 'http';
-		    $this->addText('<script src="'.$protocol.'://checkout.google.com/files/digital/ga_post.js" type="text/javascript"></script>');
-		}
+        if ($this->getGoogleCheckout()) {
+            $protocol = Mage::app()->getStore()->isCurrentlySecure() ? 'https' : 'http';
+            $this->addText('<script src="'.$protocol.'://checkout.google.com/files/digital/ga_post.js" type="text/javascript"></script>');
+        }
 
-		return parent::toHtml();
-	}
+        return parent::_toHtml();
+    }
+
 }

@@ -24,14 +24,13 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Model_System_Config_Backend_Category
+class Mage_Adminhtml_Model_System_Config_Backend_Category extends Mage_Core_Model_Config_Data
 {
-    public function afterSave(Varien_Object $configData)
+    protected function _afterSave()
     {
-        if ($configData->getScope() == 'stores') {
-            $rootId     = $configData->getValue();
-            $oldRootId  = $configData->getOldValue();
-            $storeId    = $configData->getScopeId();
+        if ($this->getScope() == 'stores') {
+            $rootId     = $this->getValue();
+            $storeId    = $this->getScopeId();
 
             $category   = Mage::getSingleton('catalog/category');
             $tree       = $category->getTreeModel();
@@ -53,6 +52,6 @@ class Mage_Adminhtml_Model_System_Config_Backend_Category
                     ->save();
             }
         }
-        return $configData;
+        return $this;
     }
 }

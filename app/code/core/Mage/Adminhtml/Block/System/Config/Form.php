@@ -132,11 +132,22 @@ class Mage_Adminhtml_Block_System_Config_Form extends Mage_Adminhtml_Block_Widge
 
                                 $fieldType = (string)$e->frontend_type;
 
+                                if ($e->backend_model) {
+                                    $model = Mage::getModel((string)$e->backend_model);
+                                    if (!$model instanceof Mage_Core_Model_Config_Data) {
+                                        Mage::throwException('Invalid config field backend model: '.(string)$e->backend_model);
+                                    }
+                                    $model->setPath($path)->setValue($data)->afterLoad();
+                                    $data = $model->getValue();
+                                }
+
+                                $comment = (string)$e->comment ? Mage::helper($helperName)->__((string)$e->comment) : '';
                                 $field = $fieldset[$group->getName()]->addField(
                                   $id, $fieldType ? $fieldType : 'text',
                                     array(
                                         'name'          => 'groups['.$group->getName().'][fields]['.$e->getName().'][value]',
                                         'label'         => Mage::helper($helperName)->__((string)$e->label),
+                                        'comment'       => $comment,
                                         'value'         => $data,
                                         'inherit'       => $inherit,
                                         'class'         => $e->frontend_class,

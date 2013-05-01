@@ -143,17 +143,19 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
         if ($id = (int) $this->getRequest()->getParam('id')) {
             try {
-                Mage::getModel('catalog/category')->load($id)
-                    ->delete();
+                $category = Mage::getModel('catalog/category')->load($id);
+                Mage::dispatchEvent('catalog_controller_category_delete', array('category'=>$category));
+
+                $category->delete();
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('Category deleted'));
             }
             catch (Exception $e){
                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Category delete error'));
-                $this->getResponse()->setRedirect(Mage::getUrl('*/*/edit', array('_current'=>true)));
+                $this->getResponse()->setRedirect($this->getUrl('*/*/edit', array('_current'=>true)));
                 return;
             }
         }
-        $this->getResponse()->setRedirect(Mage::getUrl('*/*/', array('_current'=>true, 'id'=>null)));
+        $this->getResponse()->setRedirect($this->getUrl('*/*/', array('_current'=>true, 'id'=>null)));
     }
 
     /**
@@ -184,12 +186,12 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 Mage::getSingleton('adminhtml/session')
                     ->addError($e->getMessage())
                     ->setCategoryData($data);
-                $this->getResponse()->setRedirect(Mage::getUrl('*/*/edit', array('id'=>$category->getId(), 'store'=>$storeId)));
+                $this->getResponse()->setRedirect($this->getUrl('*/*/edit', array('id'=>$category->getId(), 'store'=>$storeId)));
                 return;
             }
         }
 
-        $this->getResponse()->setRedirect(Mage::getUrl('*/*/edit', array('id'=>$category->getId(), 'store'=>$storeId)));
+        $this->getResponse()->setRedirect($this->getUrl('*/*/edit', array('id'=>$category->getId(), 'store'=>$storeId)));
     }
 
     public function gridAction()

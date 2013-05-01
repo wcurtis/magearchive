@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Widget_Breadcrumbs extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Widget_Breadcrumbs extends Mage_Adminhtml_Block_Template
 {
     /**
      * breadcrumbs links
@@ -36,7 +36,7 @@ class Mage_Adminhtml_Block_Widget_Breadcrumbs extends Mage_Core_Block_Template
     public function __construct()
     {
         $this->setTemplate('widget/breadcrumbs.phtml');
-        $this->addLink(Mage::helper('adminhtml')->__('Home'), Mage::helper('adminhtml')->__('Home'), Mage::getUrl('*'));
+        $this->addLink(Mage::helper('adminhtml')->__('Home'), Mage::helper('adminhtml')->__('Home'), $this->getUrl('*'));
     }
 
     public function addLink($label, $title=null, $url=null)

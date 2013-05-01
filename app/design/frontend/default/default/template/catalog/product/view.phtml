@@ -128,7 +128,10 @@
             <?else:?>
                 <p><small><?=$this->__('Availability: In stock.')?></small></p>
                 <?if($_product->isSaleable() && $_product->getSuperGroupProductsLoaded()->getSize()):?>
-                <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button> <strong><?=$this->__('OR')?></strong>
+                <button class="form-button" onclick="productAddToCartForm.submit()"><span><?=$this->__('Add to Cart')?></span></button>
+                    <?if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)):?>
+                    <strong><?=$this->__('OR')?></strong>
+                    <?endif;?>
                 &nbsp;&nbsp;
                 <?endif;?>
                 <?if ($this->helper('wishlist')->isAllow()) :?>

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Directory country format model
  *
@@ -26,8 +27,10 @@
  */
 class Mage_Directory_Model_Country_Format extends Mage_Core_Model_Abstract
 {
+
     protected function _construct()
     {
         $this->_init('directory/country_format');
     }
-} // Class Mage_Directory_Model_Country_Format End
+
+}

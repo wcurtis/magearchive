@@ -17,9 +17,9 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
 class Mage_Adminhtml_Block_Permissions_Tab_Userroles extends Mage_Adminhtml_Block_Widget_Tabs
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -35,9 +35,9 @@ class Mage_Adminhtml_Block_Permissions_Tab_Userroles extends Mage_Adminhtml_Bloc
         	->setUserFilter($uid)
         	->load();
 
-
         $this->setTemplate('permissions/userroles.phtml')
         	->assign('roles', $roles)
         	->assign('user_roles', $user_roles);
     }
+
 }

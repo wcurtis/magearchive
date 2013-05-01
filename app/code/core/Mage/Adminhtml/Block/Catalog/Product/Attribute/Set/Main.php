@@ -23,7 +23,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Adminhtml_Block_Template
 {
     protected function _construct()
     {
@@ -62,7 +62,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Core_
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Back'),
-                    'onclick'   => 'setLocation(\''.Mage::getUrl('*/*/').'\')',
+                    'onclick'   => 'setLocation(\''.$this->getUrl('*/*/').'\')',
                     'class' => 'back'
         )));
 
@@ -85,7 +85,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Core_
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Delete Attribute Set'),
-                    'onclick'   => 'deleteConfirm(\''. Mage::helper('catalog')->__('Are you sure you want to delete this attribute set?') . '\', \'' . Mage::getUrl('*/*/delete', array('id' => $setId)) . '\')',
+                    'onclick'   => 'deleteConfirm(\''. Mage::helper('catalog')->__('Are you sure you want to delete this attribute set?') . '\', \'' . $this->getUrl('*/*/delete', array('id' => $setId)) . '\')',
                     'class' => 'delete'
         )));
 

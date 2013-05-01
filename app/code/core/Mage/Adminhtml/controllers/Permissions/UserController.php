@@ -17,7 +17,6 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
 class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controller_Action
 {
 
@@ -57,19 +56,19 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
                 return;
             }
         }
-		// Restore previously entered form data from session
+        // Restore previously entered form data from session
         $data = Mage::getSingleton('adminhtml/session')->getUserData(true);
         if (!empty($data)) {
             $model->setData($data);
         }
 
         Mage::register('permissions_user', $model);
-        
+
         $this->_initAction()
             ->_addBreadcrumb($id ? $this->__('Edit User') : $this->__('New User'), $id ? $this->__('Edit User') : $this->__('New User'))
-            ->_addContent($this->getLayout()->createBlock('adminhtml/permissions_user_edit')->setData('action', Mage::getUrl('*/permissions_user/save')))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/permissions_user_edit')->setData('action', $this->getUrl('*/permissions_user/save')))
             ->_addLeft($this->getLayout()->createBlock('adminhtml/permissions_user_edit_tabs'));
-        
+
         $this->_addJs($this->getLayout()->createBlock('core/template')->setTemplate('permissions/user_roles_grid_js.phtml'));
         $this->renderLayout();
     }
@@ -81,21 +80,21 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
             $model->setData($data);
             try {
             	$model->save();
-				if ( $uRoles = $this->getRequest()->getParam('roles', false) ) {
+                if ( $uRoles = $this->getRequest()->getParam('roles', false) ) {
                     /*parse_str($uRoles, $uRoles);
                     $uRoles = array_keys($uRoles);*/
-				    if ( 1 == sizeof($uRoles) ) {
-				        $model->setRoleIds($uRoles)
-				            ->setRoleUserId($model->getUserId())
-				            ->saveRelations();
-				    } else if ( sizeof($uRoles) > 1 ) { 
-				        //@FIXME: stupid fix of previous multi-roles logic.
-				        //@TODO:  make proper DB upgrade in the future revisions.
-				        $rs = array();
-				        $rs[0] = $uRoles[0];
-				        $model->setRoleIds( $rs )->setRoleUserId( $model->getUserId() )->saveRelations();
-				    }
-				}
+                    if ( 1 == sizeof($uRoles) ) {
+                        $model->setRoleIds($uRoles)
+                            ->setRoleUserId($model->getUserId())
+                            ->saveRelations();
+                    } else if ( sizeof($uRoles) > 1 ) {
+                        //@FIXME: stupid fix of previous multi-roles logic.
+                        //@TODO:  make proper DB upgrade in the future revisions.
+                        $rs = array();
+                        $rs[0] = $uRoles[0];
+                        $model->setRoleIds( $rs )->setRoleUserId( $model->getUserId() )->saveRelations();
+                    }
+                }
                 Mage::getSingleton('adminhtml/session')->addSuccess($this->__('User was successfully saved'));
                 Mage::getSingleton('adminhtml/session')->setUserData(false);
                 $this->_redirect('*/*/edit', array('user_id' => $model->getUserId()));
@@ -113,7 +112,7 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
     public function deleteAction()
     {
         $currentUser = Mage::getSingleton('admin/session')->getUser();
-        
+
         if ($id = $this->getRequest()->getParam('user_id')) {
             if ( $currentUser->getId() == $id ) {
                 Mage::getSingleton('adminhtml/session')->addError($this->__('You cannot delete account of yourself'));
@@ -162,7 +161,7 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('system/acl/users');
+        return Mage::getSingleton('admin/session')->isAllowed('system/acl/users');
     }
 
 }

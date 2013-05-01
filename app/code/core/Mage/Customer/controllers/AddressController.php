@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Customer address controller
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Customer_AddressController extends Mage_Core_Controller_Front_Action
 {
+
     public function preDispatch()
     {
         parent::preDispatch();
@@ -129,4 +131,5 @@ class Mage_Customer_AddressController extends Mage_Core_Controller_Front_Action
         }
         $this->getResponse()->setRedirect(Mage::getUrl('*/*/index'));
     }
-}// Class Mage_Customer_AccountController END
+
+}

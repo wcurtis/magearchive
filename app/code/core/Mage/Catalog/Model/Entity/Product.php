@@ -598,6 +598,7 @@ class Mage_Catalog_Model_Entity_Product extends Mage_Catalog_Model_Entity_Abstra
 	       ->addData($object->getData());
 
         $this->_prepareCopy($newProduct);
+        Mage::dispatchEvent('catalog_product_copy', array('product'=>$object, 'new_product'=>$newProduct));
         $newProduct->setPostedStores($storeIds);
         $newProduct->setPostedCategories($categories);
         $newProduct->save();

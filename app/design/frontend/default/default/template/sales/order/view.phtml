@@ -55,39 +55,8 @@ function giftMessageToogle(giftMessageIdentifier)
 
 <? if ($_order->getTracksCollection()->count()) : ?>
 <span class="separator">|</span>
-<a href="#" id="linkId" onclick="shipping.getShipping();return false;"><?=$this->__('Track your order')?></a>
-<span id="shipping-method-please-wait" style="display:none;" class="opc-please-wait">
-    <img src="<?=$this->getSkinUrl('images/opc-ajax-loader.gif')?>" class="v-middle"> &nbsp; <?=$this->__('Loading...')?> &nbsp;
-</span></h4>
-<div id="shipping"></div>
-
-<script type="text/javascript">
-var Shipping = Class.create();
-Shipping.prototype = {
-    initialize: function(){
-        this.onShippingLoad = this.showShipping.bindAsEventListener(this);
-    },
-
-    getShipping: function(){
-        $('shipping-method-please-wait').show();
-        request = new Ajax.Request('<?=$this->helper('shipping')->getTrackingAjaxUrl()?>',{
-            method:     'post',
-            parameters: {order_id: <?=$_order->getId()?>},
-            onSuccess:  this.onShippingLoad,
-            onFailure:  function (){$('shipping').update("<?=$this->__('Can\'t get shipping information.')?>")},
-            onComplete: function (transport){$('shipping-method-please-wait').hide()}
-        });
-    },
-    showShipping: function (transport){
-        if (transport && transport.responseText){
-            $('shipping').update(transport.responseText)
-        } else {
-            $('shipping').update('<?=$this->__('Error in response.')?>');
-        }
-    },
-}
-var shipping = new Shipping();
-</script>
+<a href="#" id="linkId" onclick="popWin('<?=$this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId())?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?=$this->__('Track your order')?>"><?=$this->__('Track your order')?></a>
+</h4>
 <?else:?>
 </h4>
 <?endif;?>
@@ -95,10 +64,11 @@ var shipping = new Shipping();
     <thead>
         <tr>
             <th><?=$this->__('Product Name')?></th>
-            <th class="a-right"><?=$this->__('Price')?></th>
-            <th class="a-center"><?=$this->__('Qty Ordered')?></th>
-            <th class="a-center"><?=$this->__('Qty Shipped')?></th>
-            <th class="a-right"><?=$this->__('Subtotal')?></th>
+            <th width="15%"><?=$this->__('Price')?></th>
+            <th class="a-center" width="6%"><?=$this->__('Qty Ordered')?></th>
+            <th class="a-center" width="6%"><?=$this->__('Qty Shipped')?></th>
+            <th class="a-center" width="6%"><?=$this->__('Qty Canceled')?></th>
+            <th class="a-right" width="18%"><?=$this->__('Subtotal')?></th>
         </tr>
     </thead>
     <tbody>
@@ -112,9 +82,10 @@ var shipping = new Shipping();
             <br /><a href="#" id="order-item-gift-message-link-<?=$_item->getId()?>" class="giftmessage-preview-link expand" onclick="return giftMessageToogle('<?=$_item->getId()?>')"><?=$this->__('Gift Message')?></a>
             <?endif;?>
             </td>
-                <td class="a-right nowrap"><?=$_order->formatPrice($_item->getPrice())?> </td>
+                <td class="nowrap a-right"><?=$_order->formatPrice($_item->getPrice())?> </td>
                 <td class="a-center"><?=$_item->getQtyOrdered()*1?> </td>
                 <td class="a-center"><?=$_item->getQtyShipped()*1?> </td>
+                <td class="a-center"><?=$_item->getQtyCanceled()*1?> </td>
                 <td class="last a-right nowrap"><?=$_order->formatPrice($_item->getRowTotal())?> </td>
             </tr>
             <?if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()):?>
@@ -142,29 +113,29 @@ var shipping = new Shipping();
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="4" class="a-right"><?=$this->__('Order Subtotal')?></td>
+            <td colspan="5" class="a-right"><?=$this->__('Order Subtotal')?></td>
             <td class="last a-right"><?=$_order->formatPrice($_order->getSubtotal())?></td>
         </tr>
         <?if ($_order->getDiscountAmount() > 0):?>
             <tr>
-                <td colspan="4" class="a-right"><?=$this->__('Discount '.($_order->getCouponCode()?'('.$_order->getCouponCode().')':''))?></td>
+                <td colspan="5" class="a-right"><?=$this->__('Discount '.($_order->getCouponCode()?'('.$_order->getCouponCode().')':''))?></td>
                 <td class="last a-right"><?=$_order->formatPrice(0.00 - $_order->getDiscountAmount())?></td>
             </tr>
         <?endif;?>
         <?if ($_order->getTaxAmount() > 0):?>
             <tr>
-                <td colspan="4" class="a-right"><?=$this->__('Tax')?></td>
+                <td colspan="5" class="a-right"><?=$this->__('Tax')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_order->getTaxAmount())?></td>
             </tr>
         <?endif;?>
-        <?if ($_order->getShippingAmount()):?>
+        <?if ($_order->getShippingAmount() || $_order->getShippingDescription()):?>
             <tr>
-                <td colspan="4" class="a-right"><?=$this->__('Shipping & Handling')?></td>
+                <td colspan="5" class="a-right"><?=$this->__('Shipping & Handling')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_order->getShippingAmount())?></td>
             </tr>
         <?endif;?>
         <tr>
-            <td colspan="4" class="a-right"><?=$this->__('Grand Total')?></td>
+            <td colspan="5" class="a-right"><?=$this->__('Grand Total')?></td>
             <td class="last a-right"><?=$_order->formatPrice($_order->getGrandTotal())?></td>
         </tr>
     </tfoot>

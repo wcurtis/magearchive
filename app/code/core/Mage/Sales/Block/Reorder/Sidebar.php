@@ -86,10 +86,10 @@ class Mage_Sales_Block_Reorder_Sidebar extends Mage_Core_Block_Template
 //    public function loadItem($item){
 //        return Mage::getModel('catalog/product')->load($item->getId());
 //    }
-    public function toHtml()
+    protected function _toHtml()
     {
         if (Mage::helper('sales/reorder')->isAllow() && Mage::getSingleton('customer/session')->getCustomer()->getId()) {
-            return parent::toHtml();
+            return parent::_toHtml();
         }
         return '';
     }

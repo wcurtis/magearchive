@@ -196,9 +196,13 @@ class Mage_Core_Model_Url extends Varien_Object
 
     public function getSecure()
     {
+        if (!Mage::getStoreConfigFlag('web/secure/use_in_frontend')) {
+            return false;
+        }
         if (!$this->hasData('secure')) {
             if ($this->getType()===Mage_Core_Model_Store::URL_TYPE_LINK) {
-                $this->setData('secure', Mage::getConfig()->shouldUrlBeSecure('/'.$this->getActionPath()));
+                $pathSecure = Mage::getConfig()->shouldUrlBeSecure('/'.$this->getActionPath());
+                $this->setData('secure', $pathSecure);
             } else {
                 $this->setData('secure', Mage::app()->getStore()->isCurrentlySecure());
             }

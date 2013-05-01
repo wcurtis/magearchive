@@ -24,26 +24,26 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Page_Header extends Mage_Core_Block_Template 
+class Mage_Adminhtml_Block_Page_Header extends Mage_Adminhtml_Block_Template
 {
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('page/header.phtml');
     }
-    
+
     public function getHomeLink()
     {
-        return Mage::getUrl('*');
+        return $this->getUrl('adminhtml');
     }
-    
+
     public function getUser()
     {
         return Mage::getSingleton('admin/session')->getUser();
     }
-    
+
     public function getLogoutLink()
     {
-        return Mage::getUrl('*/index/logout');
+        return $this->getUrl('adminhtml/index/logout');
     }
 }

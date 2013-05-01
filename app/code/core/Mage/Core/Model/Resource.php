@@ -118,9 +118,9 @@ class Mage_Core_Model_Resource
     {
         list($model, $entity) = explode('/', $modelEntity);
         $resourceModel = (string)Mage::getConfig()->getNode('global/models/'.$model.'/resourceModel');
-
+        $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
         if ($entityConfig = $this->getEntity($resourceModel, $entity)) {
-            return (string)$entityConfig->table;
+            return $tablePrefix . (string)$entityConfig->table;
         }
         Mage::throwException(Mage::helper('core')->__('Can\'t retrieve entity config for entity: %s of model: %s', $entity, $model));
     }

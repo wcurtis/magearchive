@@ -17,7 +17,7 @@
  * @subpackage Storage
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Pop3.php 7310 2007-12-30 21:07:48Z weppos $
+ * @version    $Id: Pop3.php 7546 2008-01-21 19:47:37Z nico $
  */
 
 
@@ -242,7 +242,11 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
             if ($id) {
                 return $id;
             }
-            $range = range(1, $this->countMessages());
+            $count = $this->countMessages();
+            if ($count < 1) {
+                return array(); 
+            }
+            $range = range(1, $count);
             return array_combine($range, $range);
         }
 

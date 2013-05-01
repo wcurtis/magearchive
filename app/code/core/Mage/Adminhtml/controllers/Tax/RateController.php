@@ -37,7 +37,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
             ->_addBreadcrumb(Mage::helper('tax')->__('Tax Rates'), Mage::helper('tax')->__('Tax Rates'))
             ->_addContent(
                 $this->getLayout()->createBlock('adminhtml/tax_rate_toolbar_add', 'tax_rate_toolbar')
-                    ->assign('createUrl', Mage::getUrl('*/tax_rate/add'))
+                    ->assign('createUrl', $this->getUrl('*/tax_rate/add'))
                     ->assign('header', Mage::helper('tax')->__('Tax Rates'))
             )
             ->_addContent($this->getLayout()->createBlock('adminhtml/tax_rate_grid', 'tax_rate_grid'))
@@ -53,7 +53,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
         $rateModel = Mage::getSingleton('tax/rate')
             ->load(null);
         $this->_initAction()
-            ->_addBreadcrumb(Mage::helper('tax')->__('Tax Rates'), Mage::helper('tax')->__('Tax Rates'), Mage::getUrl('*/tax_rate'))
+            ->_addBreadcrumb(Mage::helper('tax')->__('Tax Rates'), Mage::helper('tax')->__('Tax Rates'), $this->getUrl('*/tax_rate'))
             ->_addBreadcrumb(Mage::helper('tax')->__('New Tax Rate'), Mage::helper('tax')->__('New Tax Rate'))
             ->_addContent(
                 $this->getLayout()->createBlock('adminhtml/tax_rate_toolbar_save')
@@ -86,7 +86,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
                 $rateModel->save();
 
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('tax')->__('Tax rate was successfully saved'));
-                $this->getResponse()->setRedirect(Mage::getUrl("*/*/"));
+                $this->getResponse()->setRedirect($this->getUrl("*/*/"));
                 return true;
             }
             catch (Mage_Core_Exception $e) {
@@ -110,12 +110,12 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
         $rateModel = Mage::getSingleton('tax/rate')
             ->load($rateId);
         if (!$rateModel->getId()) {
-            $this->getResponse()->setRedirect(Mage::getUrl("*/*/"));
+            $this->getResponse()->setRedirect($this->getUrl("*/*/"));
             return ;
         }
 
         $this->_initAction()
-            ->_addBreadcrumb(Mage::helper('tax')->__('Tax Rates'), Mage::helper('tax')->__('Tax Rates'), Mage::getUrl('*/tax_rate'))
+            ->_addBreadcrumb(Mage::helper('tax')->__('Tax Rates'), Mage::helper('tax')->__('Tax Rates'), $this->getUrl('*/tax_rate'))
             ->_addBreadcrumb(Mage::helper('tax')->__('Edit Tax Rate'), Mage::helper('tax')->__('Edit Tax Rate'))
             ->_addContent(
                 $this->getLayout()->createBlock('adminhtml/tax_rate_toolbar_save')
@@ -139,7 +139,7 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
                     $rateModel->delete();
 
                     Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('tax')->__('Tax rate was successfully deleted'));
-                    $this->getResponse()->setRedirect(Mage::getUrl("*/*/"));
+                    $this->getResponse()->setRedirect($this->getUrl("*/*/"));
                     return true;
                 }
                 catch (Mage_Core_Exception $e) {
@@ -152,11 +152,11 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
                     $this->getResponse()->setRedirect($referer);
                 }
                 else {
-                    $this->getResponse()->setRedirect(Mage::getUrl("*/*/"));
+                    $this->getResponse()->setRedirect($this->getUrl("*/*/"));
                 }
             } else {
                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('tax')->__('Error while deleting this rate. Incorrect rate ID'));
-                $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+                $this->getResponse()->setRedirect($this->getUrl('*/*/'));
             }
         }
     }

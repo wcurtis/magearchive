@@ -25,8 +25,8 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `salesrule`;
-CREATE TABLE `salesrule` (
+DROP TABLE IF EXISTS {$this->getTable('salesrule')};
+CREATE TABLE {$this->getTable('salesrule')} (
   `rule_id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
@@ -52,8 +52,8 @@ CREATE TABLE `salesrule` (
   KEY `sort_order` (`is_active`,`sort_order`,`to_date`,`from_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `salesrule_customer`;
-CREATE TABLE `salesrule_customer` (
+DROP TABLE IF EXISTS {$this->getTable('salesrule_customer')};
+CREATE TABLE {$this->getTable('salesrule_customer')} (
   `rule_customer_id` int(10) unsigned NOT NULL auto_increment,
   `rule_id` int(10) unsigned NOT NULL default '0',
   `customer_id` int(10) unsigned NOT NULL default '0',
@@ -61,12 +61,12 @@ CREATE TABLE `salesrule_customer` (
   PRIMARY KEY  (`rule_customer_id`),
   KEY `rule_id` (`rule_id`,`customer_id`),
   KEY `customer_id` (`customer_id`,`rule_id`),
-  CONSTRAINT `FK_salesrule_customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer_entity` (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_salesrule_customer_rule` FOREIGN KEY (`rule_id`) REFERENCES `salesrule` (`rule_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_salesrule_customer_id` FOREIGN KEY (`customer_id`) REFERENCES {$this->getTable('customer_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_salesrule_customer_rule` FOREIGN KEY (`rule_id`) REFERENCES {$this->getTable('salesrule')} (`rule_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `salesrule_product`;
-CREATE TABLE `salesrule_product` (
+DROP TABLE IF EXISTS {$this->getTable('salesrule_product')};
+CREATE TABLE {$this->getTable('salesrule_product')} (
   `rule_product_id` int(10) unsigned NOT NULL auto_increment,
   `rule_id` int(10) unsigned NOT NULL default '0',
   `from_time` int(10) unsigned NOT NULL default '0',
@@ -81,13 +81,13 @@ CREATE TABLE `salesrule_product` (
   KEY `FK_salesrule_product_rule` (`rule_id`),
   KEY `FK_salesrule_product_store` (`store_id`),
   KEY `FK_salesrule_product_customergroup` (`customer_group_id`),
-  CONSTRAINT `FK_salesrule_product_customergroup` FOREIGN KEY (`customer_group_id`) REFERENCES `customer_group` (`customer_group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_salesrule_product_rule` FOREIGN KEY (`rule_id`) REFERENCES `salesrule` (`rule_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_salesrule_product_store` FOREIGN KEY (`store_id`) REFERENCES `core_store` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_salesrule_product_customergroup` FOREIGN KEY (`customer_group_id`) REFERENCES {$this->getTable('customer_group')} (`customer_group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_salesrule_product_rule` FOREIGN KEY (`rule_id`) REFERENCES {$this->getTable('salesrule')} (`rule_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_salesrule_product_store` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `salesrule_product_action`;
-CREATE TABLE `salesrule_product_action` (
+DROP TABLE IF EXISTS {$this->getTable('salesrule_product_action')};
+CREATE TABLE {$this->getTable('salesrule_product_action')} (
   `rule_product_action_id` int(10) unsigned NOT NULL auto_increment,
   `rule_product_id` int(10) unsigned NOT NULL default '0',
   `action_type` varchar(255) NOT NULL default '',
@@ -96,7 +96,7 @@ CREATE TABLE `salesrule_product_action` (
   `action_value` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`rule_product_action_id`),
   KEY `rule_product_id` (`rule_product_id`),
-  CONSTRAINT `salesrule_product_action_ibfk_1` FOREIGN KEY (`rule_product_id`) REFERENCES `salesrule_product` (`rule_product_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `salesrule_product_action_ibfk_1` FOREIGN KEY (`rule_product_id`) REFERENCES {$this->getTable('salesrule_product')} (`rule_product_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
     ");

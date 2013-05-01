@@ -90,7 +90,8 @@ class Mage_Tag_Block_Customer_View extends Mage_Core_Block_Template
                 ->addCustomerFilter(Mage::getSingleton('customer/session')->getCustomerId())
                 ->addStoreFilter(Mage::app()->getStore()->getId())
                 ->setActiveFilter()
-                ->addAttributeToSelect('description');
+                ->addAttributeToSelect('description')
+                ->addAttributeToSelect('status');
         }
         return $this->_collection;
     }

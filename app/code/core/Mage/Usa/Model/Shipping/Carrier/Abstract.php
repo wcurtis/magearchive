@@ -24,12 +24,8 @@
  */
 abstract class Mage_Usa_Model_Shipping_Carrier_Abstract extends Mage_Shipping_Model_Carrier_Abstract
 {
-    const USA_COUNTRY_ID = 'US';
 
-    public function isTrackingAvailable()
-    {
-        return false;
-    }
+    const USA_COUNTRY_ID = 'US';
 
     public function getTrackingInfo($tracking)
     {
@@ -48,4 +44,16 @@ abstract class Mage_Usa_Model_Shipping_Carrier_Abstract extends Mage_Shipping_Mo
 
         return false;
     }
+
+    /**
+     * Check if carrier has shipping tracking option available
+     * All Mage_Usa carriers have shipping tracking option available
+     *
+     * @return boolean
+     */
+    public function isTrackingAvailable()
+    {
+        return true;
+    }
+
 }

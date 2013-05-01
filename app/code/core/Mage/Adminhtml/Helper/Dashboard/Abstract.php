@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml abstract  dashboard helper.
  *
@@ -39,7 +40,6 @@
          * @var array
          */
         protected  $_params = array();
-
 
         public function getCollection()
         {
@@ -109,4 +109,4 @@
             return $this->_params;
         }
 
- } // Class Mage_Adminhtml_Helper_Dashboard_Abstract end
+ }

@@ -24,55 +24,56 @@
     <fieldset>
 
         <legend><?=Mage::helper('catalog')->__('Inventory')?></legend>
+        <table cellspacing="0" class="form-list">
 <?if(!$this->isConfigurable()):?>
-        <span class="field-row">
-            <label for="inventory_qty"><?=Mage::helper('catalog')->__('Qty')?><span class="required">*</span></label>
-            <input type="text" class="input-text required-entry validate-number" id="inventory_qty" name="product[stock_data][qty]" value="<?=$this->getFieldValue('qty')*1?>"/>
-            <?=$this->getGlobalIcon()?>
-        </span>
+        <tr>
+            <td class="label"><label for="inventory_qty"><?=Mage::helper('catalog')->__('Qty')?><span class="required">*</span></label></td>
+            <td class="input-ele"><input type="text" class="input-text required-entry validate-number" id="inventory_qty" name="product[stock_data][qty]" value="<?=$this->getFieldValue('qty')*1?>"/>
+            <?=$this->getGlobalIcon()?></td>
+        </tr>
 
-        <span class="field-row">
-            <label for="inventory_min_qty"><?=Mage::helper('catalog')->__('Minimum Qty for Item\'s Status to be In Stock')?></label>
-            <input type="text" class="input-text validate-number" id="inventory_min_qty" name="product[stock_data][min_qty]" value="<?=$this->getFieldValue('min_qty')*1?>"/>
+        <tr>
+            <td class="label"><label for="inventory_min_qty"><?=Mage::helper('catalog')->__('Minimum Qty for Item\'s Status to be In Stock')?></label></td>
+            <td class="input-ele"><input type="text" class="input-text validate-number" id="inventory_min_qty" name="product[stock_data][min_qty]" value="<?=$this->getFieldValue('min_qty')*1?>"/>
             <?=$this->getGlobalIcon()?>
             <?$_checked = ($this->getFieldValue('use_config_min_qty') || $this->IsNew()) ? 'checked' : ''?>
             <input type="checkbox" id="inventory_use_config_min_qty" name="product[stock_data][use_config_min_qty]" value="1" <?=$_checked?> onclick="toggleValueElements(this, this.parentNode);"/>
             <label for="inventory_use_config_min_qty" class="normal"><?=Mage::helper('catalog')->__('Use Config Settings')?></label>
-            <script type="text/javascript">toggleValueElements($('inventory_use_config_min_qty'), $('inventory_use_config_min_qty').parentNode);</script>
-        </span>
+            <script type="text/javascript">toggleValueElements($('inventory_use_config_min_qty'), $('inventory_use_config_min_qty').parentNode);</script></td>
+        </tr>
 
-        <span class="field-row">
-            <label for="inventory_min_sale_qty"><?=Mage::helper('catalog')->__('Minimum Qty Allowed in Shopping Cart')?></label>
-            <input type="text" class="input-text validate-number" id="inventory_min_sale_qty" name="product[stock_data][min_sale_qty]" value="<?=$this->getFieldValue('min_sale_qty')*1?>"/>
+        <tr>
+            <td class="label"><label for="inventory_min_sale_qty"><?=Mage::helper('catalog')->__('Minimum Qty Allowed in Shopping Cart')?></label></td>
+            <td class="input-ele"><input type="text" class="input-text validate-number" id="inventory_min_sale_qty" name="product[stock_data][min_sale_qty]" value="<?=$this->getFieldValue('min_sale_qty')*1?>"/>
             <?=$this->getGlobalIcon()?>
             <?$_checked = ($this->getFieldValue('use_config_min_sale_qty') || $this->IsNew()) ? 'checked' : ''?>
             <input type="checkbox" id="inventory_use_config_min_sale_qty" name="product[stock_data][use_config_min_sale_qty]" value="1" <?=$_checked?> onclick="toggleValueElements(this, this.parentNode);"/>
             <label for="inventory_use_config_min_sale_qty" class="normal"><?=Mage::helper('catalog')->__('Use Config Settings')?></label>
-            <script type="text/javascript">toggleValueElements($('inventory_use_config_min_sale_qty'), $('inventory_use_config_min_sale_qty').parentNode);</script>
-        </span>
+            <script type="text/javascript">toggleValueElements($('inventory_use_config_min_sale_qty'), $('inventory_use_config_min_sale_qty').parentNode);</script></td>
+        </tr>
 
-        <span class="field-row">
-            <label for="inventory_max_sale_qty"><?=Mage::helper('catalog')->__('Maximum Qty Allowed in Shopping Cart')?></label>
-            <input type="text" class="input-text validate-number" id="inventory_max_sale_qty" name="product[stock_data][max_sale_qty]" value="<?=$this->getFieldValue('max_sale_qty')*1?>"/>
+        <tr>
+            <td class="label"><label for="inventory_max_sale_qty"><?=Mage::helper('catalog')->__('Maximum Qty Allowed in Shopping Cart')?></label></td>
+            <td class="input-ele"><input type="text" class="input-text validate-number" id="inventory_max_sale_qty" name="product[stock_data][max_sale_qty]" value="<?=$this->getFieldValue('max_sale_qty')*1?>"/>
             <?=$this->getGlobalIcon()?>
             <?$_checked = ($this->getFieldValue('use_config_max_sale_qty') || $this->IsNew()) ? 'checked' : ''?>
             <input type="checkbox" id="inventory_use_config_max_sale_qty" name="product[stock_data][use_config_max_sale_qty]" value="1" <?=$_checked?> onclick="toggleValueElements(this, this.parentNode);"/>
             <label for="inventory_use_config_max_sale_qty" class="normal"><?=Mage::helper('catalog')->__('Use Config Settings')?></label>
-            <script type="text/javascript">toggleValueElements($('inventory_use_config_max_sale_qty'), $('inventory_use_config_max_sale_qty').parentNode);</script>
-        </span>
+            <script type="text/javascript">toggleValueElements($('inventory_use_config_max_sale_qty'), $('inventory_use_config_max_sale_qty').parentNode);</script></td>
+        </tr>
 
-        <span class="field-row">
-            <label for="inventory_is_qty_decimal"><?=Mage::helper('catalog')->__('Qty Uses Decimals')?></label>
-            <select id="inventory_is_qty_decimal" name="product[stock_data][is_qty_decimal]" class="select">
+        <tr>
+            <td class="label"><label for="inventory_is_qty_decimal"><?=Mage::helper('catalog')->__('Qty Uses Decimals')?></label></td>
+            <td class="input-ele"><select id="inventory_is_qty_decimal" name="product[stock_data][is_qty_decimal]" class="select">
                 <option value="0"><?=Mage::helper('catalog')->__('No')?></option>
                 <option value="1"<?if($this->getFieldValue('is_qty_decimal')==1):?> selected<?endif;?>><?=Mage::helper('catalog')->__('Yes')?></option>
             </select>
-            <?=$this->getGlobalIcon()?>
-        </span>
+            <?=$this->getGlobalIcon()?></td>
+        </tr>
 
-        <span class="field-row">
-            <label for="inventory_backorders"><?=Mage::helper('catalog')->__('Backorders')?></label>
-            <select id="inventory_backorders" name="product[stock_data][backorders]" class="select">
+        <tr>
+            <td class="label"><label for="inventory_backorders"><?=Mage::helper('catalog')->__('Backorders')?></label></td>
+            <td class="input-ele"><select id="inventory_backorders" name="product[stock_data][backorders]" class="select">
             <?foreach ($this->getBackordersOption() as $option):?>
                 <?$_selected = ($option['value'] == $this->getFieldValue('backorders')) ? 'selected' : ''?>
                 <option value="<?=$option['value']?>" <?=$_selected?>><?=$option['label']?></option>
@@ -82,18 +83,18 @@
             <?$_checked = ($this->getFieldValue('use_config_backorders') || $this->IsNew()) ? 'checked' : ''?>
             <input type="checkbox" id="inventory_use_config_backorders" name="product[stock_data][use_config_backorders]" value="1" <?=$_checked?> onclick="toggleValueElements(this, this.parentNode);"/>
             <label for="inventory_use_config_backorders" class="normal"><?=Mage::helper('catalog')->__('Use Config Settings')?></label>
-            <script type="text/javascript">toggleValueElements($('inventory_use_config_backorders'), $('inventory_use_config_backorders').parentNode);</script>
-        </span>
+            <script type="text/javascript">toggleValueElements($('inventory_use_config_backorders'), $('inventory_use_config_backorders').parentNode);</script></td>
+        </tr>
 <?endif;?>
-        <span class="field-row">
-            <label for="inventory_stock_availability"><?=Mage::helper('catalog')->__('Stock Availability')?></label>
-            <select id="inventory_stock_availability" name="product[stock_data][is_in_stock]" class="select">
+        <tr>
+            <td class="label"><label for="inventory_stock_availability"><?=Mage::helper('catalog')->__('Stock Availability')?></label></td>
+            <td class="input-ele"><select id="inventory_stock_availability" name="product[stock_data][is_in_stock]" class="select">
                 <option value="1"><?=Mage::helper('catalog')->__('In Stock')?></option>
                 <option value="0"<?if($this->getFieldValue('is_in_stock')==0):?> selected<?endif;?>><?=Mage::helper('catalog')->__('Out of Stock')?></option>
             </select>
-            <?=$this->getGlobalIcon()?>
-        </span>
-
+            <?=$this->getGlobalIcon()?></td>
+        </tr>
+        </table>
     </fieldset>
     </div>
 </div>

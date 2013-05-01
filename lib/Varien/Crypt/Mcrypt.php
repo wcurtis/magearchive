@@ -36,7 +36,7 @@ class Varien_Crypt_Mcrypt extends Varien_Crypt_Abstract
     {
         parent::__construct($data);
     }
-    
+
     /**
      * Initialize mcrypt module
      *
@@ -48,26 +48,26 @@ class Varien_Crypt_Mcrypt extends Varien_Crypt_Abstract
         if (!$this->getCipher()) {
             $this->setCipher(MCRYPT_BLOWFISH);
         }
-        
+
         if (!$this->getMode()) {
             $this->setMode(MCRYPT_MODE_ECB);
         }
-        
+
         $this->setHandler(mcrypt_module_open($this->getCipher(), '', $this->getMode(), ''));
         $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($this->getHandler()), MCRYPT_RAND);
-        
+
         $maxKeySize = mcrypt_enc_get_key_size($this->getHandler());
 
         if (iconv_strlen($key)>$maxKeySize) {
             $this->setHandler(null);
             throw new Varien_Exception('Maximum key size must should be smaller '.$maxKeySize);
         }
-        
+
         mcrypt_generic_init($this->getHandler(), $key, $iv);
-        
+
         return $this;
     }
-    
+
     /**
      * Encrypt data
      *
@@ -79,9 +79,12 @@ class Varien_Crypt_Mcrypt extends Varien_Crypt_Abstract
         if (!$this->getHandler()) {
             throw new Varien_Exception('Crypt module is not initialized.');
         }
-        return mcrypt_generic($this->getHandler(), $data);        
+        if (strlen($data) == 0) {
+            return $data;
+        }
+        return mcrypt_generic($this->getHandler(), $data);
     }
-    
+
     /**
      * Decrypt data
      *
@@ -93,9 +96,12 @@ class Varien_Crypt_Mcrypt extends Varien_Crypt_Abstract
         if (!$this->getHandler()) {
             throw new Varien_Exception('Crypt module is not initialized.');
         }
-        return mdecrypt_generic($this->getHandler(), $data);        
+        if (strlen($data) == 0) {
+            return $data;
+        }
+        return mdecrypt_generic($this->getHandler(), $data);
     }
-    
+
     /**
      * Desctruct cipher module
      *
@@ -106,10 +112,10 @@ class Varien_Crypt_Mcrypt extends Varien_Crypt_Abstract
             $this->_reset();
         }
     }
-    
+
     protected function _reset()
     {
         mcrypt_generic_deinit($this->getHandler());
-        mcrypt_module_close($this->getHandler());                
+        mcrypt_module_close($this->getHandler());
     }
 }

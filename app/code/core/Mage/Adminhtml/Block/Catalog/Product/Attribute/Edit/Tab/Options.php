@@ -24,15 +24,15 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Mage_Adminhtml_Block_Widget
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('catalog/product/attribute/options.phtml');
     }
-    
+
     protected function _prepareLayout()
     {
         $this->setChild('delete_button',
@@ -41,7 +41,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
                     'label' => Mage::helper('catalog')->__('Delete'),
                     'class' => 'delete delete-option'
                 )));
-                
+
         $this->setChild('add_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
@@ -51,12 +51,12 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
                 )));
         return parent::_prepareLayout();
     }
-    
+
     public function getDeleteButtonHtml()
     {
         return $this->getChildHtml('delete_button');
     }
-    
+
     public function getAddNewButtonHtml()
     {
         return $this->getChildHtml('add_button');
@@ -74,7 +74,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
         }
         return $stores;
     }
-    
+
     public function getOptionValues()
     {
         $values = $this->getData('option_values');
@@ -84,7 +84,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
                 ->setAttributeFilter($this->getAttributeObject()->getId())
                 ->setPositionOrder('desc')
                 ->load();
-                
+
             foreach ($optionCollection as $option) {
                 $value = array();
                 $value['id'] = $option->getId();
@@ -102,10 +102,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
             }
             $this->setData('option_values', $values);
         }
-        
+
         return $values;
     }
-    
+
     public function getLabelValues()
     {
         $values = array();
@@ -120,7 +120,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
         }
         return $values;
     }
-    
+
     public function getStoreOptionValues($storeId)
     {
         $values = $this->getData('store_option_values_'.$storeId);
@@ -137,9 +137,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options extends Ma
         }
         return $values;
     }
-    
+
     public function getAttributeObject()
     {
         return Mage::registry('entity_attribute');
     }
+
 }

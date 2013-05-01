@@ -151,7 +151,7 @@ table.actions td {
 }
 
 
-.massaction .entry-edit fieldset .select { width:186px; }
+.massaction .entry-edit fieldset .select { width:120px; }
 
 .massaction .entry-edit fieldset span.form_row, .massaction  .entry-edit fieldset span.field-row {
     display:block;
@@ -310,11 +310,11 @@ table.actions td {
 .grid tr.filter th.last { border-right:0; }
 .grid tr.filter input { width: 95%; font:normal 12px Arial; }
 .grid tr.filter select { width:100%; font:normal 12px Arial; }
-.grid tr.filter .range div { width: 10em; float: left; }
+.grid tr.filter .range div { width: 8.5em; float: left; }
 .grid tr.filter .range div.range-line { margin-bottom:4px; }
 .grid tr.filter .range div.date { width: 12em; }
 .grid tr.filter .range input {
-    width: 5.5em !important;
+    width: 4em !important;
     margin-bottom:-1px;
     margin-top:0;
     }
@@ -337,7 +337,7 @@ table.actions td {
     }
 
 .grid .head-massaction select {
-    width: 40px !important;
+    width: 50px !important;
 }
 
 /* The REAL MEAT of Grid */
@@ -556,6 +556,9 @@ ul.tabs-horiz li a.active {
 fieldset .validation-advice{
     margin:2px 0 0 13.2em;
     margin-right:20px;
+}
+fieldset td .validation-advice{
+    margin:2px 0 0 0;
 }
 input.validation-failed, textarea.validation-failed {
     background:#fef0ed;

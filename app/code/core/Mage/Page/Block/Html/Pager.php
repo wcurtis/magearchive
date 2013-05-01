@@ -88,16 +88,16 @@ class Mage_Page_Block_Html_Pager extends Mage_Core_Block_Template
     {
         return $this->_pageVarName;
     }
-    
+
     public function setShowPerPage($varName)
     {
     	$this->_showPerPage=$varName;
     }
-    
+
     public function getShowPerPage()
     {
         if(sizeof($this->getAvailableLimit())<=1) {
-            return false; 
+            return false;
         }
     	return $this->_showPerPage;
     }

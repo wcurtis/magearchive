@@ -57,7 +57,7 @@ class Mage_Review_Block_List extends Mage_Core_Block_Template
         return $this->_collection->getSize();
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         $request    = Mage::registry('controller')->getRequest();
         $productId  = $request->getParam('id', false);
@@ -73,7 +73,7 @@ class Mage_Review_Block_List extends Mage_Core_Block_Template
         $pageUrl = clone $request;
         $this->assign('pageUrl', $pageUrl);
 
-        return parent::toHtml();
+        return parent::_toHtml();
     }
 
     public function getToolbarHtml()

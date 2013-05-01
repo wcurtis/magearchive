@@ -71,6 +71,10 @@ var Validation = Class.create();
 
 Validation.prototype = {
     initialize : function(form, options){
+        this.form = $(form);
+        if (!this.form) {
+            return;
+        }
         this.options = Object.extend({
             onSubmit : true,
             stopOnFirst : false,
@@ -80,7 +84,6 @@ Validation.prototype = {
             onFormValidate : function(result, form) {},
             onElementValidate : function(result, elm) {}
         }, options || {});
-        this.form = $(form);
         if(this.options.onSubmit) Event.observe(this.form,'submit',this.onSubmit.bind(this),false);
         if(this.options.immediate) {
             var useTitles = this.options.useTitles;
@@ -283,7 +286,7 @@ Object.extend(Validation, {
 });
 
 Validation.add('IsEmpty', '', function(v) {
-    return  ((v == null) || (v.length == 0) || /^\s+$/.test(v)); // || /^\s+$/.test(v));
+    return  (v == '' || (v == null) || (v.length == 0) || /^\s+$/.test(v)); // || /^\s+$/.test(v));
 });
 
 Validation.addAllThese([
@@ -418,7 +421,7 @@ Validation.addAllThese([
     ['validate-cc-number', 'Please enter a valid credit card number.', function(v, elm) {
                 // remove non-numerics
                 var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_number')) + '_cc_type');
-                if (ccTypeContainer && ccTypeContainer.value == 'OT') {
+                if (ccTypeContainer && (ccTypeContainer.value == 'OT' || ccTypeContainer.value == 'SS')) {
                     if (!Validation.get('IsEmpty').test(v) && Validation.get('validate-digits').test(v)) {
                         return true;
                     } else {
@@ -434,8 +437,8 @@ Validation.addAllThese([
                 }
                 var ccType = ccTypeContainer.value;
 
-                // Other card type
-                if (ccType == 'OT') {
+                // Other card type or switch or solo card
+                if (ccType == 'OT' || ccType == 'SS') {
                     return true;
                 }
 
@@ -483,7 +486,8 @@ Validation.addAllThese([
                         re = new RegExp('^[0-9]{4}$');
                         break;
                     case 'OT' :
-                        re = new RegExp('^[0-9]?$');
+                    case 'SS' :
+                        re = new RegExp('^([0-9]{3}|[0-9]{4})?$');
                         break;
                 }
 

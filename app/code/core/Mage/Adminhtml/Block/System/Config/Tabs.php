@@ -31,7 +31,7 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         parent::__construct();
         $this->setId('system_config_tabs');
         $this->setDestElementId('system_config_form');
-        $this->setTitle(__('Configuration'));
+        $this->setTitle(Mage::helper('adminhtml')->__('Configuration'));
         $this->setTemplate('system/config/tabs.phtml');
     }
 
@@ -41,6 +41,7 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         return (int)$a->sort_order < (int)$b->sort_order ? -1 : ((int)$a->sort_order > (int)$b->sort_order ? 1 : 0);
 
     }
+
     public function initTabs()
     {
         $current = $this->getRequest()->getParam('section');
@@ -50,7 +51,7 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         $storeCode = $this->getRequest()->getParam('store');
 
 
-        $url = Mage::getModel('core/url');
+        $url = Mage::getModel('adminhtml/url');
 
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections = $configFields->getSections($current);
@@ -114,7 +115,7 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         $websitesConfig = Mage::getConfig()->getNode('websites');
         $storesConfig = Mage::getConfig()->getNode('stores');
 
-        $url = Mage::getModel('core/url');
+        $url = Mage::getModel('adminhtml/url');
 
         $options = array();
         $options['default'] = array(
@@ -159,23 +160,33 @@ class Mage_Adminhtml_Block_System_Config_Tabs extends Mage_Adminhtml_Block_Widge
         if (!$curWebsite && !$curStore) {
             $html .= $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
                 'label'     => Mage::helper('adminhtml')->__('New Website'),
-                'onclick'   => "location.href='".Mage::getUrl('*/system_website/new')."'",
+                'onclick'   => "location.href='".$this->getUrl('*/system_website/new')."'",
                 'class'     => 'add',
             ))->toHtml();
         } elseif (!$curStore) {
             $html .= $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
                 'label'     => Mage::helper('adminhtml')->__('Edit Website'),
-                'onclick'   => "location.href='".Mage::getUrl('*/system_website/edit', array('website'=>$curWebsite))."'",
+                'onclick'   => "location.href='".$this->getUrl('*/system_website/edit', array('website'=>$curWebsite))."'",
             ))->toHtml();
             $html .= $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
                 'label'     => Mage::helper('adminhtml')->__('New Store View'),
-                'onclick'   => "location.href='".Mage::getUrl('*/system_store/new', array('website'=>$curWebsite))."'",
+                'onclick'   => "location.href='".$this->getUrl('*/system_store/new', array('website'=>$curWebsite))."'",
                 'class'     => 'add',
+            ))->toHtml();
+            $html .= $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
+                'label'     => Mage::helper('adminhtml')->__('Delete Website'),
+                'onclick'   => "location.href='".$this->getUrl('*/system_website/delete', array('website'=>$curWebsite))."'",
+                'class'     => 'delete',
             ))->toHtml();
         } else {
             $html .= $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
                 'label'     => Mage::helper('adminhtml')->__('Edit Store View'),
-                'onclick'   => "location.href='".Mage::getUrl('*/system_store/edit', array('store'=>$curStore))."'",
+                'onclick'   => "location.href='".$this->getUrl('*/system_store/edit', array('store'=>$curStore))."'",
+            ))->toHtml();
+            $html .= $this->getLayout()->createBlock('adminhtml/widget_button')->setData(array(
+                'label'     => Mage::helper('adminhtml')->__('Delete Store View'),
+                'onclick'   => "location.href='".$this->getUrl('*/system_store/delete', array('store'=>$curStore))."'",
+                'class'     => 'delete',
             ))->toHtml();
         }
 

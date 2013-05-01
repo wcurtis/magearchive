@@ -19,32 +19,29 @@
  */
 
 
-
-
 /**
  * Base html block
  *
- * @version    1.0 
- * @date       Thu Feb 08 05:56:43 EET 2007
  */
-
 class Mage_Core_Block_Text_Tag_Css extends Mage_Core_Block_Text_Tag
 {
+
     protected function _construct()
     {
         parent::_construct();
         $this->setTagName('link');
         $this->setTagParams(array('rel'=>'stylesheet', 'type'=>'text/css', 'media'=>'all'));
     }
-    
+
     function setHref($href, $type=null)
     {
         $type = (string)$type;
-        if (empty($type)) { 
-            $type = 'skin'; 
+        if (empty($type)) {
+            $type = 'skin';
         }
         $url = Mage::getBaseUrl($type).$href;
-        
+
         return $this->setTagParam('href', $url);
     }
-}// Class Mage_Core_Block_List END
+
+}

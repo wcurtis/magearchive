@@ -33,7 +33,7 @@ class Mage_Adminhtml_Block_System_Design_Edit extends Mage_Adminhtml_Block_Widge
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('core')->__('Back'),
-                    'onclick'   => 'setLocation(\''.Mage::getUrl('*/*/').'\')',
+                    'onclick'   => 'setLocation(\''.$this->getUrl('*/*/').'\')',
                     'class' => 'back'
                 ))
         );

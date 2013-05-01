@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -37,11 +38,11 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
 
     protected function _prepareCollection()
     {
-    	parent::_prepareCollection();
-    	foreach ($this->getCollection()->getItems() as $item) {
-        	$item->addIpData($item)
+        parent::_prepareCollection();
+        foreach ($this->getCollection()->getItems() as $item) {
+            $item->addIpData($item)
                  ->addCustomerData($item)
-        	     ->addQuoteData($item);
+                 ->addQuoteData($item);
         }
         return $this;
     }
@@ -57,80 +58,80 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
     protected function _beforeToHtml()
     {
         $this->addColumn('id', array(
-                            'header'=>Mage::helper('customer')->__('ID'),
-                            'width'=>'40px',
-                            'align'=>'right',
-                            'filter' => false,
-                            'sortable' => false,
-                            'default' => Mage::helper('customer')->__('n/a'),
-                            'index'=>'customer_id')
-                        );
+            'header'=>Mage::helper('customer')->__('ID'),
+            'width'=>'40px',
+            'align'=>'right',
+            'filter' => false,
+            'sortable' => false,
+            'default' => Mage::helper('customer')->__('n/a'),
+            'index'=>'customer_id')
+        );
 
         $this->addColumn('firstname', array(
-                            'header'=> Mage::helper('customer')->__('First Name'),
-                            'filter' => false,
-                            'sortable' => false,
-                            'default' => Mage::helper('customer')->__('Guest'),
-                            'index'=>'customer_firstname')
-                        );
+            'header'=> Mage::helper('customer')->__('First Name'),
+            'filter' => false,
+            'sortable' => false,
+            'default' => Mage::helper('customer')->__('Guest'),
+            'index'=>'customer_firstname')
+        );
 
         $this->addColumn('lastname', array(
-                            'header'=> Mage::helper('customer')->__('Last Name'),
-                            'filter' => false,
-                            'sortable' => false,
-                            'default' => Mage::helper('customer')->__('n/a'),
-                            'index'=>'customer_lastname')
-                        );
+            'header'=> Mage::helper('customer')->__('Last Name'),
+            'filter' => false,
+            'sortable' => false,
+            'default' => Mage::helper('customer')->__('n/a'),
+            'index'=>'customer_lastname')
+        );
 
         $this->addColumn('email', array(
-                            'header'=> Mage::helper('customer')->__('Email'),
-                            'filter' => false,
-                            'sortable' => false,
-                            'default' => Mage::helper('customer')->__('n/a'),
-                            'index'=>'customer_email')
-                        );
+            'header'=> Mage::helper('customer')->__('Email'),
+            'filter' => false,
+            'sortable' => false,
+            'default' => Mage::helper('customer')->__('n/a'),
+            'index'=>'customer_email')
+        );
 
         $this->addColumn('ip_address', array(
-                            'header'=> Mage::helper('customer')->__('IP Address'),
-                            'index'=>'remote_addr',
-                            'default' => Mage::helper('customer')->__('n/a'),
-        	                'renderer'=>'adminhtml/customer_online_grid_renderer_ip')
-        	            );
+            'header'=> Mage::helper('customer')->__('IP Address'),
+            'index'=>'remote_addr',
+            'default' => Mage::helper('customer')->__('n/a'),
+            'renderer'=>'adminhtml/customer_online_grid_renderer_ip')
+        );
 
         $this->addColumn('session_start_time', array(
-                            'header'=> Mage::helper('customer')->__('Session Start Time'),
-                            'align'=>'left',
-                            'type' => 'datetime',
-                            'default' => Mage::helper('customer')->__('n/a'),
-                            'width' => '200px',
-                            'index'=>'first_visit_at')
-                        );
+            'header'=> Mage::helper('customer')->__('Session Start Time'),
+            'align'=>'left',
+            'type' => 'datetime',
+            'default' => Mage::helper('customer')->__('n/a'),
+            'width' => '200px',
+            'index'=>'first_visit_at')
+        );
 
         $this->addColumn('last_activity', array(
-                            'header'=> Mage::helper('customer')->__('Last Activity'),
-                            'align'=>'left',
-                            'type' => 'datetime',
-                            'default' => Mage::helper('customer')->__('n/a'),
-                            'width' => '200px',
-                            'index'=>'last_visit_at')
-                        );
+            'header'=> Mage::helper('customer')->__('Last Activity'),
+            'align'=>'left',
+            'type' => 'datetime',
+            'default' => Mage::helper('customer')->__('n/a'),
+            'width' => '200px',
+            'index'=>'last_visit_at')
+        );
 
         $this->addColumn('type', array(
-                            'header'=> Mage::helper('customer')->__('Type'),
-                            'index'=>'customer_id',
-                            'type' => 'options',
-                            'options' => array(
-                                'c' => Mage::helper('customer')->__('Customer'),
-                                'v' => Mage::helper('customer')->__('Visitor'),
-                            ),
-                            'renderer'=>'adminhtml/customer_online_grid_renderer_type',
-                        ));
+            'header'=> Mage::helper('customer')->__('Type'),
+            'index'=>'customer_id',
+            'type' => 'options',
+            'options' => array(
+                'c' => Mage::helper('customer')->__('Customer'),
+                'v' => Mage::helper('customer')->__('Visitor'),
+            ),
+            'renderer'=>'adminhtml/customer_online_grid_renderer_type',
+        ));
 
         $this->addColumn('last_url', array(
-                            'header'=> Mage::helper('customer')->__('Last Url'),
-                            'default' => Mage::helper('customer')->__('n/a'),
-                            'index'=>'url')
-                        );
+            'header'=> Mage::helper('customer')->__('Last Url'),
+            'default' => Mage::helper('customer')->__('n/a'),
+            'index'=>'url')
+        );
 
         $this->_initCollection();
         return parent::_beforeToHtml();
@@ -138,7 +139,7 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
 
     public function getRowUrl($row)
     {
-        return ( intval($row->getCustomerId()) > 0 ) ? Mage::getUrl('*/customer/edit', array('id' => $row->getCustomerId())) : '#';
+        return ( intval($row->getCustomerId()) > 0 ) ? $this->getUrl('*/customer/edit', array('id' => $row->getCustomerId())) : '#';
     }
 
     protected function _addColumnFilterToCollection($column)
@@ -146,4 +147,5 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
         $this->getCollection()->addFieldToFilter($column->getId(), $column->getFilter()->getValue());
         return $this;
     }
+
 }

@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Address renderer interface
  *
@@ -47,4 +48,4 @@ interface Mage_Customer_Block_Address_Renderer_Interface
      * @return mixed
      */
     function render(Mage_Customer_Model_Address_Abstract $address);
-} // Class Mage_Customer_Block_Address_Renderer_Interface End
+}

@@ -63,13 +63,13 @@ class Mage_Poll_Block_ActivePoll extends Mage_Core_Block_Template
         return $this;
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         if( $this->_voted === true ) {
             $this->setTemplate($this->_templates['results']);
         } else {
             $this->setTemplate($this->_templates['poll']);
         }
-        return parent::toHtml();
+        return parent::_toHtml();
     }
 }

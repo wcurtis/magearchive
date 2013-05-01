@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Dashboard visitors section data helper
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Helper_Dashboard_Visitor extends Mage_Adminhtml_Helper_Dashboard_Abstract
 {
+
     protected $_onlineDataCache = null;
 
     protected function _initCollection()
@@ -90,5 +92,4 @@ class Mage_Adminhtml_Helper_Dashboard_Visitor extends Mage_Adminhtml_Helper_Dash
         return isset($this->_onlineDataCache[$part]) ? $this->_onlineDataCache[$part] : null;
     }
 
-
-} // Class Mage_Adminhtml_Helper_Dashboard_Visitor end
+}

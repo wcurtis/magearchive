@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Adminhtml_Block_Template
 {
     /**
      * Initialize template
@@ -62,6 +62,16 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Core_Bl
             ))
         );
 
+        $orderPayment = $this->getInvoice()->getOrder()->getPayment();
+        $totalsBarBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totalbar')
+            ->setOrder($this->getInvoice()->getOrder())
+            ->addTotal(Mage::helper('sales')->__('Paid Amount'), $orderPayment->getAmountPaid())
+            ->addTotal(Mage::helper('sales')->__('Refund Amount'), $orderPayment->getAmountRefunded())
+            ->addTotal(Mage::helper('sales')->__('Shipping Amount'), $orderPayment->getShippingCaptured())
+            ->addTotal(Mage::helper('sales')->__('Shipping Refund'), $orderPayment->getShippingRefunded())
+            ->addTotal(Mage::helper('sales')->__('Order Grand Total'), $this->getInvoice()->getOrder()->getGrandTotal(), true);
+
+        $this->setChild('totals_bar', $totalsBarBlock);
 
         $totalsBlock = $this->getLayout()->createBlock('adminhtml/sales_order_totals')
             ->setSource($this->getInvoice())
@@ -130,9 +140,9 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Core_Bl
     public function canCreateShipment()
     {
         foreach ($this->getInvoice()->getAllItems() as $item) {
-        	if ($item->getOrderItem()->getQtyToShip()) {
-        	    return true;
-        	}
+            if ($item->getOrderItem()->getQtyToShip()) {
+                return true;
+            }
         }
         return false;
     }

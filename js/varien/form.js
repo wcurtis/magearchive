@@ -17,10 +17,13 @@
 VarienForm = Class.create();
 VarienForm.prototype = {
     initialize: function(formId, firstFieldFocus){
+        this.form       = $(formId);
+        if (!this.form) {
+            return;
+        }
         this.cache      = $A();
         this.currLoader = false;
         this.currDataIndex = false;
-        this.form       = $(formId);
         this.validator  = new Validation(this.form);
         this.elementFocus   = this.elementOnFocus.bindAsEventListener(this);
         this.elementBlur    = this.elementOnBlur.bindAsEventListener(this);
@@ -35,6 +38,13 @@ VarienForm.prototype = {
             }
             catch(e){}
         }
+    },
+
+    submit : function(url){
+        if(this.validator && this.validator.validate()){
+            this.form.submit();
+        }
+        return false;
     },
 
     bindElements:function (){
@@ -144,64 +154,64 @@ VarienForm.prototype = {
 
 RegionUpdater = Class.create();
 RegionUpdater.prototype = {
-	initialize: function (countryEl, regionTextEl, regionSelectEl, regions)
-	{
-		this.countryEl = $(countryEl);
-		this.regionTextEl = $(regionTextEl);
-		this.regionSelectEl = $(regionSelectEl);
-		this.regions = regions;
+    initialize: function (countryEl, regionTextEl, regionSelectEl, regions)
+    {
+        this.countryEl = $(countryEl);
+        this.regionTextEl = $(regionTextEl);
+        this.regionSelectEl = $(regionSelectEl);
+        this.regions = regions;
 
-		this.update();
+        this.update();
 
-		Event.observe(this.countryEl, 'change', this.update.bind(this));
-	},
+        Event.observe(this.countryEl, 'change', this.update.bind(this));
+    },
 
-	update: function()
-	{
-    	if (this.regions[this.countryEl.value]) {
-    		var i, option, region;
-    		var def = this.regionTextEl.value.toLowerCase();
-    		if (!def) {
-    		    def = this.regionSelectEl.getAttribute('defaultValue');
-    		}
+    update: function()
+    {
+        if (this.regions[this.countryEl.value]) {
+            var i, option, region;
+            var def = this.regionTextEl.value.toLowerCase();
+            if (!def) {
+                def = this.regionSelectEl.getAttribute('defaultValue');
+            }
 
-    		this.regionTextEl.value = '';
+            this.regionTextEl.value = '';
 
-			this.regionSelectEl.options.length = 1;
-    		for (regionId in this.regions[this.countryEl.value]) {
-    			region = this.regions[this.countryEl.value][regionId];
+            this.regionSelectEl.options.length = 1;
+            for (regionId in this.regions[this.countryEl.value]) {
+                region = this.regions[this.countryEl.value][regionId];
 
-    			option = document.createElement('OPTION');
-    			option.value = regionId;
-    			option.text = region.name;
+                option = document.createElement('OPTION');
+                option.value = regionId;
+                option.text = region.name;
 
-    			if (this.regionSelectEl.options.add) {
-    				this.regionSelectEl.options.add(option);
-    			} else {
-    				this.regionSelectEl.appendChild(option);
-    			}
+                if (this.regionSelectEl.options.add) {
+                    this.regionSelectEl.options.add(option);
+                } else {
+                    this.regionSelectEl.appendChild(option);
+                }
 
-    			if (regionId==def || region.name.toLowerCase()==def || region.code.toLowerCase()==def) {
-    				this.regionSelectEl.value = regionId;
-    			}
-    		}
+                if (regionId==def || region.name.toLowerCase()==def || region.code.toLowerCase()==def) {
+                    this.regionSelectEl.value = regionId;
+                }
+            }
 
-    		this.regionTextEl.style.display = 'none';
-    		this.regionSelectEl.style.display = '';
-    		this.setMarkDisplay(this.regionSelectEl, true);
-    	} else {
-    		this.regionTextEl.style.display = '';
-    		this.regionSelectEl.style.display = 'none';
-    		this.setMarkDisplay(this.regionSelectEl, false);
-    	}
-	},
+            this.regionTextEl.style.display = 'none';
+            this.regionSelectEl.style.display = '';
+            this.setMarkDisplay(this.regionSelectEl, true);
+        } else {
+            this.regionTextEl.style.display = '';
+            this.regionSelectEl.style.display = 'none';
+            this.setMarkDisplay(this.regionSelectEl, false);
+        }
+    },
 
-	setMarkDisplay: function(elem, display){
-	    if(elem.parentNode){
-	        var marks = Element.getElementsByClassName(elem.parentNode, 'required');
-	        if(marks[0]){
-	            display ? marks[0].show() : marks[0].hide();
-	        }
-	    }
-	}
+    setMarkDisplay: function(elem, display){
+        if(elem.parentNode){
+            var marks = Element.getElementsByClassName(elem.parentNode, 'required');
+            if(marks[0]){
+                display ? marks[0].show() : marks[0].hide();
+            }
+        }
+    }
 }

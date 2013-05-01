@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Locale
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Locale.php 7357 2008-01-06 20:57:06Z thomas $
+ * @version    $Id: Locale.php 7700 2008-01-30 17:33:08Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -489,15 +489,6 @@ class Zend_Locale {
     /**
      * Returns localized informations as array, supported are several
      * types of informations.
-     * Supported types are:
-     * 'language', 'script', 'territory', 'variant', 'key', 'type', 'calendar', 'collation',
-     * 'currency', 'layout', 'characters', 'delimiters', 'measurement', 'months', 'month',
-     * 'days', 'day', 'week', 'quarters', 'quarter', 'eras', 'era', 'date', 'time', 'datetime',
-     * 'field', 'relative', 'symbols', 'currency', 'currencysymbol', 'question',
-     * 'currencyfraction', 'currencyrounding', 'currencytoregion', 'regiontocurrency',
-     * 'regiontoterritory', 'territorytoregion', 'scripttolanguage', 'languagetoscript',
-     * 'territorytolanguage', 'languagetoterritory', 'timezonetowindows', 'timezonetowindows',
-     * 'territorytotimezone', 'timezonetoterritory', 'citytotimezone', 'timezonetocity'
      * For detailed information about the types look into the documentation
      *
      * @param  string         $path    OPTIONAL Type of information to return
@@ -509,6 +500,7 @@ class Zend_Locale {
     {
         // load class within method for speed
         require_once 'Zend/Locale/Data.php';
+        require_once 'Zend/Locale/Exception.php';
 
         if ($locale === null) {
             $locale = $this->_Locale;
@@ -526,11 +518,7 @@ class Zend_Locale {
         if (is_array($locale)) {
             $locale = key($locale);
         }
-        try {
-            $result = Zend_Locale_Data::getList($locale, $path, $value);
-        } catch(Zend_Locale_Exception $e) {
-            return false;
-        }
+        $result = Zend_Locale_Data::getList($locale, $path, $value);
         if (empty($result)) {
             return false;
         }
@@ -589,27 +577,18 @@ class Zend_Locale {
 
     /**
      * Returns a localized information string, supported are several types of informations.
-     *
-     * Supported types are:
-     * 'language', 'script', 'country', 'territory', 'variant', 'key', 'datechars', 'defaultcalendar',
-     * 'monthcontext', 'defaultmonth', 'month', 'daycontext', 'defaultday', 'quarter', 'am', 'pm', 'era',
-     * 'defaultdate', 'date', 'defaulttime', 'time', 'datetime', 'field', 'relative', 'decimalnumber',
-     * 'scientificnumber', 'percentnumber', 'currencynumber', 'currency', 'currencysymbol', 'question',
-     * 'currencyfraction', 'currencyrounding', 'currencytoregion', 'regiontocurrency', 'regiontoterritory',
-     * 'territorytoregion', 'scripttolanguage', 'languagetoscript', 'territorytolanguage',
-     * 'languagetoterritory', 'timezonetowindows', 'windowstotimezone', 'territorytotimezone',
-     * 'timezonetoterritory', 'citytotimezone', 'timezonetocity'
      * For detailed information about the types look into the documentation
      *
      * @param  string         $value   Name to get detailed information about
      * @param  string         $path    OPTIONAL Type of information to return
      * @param  string|locale  $locale  OPTIONAL Locale|Language for which this informations should be returned
-     * @return string|array            Array with the wished information in the given language
+     * @return string                  The wished information in the given language
      */
     public function getTranslation($value = null, $path = null, $locale = null)
     {
         // load class within method for speed
         require_once 'Zend/Locale/Data.php';
+        require_once 'Zend/Locale/Exception.php';
 
         if ($locale === null) {
             $locale = $this->_Locale;
@@ -627,11 +606,7 @@ class Zend_Locale {
         if (is_array($locale)) {
             $locale = key($locale);
         }
-        try {
-            $result = Zend_Locale_Data::getContent($locale, $path, $value);
-        } catch(Zend_Locale_Exception $e) {
-            return false;
-        }
+        $result = Zend_Locale_Data::getContent($locale, $path, $value);
         if (empty($result)) {
             return false;
         }
@@ -719,7 +694,7 @@ class Zend_Locale {
         if (is_array($locale)) {
             $locale = key($locale);
         }
-        $quest = Zend_Locale_Data::getContent($locale, 'question');
+        $quest = Zend_Locale_Data::getList($locale, 'question');
         $yes = explode(':', $quest['yes']);
         $no  = explode(':', $quest['no']);
         $quest['yes']      = $yes[0];

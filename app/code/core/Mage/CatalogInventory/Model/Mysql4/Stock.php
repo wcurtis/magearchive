@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Stock resource model
  *
@@ -26,8 +26,23 @@
  */
 class Mage_CatalogInventory_Model_Mysql4_Stock extends Mage_Core_Model_Mysql4_Abstract
 {
-    protected function  _construct() 
+    protected function  _construct()
     {
         $this->_init('cataloginventory/stock', 'stock_id');
+    }
+
+    public function lockProductItems($stock, $productIds)
+    {
+        $itemTable = $this->getTable('cataloginventory/stock_item');
+        $select = $this->_getReadAdapter()->select()
+            ->from($itemTable)
+            ->where('stock_id=?', $stock->getId())
+            ->where('product_id IN(?)', $productIds)
+            ->forUpdate(true);
+        /**
+         * We use write adapter for resolving problems with replication
+         */
+        $this->_getWriteAdapter()->query($select);
+        return $this;
     }
 }

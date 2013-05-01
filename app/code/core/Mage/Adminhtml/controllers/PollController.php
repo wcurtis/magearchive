@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_PollController extends Mage_Adminhtml_Controller_Action
 {
+
     public function indexAction()
     {
         $this->loadLayout();
@@ -48,7 +48,7 @@ class Mage_Adminhtml_PollController extends Mage_Adminhtml_Controller_Action
 
             $this->loadLayout();
             $this->_setActiveMenu('cms/poll');
-            $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Poll Manager'), Mage::helper('adminhtml')->__('Poll Manager'), Mage::getUrl('*/*/'));
+            $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Poll Manager'), Mage::helper('adminhtml')->__('Poll Manager'), $this->getUrl('*/*/'));
             $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Edit Poll'), Mage::helper('adminhtml')->__('Edit Poll'));
 
             $this->getLayout()->getBlock('root')->setCanLoadExtJs(true);
@@ -160,8 +160,6 @@ class Mage_Adminhtml_PollController extends Mage_Adminhtml_Controller_Action
                     }
                 }
 
-
-
                 $pollModel->save();
 
                 $answersDelete = $this->getRequest()->getParam('deleteAnswer');
@@ -185,7 +183,7 @@ class Mage_Adminhtml_PollController extends Mage_Adminhtml_Controller_Action
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('cms/poll');
+        return Mage::getSingleton('admin/session')->isAllowed('cms/poll');
     }
 
 }

@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Tags extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -44,38 +45,38 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Tags extends Mage_Adminhtml_Block_W
             ->joinAttribute('billing_city', 'customer_address/city', 'default_billing')
             ->joinAttribute('billing_telephone', 'customer_address/telephone', 'default_billing')
             ->joinAttribute('billing_country_id', 'customer_address/country_id', 'default_billing');
-        
+
         $this->setCollection($collection);
-        
+
         return parent::_prepareCollection();
     }
-    
+
     protected function _prepareColumns()
     {
         $this->addColumn('id', array(
-            'header'    => Mage::helper('customer')->__('ID'), 
-            'width'     =>5, 
-            'align'     =>'center', 
-            'sortable'  =>true, 
+            'header'    => Mage::helper('customer')->__('ID'),
+            'width'     =>5,
+            'align'     =>'center',
+            'sortable'  =>true,
             'index'     =>'entity_id'
         ));
         $this->addColumn('firstname', array(
-            'header'    => Mage::helper('customer')->__('First Name'), 
+            'header'    => Mage::helper('customer')->__('First Name'),
             'index'     =>'firstname'
         ));
         $this->addColumn('lastname', array(
-            'header'    => Mage::helper('customer')->__('Last Name'), 
+            'header'    => Mage::helper('customer')->__('Last Name'),
             'index'     =>'lastname'
         ));
         $this->addColumn('email', array(
-            'header'    => Mage::helper('customer')->__('Email'), 
-            'width'     =>40, 
-            'align'     =>'center', 
+            'header'    => Mage::helper('customer')->__('Email'),
+            'width'     =>40,
+            'align'     =>'center',
             'index'     =>'email'
         ));
         $this->addColumn('telephone', array(
-            'header'    => Mage::helper('customer')->__('Telephone'), 
-            'align'     =>'center', 
+            'header'    => Mage::helper('customer')->__('Telephone'),
+            'align'     =>'center',
             'index'     =>'billing_telephone'
         ));
         $this->addColumn('billing_postcode', array(
@@ -96,17 +97,17 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Tags extends Mage_Adminhtml_Block_W
         $this->addColumn('action', array(
             'header'    => Mage::helper('customer')->__('Action'),
             'align'     =>'center',
-            'format'    =>'<a href="'.Mage::getUrl('*/sales/edit/id/$entity_id').'">'.Mage::helper('customer')->__('Edit').'</a>',
+            'format'    =>'<a href="'.$this->getUrl('*/sales/edit/id/$entity_id').'">'.Mage::helper('customer')->__('Edit').'</a>',
             'filter'    =>false,
             'sortable'  =>false,
             'is_system' =>true
         ));
-        
+
         $this->setColumnFilter('id')
             ->setColumnFilter('email')
             ->setColumnFilter('firstname')
             ->setColumnFilter('lastname');
-        
+
         $this->addExportType('*/*/exportCsv', Mage::helper('customer')->__('CSV'));
         $this->addExportType('*/*/exportXml', Mage::helper('customer')->__('XML'));
         return parent::_prepareColumns();
@@ -114,7 +115,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Tags extends Mage_Adminhtml_Block_W
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/index', array('_current'=>true));
+        return $this->getUrl('*/*/index', array('_current'=>true));
     }
 
 }

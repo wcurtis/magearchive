@@ -24,27 +24,26 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
-class Mage_Adminhtml_Block_Newsletter_Problem extends Mage_Core_Block_Template 
+class Mage_Adminhtml_Block_Newsletter_Problem extends Mage_Adminhtml_Block_Template
 {
-    public function __construct() 
+
+    public function __construct()
     {
         parent::__construct();
         $this->setTemplate('newsletter/problem/list.phtml');
         $collection = Mage::getResourceSingleton('newsletter/problem_collection')
             ->addSubscriberInfo()
             ->addQueueInfo();
-            
-        
+
     }
-    
+
     protected function _prepareLayout()
     {
-        $this->setChild('grid', 
+        $this->setChild('grid',
             $this->getLayout()->createBlock('adminhtml/newsletter_problem_grid','newsletter.problem.grid')
         );
-        
-        $this->setChild('deleteButton', 
+
+        $this->setChild('deleteButton',
             $this->getLayout()->createBlock('adminhtml/widget_button','del.button')
                 ->setData(
                     array(
@@ -53,8 +52,8 @@ class Mage_Adminhtml_Block_Newsletter_Problem extends Mage_Core_Block_Template
                     )
                 )
         );
-        
-        $this->setChild('unsubscribeButton', 
+
+        $this->setChild('unsubscribeButton',
             $this->getLayout()->createBlock('adminhtml/widget_button','unsubscribe.button')
                 ->setData(
                     array(
@@ -65,20 +64,20 @@ class Mage_Adminhtml_Block_Newsletter_Problem extends Mage_Core_Block_Template
         );
         return parent::_prepareLayout();
     }
-    
-    public function getUnsubscribeButtonHtml() 
+
+    public function getUnsubscribeButtonHtml()
     {
         return $this->getChildHtml('unsubscribeButton');
     }
-    
-    public function getDeleteButtonHtml() 
+
+    public function getDeleteButtonHtml()
     {
         return $this->getChildHtml('deleteButton');
     }
-    
-    public function getShowButtons() 
+
+    public function getShowButtons()
     {
         return  Mage::getResourceSingleton('newsletter/problem_collection')->getSize() > 0;
     }
-    
+
 }// Class Mage_Adminhtml_Block_Newsletter_Problem END

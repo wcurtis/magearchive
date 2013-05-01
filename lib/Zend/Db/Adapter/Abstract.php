@@ -18,7 +18,7 @@
  * @subpackage Adapter
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 6897 2007-11-22 08:31:59Z thomas $
+ * @version    $Id: Abstract.php 7649 2008-01-27 00:17:34Z peptolab $
  */
 
 
@@ -270,6 +270,16 @@ abstract class Zend_Db_Adapter_Abstract
     {
         $this->_connect();
         return $this->_connection;
+    }
+
+    /**
+     * Returns the configuration variables in this adapter.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->_config;
     }
 
     /**
@@ -594,14 +604,38 @@ abstract class Zend_Db_Adapter_Abstract
      * Fetches all SQL result rows as a sequential array.
      * Uses the current fetchMode for the adapter.
      *
-     * @param  string|Zend_Db_Select $sql  An SQL SELECT statement.
-     * @param  mixed                 $bind Data to bind into SELECT placeholders.
+     * @param string|Zend_Db_Select $sql  An SQL SELECT statement.
+     * @param mixed                 $bind Data to bind into SELECT placeholders.
+     * @param mixed                 $fetchMode Override current fetch mode.
      * @return array
      */
-    public function fetchAll($sql, $bind = array())
+    public function fetchAll($sql, $bind = array(), $fetchMode = null)
     {
+        if ($fetchMode === null) {
+            $fetchMode = $this->_fetchMode;
+        }
         $stmt = $this->query($sql, $bind);
-        $result = $stmt->fetchAll($this->_fetchMode);
+        $result = $stmt->fetchAll($fetchMode);
+        return $result;
+    }
+
+    /**
+     * Fetches the first row of the SQL result.
+     * Uses the current fetchMode for the adapter.
+     *
+     * @param string|Zend_Db_Select $sql An SQL SELECT statement.
+     * @param mixed $bind Data to bind into SELECT placeholders.
+     * @param mixed                 $fetchMode Override current fetch mode.
+     * @return array
+     */
+    public function fetchRow($sql, $bind = array(), $fetchMode = null)
+    {
+        if ($fetchMode === null) {
+            $fetchMode = $this->_fetchMode;
+        }
+        $stmt = $this->query($sql, $bind);
+        $result = $stmt->fetch($fetchMode);
+        $stmt->closeCursor();
         return $result;
     }
 
@@ -676,22 +710,6 @@ abstract class Zend_Db_Adapter_Abstract
     {
         $stmt = $this->query($sql, $bind);
         $result = $stmt->fetchColumn(0);
-        $stmt->closeCursor();
-        return $result;
-    }
-
-    /**
-     * Fetches the first row of the SQL result.
-     * Uses the current fetchMode for the adapter.
-     *
-     * @param string|Zend_Db_Select $sql An SQL SELECT statement.
-     * @param mixed $bind Data to bind into SELECT placeholders.
-     * @return array
-     */
-    public function fetchRow($sql, $bind = array())
-    {
-        $stmt = $this->query($sql, $bind);
-        $result = $stmt->fetch($this->_fetchMode);
         $stmt->closeCursor();
         return $result;
     }

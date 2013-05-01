@@ -34,7 +34,7 @@ class Mage_Review_Block_List_Detailed extends Mage_Catalog_Block_Product_View
         $this->setProductId(Mage::registry('productId'));
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         $productId = $this->getProductId();
         if(!$product = Mage::registry('product')) {
@@ -57,7 +57,7 @@ class Mage_Review_Block_List_Detailed extends Mage_Catalog_Block_Product_View
         $this->setChild('reviewList', $this->getLayout()->createBlock('review/list', 'review_list'));
         $this->assign('reviewCount', $this->getLayout()->getBlock('review_list')->count());
 
-        return parent::toHtml();
+        return parent::_toHtml();
     }
 
     public function count()

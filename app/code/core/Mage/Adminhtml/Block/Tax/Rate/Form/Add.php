@@ -122,7 +122,7 @@ class Mage_Adminhtml_Block_Tax_Rate_Form_Add extends Mage_Adminhtml_Block_Widget
             );
         }
 
-        $form->setAction(Mage::getUrl('*/tax_rate/save'));
+        $form->setAction($this->getUrl('*/tax_rate/save'));
         $form->setUseContainer(true);
         $form->setId('rate_form');
         $form->setMethod('post');

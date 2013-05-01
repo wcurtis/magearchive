@@ -24,11 +24,22 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Page extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Page extends Mage_Adminhtml_Block_Template
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('page.phtml');
     }
+
+    public function getLang()
+    {
+        if (!$this->hasData('lang')) {
+            $this->setData('lang', substr(Mage::app()->getLocale()->getLocaleCode(), 0, 2));
+        }
+        return $this->getData('lang');
+    }
+
 }
+

@@ -66,7 +66,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Formgroup extends 
 
         $form->setUseContainer(true);
         $form->setMethod('post');
-        $form->setAction(Mage::getUrl('*/catalog_product_group/save'));
+        $form->setAction($this->getUrl('*/catalog_product_group/save'));
         $this->setForm($form);
     }
 

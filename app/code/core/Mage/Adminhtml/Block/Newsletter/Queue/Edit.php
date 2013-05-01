@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Newsletter_Queue_Edit extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Newsletter_Queue_Edit extends Mage_Adminhtml_Block_Template
 {
     protected  function _beforeToHtml() {
 

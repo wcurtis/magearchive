@@ -17,8 +17,6 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-
 class Mage_Adminhtml_Customer_OnlineController extends Mage_Adminhtml_Controller_Action
 {
 
@@ -43,7 +41,7 @@ class Mage_Adminhtml_Customer_OnlineController extends Mage_Adminhtml_Controller
 
     protected function _isAllowed()
     {
-	    //print $this->getRequest()->getActionName();
+        //print $this->getRequest()->getActionName();
     	return Mage::getSingleton('admin/session')->isAllowed('customer/online');
     }
 

@@ -27,21 +27,11 @@
 class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
     /**
-     * Constructor
-     *
-     * Initialize form
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_renderPrepare();
-    }
-
-    /**
      * Prepare form for render
      */
-    protected function _renderPrepare()
+    protected function _prepareLayout()
     {
+        parent::_prepareLayout();
         $form = new Varien_Data_Form();
         $customerGroup = Mage::registry('current_group');
 
@@ -87,7 +77,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
 
         $form->setUseContainer(true);
         $form->setId('edit_form');
-        $form->setAction(Mage::getUrl('*/*/save'));
+        $form->setAction($this->getUrl('*/*/save'));
         $this->setForm($form);
     }
 }

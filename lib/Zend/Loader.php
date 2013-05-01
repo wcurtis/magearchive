@@ -16,6 +16,7 @@
  * @package    Zend_Loader
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id: Loader.php 7577 2008-01-22 22:06:41Z darby $
  */
 
 /**
@@ -26,9 +27,15 @@
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-
 class Zend_Loader
 {
+    /**
+     * An array of stdClass objects used for tracking PHP errors from including a file
+     *
+     * @var array
+     */
+    protected static $_errors = array();
+
     /**
      * Loads a class from a PHP file.  The filename must be formatted
      * as "$class.php".
@@ -59,36 +66,32 @@ class Zend_Loader
             require_once 'Zend/Exception.php';
             throw new Zend_Exception('Directory argument must be a string or an array');
         }
-        if (null === $dirs) {
-            $dirs = array();
-        }
-        if (is_string($dirs)) {
-            $dirs = (array) $dirs;
-        }
 
         // autodiscover the path from the class name
-        $path = str_replace('_', DIRECTORY_SEPARATOR, $class);
-        if ($path != $class) {
+        $file = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
+        if (!empty($dirs)) {
             // use the autodiscovered path
-            $dirPath = dirname($path);
-            if (0 == count($dirs)) {
-                $dirs = array($dirPath);
-            } else {
-                foreach ($dirs as $key => $dir) {
-                    if ($dir == '.') {
-                        $dirs[$key] = $dirPath;
-                    } else {
-                        $dir = rtrim($dir, '\\/');
-                        $dirs[$key] = $dir . DIRECTORY_SEPARATOR . $dirPath;
-                    }
+            $dirPath = dirname($file);
+            if (is_string($dirs)) {
+                $dirs = explode(PATH_SEPARATOR, $dirs);
+            }
+            foreach ($dirs as $key => $dir) {
+                if ($dir == '.') {
+                    $dirs[$key] = $dirPath;
+                } else {
+                    $dir = rtrim($dir, '\\/');
+                    $dirs[$key] = $dir . DIRECTORY_SEPARATOR . $dirPath;
                 }
             }
-            $file = basename($path) . '.php';
+            $file = basename($file);
+            self::loadFile($file, $dirs, true);
         } else {
-            $file = $class . '.php';
+            self::_securityCheck($file);
+            set_error_handler(array('Zend_Loader', 'errorHandler'));
+            include_once $file;
+            restore_error_handler();
+            self::_throwIncludeErrors($file);
         }
-
-        self::loadFile($file, $dirs, true);
 
         if (!class_exists($class, false) && !interface_exists($class, false)) {
             require_once 'Zend/Exception.php';
@@ -121,64 +124,70 @@ class Zend_Loader
      */
     public static function loadFile($filename, $dirs = null, $once = false)
     {
-        /**
-         * Security check
-         */
-        if (preg_match('/[^a-z0-9\-_.]/i', $filename)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception('Security check: Illegal character in filename');
-        }
+        self::_securityCheck($filename);
 
         /**
-         * Search for the file in each of the dirs named in $dirs.
+         * Search in provided directories, as well as include_path
          */
-        if (is_null($dirs)) {
-            $dirs = array();
-        } elseif (is_string($dirs))  {
-            $dirs = explode(PATH_SEPARATOR, $dirs);
-        }
-        foreach ($dirs as $dir) {
-            $filespec = rtrim($dir, '\\/') . DIRECTORY_SEPARATOR . $filename;
-            if (self::isReadable($filespec)) {
-                return self::_includeFile($filespec, $once);
+        $incPath = false;
+        if (!empty($dirs) && (is_array($dirs) || is_string($dirs))) {
+            if (is_array($dirs)) {
+                $dirs = implode(PATH_SEPARATOR, $dirs);
             }
+            $incPath = get_include_path();
+            set_include_path($dirs . PATH_SEPARATOR . $incPath);
         }
 
         /**
-         * The file was not found in the $dirs specified.
          * Try finding for the plain filename in the include_path.
          */
-        if (self::isReadable($filename)) {
-            return self::_includeFile($filename, $once);
+        set_error_handler(array('Zend_Loader', 'errorHandler'));
+        if ($once) {
+            include_once $filename;
+        } else {
+            include $filename;
         }
+        restore_error_handler();
 
         /**
-         * The file was not located anywhere.
+         * If searching in directories, reset include_path
          */
-        require_once 'Zend/Exception.php';
-        throw new Zend_Exception("File \"$filename\" was not found");
+        if ($incPath) {
+            set_include_path($incPath);
+        }
+
+        self::_throwIncludeErrors($filename);
+
+        /**
+         * @todo deprecate this behavior
+         *
+         * if it doesn't work, throw an exception;
+         * if it works, no need to return true
+         */
+        return true;
     }
 
     /**
-     * Attempt to include() the file.
+     * Stores the information from an error for later examination
      *
-     * include() is not prefixed with the @ operator because if
-     * the file is loaded and contains a parse error, execution
-     * will halt silently and this is difficult to debug.
-     *
-     * Always set display_errors = Off on production servers!
-     *
-     * @param  string  $filespec
-     * @param  boolean $once
-     * @return boolean
+     * @param  integer $errno
+     * @param  string  $errstr
+     * @param  string  $errfile
+     * @param  integer $errline
+     * @param  array   $errcontext
+     * @return void
      */
-    protected static function _includeFile($filespec, $once = false)
+    public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
-        if ($once) {
-            return include_once $filespec;
-        } else {
-            return include $filespec ;
-        }
+        $error = new stdClass();
+
+        $error->errno      = $errno;
+        $error->errstr     = $errstr;
+        $error->errfile    = $errfile;
+        $error->errline    = $errline;
+        $error->errcontext = $errcontext;
+
+        self::$_errors[] = $error;
     }
 
     /**
@@ -246,6 +255,80 @@ class Zend_Loader
             spl_autoload_register(array($class, 'autoload'));
         } else {
             spl_autoload_unregister(array($class, 'autoload'));
+        }
+    }
+
+    /**
+     * Ensure that filename does not contain exploits
+     *
+     * @param  string $filename
+     * @return void
+     * @throws Zend_Exception
+     */
+    protected static function _securityCheck($filename)
+    {
+        /**
+         * Security check
+         */
+        if (preg_match('/[^a-z0-9\\/\\\\_.-]/i', $filename)) {
+            require_once 'Zend/Exception.php';
+            throw new Zend_Exception('Security check: Illegal character in filename');
+        }
+    }
+
+    /**
+     * Throws an exception with any PHP errors from including $fileIncluded.
+     * The static $_errors property is cleared prior to throwing the exception.
+     * If there are no errors to report, then this method does nothing.
+     *
+     * @param  string $fileIncluded
+     * @return void
+     * @throws Zend_Exception
+     */
+    protected static function _throwIncludeErrors($fileIncluded)
+    {
+        if (self::$_errors === array()) {
+            return;
+        }
+
+        $message = "At least one error occurred including \"$fileIncluded\"; see includeErrors property";
+
+        /**
+         * @see Zend_Exception
+         */
+        require_once 'Zend/Exception.php';
+        $exception = new Zend_Exception($message);
+
+        $exception->includeErrors = array();
+        foreach (self::$_errors as $error) {
+            $exception->includeErrors[] = $error;
+        }
+
+        self::$_errors = array();
+
+        throw $exception;
+    }
+
+    /**
+     * Attempt to include() the file.
+     *
+     * include() is not prefixed with the @ operator because if
+     * the file is loaded and contains a parse error, execution
+     * will halt silently and this is difficult to debug.
+     *
+     * Always set display_errors = Off on production servers!
+     *
+     * @param  string  $filespec
+     * @param  boolean $once
+     * @return boolean
+     * @deprecated Since 1.5.0; use loadFile() instead
+     */
+    protected static function _includeFile($filespec, $once = false)
+    {
+        if ($once) {
+            return include_once $filespec;
+        } else {
+            return include $filespec ;
         }
     }
 }

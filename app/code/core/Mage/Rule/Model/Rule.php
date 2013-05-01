@@ -24,7 +24,7 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
     protected $_conditions;
     protected $_actions;
     protected $_form;
-    
+
     protected function _construct()
     {
     	$this->_init('rule/rule');
@@ -35,7 +35,7 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
     {
         return Mage::getModel('rule/condition_combine');
     }
-    
+
     public function _resetConditions(Mage_Rule_Model_Condition_Interface $conditions=null)
     {
         if (is_null($conditions)) {
@@ -46,13 +46,13 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
 
         return $this;
     }
-    
+
     public function setConditions(Mage_Rule_Model_Condition_Interface $conditions)
     {
         $this->_conditions = $conditions;
         return $this;
     }
-    
+
     public function getConditions()
     {
         if (empty($this->_conditions)) {
@@ -60,12 +60,12 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
         }
         return $this->_conditions;
     }
-    
+
     public function getActionsInstance()
     {
         return Mage::getModel('rule/action_collection');
     }
-    
+
     public function _resetActions(Mage_Rule_Model_Action_Interface $actions=null)
     {
         if (is_null($actions)) {
@@ -73,16 +73,16 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
         }
         $actions->setRule($this)->setId('1');
         $this->setActions($actions);
-        
+
         return $this;
     }
-    
+
     public function setActions(Mage_Rule_Model_Action_Interface $actions)
     {
         $this->_actions = $actions;
         return $this;
     }
-    
+
     public function getActions()
     {
         if (!$this->_actions) {
@@ -90,7 +90,7 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
         }
         return $this->_actions;
     }
-    
+
     public function getForm()
     {
         if (!$this->_form) {
@@ -108,8 +108,8 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
              . $this->getConditions()->asStringRecursive() ."\n\n"
              . $this->getActions()->asStringRecursive() ."\n\n";
         return $str;
-    }    
-    
+    }
+
     public function asHtml()
     {
         $str = Mage::helper('rule')->__("Name: %s", $this->getName()) ."<br>"
@@ -120,7 +120,7 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
              . '<ul class="rule-actions">'.$this->getActions()->asHtmlRecursive()."</ul>";
         return $str;
     }
-    
+
     public function loadPost(array $rule)
     {
     	$arr = array();
@@ -155,17 +155,17 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
 
     	return $this;
     }
-    
+
     /**
      * Returns rule as an array for admin interface
-     * 
+     *
      * Output example:
      * array(
      *   'name'=>'Example rule',
      *   'conditions'=>{condition_combine::asArray}
      *   'actions'=>{action_collection::asArray}
      * )
-     * 
+     *
      * @return array
      */
     public function asArray(array $arrAttributes = array())
@@ -178,7 +178,7 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
             'conditions'=>$this->getConditions()->asArray(),
             'actions'=>$this->getActions()->asArray(),
         );
-        
+
         return $out;
     }
 
@@ -186,7 +186,7 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
     {
         return $this->getConditions()->validate($object);
     }
-    
+
     protected function _afterLoad()
     {
         parent::_afterLoad();
@@ -194,12 +194,12 @@ class Mage_Rule_Model_Rule extends Mage_Core_Model_Abstract
 		if (!empty($conditionsArr) && is_array($conditionsArr)) {
             $this->getConditions()->loadArray($conditionsArr);
 		}
-        
+
         $actionsArr = unserialize($this->getActionsSerialized());
         if (!empty($actionsArr) && is_array($actionsArr)) {
             $this->getActions()->loadArray($actionsArr);
         }
-        
+
         $this->setStoreIds(explode(',',$this->getStoreIds()));
         $this->setCustomerGroupIds(explode(',',$this->getCustomerGroupIds()));
     }

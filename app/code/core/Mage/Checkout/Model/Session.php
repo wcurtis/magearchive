@@ -29,7 +29,6 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
     public function __construct()
     {
         $this->init('checkout');
-        Mage::dispatchEvent('checkout_session_init', array('checkout_session'=>$this));
     }
 
     public function unsetAll()
@@ -39,7 +38,7 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
     }
 
     /**
-     * Enter description here...
+     * Retrieve quote instance by current session
      *
      * @return Mage_Sales_Model_Quote
      */
@@ -66,6 +65,9 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                 }
             }
             $this->_quote = $quote;
+        }
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            $this->_quote->setRemoteIp($_SERVER['REMOTE_ADDR']);
         }
         return $this->_quote;
     }

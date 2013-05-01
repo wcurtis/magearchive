@@ -80,6 +80,18 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
         return $this;
     }
 
+    public function addRegionNameFilter($regionName)
+    {
+        if (!empty($regionName)) {
+            if (is_array($regionName)) {
+                $this->_sqlSelect->where("region.default_name in ('".implode("','", $regionName)."'");
+            } else {
+                $this->_sqlSelect->where("region.default_name = '{$regionName}'");
+            }
+        }
+        return $this;
+    }
+
     public function toOptionArray()
     {
         $options = array();

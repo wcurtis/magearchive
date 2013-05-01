@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Media library js helper
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Helper_Media_Js extends Mage_Core_Helper_Js
 {
+
     public function __construct()
     {
          $this->_translateData = array(
@@ -56,4 +58,5 @@ class Mage_Adminhtml_Helper_Media_Js extends Mage_Core_Helper_Js
                 . '}';
         return $this->getScript($script);
     }
-} // Class Mage_Adminhtml_Helper_Media_Js End
+
+}

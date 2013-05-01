@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_Block_Widget_Form
 {
+
     protected $_category;
 
     public function __construct()
@@ -44,7 +45,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
 
     public function _prepareLayout()
     {
-	parent::_prepareLayout();
+    parent::_prepareLayout();
         $form = new Varien_Data_Form();
         $form->setHtmlIdPrefix('_general');
 
@@ -97,4 +98,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
         }
         return $options;
     }
+
 }
+

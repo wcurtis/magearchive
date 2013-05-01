@@ -244,7 +244,7 @@ class Mage_Catalog_Model_Product extends Varien_Object
             ));
         }
 
-        $custGroup = Mage::getSingleton('customer/session')->getCustomer()->getGroupId();
+        $custGroup = Mage::getSingleton('customer/session')->getCustomerGroupId();
         if ($qty) {
             // starting with quantity 1 and original price
             $prevQty = 1;
@@ -525,6 +525,7 @@ class Mage_Catalog_Model_Product extends Varien_Object
     {
         return $attribute->getIsGlobal()
             && $attribute->getIsVisible()
+            && $attribute->getUseInSuperProduct()
             && $attribute->getIsUserDefined()
             && ($attribute->getSourceModel() || $attribute->getBackendType()=='int' );
     }
@@ -814,6 +815,7 @@ class Mage_Catalog_Model_Product extends Varien_Object
 
     public function formatUrlKey($str)
     {
+        $str = Mage::helper('core')->removeAccents($str);
     	$urlKey = preg_replace('#[^0-9a-z]+#i', '-', $str);
     	$urlKey = strtolower($urlKey);
     	$urlKey = trim($urlKey, '-');
@@ -849,6 +851,17 @@ class Mage_Catalog_Model_Product extends Varien_Object
         return $url;
     }
 
+    public function getCustomImageUrl($size, $extension=null, $watermark=null)
+    {
+        $url = false;
+        if ($attribute = $this->getResource()->getAttribute('image')) {
+            $url = Mage::getModel('media/image')
+                    ->setConfig(Mage::getSingleton('catalog/product_media_config'))
+                    ->getSpecialLink($attribute, $size, $extension, $watermark);
+        }
+        return $url;
+    }
+
     public function getSmallImageUrl()
     {
         $url = false;
@@ -861,6 +874,20 @@ class Mage_Catalog_Model_Product extends Varien_Object
         return $url;
     }
 
+    public function getCustomSmallImageUrl($size, $extension=null, $watermark=null)
+    {
+        $url = false;
+        if ($attribute = $this->getData('small_image')) {
+            try {
+                $url = Mage::getModel('media/image')
+                        ->setConfig(Mage::getSingleton('catalog/product_media_config'))
+                        ->getSpecialLink($attribute, $size, $extension, $watermark);
+            } catch (Exception $e) {
+                $url = false;
+            }
+        }
+        return $url;
+    }
 
     public function getThumbnailUrl()
     {

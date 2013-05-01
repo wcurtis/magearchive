@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Checkout default helper
  *
@@ -36,7 +36,7 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return $this->_checkout;
     }
-    
+
     /**
      * Retrieve checkout quote model object
      *
@@ -49,7 +49,7 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return $this->_quote;
     }
-    
+
     /**
      * Retrieve quote item product url
      *
@@ -61,13 +61,13 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         if ($superProduct = $item->getSuperProduct()) {
             return $superProduct->getProductUrl();
         }
-        
+
         if ($product = $item->getProduct()) {
             return $product->getProductUrl();
         }
         return '';
     }
-    
+
     /**
      * Retrieve quote item product image url
      *
@@ -79,13 +79,13 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         if ($superProduct = $item->getSuperProduct()) {
             return $superProduct->getThumbnailUrl();
         }
-        
+
         if ($product = $item->getProduct()) {
             return $product->getThumbnailUrl();
         }
         return '';
     }
-    
+
     /**
      * Retrieve quote item product name
      *
@@ -98,13 +98,13 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         if ($superProduct && $superProduct->isConfigurable()) {
             return $superProduct->getName();
         }
-        
+
         if ($product = $item->getProduct()) {
             return $product->getName();
         }
         return $item->getName();
     }
-    
+
     /**
      * Retrieve quote item product description
      *
@@ -120,7 +120,7 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return '';
     }
-    
+
     /**
      * Retrieve quote item qty
      *
@@ -129,15 +129,9 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getQuoteItemQty($item)
     {
-        $qty = $item->getQty();
-        if ($product = $item->getProduct()) {
-            if ($product->getQtyIsDecimal()) {
-                return number_format($qty, 2, null, '');
-            }
-        }
-        return number_format($qty, 0, null, '');
+        return $item->getQty()*1;
     }
-    
+
     /**
      * Retrieve quote item product in stock flag
      *
@@ -153,7 +147,7 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return false;
     }
-    
+
     protected function _getConfigurableProductDescription($product)
     {
  		$html = '<ul class="super-product-attributes">';
@@ -171,12 +165,12 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
  		$html.='</ul>';
  		return $html;
     }
-    
+
     public function formatPrice($price)
     {
         return $this->getQuote()->getStore()->formatPrice($price);
     }
-    
+
     public function convertPrice($price, $format=true)
     {
         return $this->getQuote()->getStore()->convertPrice($price, $format);

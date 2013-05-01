@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Permissions_Role_Grid_User extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -144,7 +144,7 @@ class Mage_Adminhtml_Block_Permissions_Role_Grid_User extends Mage_Adminhtml_Blo
     public function getGridUrl()
     {
         $roleId = $this->getRequest()->getParam('rid');
-        return Mage::getUrl('*/*/editrolegrid', array('rid' => $roleId));
+        return $this->getUrl('*/*/editrolegrid', array('rid' => $roleId));
     }
 
     protected function _getUsers($json=false)

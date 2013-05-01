@@ -136,6 +136,8 @@ class Mage_Install_Model_Installer extends Varien_Object
         }
         if (!empty($locale['currency'])) {
             $setupModel->setConfigData(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE, $locale['currency']);
+            $setupModel->setConfigData(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_DEFAULT, $locale['currency']);
+            $setupModel->setConfigData(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_ALLOW, $locale['currency']);
         }
 
         return $this;

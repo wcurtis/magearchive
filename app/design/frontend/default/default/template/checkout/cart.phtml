@@ -47,7 +47,7 @@
             <th>&nbsp;</th>
             <th><?=$this->__('Product Name')?></th>
             <th class="a-center"><?=$this->__('Remove Product')?></th>
-            <?if ($this->helper('wishlist')->isAllow()) :?>
+            <?if ($this->helper('wishlist')->isAllowInCart()) :?>
             <th class="a-center"><?=$this->__('Move to Wishlist')?></th>
             <?endif?>
             <th class="a-right"><?=$this->__('Unit Price')?></th>
@@ -87,7 +87,7 @@
                     <img src="<?=$this->getSkinUrl('images/btn_trash.gif')?>" width="16" height="16" alt="Remove item"/>
                 </a>
             </td>
-            <?if ($this->helper('wishlist')->isAllow()) :?>
+            <?if ($this->helper('wishlist')->isAllowInCart()) :?>
             <td class="a-center">
                 <input type="checkbox" value="1" name="cart[<?=$_item->getId()?>][wishlist]"/>
             </td>

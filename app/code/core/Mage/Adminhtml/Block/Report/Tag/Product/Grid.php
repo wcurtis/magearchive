@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Report_Tag_Product_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -85,7 +86,7 @@ class Mage_Adminhtml_Block_Report_Tag_Product_Grid extends Mage_Adminhtml_Block_
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/productDetail', array('id'=>$row->entity_id));
+        return $this->getUrl('*/*/productDetail', array('id'=>$row->entity_id));
     }
 
 }

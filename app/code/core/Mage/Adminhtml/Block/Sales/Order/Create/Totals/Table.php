@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Sales_Order_Create_Totals_Table extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Create_Totals_Table extends Mage_Adminhtml_Block_Template
 {
 
     protected $_websiteCollection = null;

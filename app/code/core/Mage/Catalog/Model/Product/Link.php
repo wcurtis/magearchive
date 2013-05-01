@@ -18,58 +18,60 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog product link model
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
-
 class Mage_Catalog_Model_Product_Link extends Mage_Core_Model_Abstract
 {
-	protected $_attributeCollection = null;
-	
-	protected function _construct()
-	{
-		$this->_init('catalog/product_link');
-	}
-	
-	public function getDataForSave() 
-	{
-		$data = array();
-		$data['product_id'] = $this->getProductId();
-		$data['linked_product_id'] = $this->getLinkedProductId();
-		$data['link_type_id'] = $this->getLinkTypeId();
-		return $data;
-	}
-	
-	public function getAttributeCollection()
-	{
-		if(is_null($this->_attributeCollection))
-		{
-			$this->setAttributeCollection(
-				Mage::getResourceModel('catalog/product_link_attribute_collection')
-					->addFieldToFilter('link_type_id', $this->getLinkTypeId())
-					->load()
-			);
-		}
-		
-		return $this->_attributeCollection;
-	}
-	
-	public function setAttributeCollection($collection)
-	{
-		$this->_attributeCollection = $collection;
-		return $this;
-	}
-	
-	public function addLinkData($linkTypeId, $product, $linkedProductId) 
-	{
-		$this->setLinkTypeId($linkTypeId)
-			->setProductId($product->getId())
-			->setLinkedProductId($linkedProductId);
-		
-		return $this;
-	}
-		
-}// Class Mage_Catalog_Model_Product_Link END
+
+    protected $_attributeCollection = null;
+
+    protected function _construct()
+    {
+        $this->_init('catalog/product_link');
+    }
+
+    public function getDataForSave()
+    {
+        $data = array();
+        $data['product_id'] = $this->getProductId();
+        $data['linked_product_id'] = $this->getLinkedProductId();
+        $data['link_type_id'] = $this->getLinkTypeId();
+        return $data;
+    }
+
+    public function getAttributeCollection()
+    {
+        if(is_null($this->_attributeCollection))
+        {
+            $this->setAttributeCollection(
+                Mage::getResourceModel('catalog/product_link_attribute_collection')
+                    ->addFieldToFilter('link_type_id', $this->getLinkTypeId())
+                    ->load()
+            );
+        }
+
+        return $this->_attributeCollection;
+    }
+
+    public function setAttributeCollection($collection)
+    {
+        $this->_attributeCollection = $collection;
+        return $this;
+    }
+
+    public function addLinkData($linkTypeId, $product, $linkedProductId)
+    {
+        $this->setLinkTypeId($linkTypeId)
+            ->setProductId($product->getId())
+            ->setLinkedProductId($linkedProductId);
+
+        return $this;
+    }
+
+}
+

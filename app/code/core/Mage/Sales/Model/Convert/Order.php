@@ -52,8 +52,12 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setCustomerEmail($order->getCustomerEmail())
             ->setCustomerGroupId($order->getCustomerGroupId())
             ->setCustomerTaxClassId($order->getCustomerTaxClassId())
-            ->setCustomerNote($quote->getCustomerNote())
-            ->setCustomerNoteNotify($quote->getCustomerNoteNotify())
+            /**
+             * Not use note from previos order
+             */
+            //->setCustomerNote($order->getCustomerNote())
+            //->setCustomerNoteNotify($order->getCustomerNoteNotify())
+            ->setCustomerIsGuest($order->getCustomerIsGuest())
 
             /**
              * Currency data
@@ -74,7 +78,8 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
              */
             ->setCouponCode($order->getCouponCode())
             ->setGiftcertCode($order->getGiftcertCode())
-            ->setAppliedRuleIds($order->getAppliedRuleIds());
+            ->setAppliedRuleIds($order->getAppliedRuleIds())
+            ->collectTotals();
 
 
         Mage::dispatchEvent('sales_convert_order_to_quote', array('order'=>$order, 'quote'=>$quote));
@@ -177,7 +182,6 @@ class Mage_Sales_Model_Convert_Order extends Varien_Object
             ->setName($item->getName())
             ->setDescription($item->getDescription())
             ->setWeight($item->getWeight())
-            ->setQty($item->getQtyToShip())
             ->setCustomPrice($item->getPrice())
             ->setDiscountPercent($item->getDiscountPercent())
             ->setDiscountAmount($item->getDiscountAmount())

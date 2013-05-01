@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Review_Rating_Summary extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Review_Rating_Summary extends Mage_Adminhtml_Block_Template
 {
     public function __construct()
     {

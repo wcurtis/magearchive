@@ -32,7 +32,6 @@ class Mage_Catalog_Model_Category extends Varien_Object
     const DM_PRODUCT        = 'PRODUCTS';
     const DM_PAGE           = 'PAGE';
     const DM_MIXED          = 'PRODUCTS_AND_PAGE';
-    const XML_PATH_ROOT_ID  = 'catalog/category/root_id';
 
     protected static $_url;
     protected static $_urlRewrite;
@@ -304,6 +303,7 @@ class Mage_Catalog_Model_Category extends Varien_Object
 
     public function formatUrlKey($str)
     {
+        $str = Mage::helper('core')->removeAccents($str);
     	$urlKey = preg_replace('#[^0-9a-z]+#i', '-', $str);
     	$urlKey = strtolower($urlKey);
     	$urlKey = trim($urlKey, '-');

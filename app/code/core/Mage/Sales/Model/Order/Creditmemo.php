@@ -224,8 +224,6 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
     public function refund()
     {
         $this->setState(self::STATE_REFUNDED);
-        $this->getOrder()->getPayment()->refound($this);
-
         $orderRefund = $this->getOrder()->getTotalRefunded()+$this->getGrandTotal();
 
         if ($orderRefund>$this->getOrder()->getTotalPaid()) {
@@ -238,6 +236,18 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
         }
 
         $this->getOrder()->setTotalRefunded($orderRefund);
+        $this->getOrder()->setAdjustmentPositive(
+            $this->getOrder()->getAdjustmentPositive()+$this->getAdjustmentPositive()
+        );
+        $this->getOrder()->setAdjustmentNegative(
+            $this->getOrder()->getAdjustmentNegative()+$this->getAdjustmentNegative()
+        );
+
+        if ($this->getInvoice()) {
+            $this->getInvoice()->setIsUsedForRefund(true);
+            $this->setInvoiceId($this->getInvoice()->getId());
+        }
+        $this->getOrder()->getPayment()->refund($this);
         return $this;
     }
 
@@ -280,11 +290,9 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
             }
         }
 
-        if ($this->getRefundRequested()) {
-            $creditmemo->getDoTransaction(true);
-        }
+        $this->setDoTransaction(true);
         if ($this->getOfflineRequested()) {
-            $creditmemo->getDoTransaction(false);
+            $this->getDoTransaction(false);
         }
         $this->refund();
 

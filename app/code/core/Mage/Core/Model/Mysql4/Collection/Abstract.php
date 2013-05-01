@@ -62,7 +62,7 @@ class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Collection_
 
         parent::__construct($this->getResource()->getReadConnection());
 
-        $this->getSelect()->from(array('main_table'=>$this->getResource()->getMainTable()));
+        $this->getSelect()->from(array('main_table' => $this->getResource()->getMainTable()));
     }
 
     /**

@@ -24,7 +24,6 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sales_Order extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
 
@@ -38,7 +37,7 @@ class Mage_Adminhtml_Block_Sales_Order extends Mage_Adminhtml_Block_Widget_Grid_
 
     public function getCreateUrl()
     {
-        return Mage::getUrl('*/sales_order_create/start');
+        return $this->getUrl('*/sales_order_create/start');
     }
 
 }

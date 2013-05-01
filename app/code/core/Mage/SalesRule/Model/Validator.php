@@ -55,10 +55,6 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 				continue;
 			}
 
-			if ($action->getCouponCode() && ($action->getCouponCode() == $this->getCouponCode())) {
-                $this->setIsCouponCodeConfirmed(true);
-			}
-
             if ($rule->getUsesPerCoupon()
                 && ($rule->getTimesUsed() >= $rule->getUsesPerCoupon())) {
                 break;
@@ -112,6 +108,10 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 
 			if ($rule->getStopRulesProcessing()) {
 				break;
+			}
+
+			if ($action->getCouponCode() && ($action->getCouponCode() == $this->getCouponCode())) {
+                $this->setIsCouponCodeConfirmed(true);
 			}
 		}
 

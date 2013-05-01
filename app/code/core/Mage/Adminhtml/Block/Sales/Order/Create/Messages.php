@@ -17,16 +17,20 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Order create errors block
  *
+ * @category   Mage
+ * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_Create_Messages extends Mage_Core_Block_Messages
+class Mage_Adminhtml_Block_Sales_Order_Create_Messages extends Mage_Adminhtml_Block_Messages
 {
+
     public function _prepareLayout()
     {
         $this->addMessages(Mage::getSingleton('adminhtml/session_quote')->getMessages(true));
         parent::_prepareLayout();
     }
+
 }

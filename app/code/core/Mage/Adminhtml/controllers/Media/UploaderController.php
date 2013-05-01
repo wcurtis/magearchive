@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Media_UploaderController extends Mage_Adminhtml_Controller_Action
 {
+
     public function uploadAction()
     {
         $this->getResponse()->setBody(Zend_Json::encode($_REQUEST));
@@ -39,4 +40,5 @@ class Mage_Adminhtml_Media_UploaderController extends Mage_Adminhtml_Controller_
         );
         $this->renderLayout();
     }
-} // Class Mage_Adminhtml_Media_Uploader_Controller End
+
+}

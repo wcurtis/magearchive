@@ -41,16 +41,6 @@
                 <class>Mage_GoogleAnalytics_Helper</class>
             </googleanalytics>
         </helpers>
-        <resources>
-            <googleanalytics_setup>
-                <setup>
-                    <module>Mage_GoogleAnalytics</module>
-                </setup>
-                <connection>
-                    <use>core_setup</use>
-                </connection>
-            </googleanalytics_setup>
-        </resources>
     </global>
 
     <frontend>

@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
-class Mage_Adminhtml_Block_Customer_Group extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Customer_Group extends Mage_Adminhtml_Block_Template
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -35,8 +35,9 @@ class Mage_Adminhtml_Block_Customer_Group extends Mage_Core_Block_Template
 
     public function _beforeToHtml()
     {
-        $this->assign('createUrl', Mage::getUrl('*/customer_group/new'));
+        $this->assign('createUrl', $this->getUrl('*/customer_group/new'));
         $this->setChild('grid', $this->getLayout()->createBlock('adminhtml/customer_group_grid', 'customer.group.grid'));
         return parent::_beforeToHtml();
     }
+
 }

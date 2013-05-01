@@ -24,7 +24,7 @@
  * @category   Mage
  * @package    Mage_Catalog
  */
-abstract class Mage_Catalog_Model_Entity_Abstract extends Mage_Eav_Model_Entity_Abstract
+abstract class Mage_Catalog_Model_Entity_Abstract extends Mage_Eav_Model_Entity_Abstractold
 {
 
     protected function _collectOrigData($object)

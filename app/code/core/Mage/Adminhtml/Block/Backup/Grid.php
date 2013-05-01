@@ -31,7 +31,7 @@ class Mage_Adminhtml_Block_Backup_Grid extends Mage_Adminhtml_Block_Widget_Grid
     {
         $this->setSaveParametersInSession(true);
         $this->setId('backupsGrid');
-		$this->setDefaultSort('time', 'desc');
+        $this->setDefaultSort('time', 'desc');
     }
 
     /**
@@ -49,7 +49,7 @@ class Mage_Adminhtml_Block_Backup_Grid extends Mage_Adminhtml_Block_Widget_Grid
      */
     protected function _prepareColumns()
     {
-        $gridUrl = Mage::getUrl('*/*/');
+        $gridUrl = $this->getUrl('*/*/');
 
         $this->addColumn('time', array(
                                 'header'=>Mage::helper('backup')->__('Time'),

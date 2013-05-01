@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Date
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Date.php 7357 2008-01-06 20:57:06Z thomas $
+ * @version    $Id: Date.php 7604 2008-01-23 21:01:56Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -181,7 +181,7 @@ class Zend_Date extends Zend_Date_DateObject {
         }
 
         if (is_null($date)) {
-            $date = Zend_Date::now();
+            $date = Zend_Date::now($locale);
             if (($part !== null) && ($part !== Zend_Date::TIMESTAMP)) {
                 $date = $date->get($part);
             }
@@ -1303,6 +1303,28 @@ class Zend_Date extends Zend_Date_DateObject {
         return $clone;
     }
 
+    /**
+     * Internal function, returns the offset of a given timezone
+     *
+     * @param string $zone
+     * @return integer
+     */
+    protected function _findZone($zone)
+    {
+        preg_match('/[+-](\d{2}):{0,1}(\d{2})/', $zone, $match);
+        if (!empty($match)) {
+            $offset = $this->getGmtOffset() / 3600;
+            return ($match[1] + $offset);
+        }
+        $zone = trim($zone);
+        $tz = new DateTimeZone($zone);
+        $zone = $tz->getOffset($zone);
+        if ($zone === false) {
+            return 0;
+        }
+        $offset = $this->getGmtOffset() / 3600;
+        return ($zone + $offset);
+    }
 
     /**
      * Calculates the date or object
@@ -2114,17 +2136,27 @@ class Zend_Date extends Zend_Date_DateObject {
                 if (empty($datematch)) {
                     preg_match('/^(-{0,1}\d{2})(\d{2})(\d{2})/', $date, $datematch);
                 }
+                $tmpdate = $date;
                 if (!empty($datematch)) {
-                    $date = substr($date, strlen($datematch[0]));
+                    $tmpdate = substr($date, strlen($datematch[0]));
                 }
                 // (T)hh:mm:ss
-                preg_match('/[T,\s]{0,1}(\d{2}):(\d{2}):(\d{2}).{0,21}$/', $date, $timematch);
+                preg_match('/[T,\s]{0,1}(\d{2}):(\d{2}):(\d{2})/', $tmpdate, $timematch);
                 if (empty($timematch)) {
-                    preg_match('/[T,\s]{0,1}(\d{2})(\d{2})(\d{2}).{0,21}$/', $date, $timematch);
+                    preg_match('/[T,\s]{0,1}(\d{2})(\d{2})(\d{2})/', $tmpdate, $timematch);
                 }
                 if (empty($datematch) and empty($timematch)) {
                     require_once 'Zend/Date/Exception.php';
                     throw new Zend_Date_Exception("unsupported ISO8601 format ($date)", $date);
+                }
+                if (!empty($timematch)) {
+                    $tmpdate = substr($tmpdate, strlen($timematch[0])); 
+                }
+                if (!empty($tmpdate)) {
+                    $zone = $this->_findZone($tmpdate);
+                    if ($zone != 0) {
+//                        $timematch[1] += $zone;
+                    }
                 }
                 if (empty($datematch)) {
                     $datematch[1] = 1970;

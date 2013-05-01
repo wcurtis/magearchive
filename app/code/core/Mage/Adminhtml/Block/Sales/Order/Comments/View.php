@@ -24,8 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Sales_Order_Comments_View extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Sales_Order_Comments_View extends Mage_Adminhtml_Block_Template
 {
+
     protected function _construct()
     {
         parent::_construct();
@@ -54,4 +55,5 @@ class Mage_Adminhtml_Block_Sales_Order_Comments_View extends Mage_Core_Block_Tem
     {
         return $this->getUrl('*/*/addComment',array('id'=>$this->getEntity()->getId()));
     }
+
 }

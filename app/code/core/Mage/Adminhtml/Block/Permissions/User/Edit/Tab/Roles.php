@@ -92,7 +92,7 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Roles extends Mage_Adminhtm
 
     public function getGridUrl()
     {
-        return Mage::getUrl('*/*/rolesGrid', array('user_id' => Mage::registry('permissions_user')->getUserId()));
+        return $this->getUrl('*/*/rolesGrid', array('user_id' => Mage::registry('permissions_user')->getUserId()));
     }
 
     protected function _getSelectedRoles($json=false)

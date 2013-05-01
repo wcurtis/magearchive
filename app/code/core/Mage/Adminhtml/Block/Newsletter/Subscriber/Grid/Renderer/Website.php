@@ -24,13 +24,14 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
-class Mage_Adminhtml_Block_Newsletter_Subscriber_Grid_Renderer_Website extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract 
+class Mage_Adminhtml_Block_Newsletter_Subscriber_Grid_Renderer_Website extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
-	public function render(Varien_Object $row) 
-	{
-		$collection = Mage::registry('website_collection');
-		
-		return $collection->getItemById($row->getWebsiteId())->getName();
-	}
-}// Class  Mage_Adminhtml_Block_Newsletter_Subscriber_Grid_Renderer_Website END
+
+    public function render(Varien_Object $row)
+    {
+        $collection = Mage::registry('website_collection');
+
+        return $collection->getItemById($row->getWebsiteId())->getName();
+    }
+
+}

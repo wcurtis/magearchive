@@ -18,12 +18,11 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Page Index Controller
  *
- * @version    1.0
  */
-
 class Mage_SearchLucene_IndexController extends Mage_Core_Controller_Front_Action
 {
 
@@ -56,7 +55,6 @@ class Mage_SearchLucene_IndexController extends Mage_Core_Controller_Front_Actio
         }
         $this->renderLayout();
     }
-
 
 
     function buildindexAction()
@@ -133,4 +131,5 @@ class Mage_SearchLucene_IndexController extends Mage_Core_Controller_Front_Actio
         }
         Zend_Search_Lucene::create($index_dir);
     }
-}// Class IndexController END
+
+}

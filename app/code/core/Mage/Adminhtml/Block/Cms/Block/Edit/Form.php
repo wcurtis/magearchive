@@ -24,7 +24,6 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Cms_Block_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
 
@@ -70,8 +69,8 @@ class Mage_Adminhtml_Block_Cms_Block_Edit_Form extends Mage_Adminhtml_Block_Widg
 
     	$fieldset->addField('store_id', 'select', array(
             'name'      => 'store_id',
-            'label'     => Mage::helper('cms')->__('Store'),
-            'title'     => Mage::helper('cms')->__('Store'),
+            'label'     => Mage::helper('cms')->__('Store View'),
+            'title'     => Mage::helper('cms')->__('Store View'),
             'required'  => true,
             'options'    => $stores,
         ));

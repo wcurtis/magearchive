@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Directory>
-            <version>0.7.1</version>
+            <version>0.7.2</version>
             <depends>
                 <Mage_Core />
             </depends>
@@ -156,13 +156,13 @@
             </local>
         </general>
     </default>
-
     <crontab>
         <jobs>
-            <newsletter_send_all>
-                <schedule><cron_expr>0 0 * * *</cron_expr></schedule>
-                <run><model>directory/observer::scheduledUpdateCurrencyRates</model></run>
-            </newsletter_send_all>
+            <currency_rates_update>
+                <run>
+                    <model>directory/observer::scheduledUpdateCurrencyRates</model>
+                </run>
+            </currency_rates_update>
         </jobs>
     </crontab>
 </config>

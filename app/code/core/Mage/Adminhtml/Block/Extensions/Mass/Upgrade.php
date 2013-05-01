@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Extensions_Mass_Upgrade extends Mage_Adminhtml_Block_Widget_Form
 {
+
     public function initForm()
     {
         $this->setTitle('Upgrade packages');
@@ -57,4 +58,5 @@ class Mage_Adminhtml_Block_Extensions_Mass_Upgrade extends Mage_Adminhtml_Block_
 
         return $html;
     }
+
 }

@@ -24,44 +24,46 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Bundle_Option extends Mage_Adminhtml_Block_Widget_Form 
+class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Bundle_Option extends Mage_Adminhtml_Block_Widget_Form
 {
-	protected $_parent = null;
-	
-	public function setParent(Mage_Core_Block_Abstract $parent)
-	{
-		$this->_parent = $parent;
-		return $this;
-	}
-	
-	public function getParent()
-	{
-		return $this->_parent;
-	}
-	
-	
+    protected $_parent = null;
+
+    public function setParent(Mage_Core_Block_Abstract $parent)
+    {
+        $this->_parent = $parent;
+        return $this;
+    }
+
+    public function getParent()
+    {
+        return $this->_parent;
+    }
+
+
     protected function _prepareForm()
     {
     	$form = new Varien_Data_Form();
-    	
+
     	$fieldset = $form->addFieldset('fieldset', array(
     		'legend' => Mage::helper('catalog')->__('Options')
     	));
-    	
-    	$fieldset->addField('options', 'text', 
+
+    	$fieldset->addField('options', 'text',
     		array(
     			'name'=>'b_option',
     			'class'=>'required-entry'
     		)
     	);
-    	
-    	
+
+
     	$form->getElement('options')->setRenderer(
     		$this->getLayout()->createBlock('adminhtml/catalog_product_edit_tab_bundle_option_renderer')
     			->setParent($this)
       	);
-    	
+
     	$this->setForm($form);
     	return $this;
     }
+
 }
+

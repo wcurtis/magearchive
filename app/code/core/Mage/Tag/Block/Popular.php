@@ -83,10 +83,10 @@ class Mage_Tag_Block_Popular extends Mage_Core_Block_Template
         return $this->_minPopularity;
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         if (count($this->getTags()) > 0) {
-            return parent::toHtml();
+            return parent::_toHtml();
         }
         return '';
     }

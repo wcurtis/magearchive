@@ -163,17 +163,17 @@ varienLoaderHandler.handler = {
             Element.show('loading-mask');
             setLoaderPosition();
             if(request.options.loaderArea=='html-body'){
-                Element.show('loading-process');
+                //Element.show('loading-process');
             }
         }
         else{
-            Element.show('loading-process');
+            //Element.show('loading-process');
         }
     },
 
     onComplete: function(transport) {
         if(Ajax.activeRequestCount == 0) {
-            Element.hide('loading-process');
+            //Element.hide('loading-process');
             toggleSelectsUnderBlock($('loading-mask'), true);
             Element.hide('loading-mask');
         }

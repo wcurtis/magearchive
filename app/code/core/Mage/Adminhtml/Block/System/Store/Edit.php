@@ -19,7 +19,7 @@
  */
 
 /**
- * Admin tag edit block
+ * Adminhtml store edit
  *
  * @category   Mage
  * @package    Mage_Adminhtml
@@ -27,31 +27,67 @@
 
 class Mage_Adminhtml_Block_System_Store_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 {
-
+    /**
+     * Init class
+     *
+     */
     public function __construct()
     {
-        $this->_objectId = 'store';
+        switch (Mage::registry('store_type')) {
+            case 'website':
+                $this->_objectId = 'website_id';
+                $saveLabel   = Mage::helper('core')->__('Save Website');
+                $deleteLabel = Mage::helper('core')->__('Delete Website');
+                $deleteUrl   = $this->getUrl('*/*/deleteWebsite', array('website_id'=>Mage::registry('store_data')->getId()));
+                break;
+            case 'group':
+                $this->_objectId = 'group_id';
+                $saveLabel   = Mage::helper('core')->__('Save Store');
+                $deleteLabel = Mage::helper('core')->__('Delete Store');
+                $deleteUrl   = $this->getUrl('*/*/deleteGroup', array('group_id'=>Mage::registry('store_data')->getId()));
+                break;
+            case 'store':
+                $this->_objectId = 'store_id';
+                $saveLabel   = Mage::helper('core')->__('Save Store View');
+                $deleteLabel = Mage::helper('core')->__('Delete Store View');
+                $deleteUrl   = $this->getUrl('*/*/deleteStore', array('store_id'=>Mage::registry('store_data')->getId()));
+                break;
+        }
         $this->_controller = 'system_store';
 
         parent::__construct();
 
-        $this->_updateButton('save', 'label', Mage::helper('adminhtml')->__('Save Store View'));
-        $this->_updateButton('delete', 'label', Mage::helper('adminhtml')->__('Delete Store View'));
-    }
-    
-    public function getBackUrl()
-    {
-        return Mage::getUrl('*/system_config/edit', array('store'=>Mage::registry('admin_current_store')->getCode()));
+        $this->_updateButton('save', 'label', $saveLabel);
+        $this->_updateButton('delete', 'label', $deleteLabel);
+        $this->_updateButton('delete', 'onclick', 'setLocation(\''.$deleteUrl.'\');');
+
+        if (!Mage::registry('store_data')->isCanDelete()) {
+            $this->_removeButton('delete');
+        }
     }
 
+    /**
+     * Get Header text
+     *
+     * @return string
+     */
     public function getHeaderText()
     {
-        if (Mage::registry('admin_current_store')->getId()) {
-            return Mage::helper('adminhtml')->__("Edit Store '%s' View", Mage::registry('admin_current_store')->getName());
+        switch (Mage::registry('store_type')) {
+            case 'website':
+                $editLabel = Mage::helper('core')->__('Edit Website');
+                $addLabel  = Mage::helper('core')->__('New Website');
+                break;
+            case 'group':
+                $editLabel = Mage::helper('core')->__('Edit Store');
+                $addLabel  = Mage::helper('core')->__('New Store');
+                break;
+            case 'store':
+                $editLabel = Mage::helper('core')->__('Edit Store View');
+                $addLabel  = Mage::helper('core')->__('New Store View');
+                break;
         }
-        else {
-            return Mage::helper('adminhtml')->__('New Store View');
-        }
-    }
 
+        return Mage::registry('store_action') == 'add' ? $addLabel : $editLabel;
+    }
 }

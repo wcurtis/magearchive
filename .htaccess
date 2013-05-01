@@ -22,6 +22,7 @@ DirectoryIndex index.php
 ## adjust memory limit
 
     php_value memory_limit 32M
+    php_value max_execution_time 18000
 
 ############################################
 ## disable magic quotes for php request vars
@@ -58,6 +59,11 @@ DirectoryIndex index.php
     #RewriteBase /magento/
 
 ############################################
+## workaround for HTTP authorization in CGI environment
+
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+############################################
 ## always send 404 on missing files in these folders
 
     RewriteCond %{REQUEST_URI} !^/(media|skin|js)/
@@ -72,7 +78,7 @@ DirectoryIndex index.php
 ############################################
 ## rewrite everything else to index.php
 
-    RewriteRule .* index.php
+    RewriteRule .* index.php [L]
 
 </IfModule>
 

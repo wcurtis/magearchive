@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Adminhtml catalog product action attribute update helper
  *
@@ -146,4 +147,5 @@ class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute extends Mage_C
 
         return $this->_productsNotInStoreIds;
     }
-} // Class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute End
+
+}

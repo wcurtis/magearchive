@@ -28,41 +28,41 @@
 abstract class Mage_Adminhtml_Block_Dashboard_Tab_Abstract extends Mage_Adminhtml_Block_Widget
 {
 
-	protected $_tabBar = null;
+    protected $_tabBar = null;
 
-	protected $_dataHelperName = null;
+    protected $_dataHelperName = null;
 
-	public function __construct($attributes=array())
-	{
-		parent::__construct($attributes);
-		$this->setTemplate($this->_getTabTemplate());
-	}
+    public function __construct($attributes=array())
+    {
+        parent::__construct($attributes);
+        $this->setTemplate($this->_getTabTemplate());
+    }
 
-	public function getCollection()
-	{
-	       return $this->getDataHelper()->getCollection();
-	}
+    public function getCollection()
+    {
+           return $this->getDataHelper()->getCollection();
+    }
 
-	public function getCount()
-	{
-	       return $this->getDataHelper()->getCount();
-	}
+    public function getCount()
+    {
+           return $this->getDataHelper()->getCount();
+    }
 
-	public function getDataHelper()
-	{
-	       return $this->helper($this->getDataHelperName());
-	}
+    public function getDataHelper()
+    {
+           return $this->helper($this->getDataHelperName());
+    }
 
-	public  function getDataHelperName()
-	{
-	       return $this->_dataHelperName;
-	}
+    public  function getDataHelperName()
+    {
+           return $this->_dataHelperName;
+    }
 
-	public  function setDataHelperName($dataHelperName)
-	{
-	       $this->_dataHelperName = $dataHelperName;
-	       return $this;
-	}
+    public  function setDataHelperName($dataHelperName)
+    {
+           $this->_dataHelperName = $dataHelperName;
+           return $this;
+    }
 
-	abstract protected function _getTabTemplate();
+    abstract protected function _getTabTemplate();
 }// Class Mage_Adminhtml_Block_Dashboard_Abstract END

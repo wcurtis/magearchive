@@ -24,29 +24,30 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist_Grid_Renderer_Visible extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
-	public function render(Varien_Object $row)
-	{
-		return implode(", ", $this->_getSharedStoresNames($row->getData($this->getColumn()->getIndex())));
-	}
 
-	protected function _getSharedStoresNames($storeId)
-	{
-		$collection = Mage::registry('stores_select_collection');
-		$store = $collection->getItemById($storeId);
-		$sharedIds = Mage::getModel('wishlist/wishlist')->setStore($store)->getSharedStoreIds();
+    public function render(Varien_Object $row)
+    {
+        return implode(", ", $this->_getSharedStoresNames($row->getData($this->getColumn()->getIndex())));
+    }
 
-		$sharedNames = array();
+    protected function _getSharedStoresNames($storeId)
+    {
+        $collection = Mage::registry('stores_select_collection');
+        $store = $collection->getItemById($storeId);
+        $sharedIds = Mage::getModel('wishlist/wishlist')->setStore($store)->getSharedStoreIds();
 
-		foreach($sharedIds as $sharedId) {
-		         $store = $collection->getItemById($sharedId);
-			if($store) {
-		              $sharedNames[] = $store->getName();
-			}
-		}
+        $sharedNames = array();
 
-		return $sharedNames;
-	}
-}// Class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist_Grid_Renderer_Visible END
+        foreach($sharedIds as $sharedId) {
+                 $store = $collection->getItemById($sharedId);
+            if($store) {
+                      $sharedNames[] = $store->getName();
+            }
+        }
+
+        return $sharedNames;
+    }
+
+}

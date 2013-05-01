@@ -33,42 +33,42 @@ class Mage_Sales_Model_Entity_Quote_Item_Collection extends Mage_Eav_Model_Entit
         $this->setEntity(Mage::getSingleton('sales_entity/quote_item'));
         $this->setObject('sales/quote_item');
     }
-    
+
     public function setQuoteFilter($quoteId)
     {
         $this->addAttributeToFilter('parent_id', $quoteId);
         return $this;
     }
-    
+
     protected function _afterLoad()
     {
         $productCollection = $this->_getProductCollection();
         foreach ($this as $item) {
             $product = $productCollection->getItemById($item->getProductId());
-            
+
             if (!$product) {
                 continue;
             }
-            
+
             if ($item->getSuperProductId()) {
                 $superProduct = $productCollection->getItemById($item->getSuperProductId());
             }
             else {
                 $superProduct = null;
             }
-            
+
             $itemProduct = clone $product;
             if ($superProduct) {
                 $itemProduct->setSuperProduct($superProduct);
                 $item->setSuperProduct($superProduct);
             }
-        	
+
             $item->importCatalogProduct($itemProduct);
             $item->checkData();
         }
         return $this;
     }
-    
+
     protected function _getProductCollection()
     {
     	$productIds = array();
@@ -81,13 +81,13 @@ class Mage_Sales_Model_Entity_Quote_Item_Collection extends Mage_Eav_Model_Entit
 			    $productIds[$item->getSuperProductId()] = $item->getParentProductId();
 			}
         }
-        
+
         if (empty($productIds)) {
             $productIds[] = false;
         }
-        
+
         $collection = Mage::getResourceModel('catalog/product_collection');
-        $collection->getEntity()->setStore($this->getEntity()->getStore());
+        //$collection->getEntity()->setStore($this->getEntity()->getStore());
         $collection->addAttributeToFilter('entity_id', array('in'=>$productIds))
        	    ->addAttributeToSelect('*')
        	    ->load();

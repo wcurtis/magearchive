@@ -18,21 +18,22 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Catalog product bundle option model
  *
  * @category   Mage
  * @package    Mage_Catalog
  */
- class Mage_Catalog_Model_Product_Bundle_Option extends Mage_Core_Model_Abstract 
+ class Mage_Catalog_Model_Product_Bundle_Option extends Mage_Core_Model_Abstract
  {
     protected $_linkCollection = null;
-    
-    protected function _construct() 
+
+    protected function _construct()
     {
         $this->_init('catalog/product_bundle_option');
     }
-    
+
     public function getLinkCollection()
     {
         if(is_null($this->_linkCollection)) {
@@ -40,33 +41,33 @@
                 ->setOptionId($this->getId())
                 ->setStoreId($this->getStoreId());
         }
-        
+
         return $this->_linkCollection;
     }
-    
-    public function toArray(array $arrAttributes = array()) 
+
+    public function toArray(array $arrAttributes = array())
     {
         return $this->_getResource()->toArray($this);
     }
-    
+
     public function getDataForSave()
     {
         $data = array();
         $data['product_id'] = $this->getProductId();
         return $data;
     }
-    
+
     public function getPosition() {
         if(strlen($this->getData('position')) > 0 || $this->getData('position')) {
             return $this->getData('position');
         }
         return $this->getDefaultPosition();
     }
-    
+
     public function getLabel() {
         if(strlen($this->getData('label')) > 0 || $this->getData('label')) {
             return $this->getData('label');
         }
         return $this->getDefaultLabel();
     }
- } // Class Mage_Catalog_Model_Product_Bundle_Option end
+ }

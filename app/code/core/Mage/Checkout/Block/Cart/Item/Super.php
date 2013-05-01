@@ -18,45 +18,46 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Checkout item super product options block
  *
  * @category   Mage
  * @package    Mage_Checkout
  */
- class Mage_Checkout_Block_Cart_Item_Super extends Mage_Core_Block_Abstract 
+ class Mage_Checkout_Block_Cart_Item_Super extends Mage_Core_Block_Abstract
  {
- 	protected $_product = null;
- 	public function setProduct($product)
- 	{
+     protected $_product = null;
+     public function setProduct($product)
+     {
         $this->_product = $product;
         return $this;
- 	}
- 	
- 	public function getProduct()
- 	{
- 		return $this->_product;
- 	}
- 	
- 	public function toHtml()
- 	{
-		if (!$this->_beforeToHtml()) {
-			return '';
-		}
- 		$result = '<ul class="super-product-attributes">';
- 		foreach ($this->getProduct()->getSuperProduct()->getSuperAttributes(true) as $attribute) {
- 			$result.= '<li><strong>' . $attribute->getFrontend()->getLabel() . ':</strong> ';
- 			if($attribute->getSourceModel()) {
- 				$result.= htmlspecialchars(
+     }
+
+     public function getProduct()
+     {
+         return $this->_product;
+     }
+
+     protected function _toHtml()
+     {
+        if (!$this->_beforeToHtml()) {
+            return '';
+        }
+         $result = '<ul class="super-product-attributes">';
+         foreach ($this->getProduct()->getSuperProduct()->getSuperAttributes(true) as $attribute) {
+             $result.= '<li><strong>' . $attribute->getFrontend()->getLabel() . ':</strong> ';
+             if($attribute->getSourceModel()) {
+                 $result.= htmlspecialchars(
                     $attribute->getSource()->getOptionText($this->getProduct()->getData($attribute->getAttributeCode()))
                 );
- 			} else {
- 				$result.= htmlspecialchars($this->getProduct()->getData($attribute->getAttributeCode()));
- 			}
- 			$result.='</li>';
- 		}
- 		$result.='</ul>';
- 		return $result;
- 	}
- 	
- } // Class Mage_Checkout_Block_Cart_Item_Super end
+             } else {
+                 $result.= htmlspecialchars($this->getProduct()->getData($attribute->getAttributeCode()));
+             }
+             $result.='</li>';
+         }
+         $result.='</ul>';
+         return $result;
+     }
+
+ }

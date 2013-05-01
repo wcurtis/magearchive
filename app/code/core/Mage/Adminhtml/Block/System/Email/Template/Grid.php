@@ -27,11 +27,10 @@
 class Mage_Adminhtml_Block_System_Email_Template_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
 
-	protected function _construct()
-	{
-		$this->setEmptyText(Mage::helper('adminhtml')->__('No Templates Found'));
-	}
-
+    protected function _construct()
+    {
+        $this->setEmptyText(Mage::helper('adminhtml')->__('No Templates Found'));
+    }
 
     protected function _prepareCollection()
     {
@@ -107,6 +106,8 @@ class Mage_Adminhtml_Block_System_Email_Template_Grid extends Mage_Adminhtml_Blo
 
     public function getRowUrl($row)
     {
-        return Mage::getUrl('*/*/edit', array('id'=>$row->getId()));
+        return $this->getUrl('*/*/edit', array('id'=>$row->getId()));
     }
+
 }
+

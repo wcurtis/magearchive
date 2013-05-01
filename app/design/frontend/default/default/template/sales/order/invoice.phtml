@@ -63,9 +63,9 @@ function giftMessageToogle(giftMessageIdentifier)
     <thead>
         <tr>
             <th><?=$this->__('Product Name')?></th>
-            <th class="a-right"><?=$this->__('Price')?></th>
-            <th class="a-center"><?=$this->__('Qty Invoiced')?></th>
-            <th class="a-right"><?=$this->__('Subtotal')?></th>
+            <th width="15%"><?=$this->__('Price')?></th>
+            <th class="a-center" width="10%"><?=$this->__('Qty Invoiced')?></th>
+            <th class="a-right" width="20%"><?=$this->__('Subtotal')?></th>
         </tr>
     </thead>
     <tbody>
@@ -98,7 +98,7 @@ function giftMessageToogle(giftMessageIdentifier)
                 <td class="last a-right"><?=$_order->formatPrice($_invoice->getTaxAmount())?></td>
             </tr>
         <?endif;?>
-        <?if ($_invoice->getShippingAmount()):?>
+        <?if ($_invoice->getShippingAmount() || $_invoice->getShippingDescription()):?>
             <tr>
                 <td colspan="3" class="a-right"><?=$this->__('Shipping & Handling')?></td>
                 <td class="last a-right"><?=$_order->formatPrice($_invoice->getShippingAmount())?></td>

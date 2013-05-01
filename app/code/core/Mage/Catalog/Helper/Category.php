@@ -56,7 +56,7 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
      */
     public function getStoreCategories($maxChildLevel=1)
     {
-        $parent = Mage::app()->getStore()->getConfig('catalog/category/root_id');
+        $parent = Mage::app()->getStore()->getRootCategoryId();
         return $this->_getChildCategories($parent, $maxChildLevel);
     }
 
@@ -94,7 +94,7 @@ class Mage_Catalog_Helper_Category extends Mage_Core_Helper_Abstract
         }
 
         $rootCategory = Mage::getModel('catalog/category')
-            ->load(Mage::app()->getStore()->getConfig('catalog/category/root_id'));
+            ->load(Mage::app()->getStore()->getRootCategoryId());
 
         if (!in_array($category->getId(), explode(',', $rootCategory->getAllChildren()))) {
             return false;

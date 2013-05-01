@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Report_Review_Detail_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -36,7 +37,6 @@ class Mage_Adminhtml_Block_Report_Review_Detail_Grid extends Mage_Adminhtml_Bloc
     {
 
         //$collection = Mage::getModel('review/review')->getProductCollection();
-
 
         //$collection->getSelect()
         //    ->where('rt.entity_pk_value='.(int)$this->getRequest()->getParam('id'));
@@ -86,4 +86,6 @@ class Mage_Adminhtml_Block_Report_Review_Detail_Grid extends Mage_Adminhtml_Bloc
 
         return parent::_prepareColumns();
     }
+
 }
+

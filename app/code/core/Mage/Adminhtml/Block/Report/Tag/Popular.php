@@ -24,7 +24,6 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Report_Tag_Popular extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
 
@@ -41,7 +40,7 @@ class Mage_Adminhtml_Block_Report_Tag_Popular extends Mage_Adminhtml_Block_Widge
         $this->setChild('store_switcher',
             $this->getLayout()->createBlock('adminhtml/store_switcher')
                 ->setUseConfirm(false)
-                ->setSwitchUrl(Mage::getUrl('*/*/*', array('store'=>null)))
+                ->setSwitchUrl($this->getUrl('*/*/*', array('store'=>null)))
         );
 
         return parent::_prepareLayout();
@@ -56,4 +55,6 @@ class Mage_Adminhtml_Block_Report_Tag_Popular extends Mage_Adminhtml_Block_Widge
     {
         return $this->getStoreSwitcherHtml() . parent::getGridHtml();
     }
+
 }
+

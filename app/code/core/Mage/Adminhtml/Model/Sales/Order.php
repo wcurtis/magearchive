@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Order control model
  *
@@ -35,7 +35,7 @@ class Mage_Adminhtml_Model_Sales_Order
     {
         return Mage::getSingleton('adminhtml/session');
     }
-    
+
     public function checkRelation(Mage_Sales_Model_Order $order)
     {
         /**
@@ -47,7 +47,7 @@ class Mage_Adminhtml_Model_Sales_Order
                 Mage::helper('adminhtml')->__(' The customer doesn\'t exist in the system anymore')
             );
         }
-        
+
         /**
          * Check Item products existing
          */
@@ -55,17 +55,17 @@ class Mage_Adminhtml_Model_Sales_Order
         foreach ($order->getAllItems() as $item) {
         	$productIds[] = $item->getProductId();
         }
-        
+
         $productCollection = Mage::getModel('catalog/product')->getCollection()
             ->addIdFilter($productIds)
             ->load();
-            
+
         $hasBadItems = false;
         foreach ($order->getAllItems() as $item) {
         	if (!$productCollection->getItemById($item->getProductId())) {
         	    $this->_getSession()->addError(
-        	       Mage::helper('adminhtml')->__('The item %s (SKU %s) doesn\'t exist in the catalog anymore', 
-        	           $item->getName(), 
+        	       Mage::helper('adminhtml')->__('The item %s (SKU %s) doesn\'t exist in the catalog anymore',
+        	           $item->getName(),
         	           $item->getSku()
                 ));
                 $hasBadItems = true;
@@ -78,4 +78,6 @@ class Mage_Adminhtml_Model_Sales_Order
         }
         return $this;
     }
+
 }
+

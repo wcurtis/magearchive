@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -64,9 +65,9 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
             'index'     => 'type',
             'type'      => 'options',
             'options'   => array(
-                1 => $this->__('Category'),
-                2 => $this->__('Product'),
-                3 => $this->__('Custom')
+                Mage_Core_Model_Url_Rewrite::TYPE_CATEGORY  => $this->__('Category'),
+                Mage_Core_Model_Url_Rewrite::TYPE_PRODUCT   => $this->__('Product'),
+                Mage_Core_Model_Url_Rewrite::TYPE_CUSTOM    => $this->__('Custom')
             ),
         ));
 
@@ -98,7 +99,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
             'type'      => 'action',
             'actions'   => array(
                 array(
-                    'url'       => Mage::getUrl('*/*/edit') . 'id/$url_rewrite_id',
+                    'url'       => $this->getUrl('*/*/edit') . 'id/$url_rewrite_id',
                     'caption'   => $this->__('Edit'),
                 ),
             )
@@ -110,7 +111,9 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
 
     public function getRowUrl($row)
     {
-        //return Mage::getUrl('*/*/edit', array('id'=>$row->getId()));
-        //return Mage::getUrl('*/*/view', array('id' => $row->getId()));
+        //return $this->getUrl('*/*/edit', array('id'=>$row->getId()));
+        //return $this->getUrl('*/*/view', array('id' => $row->getId()));
     }
+
 }
+

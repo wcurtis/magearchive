@@ -47,7 +47,7 @@
                 <tr class="<?=$_i%2?'odd':'even'?>">
                     <td>
                         <?=$_item->getName()?>
-                        <div><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
+                        <div class="nobr"><strong><?=$this->helper('sales')->__('SKU')?>:</strong> <?=$_item->getSku()?></div>
                     </td>
                     <td class="price"><?=$this->formatPrice($_item->getPrice())?></td>
                     <td><?=$this->getQtyHtml($_item->getOrderItem())?></td>
@@ -86,33 +86,49 @@
     </div>
 <?endif;?>
 
+<div class="clear">&nbsp;</div>
+<?=$this->getChildHtml('totals_bar')?>
+<div class="clear">&nbsp;</div>
+
 <input type="hidden" name="creditmemo[do_offline]" id="creditmemo_do_offline" value="0"/>
 
-<table cellpadding="0" cellspacing="0" width="100%">
-    <tr>
-        <td>&nbsp;</td>
-        <td width="33%" style="padding-right:30px">
-        <div class="entry-edit">
-            <h4 class=""><?=Mage::helper('sales')->__('Credit Memo Comment')?></h4>
-            <fieldset>
-                <?=Mage::helper('sales')->__('Add Credit Memo Comment')?><br/>
-                <textarea style="width:90%; height: 6em;" name="creditmemo[comment_text]"></textarea><br/>
-                <input type="checkbox" id="notify_customer" name="creditmemo[comment_customer_notify]" value="1"/>
-                <label for="notify_customer" class="normal"><?=Mage::helper('sales')->__('Notify Customer')?></label>
-            </fieldset>
-        </div>
-        </td>
-        <td class="box order-totals" style="width:280px;">
-            <?=$this->getChildHtml('totals')?>
-            <div style="padding:10px">
-                <?=$this->getChildHtml('submit_offline')?>
-                <?=$this->getChildHtml('submit_button')?>
-            </div>
-        </td>
-    </tr>
+<table class="order-info-foot" cellpadding="10" cellspacing="0" width="100%">
+    <tbody>
+        <tr>
+            <td class="section">
+                <table id="comments_block" cellpadding="0" width="100%">
+                    <tbody>
+                        <tr>
+                            <td style="padding-right: 30px;" width="50%"></td>
+                            <td>
+                                <div id="history_form" class="order-history-form">
+                                    <span class="field-row">
+                                        <label class="normal" for="history_comment"><?=Mage::helper('sales')->__('Credit Memo Comment')?></label>
+                                        <textarea name="creditmemo[comment_text]" class="input-text" style="height: 6em; width: 99%;"></textarea>
+                                    </span>
+                                    <div class="left">
+                                        <input name="creditmemo[comment_customer_notify]" id="notify_customer" value="1" type="checkbox">
+                                        <label class="normal" for="notify_customer"><?=Mage::helper('sales')->__('Notify Customer')?></label>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+
+            <td class="document-totals section">
+                <?=$this->getChildHtml('totals')?>
+                <div class="divider"></div>
+                <div class="a-right">
+                    <?=$this->getChildHtml('submit_offline')?>
+                    <?=$this->getChildHtml('submit_button')?>
+                </div>
+            </td>
+        </tr>
+    </tbody>
 </table>
-
-
 
 <script type="text/javascript">
 var submitButtons = document.getElementsByClassName('submit-button');

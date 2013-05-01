@@ -23,8 +23,8 @@ $installer = $this;
 
 $installer->startSetup()
     ->run("
-DROP TABLE IF EXISTS `directory_country_format`;
-CREATE TABLE `directory_country_format` (
+DROP TABLE IF EXISTS {$this->getTable('directory_country_format')};
+CREATE TABLE {$this->getTable('directory_country_format')} (
     `country_format_id` int(10) unsigned NOT NULL auto_increment,
     `country_id` char(2) NOT NULL default '',
     `type` varchar(30) NOT NULL default '',
@@ -33,5 +33,5 @@ CREATE TABLE `directory_country_format` (
     UNIQUE KEY `country_type` (`country_id`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Countries format';
 
-ALTER TABLE `directory_country`, DROP COLUMN `address_template_plain`, DROP COLUMN `address_template_html`;
+ALTER TABLE {$this->getTable('directory_country')}, DROP COLUMN `address_template_plain`, DROP COLUMN `address_template_html`;
 ");

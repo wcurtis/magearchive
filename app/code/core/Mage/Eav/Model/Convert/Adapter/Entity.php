@@ -42,7 +42,7 @@ class Mage_Eav_Model_Convert_Adapter_Entity extends Varien_Convert_Adapter_Abstr
      * @param $attrToDb	- attribute name to DB field
      * @return Mage_Eav_Model_Convert_Adapter_Entity
     */
-    
+
     protected function _parseVars(){
         $var_filters = $this->getVars();
         $filters = array();
@@ -54,11 +54,11 @@ class Mage_Eav_Model_Convert_Adapter_Entity extends Varien_Convert_Adapter_Abstr
         }
         return $filters;
     }
-    
+
     public function setFilter($attrFilterArray,$attrToDb=null,$bind=null,$joinType=null){
         if(is_null($bind))$def_bind='entity_id';
         if(is_null($joinType))$joinType='LEFT';
-        
+
         $this->_attrToDb=$attrToDb;
         $filters = $this->_parseVars();
     	foreach ($attrFilterArray as $key=>$type) {
@@ -114,9 +114,9 @@ class Mage_Eav_Model_Convert_Adapter_Entity extends Varien_Convert_Adapter_Abstr
 
     public function getFilter()
     {
-        return $this->_filter;    
+        return $this->_filter;
     }
-    
+
     public function setJoinAttr($joinAttr)
     {
     	if(is_array($joinAttr)){
@@ -129,7 +129,7 @@ class Mage_Eav_Model_Convert_Adapter_Entity extends Varien_Convert_Adapter_Abstr
     		$this->_joinAttr[] = $joinArrAttr;
     	}
     }
-    
+
     public function load()
     {
     	if (!($entityType = $this->getVar('entity_type'))
@@ -140,7 +140,7 @@ class Mage_Eav_Model_Convert_Adapter_Entity extends Varien_Convert_Adapter_Abstr
             $collection = Mage::getResourceModel($entityType.'_collection');
             $collection->getEntity()
                 ->setStore($this->getStoreId());
-           			
+
            	if(isset($this->_joinAttr)&& is_array($this->_joinAttr)){
            		foreach ($this->_joinAttr as $val){
            			$collection->joinAttribute(
@@ -156,9 +156,9 @@ class Mage_Eav_Model_Convert_Adapter_Entity extends Varien_Convert_Adapter_Abstr
            	$filterQuery = $this->_filter;
            	if(isset($filterQuery) && is_array($filterQuery)){
                 foreach ($filterQuery as $val) {
-                    $collection->addFieldToFilter(array($val));	
+                    $collection->addFieldToFilter(array($val));
                 }
-           	    
+
            	}
            	$collection
                 ->addAttributeToSelect('*')

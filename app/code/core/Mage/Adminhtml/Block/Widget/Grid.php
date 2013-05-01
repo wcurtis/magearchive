@@ -140,14 +140,12 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
      */
     protected $_massactionIdField = null;
 
-
     /**
      * Massaction block name
      *
      * @var string
      */
     protected $_massactionBlockName = 'adminhtml/widget_grid_massaction';
-
 
     public function __construct()
     {
@@ -622,7 +620,7 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
     {
         $this->_exportTypes[] = new Varien_Object(
             array(
-                'url'   => Mage::getUrl($url, array('_current'=>true)),
+                'url'   => $this->getUrl($url, array('_current'=>true)),
                 'label' => $label
             )
         );

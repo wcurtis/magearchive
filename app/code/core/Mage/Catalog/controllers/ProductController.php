@@ -60,9 +60,18 @@ class Mage_Catalog_ProductController extends Mage_Core_Controller_Front_Action
 
         $product = Mage::registry('product');
         if (!Mage::helper('catalog/product')->canShow($product)) {
+            /**
+             * @todo Change Group Store switcher
+             */
+            if (isset($_GET['store'])) {
+                $this->_redirect(null);
+                return;
+            }
             $this->_forward('noRoute');
             return;
         }
+
+        Mage::dispatchEvent('catalog_product_view', array('product'=>$product));
 
         $update = $this->getLayout()->getUpdate();
         $update->addHandle('default');

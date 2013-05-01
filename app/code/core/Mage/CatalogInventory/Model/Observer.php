@@ -71,6 +71,26 @@ class Mage_CatalogInventory_Model_Observer
         return $this;
     }
 
+    /**
+     * Copy product inventory data
+     *
+     * @param   Varien_Event_Observer $observer
+     * @return  Mage_CatalogInventory_Model_Observer
+     */
+    public function copyInventoryData($observer)
+    {
+        $newProduct = $observer->getEvent()->getNewProduct();
+        $newProduct->unsStockItem();
+        $newProduct->setStockData(array(
+            'use_config_min_qty'        => 1,
+            'use_config_min_sale_qty'   => 1,
+            'use_config_max_sale_qty'   => 1,
+            'use_config_backorders'     => 1
+        ));
+
+        return $this;
+    }
+
     protected function _prepareItemForSave($item, $product)
     {
         $item->addData($product->getStockData())
@@ -121,6 +141,40 @@ class Mage_CatalogInventory_Model_Observer
         }
 
         $stockItem->checkQuoteItemQty($item);
+        return $this;
+    }
+
+    /**
+     * Lock DB rows for order products
+     *
+     * We need do it for resolving problems with inventory on placing
+     * some orders in one time
+     *
+     * @param   Varien_Event_Observer $observer
+     * @return  Mage_CatalogInventory_Model_Observer
+     */
+    public function lockOrderInventoryData($observer)
+    {
+        $order = $observer->getEvent()->getOrder();
+        $productIds = array();
+
+        /**
+         * Do lock only for new order
+         */
+        if ($order->getId()) {
+            return $this;
+        }
+
+        if ($order) {
+            foreach ($order->getAllItems() as $item) {
+                $productIds[] = $item->getProductId();
+            }
+        }
+
+        if (!empty($productIds)) {
+            Mage::getSingleton('cataloginventory/stock')->lockProductItems($productIds);
+        }
+
         return $this;
     }
 

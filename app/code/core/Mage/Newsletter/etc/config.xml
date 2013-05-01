@@ -86,7 +86,7 @@
     </global>
     <adminhtml>
         <events>
-            <customer_model_after_save>
+            <customer_save_after>
                 <observers>
                     <newsletter_subscribe_observer>
                         <type>singleton</type>
@@ -94,8 +94,8 @@
                         <method>subscribeCustomer</method>
                     </newsletter_subscribe_observer>
                 </observers>
-            </customer_model_after_save>
-            <customer_model_delete>
+            </customer_save_after>
+            <customer_delete_after>
                 <observers>
                     <newsletter_subscribe_observer>
                         <type>singleton</type>
@@ -103,7 +103,7 @@
                         <method>customerDeleted</method>
                     </newsletter_subscribe_observer>
                 </observers>
-            </customer_model_delete>
+            </customer_delete_after>
         </events>
         <menu>
             <newsletter translate="title" module="newsletter">

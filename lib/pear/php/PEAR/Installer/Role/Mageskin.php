@@ -22,6 +22,5 @@
 /**
  * @category   Varien
  * @package    Varien_Object
- * @author     Moshe Gurvich <moshe@varien.com>
  */
 class PEAR_Installer_Role_Mageskin extends PEAR_Installer_Role_Common {}

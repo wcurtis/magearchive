@@ -54,10 +54,10 @@ class Mage_Sales_Block_Order_Recent extends Mage_Core_Block_Template
         return $this->getUrl('sales/order/track', array('order_id' => $order->getId()));
     }
 
-    public function toHtml()
+    protected function _toHtml()
     {
         if ($this->getOrders()->getSize() > 0) {
-            return parent::toHtml();
+            return parent::_toHtml();
         }
         return '';
     }

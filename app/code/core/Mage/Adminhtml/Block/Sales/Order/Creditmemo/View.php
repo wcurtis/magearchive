@@ -24,9 +24,9 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View extends Mage_Adminhtml_Block_Widget_Form_Container
 {
+
     public function __construct()
     {
         $this->_objectId    = 'creditmemo_id';
@@ -89,7 +89,7 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View extends Mage_Adminhtml_Bl
 
     public function getBackUrl()
     {
-        return Mage::getUrl(
+        return $this->getUrl(
             '*/sales_order/view',
             array(
                 'order_id'  => $this->getCreditmemo()->getOrderId(),
@@ -111,4 +111,5 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View extends Mage_Adminhtml_Bl
     {
         return $this->getUrl('*/*/cancel', array('creditmemo_id'=>$this->getCreditmemo()->getId()));
     }
+
 }

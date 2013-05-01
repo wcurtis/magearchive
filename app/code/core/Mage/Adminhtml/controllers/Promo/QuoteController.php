@@ -75,7 +75,7 @@ class Mage_Adminhtml_Promo_QuoteController extends Mage_Adminhtml_Controller_Act
         Mage::register('current_promo_quote_rule', $model);
 
         $block = $this->getLayout()->createBlock('adminhtml/promo_quote_edit')
-            ->setData('action', Mage::getUrl('*/*/save'));
+            ->setData('action', Mage::helper('adminhtml')->getUrl('*/*/save'));
 
         $this->_initAction();
 

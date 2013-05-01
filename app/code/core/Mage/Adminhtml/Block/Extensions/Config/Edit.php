@@ -53,7 +53,7 @@ class Mage_Adminhtml_Block_Extensions_Config_Edit extends Mage_Adminhtml_Block_W
 
     public function getSaveUrl()
     {
-        return Mage::getUrl('*/*/save', array('_current'=>true));
+        return $this->getUrl('*/*/save', array('_current'=>true));
     }
 
     public function initForm()

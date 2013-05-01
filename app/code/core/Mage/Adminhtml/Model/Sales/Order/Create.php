@@ -150,13 +150,30 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
         $quote = $convertModel->toQuote($order, $this->getQuote());
         $quote->setShippingAddress($convertModel->toQuoteShippingAddress($order));
         $quote->setBillingAddress($convertModel->addressToQuoteAddress($order->getBillingAddress()));
-        $convertModel->paymentToQuotePayment($order->getPayment(), $quote->getPayment());
+
+        if ($order->getReordered()) {
+            $quote->getPayment()->setMethod($order->getPayment()->getMethod());
+        }
+        else {
+            $convertModel->paymentToQuotePayment($order->getPayment(), $quote->getPayment());
+        }
 
         foreach ($order->getItemsCollection() as $item) {
-            $quote->addItem($convertModel->itemToQuoteItem($item));
+            if ($order->getReordered()) {
+                $qty = $item->getQtyOrdered();
+            }
+            else {
+                $qty = min($item->getQtyToInvoice(), $item->getQtyToShip());
+            }
+            if ($qty) {
+                $quoteItem = $convertModel->itemToQuoteItem($item)
+                    ->setQty($qty);
+                $quote->addItem($quoteItem);
+            }
         }
         $quote->getShippingAddress()->setCollectShippingRates(true);
         $quote->getShippingAddress()->collectShippingRates();
+        $quote->collectTotals();
         $quote->save();
 
         return $this;
@@ -234,7 +251,7 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
     {
         $groupId = $this->getQuote()->getCustomerGroupId();
         if (!$groupId) {
-            $groupId = $this->getSession()->getCustomer()->getGroupId();
+            $groupId = $this->getSession()->getCustomerGroupId();
         }
         return $groupId;
     }
@@ -611,7 +628,9 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
     public function createOrder()
     {
         $this->_validate();
-        $this->_saveCustomer();
+        if (!$this->getQuote()->getCustomerIsGuest()) {
+            $this->_saveCustomer();
+        }
 
         $quoteConvert = Mage::getModel('sales/convert_quote');
 
@@ -729,8 +748,10 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
         else {
             $customer = $this->getSession()->getCustomer();
             $customer->addData($this->getData('account'));
-
-            $customer->save();
+            /**
+             * don't save account information, use it only for order creation
+             */
+            //$customer->save();
         }
         $this->getQuote()->setCustomer($customer);
         return $this;

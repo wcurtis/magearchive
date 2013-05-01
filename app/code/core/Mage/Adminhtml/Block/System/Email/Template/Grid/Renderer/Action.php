@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_System_Email_Template_Grid_Renderer_Action extends Ma
     	$actions = array();
 
     	$actions[] = array(
-    		'url'		=>  Mage::getUrl('*/*/preview', array('id'=>$row->getId())),
+    		'url'		=>  $this->getUrl('*/*/preview', array('id'=>$row->getId())),
 	        'popup'     =>  true,
 	    	'caption'	=>	$this->__('Preview')
     	);

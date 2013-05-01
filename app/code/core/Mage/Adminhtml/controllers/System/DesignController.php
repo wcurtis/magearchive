@@ -107,6 +107,6 @@ class Mage_Adminhtml_System_DesignController extends Mage_Adminhtml_Controller_A
                     ->addException($e, $this->__("Can't delete design change"));
             }
         }
-        $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
+        $this->getResponse()->setRedirect($this->getUrl('*/*/'));
     }
 }

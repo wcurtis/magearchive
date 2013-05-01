@@ -45,7 +45,7 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
         $this->loadLayout()
             ->_setActiveMenu('sales/order')
             ->_addBreadcrumb($this->__('Sales'), $this->__('Sales'))
-            ->_addBreadcrumb($this->__('Orders'),$this->_getHelper()-> __('Orders'));
+            ->_addBreadcrumb($this->__('Orders'), $this->__('Orders'));
         return $this;
     }
 
@@ -78,6 +78,16 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
         $this->_initAction()
             ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order'))
             ->renderLayout();
+    }
+
+    /**
+     * Order grid
+     */
+    public function gridAction()
+    {
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('adminhtml/sales_order_grid')->toHtml()
+        );
     }
 
     /**
@@ -236,31 +246,99 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
         );
     }
 
-    /*public function emailAction()
+    /**
+     * Cancel selected orders
+     */
+    public function massCancelAction()
     {
-        $order = $this->_initOrder();
-        $order->sendNewOrderEmail();
-    }*/
+        $orderIds = $this->getRequest()->getPost('order_ids', array());
+        $cancelAnyOrder = false;
+        foreach ($orderIds as $orderId) {
+            $order = Mage::getModel('sales/order')->load($orderId);
+            if ($order->canCancel()) {
+                $order->cancel()
+                    ->save();
+                $cancelAnyOrder = true;
+            }
+        }
+        if ($cancelAnyOrder) {
+            $this->_getSession()->addSuccess($this->__('Orders was canceled'));
+        }
+        else {
+            // selected orders is not available for cancel
+        }
+        $this->_redirect('*/*/');
+    }
 
     /**
-     * Random orders generation
+     * Hold selected orders
      */
-    /*public function generateAction()
+    public function massHoldAction()
     {
-        $count = (int) $this->getRequest()->getParam('count', 10);
-        if ($count && $count>100) {
-            $count = 100;
+        $orderIds = $this->getRequest()->getPost('order_ids', array());
+        $holdAnyOrder = false;
+        foreach ($orderIds as $orderId) {
+            $order = Mage::getModel('sales/order')->load($orderId);
+            if ($order->canHold()) {
+                $order->hold()
+                    ->save();
+                $holdAnyOrder = true;
+            }
         }
+        if ($holdAnyOrder) {
+            $this->_getSession()->addSuccess($this->__('Orders was holded'));
+        }
+        else {
+            // selected orders is not available for hold
+        }
+        $this->_redirect('*/*/');
+    }
 
-        for ($i=0; $i<$count; $i++){
-            $randomOrder = Mage::getModel('adminhtml/sales_order_random')
-                ->render()
-                ->save();
+    /**
+     * Unhold selected orders
+     */
+    public function massUnholdAction()
+    {
+        $orderIds = $this->getRequest()->getPost('order_ids', array());
+        $unholdAnyOrder = false;
+        foreach ($orderIds as $orderId) {
+            $order = Mage::getModel('sales/order')->load($orderId);
+            if ($order->canUnhold()) {
+                $order->unhold()
+                    ->save();
+                $unholdAnyOrder = true;
+            }
         }
-    }*/
+        if ($unholdAnyOrder) {
+            $this->_getSession()->addSuccess($this->__('Orders was unholded'));
+        }
+        else {
+            // selected orders is not available for hold
+        }
+        $this->_redirect('*/*/');
+    }
+
+    /**
+     * Change status for selected orders
+     */
+    public function massStatusAction()
+    {
+
+    }
+
+    /**
+     * Print documents for selected orders
+     */
+    public function massPrintAction()
+    {
+        $orderIds = $this->getRequest()->getPost('order_ids');
+        $document = $this->getRequest()->getPost('document');
+    }
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('sales/order');
+        return Mage::getSingleton('admin/session')->isAllowed('sales/order');
     }
+
 }
+

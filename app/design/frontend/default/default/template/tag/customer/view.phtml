@@ -38,14 +38,15 @@
             <tr <?if($iterator % 2 == 0):?>class="odd"<?$iterator++;endif;?>>
                 <td><a href="<?=$_product->getProductUrl();?>"><img src="<?=$_product->getSmallImageUrl()?>" alt="" height="100" width="100"></a></td>
                 <td>
-
                     <h5><a href="<?=$_product->getProductUrl()?>"><?=$_product->getName()?></a></h5>
                     <?=$this->helper('catalog/product')->getPriceHtml($_product)?>
                     <?=$this->helper('review/product')->getSummaryHtml($_product, 'short')?>
                     <p><?=$_product->getDescription()?></p>
                 </td>
                 <td class="a-center">
-                    <button class="form-button" onclick="setLocation('<?=$this->getUrl('checkout/cart/add',array('product'=>$_product->getId()))?>')"><span><?=$this->__('Add to Cart')?></span></button>
+                    <?if($_product->isSaleable()):?>
+                        <button class="form-button" onclick="setLocation('<?=$this->getUrl('checkout/cart/add',array('product'=>$_product->getId()))?>')"><span><?=$this->__('Add to Cart')?></span></button>
+                    <?endif;?>
                     <?if ($this->helper('wishlist')->isAllow()) :?>
                     <br><a href="<?=$this->getUrl('wishlist/index/add',array('product'=>$_product->getId()))?>"><?=$this->__('Add to Wishlist')?></a>
                     <?endif;?>

@@ -23,6 +23,6 @@ $installer = $this;
 
 $installer->startSetup();
 
-$installer->run("DROP TABLE IF EXISTS `tax_class_group`;");
+$installer->run("DROP TABLE IF EXISTS {$this->getTable('tax_class_group')};");
 
 $installer->endSetup();

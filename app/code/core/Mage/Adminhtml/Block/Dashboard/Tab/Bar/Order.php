@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Dashboard orders block
  *
@@ -26,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Order extends Mage_Adminhtml_Block_Dashboard_Tab_Bar_Abstract
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -65,13 +67,10 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Order extends Mage_Adminhtml_Block_
         $this->getTab('orders_income')->getHorizontalAxis()->setTitle($this->__('Timeline'));
         $this->getTab('orders_income')->getHorizontalAxis()->setFormatType($this->getDataHelper()->getParam('range'));
 
-
         // number of orders axises configuration
         $this->getTab('orders_total')->getVerticalAxis()->setTitle($this->__('Qty'));
         $this->getTab('orders_total')->getHorizontalAxis()->setTitle($this->__('Timeline'));
         $this->getTab('orders_total')->getHorizontalAxis()->setFormatType($this->getDataHelper()->getParam('range'));
-
-
 
         // init columns for orders summary grid
         $this->getTab('orders_summary')
@@ -95,8 +94,6 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Order extends Mage_Adminhtml_Block_
                 'index'     =>  'amouth'
             ));
 
-
-
         // Totals for summary
         $this->getTab('orders_summary')->addTotal('qty', $this->__('Number Of Orders'));
         $this->getTab('orders_summary')->addTotal('revenue', $this->__('Total Income'));
@@ -106,4 +103,4 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Order extends Mage_Adminhtml_Block_
         return parent::_configureTabs();
     }
 
-} // Class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Order End
+}

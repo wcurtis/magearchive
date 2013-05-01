@@ -18,6 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Gift Message resource setup
  *
@@ -26,4 +27,4 @@
  */
 class Mage_GiftMessage_Model_Mysql4_Setup extends Mage_Eav_Model_Entity_Setup
 {
-} // Class Mage_GiftMessage_Model_Mysql4_Setup End
+}

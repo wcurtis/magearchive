@@ -17,7 +17,7 @@
  * @package    Zend_Config
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Ini.php 7191 2007-12-18 19:30:16Z darby $
+ * @version    $Id: Ini.php 7653 2008-01-27 17:24:02Z rob $
  */
 
 
@@ -130,7 +130,11 @@ class Zend_Config_Ini extends Zend_Config
         if (null === $section) {
             $dataArray = array();
             foreach ($preProcessedArray as $sectionName => $sectionData) {
-                $dataArray[$sectionName] = $this->_processExtends($preProcessedArray, $sectionName);
+                if(!is_array($sectionData)) {
+                    $dataArray = array_merge_recursive($dataArray, $this->_processKey($config, $sectionName, $sectionData));
+                } else {
+                    $dataArray[$sectionName] = $this->_processExtends($preProcessedArray, $sectionName);
+                }
             }
             parent::__construct($dataArray, $allowModifications);
         } elseif (is_array($section)) {

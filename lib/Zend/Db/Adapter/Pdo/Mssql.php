@@ -18,7 +18,7 @@
  * @subpackage Adapter
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Mssql.php 7188 2007-12-18 16:48:27Z darby $
+ * @version    $Id: Mssql.php 7671 2008-01-29 11:38:06Z peptolab $
  */
 
 
@@ -89,7 +89,11 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
         unset($dsn['driver_options']);
 
         if (isset($dsn['port'])) {
-            $dsn['host'] .= ',' . $dsn['port'];
+            $seperator = ':';
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $seperator = ',';
+            }
+            $dsn['host'] .= $seperator . $dsn['port'];
             unset($dsn['port']);
         }
 
@@ -131,6 +135,44 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
         }
         parent::_connect();
         $this->_connection->exec('SET QUOTED_IDENTIFIER ON');
+    }
+
+    /**
+     * Begin a transaction.
+     *
+     * It is necessary to override the abstract PDO transaction functions here, as
+     * the PDO driver for MSSQL does not support transactions.
+     */
+    protected function _beginTransaction()
+    {
+        $this->_connect();
+        $this->_connection->exec('BEGIN TRANSACTION');
+        return true;
+    }
+
+    /**
+     * Commit a transaction.
+     *
+     * It is necessary to override the abstract PDO transaction functions here, as
+     * the PDO driver for MSSQL does not support transactions.
+     */
+    protected function _commit()
+    {
+        $this->_connect();
+        $this->_connection->exec('COMMIT TRANSACTION');
+        return true;
+    }
+
+    /**
+     * Roll-back a transaction.
+     *
+     * It is necessary to override the abstract PDO transaction functions here, as
+     * the PDO driver for MSSQL does not support transactions.
+     */
+    protected function _rollBack() {
+        $this->_connect();
+        $this->_connection->exec('ROLLBACK TRANSACTION');
+        return true;
     }
 
     /**
@@ -200,6 +242,7 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
         $sql = "exec sp_pkeys @table_name = " . $this->quoteIdentifier($tableName, true);
         $stmt = $this->query($sql);
         $primaryKeysResult = $stmt->fetchAll(Zend_Db::FETCH_NUM);
+        $primaryKeyColumn = array();
         $pkey_column_name = 3;
         $pkey_key_seq = 4;
         foreach ($primaryKeysResult as $pkeysRow) {
@@ -274,9 +317,9 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
 
         $orderby = stristr($sql, 'ORDER BY');
         if ($orderby !== false) {
-            $sort = (stripos($orderby, 'desc') !== false) ? 'desc' : 'asc';
+            $sort = (stripos($orderby, ' desc') !== false) ? 'desc' : 'asc';
             $order = str_ireplace('ORDER BY', '', $orderby);
-            $order = trim(preg_replace('/ASC|DESC/i', '', $order));
+            $order = trim(preg_replace('/\bASC\b|\bDESC\b/i', '', $order));
         }
 
         $sql = preg_replace('/^SELECT\s/i', 'SELECT TOP ' . ($count+$offset) . ' ', $sql);

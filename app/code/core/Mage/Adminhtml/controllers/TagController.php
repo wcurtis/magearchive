@@ -70,7 +70,7 @@ class Mage_Adminhtml_TagController extends Mage_Adminhtml_Controller_Action
 
         $this->_initAction()
             ->_addBreadcrumb($id ? Mage::helper('adminhtml')->__('Edit Tag') : Mage::helper('adminhtml')->__('New Tag'), $id ? Mage::helper('adminhtml')->__('Edit Tag') : Mage::helper('adminhtml')->__('New Tag'))
-            ->_addContent($this->getLayout()->createBlock('adminhtml/tag_tag_edit')->setData('action', Mage::getUrl('*/tag_edit/save')))
+            ->_addContent($this->getLayout()->createBlock('adminhtml/tag_tag_edit')->setData('action', $this->getUrl('*/tag_edit/save')))
             ->renderLayout();
     }
 
@@ -83,21 +83,21 @@ class Mage_Adminhtml_TagController extends Mage_Adminhtml_Controller_Action
 
             switch( $this->getRequest()->getParam('ret') ) {
                 case 'all':
-                    $url = Mage::getUrl('*/*/index', array(
+                    $url = $this->getUrl('*/*/index', array(
                         'customer_id' => $this->getRequest()->getParam('customer_id'),
                         'product_id' => $this->getRequest()->getParam('product_id'),
                     ));
                     break;
 
                 case 'pending':
-                    $url = Mage::getUrl('*/tag/pending', array(
+                    $url = $this->getUrl('*/tag/pending', array(
                         'customer_id' => $this->getRequest()->getParam('customer_id'),
                         'product_id' => $this->getRequest()->getParam('product_id'),
                     ));
                     break;
 
                 default:
-                    $url = Mage::getUrl('*/*/index', array(
+                    $url = $this->getUrl('*/*/index', array(
                         'customer_id' => $this->getRequest()->getParam('customer_id'),
                         'product_id' => $this->getRequest()->getParam('product_id'),
                     ));
@@ -127,21 +127,21 @@ class Mage_Adminhtml_TagController extends Mage_Adminhtml_Controller_Action
 
             switch( $this->getRequest()->getParam('ret') ) {
                 case 'all':
-                    $url = Mage::getUrl('*/*/', array(
+                    $url = $this->getUrl('*/*/', array(
                         'customer_id' => $this->getRequest()->getParam('customer_id'),
                         'product_id' => $this->getRequest()->getParam('product_id'),
                     ));
                     break;
 
                 case 'pending':
-                    $url = Mage::getUrl('*/tag/pending', array(
+                    $url = $this->getUrl('*/tag/pending', array(
                         'customer_id' => $this->getRequest()->getParam('customer_id'),
                         'product_id' => $this->getRequest()->getParam('product_id'),
                     ));
                     break;
 
                 default:
-                    $url = Mage::getUrl('*/*/', array(
+                    $url = $this->getUrl('*/*/', array(
                         'customer_id' => $this->getRequest()->getParam('customer_id'),
                         'product_id' => $this->getRequest()->getParam('product_id'),
                     ));

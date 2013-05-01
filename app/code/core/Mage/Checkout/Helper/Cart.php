@@ -32,7 +32,7 @@ class Mage_Checkout_Helper_Cart extends Mage_Core_Helper_Url
      * @param   Mage_Catalog_Model_Product $product
      * @return  string
      */
-    public function getAddUrl($product)
+    public function getAddUrl($product, $additional = array())
     {
         // identify continue shopping url
         if ($currentProduct = Mage::registry('current_product')) {
@@ -51,13 +51,17 @@ class Mage_Checkout_Helper_Cart extends Mage_Core_Helper_Url
         }
 
         $params = array(
-            Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL => base64_encode($continueShoppingUrl),
+            Mage_Core_Controller_Front_Action::PARAM_NAME_URL_ENCODED => Mage::helper('core')->urlEncode($continueShoppingUrl),
             'product' => $product->getId()
         );
 
         if ($this->_getRequest()->getModuleName() == 'checkout'
             && $this->_getRequest()->getControllerName() == 'cart') {
             $params['in_cart'] = 1;
+        }
+
+        if (count($additional)){
+            $params = array_merge($params, $additional);
         }
 
         return $this->_getUrl('checkout/cart/add', $params);

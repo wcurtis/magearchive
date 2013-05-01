@@ -35,13 +35,14 @@
 <?=$this->getToolbarHtml()?>
 <?// List mode?>
 <?if($this->getMode()!='grid'):?>
+<?$_iterator = 0;?>
 <div class="listing-type-list catalog-listing">
 <?foreach ($_productCollection as $_product):?>
-    <div class="listing-item ">
+    <div class="listing-item <?if( ++$_iterator == sizeof($_productCollection) ):?>last<?endif;?>">
         <?// Product Image?>
         <div class="product-image">
             <a href="<?=$_product->getProductUrl()?>" title="<?=$this->htmlEscape($_product->getName())?>">
-                <img src="<?=$_product->getSmallImageUrl()?>" width="135" height="135" alt="<?=$this->htmlEscape($_product->getName())?>"/>
+                <img src="<?=$_product->getCustomSmallImageUrl('135x135')?>" alt="<?=$this->htmlEscape($_product->getName())?>"/>
             </a>
         </div>
 

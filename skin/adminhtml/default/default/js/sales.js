@@ -41,7 +41,7 @@ AdminOrder.prototype = {
 
     setCustomerId : function(id){
         this.customerId = id;
-        this.loadArea('header', false);
+        this.loadArea('header', true);
         this.customerSelectorHide();
         this.storeSelectorShow();
     },

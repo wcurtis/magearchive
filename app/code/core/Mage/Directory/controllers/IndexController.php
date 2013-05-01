@@ -19,19 +19,15 @@
  */
 
 
-
 /**
  * Page Index Controller
  *
- * @version    1.0
- * @date       Wed Feb 07 04:25:14 EET 2007
  */
-
 class Mage_Directory_IndexController extends Mage_Core_Controller_Front_Action
 {
-    function indexAction() 
+    function indexAction()
     {
 
     }
 
-}// Class IndexController END
+}

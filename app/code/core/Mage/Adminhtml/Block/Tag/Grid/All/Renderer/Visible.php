@@ -24,23 +24,22 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Tag_Grid_All_Renderer_Visible extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
-	public function render(Varien_Object $row)
-	{
-		return implode(", ", $this->_getStoresNames($row->getData($this->getColumn()->getIndex())));
-	}
+    public function render(Varien_Object $row)
+    {
+        return implode(", ", $this->_getStoresNames($row->getData($this->getColumn()->getIndex())));
+    }
 
-	protected function _getStoresNames($stores)
-	{
-		$collection = Mage::registry('stores_select_collection');
-		$sharedNames = array();
-		foreach($stores as $storeId) {
-		    if($storeId != 0) {
-			$sharedNames[] = $collection->getItemById($storeId)->getName();
-		    }
-		}
-		return $sharedNames;
-	}
+    protected function _getStoresNames($stores)
+    {
+        $collection = Mage::registry('stores_select_collection');
+        $sharedNames = array();
+        foreach($stores as $storeId) {
+            if($storeId != 0) {
+            $sharedNames[] = $collection->getItemById($storeId)->getName();
+            }
+        }
+        return $sharedNames;
+    }
 }// Class Mage_Adminhtml_Block_Tag_Grid_All_Renderer_Visible END

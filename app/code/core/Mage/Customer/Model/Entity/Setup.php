@@ -147,13 +147,6 @@ class Mage_Customer_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
                     ),
                 ),
             ),
-            
-            'customer_payment'=>array(
-                'table'=>'customer/entity',
-                'attributes' => array(
-                    'method_type'=>array('type'=>'int', 'input'=>'select', 'label'=>'Payment Method'),
-                ),
-            ),
         );
     }
 }

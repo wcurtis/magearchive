@@ -93,19 +93,18 @@ abstract class Varien_Convert_Profile_Abstract
     public function addException(Varien_Convert_Exception $e)
     {
         $this->_exceptions[] = $e;
-
-        if (Varien_Convert_Exception::FATAL==$e->getLevel()) {
-            throw $e;
-        }
-
         return $this;
     }
 
     public function run()
     {
         if (!$this->_actions) {
-            $this->getContainer()->addException("Could not find any actions for this profile", Varien_Convert_Exception::FATAL);
+            $e = new Varien_Convert_Exception("Could not find any actions for this profile");
+            $e->setLevel(Varien_Convert_Exception::FATAL);
+            $this->addException($e);
+            return;
         }
+
         foreach ($this->_actions as $action) {
             $action->run();
         }

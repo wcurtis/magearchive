@@ -18,15 +18,16 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+
 /**
  * Reports orders collection
  *
  * @category   Mage
  * @package    Mage_Reports
  */
-
 class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity_Order_Collection
 {
+
     public function prepareSummary($range, $customStart, $customEnd, $storeId=0)
     {
 
@@ -51,21 +52,21 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
 
         switch ($range)
         {
-        	case '24h':
-        		$expression = 'DATE_FORMAT(DATE_SUB({{attribute}}, INTERVAL ' . $timeZoneOffset . ' SECOND), \'%Y-%m-%d %H:00\')';
-        		break;
+            case '24h':
+                $expression = 'DATE_FORMAT(DATE_SUB({{attribute}}, INTERVAL ' . $timeZoneOffset . ' SECOND), \'%Y-%m-%d %H:00\')';
+                break;
 
-        	case '7d':
-        	case '1m':
-        	   $expression = 'DATE_FORMAT(DATE_SUB({{attribute}}, INTERVAL ' . $timeZoneOffset . ' SECOND), \'%Y-%m-%d\')';
-        	   break;
+            case '7d':
+            case '1m':
+               $expression = 'DATE_FORMAT(DATE_SUB({{attribute}}, INTERVAL ' . $timeZoneOffset . ' SECOND), \'%Y-%m-%d\')';
+               break;
 
 
-        	case '1y':
-        	case 'custom':
-        	default:
-        	    $expression = 'DATE_FORMAT(DATE_SUB({{attribute}}, INTERVAL ' . $timeZoneOffset . ' SECOND), \'%Y-%m-01\')';
-        		break;
+            case '1y':
+            case 'custom':
+            default:
+                $expression = 'DATE_FORMAT(DATE_SUB({{attribute}}, INTERVAL ' . $timeZoneOffset . ' SECOND), \'%Y-%m-01\')';
+                break;
         }
 
         return $expression;
@@ -83,17 +84,17 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
         $dateStart = clone $dateEnd;
         switch ($range)
         {
-        	case '24h':
-        		$dateStart->setHour(0);
-        		break;
+            case '24h':
+                $dateStart->setHour(0);
+                break;
 
             case '7d':
-        		$dateStart->subDay(7);
-        		break;
+                $dateStart->subDay(7);
+                break;
 
             case '1m':
                 $dateStart->setDay(1);
-        		break;
+                break;
 
             case 'custom':
                 $dateStart = $customStart ? $customStart : $dateEnd;
@@ -106,9 +107,9 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
             case '2y':
                 $dateStart->subYear(2);
                 break;
-        	default:
-        	    $dateStart->subYear(1);
-        		break;
+            default:
+                $dateStart->subYear(1);
+                break;
         }
 
         $dateStart->setHour(0);
@@ -118,4 +119,5 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
 
         return array('from'=>$dateStart, 'to'=>$dateEnd, 'datetime'=>true);
     }
-}// Class Mage_Reports_Model_Mysql4_Order_Collection END
+
+}

@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -33,8 +34,6 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
         $this->setUseAjax(true);
         $this->setDefaultSort('id');
     }
-
-
 
     protected function _prepareCollection()
     {
@@ -193,4 +192,5 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
     {
         return $this->getUrl('*/*/grid', array('_current'=>true));
     }
+
 }

@@ -26,6 +26,7 @@
  */
 class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Product extends Mage_Adminhtml_Block_Dashboard_Tab_Bar_Abstract
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -47,12 +48,10 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Product extends Mage_Adminhtml_Bloc
             ->addSeries('average', array('x_field'=>'name', 'y_field'=>'salary'))
             ->addSeries('salary', array('x_field'=>'name', 'y_field'=>'avarage'));
 
-
         $this->getTab('products_avarage')->getVerticalAxis()->setTitle($this->__('Avarage'));
         $this->getTab('products_avarage')->getHorizontalAxis()->setTitle($this->__('Products'));
 
         $this->addTab('products_avarage_grid',  'grid', array('title'=>$this->__('Table')));
-
 
         // init columns for product tab
         $this->getTab('products_avarage_grid')
@@ -76,4 +75,6 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Product extends Mage_Adminhtml_Bloc
 
         return parent::_initTabs();
     }
-} // Class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Product end
+
+}
+ // Class Mage_Adminhtml_Block_Dashboard_Tab_Bar_Product end

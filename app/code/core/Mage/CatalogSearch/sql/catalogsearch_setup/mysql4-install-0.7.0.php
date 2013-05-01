@@ -25,8 +25,8 @@ $installer->startSetup();
 
 $installer->run("
 
-DROP TABLE IF EXISTS `catalogsearch_query`;
-CREATE TABLE `catalogsearch_query` (
+DROP TABLE IF EXISTS {$this->getTable('catalogsearch_query')};
+CREATE TABLE {$this->getTable('catalogsearch_query')} (
     `query_id` int(10) unsigned NOT NULL auto_increment,
     `query_text` varchar(255) NOT NULL default '',
     `num_results` int(10) unsigned NOT NULL default '0',
@@ -37,7 +37,7 @@ CREATE TABLE `catalogsearch_query` (
     PRIMARY KEY  (`query_id`),
     KEY `search_query` (`query_text`,`popularity`),
     KEY `FK_catalogsearch_query` (`store_id`),
-    CONSTRAINT `FK_catalogsearch_query` FOREIGN KEY (`store_id`) REFERENCES `core_store` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `FK_catalogsearch_query` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
     ");

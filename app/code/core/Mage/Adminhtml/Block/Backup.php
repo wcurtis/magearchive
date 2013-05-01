@@ -25,7 +25,7 @@
  * @package    Mage_Adminhtml
  */
 
-class Mage_Adminhtml_Block_Backup extends Mage_Core_Block_Template
+class Mage_Adminhtml_Block_Backup extends Mage_Adminhtml_Block_Template
 {
     public function __construct()
     {
@@ -40,7 +40,7 @@ class Mage_Adminhtml_Block_Backup extends Mage_Core_Block_Template
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label' => Mage::helper('backup')->__('Create Backup'),
-                    'onclick' => "window.location.href='" . Mage::getUrl('*/*/create') . "'",
+                    'onclick' => "window.location.href='" . $this->getUrl('*/*/create') . "'",
                                         'class'  => 'task'
                 ))
         );

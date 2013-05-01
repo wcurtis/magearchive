@@ -76,4 +76,12 @@ class Mage_Page_Block_Html extends Mage_Core_Block_Template
         $this->setBodyClass($this->getBodyClass().' '.$className);
         return $this;
     }
+
+    public function getLang()
+    {
+        if (!$this->hasData('lang')) {
+            $this->setData('lang', substr(Mage::app()->getLocale()->getLocaleCode(), 0, 2));
+        }
+        return $this->getData('lang');
+    }
 }

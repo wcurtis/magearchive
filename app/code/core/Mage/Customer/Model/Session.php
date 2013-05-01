@@ -77,6 +77,11 @@ class Mage_Customer_Model_Session extends Mage_Core_Model_Session_Abstract
         return $this->getId();
     }
 
+    public function getCustomerGroupId()
+    {
+        return $this->isLoggedIn() ? $this->getCustomer()->getGroupId() : 0;
+    }
+
     /**
      * Checking custommer loggin status
      *

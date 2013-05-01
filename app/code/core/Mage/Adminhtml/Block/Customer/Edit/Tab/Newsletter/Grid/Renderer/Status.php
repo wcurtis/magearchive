@@ -24,34 +24,35 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid_Renderer_Status extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
-	protected static $_statuses;
-	
-	public function __construct()
-	{
-	    self::$_statuses = array(
-        		Mage_Newsletter_Model_Queue::STATUS_SENT 	=> Mage::helper('customer')->__('Sent'),
-        		Mage_Newsletter_Model_Queue::STATUS_CANCEL	=> Mage::helper('customer')->__('Cancel'),
-        		Mage_Newsletter_Model_Queue::STATUS_NEVER 	=> Mage::helper('customer')->__('Not Sent'),
-        		Mage_Newsletter_Model_Queue::STATUS_SENDING => Mage::helper('customer')->__('Sending'),
-        		Mage_Newsletter_Model_Queue::STATUS_PAUSE 	=> Mage::helper('customer')->__('Paused'),
-        	);
+
+    protected static $_statuses;
+
+    public function __construct()
+    {
+        self::$_statuses = array(
+                Mage_Newsletter_Model_Queue::STATUS_SENT 	=> Mage::helper('customer')->__('Sent'),
+                Mage_Newsletter_Model_Queue::STATUS_CANCEL	=> Mage::helper('customer')->__('Cancel'),
+                Mage_Newsletter_Model_Queue::STATUS_NEVER 	=> Mage::helper('customer')->__('Not Sent'),
+                Mage_Newsletter_Model_Queue::STATUS_SENDING => Mage::helper('customer')->__('Sending'),
+                Mage_Newsletter_Model_Queue::STATUS_PAUSE 	=> Mage::helper('customer')->__('Paused'),
+            );
         parent::__construct();
-	}
+    }
 
     public function render(Varien_Object $row)
     {
-    	return Mage::helper('customer')->__($this->getStatus($row->getQueueStatus()));
+        return Mage::helper('customer')->__($this->getStatus($row->getQueueStatus()));
     }
 
     public static function  getStatus($status)
     {
-    	if(isset(self::$_statuses[$status])) {
-    		return self::$_statuses[$status];
-    	}
+        if(isset(self::$_statuses[$status])) {
+            return self::$_statuses[$status];
+        }
 
-    	return Mage::helper('customer')->__('Unknown');
+        return Mage::helper('customer')->__('Unknown');
     }
+
 }

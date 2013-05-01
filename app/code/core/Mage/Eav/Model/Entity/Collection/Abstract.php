@@ -953,7 +953,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract implements IteratorAggregate, Co
      */
     public function _loadAttributes($printQuery = false, $logQuery = false)
     {
-        if (empty($this->_items) || empty($this->_selectAttributes)) {
+        if (empty($this->_items) || empty($this->_itemsById) || empty($this->_selectAttributes)) {
             return $this;
         }
 
@@ -962,12 +962,6 @@ class Mage_Eav_Model_Entity_Collection_Abstract implements IteratorAggregate, Co
 
         $condition = "entity_type_id=".$entity->getTypeId();
         $condition .= " and ".$this->_read->quoteInto("$entityIdField in (?)", array_keys($this->_itemsById));
-        if ($entity->getUseDataSharing()) {
-            $condition .= " and ".$this->_read->quoteInto("store_id in (?)", $entity->getSharedStoreIds());
-        }
-        else {
-            $condition .= " and ".$this->_read->quoteInto("store_id=?", $entity->getStoreId());
-        }
         $condition .= " and ".$this->_read->quoteInto("attribute_id in (?)", $this->_selectAttributes);
 
         $attrById = array();
@@ -1090,12 +1084,12 @@ class Mage_Eav_Model_Entity_Collection_Abstract implements IteratorAggregate, Co
         $select = $this->getSelect();
 
         $condArr = array("$pk = $fk");
-        if ($entity->getUseDataSharing()) {
+        /*if ($entity->getUseDataSharing()) {
             $condArr[] = $read->quoteInto("$attrTable.store_id in (?)", $entity->getSharedStoreIds());
         }
         else {
             $condArr[] = $read->quoteInto("$attrTable.store_id=?", $entity->getStoreId());
-        }
+        }*/
         if (!$attribute->getBackend()->isStatic()) {
             $condArr[] = $read->quoteInto("$attrTable.attribute_id=?", $attribute->getId());
         }

@@ -19,31 +19,28 @@
  */
 
 
-
-
 /**
  * Immediate flush block. To be used only as root
  *
- * @version    1.0 
- * @date       Thu Feb 08 05:56:43 EET 2007
  */
-
 class Mage_Core_Block_Flush extends Mage_Core_Block_Abstract
 {
-	function toHtml()
-	{
-		if (!$this->_beforeToHtml()) {
-			return '';
-		}
 
-	    ob_implicit_flush();
-	    
-		foreach ($this->getSortedChildren() as $name) {
-			$block = $this->getLayout()->getBlock($name);
-			if (!$block) {
-				Mage::exception(Mage::helper('core')->__('Invalid block: %s', $name));
-			}
-			echo $block->toHtml();
-		}
-	}
-}// Class Mage_Core_Block_List END
+    protected function _toHtml()
+    {
+        if (!$this->_beforeToHtml()) {
+            return '';
+        }
+
+        ob_implicit_flush();
+
+        foreach ($this->getSortedChildren() as $name) {
+            $block = $this->getLayout()->getBlock($name);
+            if (!$block) {
+                Mage::exception(Mage::helper('core')->__('Invalid block: %s', $name));
+            }
+            echo $block->toHtml();
+        }
+    }
+
+}
