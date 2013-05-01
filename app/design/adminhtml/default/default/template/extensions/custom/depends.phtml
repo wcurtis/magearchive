@@ -58,7 +58,7 @@
                     </td><td style="margin-bottom:5px;">
                         <input class="input-text" style="width:100px;" name="depends[package][exclude][]" <?php echo $self->getChecked('depends/package/exclude/'.$_i) ?>/>
                     </td><td style="margin-bottom:5px;">
-                        <select name="depends[package][type][]">
+                        <select name="depends[package][type][]" style="width:70px">
                             <?php foreach ($self->getDependTypes() as $_value=>$_label): ?>
                                 <option value="<?php echo $_value ?>" <?php echo $self->getSelected('depends/package/type/'.$_i, $_value) ?>><?php echo $_label ?></option>
                             <?php endforeach ?>
@@ -120,7 +120,7 @@
                     </td><td style="margin-bottom:5px;">
                         <input class="input-text" style="width:100px;" name="depends[subpackage][exclude][]" <?php echo $self->getChecked('depends/subpackage/exclude/'.$_i) ?>/>
                     </td><td style="margin-bottom:5px;">
-                        <select name="depends[subpackage][type][]">
+                        <select name="depends[subpackage][type][]" style="width:70px">
                         <?php foreach ($self->getDependTypes() as $_value=>$_label): ?>
                             <option value="<?php echo $_value ?>" <?php echo $self->getSelected('depends/subpackage/type/'.$_i, $_value) ?>><?php echo $_label ?></option>
                         <?php endforeach ?>
@@ -169,7 +169,7 @@
                 <tr id="depends_extensions_template" style="display:none">
 <?php function showDependsExtensionsTemplate($self, $_i=0) { ?>
                     <td style="margin-bottom:5px;">
-                        <select name="depends[extension][name][]">
+                        <select name="depends[extension][name][]" style="width:100px">
                         <?php foreach ($self->getExtensions() as $_value=>$_label): ?>
                             <option value="<?php echo $_value ?>" <?php echo $self->getSelected('depends/extension/name/'.$_i, $_value) ?>><?php echo $_label ?></option>
                         <?php endforeach ?>
@@ -183,7 +183,7 @@
                     </td><td style="margin-bottom:5px;">
                         <input class="input-text" style="width:100px;" name="depends[extension][exclude][]" <?php echo $self->getChecked('depends/extension/exclude/'.$_i) ?>/>
                     </td><td style="margin-bottom:5px;">
-                        <select name="depends[extension][type][]">
+                        <select name="depends[extension][type][]" style="width:70px">
                             <?php foreach ($self->getDependTypes() as $_value=>$_label): ?>
                                 <option value="<?php echo $_value ?>" <?php echo $self->getSelected('depends/extension/type/'.$_i, $_value) ?>><?php echo $_label ?></option>
                             <?php endforeach ?>

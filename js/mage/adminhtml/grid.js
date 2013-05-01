@@ -81,6 +81,7 @@ varienGrid.prototype = {
             }
         }
         this.bindFilterFields();
+        this.bindFieldsChange();
         if(this.initCallback){
             try {
                 this.initCallback(this);
@@ -184,6 +185,15 @@ varienGrid.prototype = {
             Event.observe(filters[i],'keypress',this.filterKeyPress.bind(this));
         }
     },
+    bindFieldsChange : function(){
+        if (!$(this.containerId)) {
+            return;
+        }
+        var dataElements = $(this.containerId+this.tableSufix).down('.data tbody').getElementsBySelector('input', 'select');
+        for(var i=0; i<dataElements.length;i++){
+            Event.observe(dataElements[i], 'change', dataElements[i].setHasChanges.bind(dataElements[i]));
+        }
+    },
     filterKeyPress : function(event){
         if(event.keyCode==Event.KEY_RETURN){
             this.doFilter();
@@ -208,6 +218,7 @@ varienGrid.prototype = {
     },
     setCheckboxChecked : function(element, checked){
         element.checked = checked;
+        element.setHasChanges({});
         if(this.checkboxCheckCallback){
             this.checkboxCheckCallback(this,element,checked);
         }

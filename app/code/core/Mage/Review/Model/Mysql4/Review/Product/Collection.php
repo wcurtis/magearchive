@@ -241,17 +241,25 @@ class Mage_Review_Model_Mysql4_Review_Product_Collection extends Mage_Catalog_Mo
         return $col;
     }
 
+    protected function _afterLoad()
+    {
+        parent::_afterLoad();
+    	if ($this->_addStoreDataFlag) {
+    	    $this->_addStoreData();
+    	}
+    	return $this;
+    }
 
-    protected function _addStoreData_addStoreData()
+    protected function _addStoreData()
     {
         $reviewsIds = $this->getColumnValues('review_id');
         $storesToReviews = array();
         if (count($reviewsIds)>0) {
-            $select = $this->_read->select()
+            $select = $this->getConnection()->select()
                 ->from($this->_reviewStoreTable)
                 ->where('review_id IN(?)', $reviewsIds)
                 ->where('store_id > ?', 0);
-            $result = $this->_read->fetchAll($select);
+            $result = $this->getConnection()->fetchAll($select);
             foreach ($result as $row) {
                 if (!isset($storesToReviews[$row['review_id']])) {
                     $storesToReviews[$row['review_id']] = array();

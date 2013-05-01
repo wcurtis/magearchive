@@ -27,6 +27,12 @@
  */
 class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
 {
+    /**
+     * Real file path
+     *
+     * @var string
+     */
+    protected $_filePath;
 
     /**
      * Init model
@@ -37,116 +43,90 @@ class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Prepare filename
+     * Return real file path
      *
      * @return string
      */
-    public function getPreparedFilename()
+    protected function getPath()
     {
-        $filename = Mage::getBaseDir('base') . '/' . $this->getSitemapPath() . '/' . $this->getSitemapFilename();
-        $filename = str_replace('//', '/', $filename);
-        return $filename;
+        if (is_null($this->_filePath)) {
+            $this->_filePath = str_replace('//', '/', Mage::getBaseDir('base') . '/'
+                . $this->getSitemapPath());
+        }
+        return $this->_filePath;
     }
 
-    /**
-     * Generate sitemap xml
-     *
-     * @return string
-     */
-    public function generateXml() {
+    public function generateXml()
+    {
+        $io = new Varien_Io_File();
+        $io->setAllowCreateFolders(true);
+        $io->open(array('path' => $this->getPath()));
+        $io->streamOpen($this->getSitemapFilename());
+
+        $io->streamWrite('<?xml version="1.0" encoding="UTF-8"?>' . "\n");
+        $io->streamWrite('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
 
         $storeId = $this->getStoreId();
-        $date = date('Y-m-d');
-
-        $simplexml = new Varien_Simplexml_Element('<?xml version="1.0" encoding="UTF-8"?><urlset></urlset>');
-        $simplexml->addAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-
+        $date    = Mage::getSingleton('core/date')->gmtDate('Y-m-d');
+        $baseUrl = Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
 
         /**
          * Generate categories sitemap
          */
-
         $changefreq = (string)Mage::getStoreConfig('sitemap/category/changefreq');
-        $priority = (string)Mage::getStoreConfig('sitemap/category/priority');
-
-        $categories = Mage::getModel('catalog/category')
-            ->setStoreId($storeId)
-            ->getCollection()
-            ->addAttributeToSelect('*')
-            ->load();
-
-        foreach ($categories as $category){
-            $category = Mage::getModel('catalog/category')
-                ->load($category->getId());
-            if (!$category->getIsActive()) {
-            	continue;
-            }
-
-            $url = $simplexml->addChild('url');
-            $url->addChild('loc', $category->getUrl());
-
-            $url->addChild('lastmod', $date);
-            $url->addChild('changefreq', $changefreq);
-            $url->addChild('priority', $priority);
+        $priority   = (string)Mage::getStoreConfig('sitemap/category/priority');
+        $collection = Mage::getResourceModel('sitemap/catalog_category')->getCollection($storeId);
+        foreach ($collection as $item) {
+            $xml = sprintf('<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq><priority>%.1f</priority></url>',
+                htmlspecialchars($baseUrl . $item->getUrl()),
+                $date,
+                $changefreq,
+                $priority
+            );
+            $io->streamWrite($xml);
         }
+        unset($collection);
 
         /**
          * Generate products sitemap
          */
-
         $changefreq = (string)Mage::getStoreConfig('sitemap/product/changefreq');
-        $priority = (string)Mage::getStoreConfig('sitemap/product/priority');
-
-        $products = Mage::getModel('catalog/product')
-            ->setStoreId($storeId)
-            ->getCollection()
-            ->addAttributeToSelect('*');
-
-        Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($products);
-        Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($products);
-
-        $products->load();
-
-        foreach ($products as $product){
-            $product = Mage::getModel('catalog/product')
-                ->load($product->getId());
-
-            $url = $simplexml->addChild('url');
-            $url->addChild('loc', $product->getProductUrl());
-
-            $url->addChild('lastmod', $date);
-            $url->addChild('changefreq', $changefreq);
-            $url->addChild('priority', $priority);
+        $priority   = (string)Mage::getStoreConfig('sitemap/product/priority');
+        $collection = Mage::getResourceModel('sitemap/catalog_product')->getCollection($storeId);
+        foreach ($collection as $item) {
+            $xml = sprintf('<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq><priority>%.1f</priority></url>',
+                htmlspecialchars($baseUrl . $item->getUrl()),
+                $date,
+                $changefreq,
+                $priority
+            );
+            $io->streamWrite($xml);
         }
+        unset($collection);
 
         /**
-         * Generate CMS pages sitemap
+         * Generate cms pages sitemap
          */
-
         $changefreq = (string)Mage::getStoreConfig('sitemap/page/changefreq');
-        $priority = (string)Mage::getStoreConfig('sitemap/page/priority');
-
-        $pages = Mage::getModel('cms/page')
-            ->setStoreId($storeId)
-            ->getCollection();
-
-        foreach ($pages as $page) {
-             $page = Mage::getModel('cms/page')
-        	     ->load($page->getId());
-
-            $url = $simplexml->addChild('url');
-            $url->addChild('loc', Mage::getBaseUrl() . $page->getIdentifier());
-
-            $url->addChild('lastmod', $date);
-            $url->addChild('changefreq', $changefreq);
-            $url->addChild('priority', $priority);
+        $priority   = (string)Mage::getStoreConfig('sitemap/page/priority');
+        $collection = Mage::getResourceModel('sitemap/cms_page')->getCollection($storeId);
+        foreach ($collection as $item) {
+            $xml = sprintf('<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq><priority>%.1f</priority></url>',
+                htmlspecialchars($baseUrl . $item->getUrl()),
+                $date,
+                $changefreq,
+                $priority
+            );
+            $io->streamWrite($xml);
         }
+        unset($collection);
 
-        // record last generation time
-        $this->setSitemapTime(now());
+        $io->streamWrite('</urlset>');
+        $io->streamClose();
+
+        $this->setSitemapTime(Mage::getSingleton('core/date')->gmtDate('Y-m-d H:i:s'));
         $this->save();
 
-        return $simplexml->asXml();
+        return $this;
     }
-
 }

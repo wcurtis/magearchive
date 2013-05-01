@@ -144,7 +144,7 @@ class Mage_Core_Model_Layout_Update
     public function getCacheId()
     {
         if (!$this->_cacheId) {
-            $this->_cacheId = md5(join('__', $this->getHandles()));
+            $this->_cacheId = Mage::app()->getStore()->getId().'_'.md5(join('__', $this->getHandles()));
         }
         return $this->_cacheId;
     }
@@ -166,7 +166,7 @@ class Mage_Core_Model_Layout_Update
         if (!Mage::app()->useCache('layout')) {
             return false;
         }
-        
+
         if (!$result = Mage::app()->loadCache($this->getCacheId())) {
             return false;
         }
@@ -243,8 +243,9 @@ class Mage_Core_Model_Layout_Update
 
         $design = Mage::getSingleton('core/design_package');
         $area = $design->getArea();
-
-        $cacheKey = 'layout_'.$area.'_'.$design->getPackageName().'_'.$design->getTheme('layout');
+        $storeId = Mage::app()->getStore()->getId();
+        $cacheKey = 'LAYOUT_'.$area.'_STORE'.$storeId.'_'.$design->getPackageName().'_'.$design->getTheme('layout');
+#echo "TEST:".$cacheKey;
         $cacheTags = array('layout');
 
         if (Mage::app()->useCache('layout') && ($layoutStr = Mage::app()->loadCache($cacheKey))) {

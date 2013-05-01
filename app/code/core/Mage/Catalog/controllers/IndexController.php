@@ -20,22 +20,11 @@
 
 class Mage_Catalog_IndexController extends Mage_Core_Controller_Front_Action
 {
-
     /**
      * Index action
-     *
-     * Display categories home page
-     *
      */
     public function indexAction()
     {
-        $this->loadLayout();
-
-        $homeBlock = $this->getLayout()->createBlock('core/template', 'homecontent')->setTemplate('catalog/home.phtml');
-        $this->getLayout()->getBlock('content')->append($homeBlock);
-
-        $this->renderLayout();
+        $this->_redirect('/');
     }
-
 }
-

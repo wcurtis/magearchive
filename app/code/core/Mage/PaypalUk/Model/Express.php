@@ -35,7 +35,7 @@ class Mage_PaypalUk_Model_Express extends Mage_Payment_Model_Method_Abstract
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canCapturePartial       = false;
-    protected $_canRefund               = true;
+    protected $_canRefund               = false;
     protected $_canVoid                 = true;
     protected $_canUseInternal          = false;
     protected $_canUseCheckout          = true;
@@ -121,7 +121,7 @@ class Mage_PaypalUk_Model_Express extends Mage_Payment_Model_Method_Abstract
         $address = $this->getQuote()->getShippingAddress();
         $this->getApi()
             ->setTrxtype($this->getPaymentAction())
-            ->setAmount($address->getGrandTotal())
+            ->setAmount($address->getBaseGrandTotal())
             ->setCurrencyCode($this->getQuote()->getBaseCurrencyCode())
             ->setShippingAddress($address)
             ->callSetExpressCheckout();
@@ -137,7 +137,7 @@ class Mage_PaypalUk_Model_Express extends Mage_Payment_Model_Method_Abstract
     {
         $this->getApi()
             ->setTrxtype($this->getPaymentAction())
-            ->setAmount($this->getQuote()->getGrandTotal())
+            ->setAmount($this->getQuote()->getBaseGrandTotal())
             ->setCurrencyCode($this->getQuote()->getBaseCurrencyCode())
             ->callSetExpressCheckout();
 
@@ -193,7 +193,7 @@ class Mage_PaypalUk_Model_Express extends Mage_Payment_Model_Method_Abstract
 
         if ($api->callGetExpressCheckoutDetails()===false) {
             //here need to take care where is the page should land
-            Mage::throwException(Mage::helper('paypalUk')->__('Problem during communication with PayPal UK'));
+            Mage::throwException(Mage::helper('paypalUk')->__('There has been an error processing your payment. Please try later or contact us for help.'));
         }
 
         $q = $this->getQuote();
@@ -230,14 +230,18 @@ class Mage_PaypalUk_Model_Express extends Mage_Payment_Model_Method_Abstract
     public function placeOrder(Varien_Object $payment)
     {
         $api = $this->getApi();
-        $api->setAmount($payment->getOrder()->getGrandTotal())
+        $api->setAmount($payment->getOrder()->getBaseGrandTotal())
             ->setTrxtype($this->getPaymentAction())
-            ->setCurrencyCode($payment->getOrder()->getOrderCurrencyCode());
+            ->setCurrencyCode($payment->getOrder()->getBaseCurrencyCode());
 
         if ($api->callDoExpressCheckoutPayment()!==false) {
             $payment->setStatus('APPROVED')
-                ->setCcTransId($api->getTransactionId())
                 ->setPayerId($api->getPayerId());
+           if ($this->getPaymentAction()==Mage_PaypalUk_Model_Api_Pro::TRXTYPE_AUTH_ONLY) {
+                $payment->setCcTransId($api->getTransactionId());
+           } else {
+                $payment->setLastTransId($api->getTransactionId());
+           }
         } else {
             $e = $api->getError();
             Mage::throwException($e['message']);
@@ -261,7 +265,8 @@ class Mage_PaypalUk_Model_Express extends Mage_Payment_Model_Method_Abstract
                    $payment
                     ->setStatus('APPROVED')
                     ->setPaymentStatus('CAPTURE')
-                    ->setCcTransId($api->getTransactionId())
+                    //->setCcTransId($api->getTransactionId())
+                    ->setLastTransId($api->getTransactionId())
                     ->setCcAvsStatus($api->getAvsCode())
                     ->setCcCidStatus($api->getCvv2Match());
              } else {

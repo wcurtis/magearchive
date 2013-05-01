@@ -32,11 +32,6 @@ class Mage_Tag_Block_All extends Mage_Core_Block_Template
     protected $_minPopularity;
     protected $_maxPopularity;
 
-    public function __construct()
-    {
-        #$this->setTemplate('tag/cloud.phtml');
-    }
-
     protected function _loadTags()
     {
         if (empty($this->_tags)) {
@@ -81,11 +76,6 @@ class Mage_Tag_Block_All extends Mage_Core_Block_Template
     public function getMinPopularity()
     {
         return $this->_minPopularity;
-    }
-
-    protected function _toHtml()
-    {
-        return parent::_toHtml();
     }
 
     protected function _getHeadText()

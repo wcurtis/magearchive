@@ -72,6 +72,12 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
         Varien_Profiler::stop('TEST4: '.__METHOD__);
         Varien_Profiler::start('TEST5: '.__METHOD__);
 
+        foreach ($cart->getQuote()->getMessages() as $message) {
+            if ($message) {
+                $cart->getCheckoutSession()->addMessage($message);
+            }
+        }
+
         $this->loadLayout();
         $this->_initLayoutMessages('checkout/session');
         $this->_initLayoutMessages('catalog/session');
@@ -83,10 +89,11 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
     public function addgroupAction()
     {
         $productIds = $this->getRequest()->getParam('products');
-        $cart = $this->_getCart();
-        $cart->addProductsByIds($productIds);
-        $cart->save();
-
+        if (is_array($productIds)) {
+            $cart = $this->_getCart();
+            $cart->addProductsByIds($productIds);
+            $cart->save();
+        }
         $this->_goBack();
     }
 
@@ -96,8 +103,8 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
     public function addAction()
     {
         $productId       = (int) $this->getRequest()->getParam('product');
-        $qty             = $this->getRequest()->getParam('qty', 1);
-        $relatedProducts = $this->getRequest()->getParam('related_product');
+        $qty             = (float) $this->getRequest()->getParam('qty', 1);
+        $relatedProducts = (string) $this->getRequest()->getParam('related_product');
 
         if (!$productId) {
             $this->_goBack();
@@ -105,7 +112,9 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
         }
 
         $additionalIds = array();
-        // Parse related products
+        /**
+         * Parse related products
+         */
         if ($relatedProducts) {
             $relatedProducts = explode(',', $relatedProducts);
             if (is_array($relatedProducts)) {
@@ -118,6 +127,7 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
         try {
             $cart = $this->_getCart();
             $product = Mage::getModel('catalog/product')
+                ->setStoreId(Mage::app()->getStore()->getId())
                 ->load($productId)
                 ->setConfiguredAttributes($this->getRequest()->getParam('super_attribute'))
                 ->setGroupedProducts($this->getRequest()->getParam('super_group', array()));
@@ -126,6 +136,7 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
                 'qty' => $qty,
                 'additional_ids' => $additionalIds,
                 'request' => $this->getRequest(),
+                'response' => $this->getResponse(),
             );
 
             Mage::dispatchEvent('checkout_cart_before_add', $eventArgs);
@@ -139,46 +150,14 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
 
             Mage::dispatchEvent('checkout_cart_add_product', array('product'=>$product));
 
-            $message = Mage::helper('checkout')->__('%s was successfully added to your shopping cart.', $product->getName());
-            if (!$this->getRequest()->getParam('in_cart')) {
-                // $message .= ' ' . Mage::helper('checkout')->__('Click <a href="%s">here</a> to continue shopping', $this->_getRefererUrl());
-            }
+            $message = $this->__('%s was successfully added to your shopping cart.', $product->getName());
 
-
-
-            $messages = Mage::getSingleton('checkout/session')->getWishlistPendingMessages();
-            $urls = Mage::getSingleton('checkout/session')->getWishlistPendingUrls();
-            $wishlistIds = Mage::getSingleton('checkout/session')->getWishlistIds();
-
-            if (count($wishlistIds) && $this->getRequest()->getParam('wishlist_next')){
-                $wishlistId = array_shift($wishlistIds);
-
-                $wishlist = Mage::getModel('wishlist/wishlist')
-                        ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer(), true);
-                $wishlist->getItemCollection()->load();
-
-                foreach($wishlist->getItemCollection() as $wishlistItem){
-                    if ($wishlistItem->getId() == $wishlistId)
-                        $wishlistItem->delete();
-                }
-                Mage::getSingleton('checkout/session')->setWishlistIds($wishlistIds);
-            }
-
-            if ($this->getRequest()->getParam('wishlist_next') && count($urls)) {
-                $url = array_shift($urls);
-                $message = array_shift($messages);
-
-                Mage::getSingleton('checkout/session')->setWishlistPendingUrls($urls);
-                Mage::getSingleton('checkout/session')->setWishlistPendingMessages($messages);
-
-                Mage::getSingleton('checkout/session')->addError($message);
-                $this->getResponse()->setRedirect($url);
-            } else {
+            if (!Mage::getSingleton('checkout/session')->getNoCartRedirect(true)) {
                 Mage::getSingleton('checkout/session')->addSuccess($message);
                 $this->_goBack();
             }
         }
-        catch (Mage_Core_Exception $e){
+        catch (Mage_Core_Exception $e) {
             if (Mage::getSingleton('checkout/session')->getUseNotice(true)) {
                 Mage::getSingleton('checkout/session')->addNotice($e->getMessage());
             }
@@ -195,7 +174,7 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
             }
         }
         catch (Exception $e) {
-            Mage::getSingleton('checkout/session')->addException($e, Mage::helper('checkout')->__('Can not add item to shopping cart'));
+            Mage::getSingleton('checkout/session')->addException($e, $this->__('Can not add item to shopping cart'));
             $this->_goBack();
         }
     }
@@ -207,17 +186,19 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
     {
         try {
             $cartData = $this->getRequest()->getParam('cart');
-            $cart = $this->_getCart();
-            $cart->updateItems($cartData)
-                ->save();
+            if (is_array($cartData)) {
+                $cart = $this->_getCart();
+                $cart->updateItems($cartData)
+                    ->save();
+            }
+            Mage::getSingleton('checkout/session')->setCartWasUpdated(true);
         }
         catch (Mage_Core_Exception $e){
             Mage::getSingleton('checkout/session')->addError($e->getMessage());
         }
         catch (Exception $e){
-            Mage::getSingleton('checkout/session')->addException($e, Mage::helper('checkout')->__('Cannot update shopping cart'));
+            Mage::getSingleton('checkout/session')->addException($e, $this->__('Cannot update shopping cart'));
         }
-
         $this->_goBack();
     }
 
@@ -226,13 +207,15 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
      */
     public function moveToWishlistAction()
     {
-        $id = $this->getRequest()->getParam('id');
-        try {
-            $this->_getCart()->moveItemToWishlist($id)
-                ->save();
-        }
-        catch (Exception $e){
-            Mage::getSingleton('checkout/session')->addError(Mage::helper('checkout')->__('Cannot move item to wishlist'));
+        $id = (int) $this->getRequest()->getParam('id');
+        if ($id) {
+            try {
+                $this->_getCart()->moveItemToWishlist($id)
+                    ->save();
+            }
+            catch (Exception $e){
+                Mage::getSingleton('checkout/session')->addError($this->__('Cannot move item to wishlist'));
+            }
         }
         $this->_goBack();
     }
@@ -242,62 +225,68 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
      */
     public function deleteAction()
     {
-        $id = $this->getRequest()->getParam('id');
-        $cart = Mage::getSingleton('checkout/cart');
-        try {
-            $cart->removeItem($id)
-              ->save();
-        } catch (Exception $e) {
-            Mage::getSingleton('checkout/session')->addError(Mage::helper('checkout')->__('Cannot remove item'));
+        $id = (int) $this->getRequest()->getParam('id');
+        if ($id) {
+            try {
+                $this->_getCart()->removeItem($id)
+                  ->save();
+            } catch (Exception $e) {
+                Mage::getSingleton('checkout/session')->addError($this->__('Cannot remove item'));
+            }
         }
-
         $this->_redirectReferer(Mage::getUrl('*/*'));
     }
 
     public function estimatePostAction()
     {
-        $country = $this->getRequest()->getParam('country_id');
-        $postcode = $this->getRequest()->getParam('estimate_postcode');
-        $city = $this->getRequest()->getParam('estimate_city');
+        $country    = (string) $this->getRequest()->getParam('country_id');
+        $postcode   = (string) $this->getRequest()->getParam('estimate_postcode');
+        $city       = (string) $this->getRequest()->getParam('estimate_city');
+        $regionId   = (string) $this->getRequest()->getParam('region_id');
+        $region     = (string) $this->getRequest()->getParam('region');
 
         $this->getQuote()->getShippingAddress()
             ->setCountryId($country)
             ->setCity($city)
             ->setPostcode($postcode)
-            ->setRegionId($this->getRequest()->getParam('region_id'))
-            ->setRegion($this->getRequest()->getParam('region'))
+            ->setRegionId($regionId)
+            ->setRegion($region)
             ->setCollectShippingRates(true);
-        $this->getQuote()/*->collectTotals()*/->save();
-
+        $this->getQuote()->save();
         $this->_goBack();
     }
 
     public function estimateUpdatePostAction()
     {
-        $code = $this->getRequest()->getParam('estimate_method');
-
-        $this->getQuote()->getShippingAddress()->setShippingMethod($code)/*->collectTotals()*/->save();
-
+        $code = (string) $this->getRequest()->getParam('estimate_method');
+        if (!empty($code)) {
+            $this->getQuote()->getShippingAddress()->setShippingMethod($code)/*->collectTotals()*/->save();
+        }
         $this->_goBack();
     }
 
     public function couponPostAction()
     {
-        $couponCode = $this->getRequest()->getParam('coupon_code');
+        $couponCode = (string) $this->getRequest()->getParam('coupon_code');
+        if (!strlen($couponCode)) {
+            $this->_goBack();
+            return;
+        }
+
         try {
             $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
             $this->getQuote()->setCouponCode($couponCode)
                 ->collectTotals()
                 ->save();
             if ($couponCode) {
-                if ($couponCode == $this->getQuote()->getCouponCode()) {
+                if ($couponCode == $this->getQuote()->getShippingAddress()->getCouponCode()) {
                     Mage::getSingleton('checkout/session')->addSuccess(
                         $this->__('Coupon code was applied successfully.')
                     );
                 }
                 else {
                     Mage::getSingleton('checkout/session')->addError(
-                        $this->__('"%s" coupon code is not valid.', $couponCode)
+                        $this->__('Coupon code "%s" is not valid.', Mage::helper('core')->htmlEscape($couponCode))
                     );
                 }
             }
@@ -311,19 +300,6 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
                 $this->__('Can not apply coupon code.')
             );
         }
-
-        $this->_goBack();
-    }
-
-    public function giftCertPostAction()
-    {
-        if ($this->getRequest()->getParam('do')==Mage::helper('checkout')->__('Clear')) {
-            $giftCode = '';
-        } else {
-            $giftCode = $this->getRequest()->getParam('giftcert_code');
-        }
-
-        $this->getQuote()->setGiftcertCode($giftCode)/*->collectTotals()*/->save();
 
         $this->_goBack();
     }

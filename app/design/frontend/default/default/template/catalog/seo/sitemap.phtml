@@ -33,5 +33,7 @@
         </ul>
     </div>
 <?php else: ?>
-    <div><?php echo $this->__('There are no %s available.', $this->getItemsTitle()); ?></div>
+    <div class="note-msg">
+        <?php echo $this->__('There are no %s available.', $this->getItemsTitle()); ?>
+    </div>
 <?php endif ?>

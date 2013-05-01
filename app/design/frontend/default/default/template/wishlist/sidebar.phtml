@@ -34,17 +34,17 @@
         <li>
             <div class="product-images">
                 <a href="<?php echo $_item->getProductUrl() ?>">
-                    <img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(50); ?>" alt="<?php echo $_item->getName() ?>" width="50"/>
+                    <img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(50); ?>" alt="<?php echo $this->htmlEscape($_item->getName()) ?>" width="50" height="50" />
                 </a>
             </div>
             <div class="product-details">
                 <a href="<?php echo $this->helper('wishlist')->getRemoveUrl($_item) ?>" onclick="return confirm('<?php echo $this->__('Are You sure?') ?>');" class="widget-btn">
                     <img src="<?php echo $this->getSkinUrl('images/list_remove_btn.gif') ?>" alt="<?php echo $this->__('Remove Item') ?>"/>
                 </a>
-                <a href="<?php echo $_item->getProductUrl() ?>"><?php echo $_item->getName() ?></a>
+                <a href="<?php echo $_item->getProductUrl() ?>"><?php echo $this->htmlEscape($_item->getName()) ?></a>
                 <?php echo $this->helper('catalog/product')->getPriceHtml($_item) ?>
                 <?php if($_item->isSaleable()): ?>
-                <a href="<?php echo $this->helper('wishlist')->getAddToCartUrl($_item) ?>" class="link-cart"><?php echo $this->__('Add to Cart') ?></a>
+                <a href="<?php echo $this->helper('wishlist')->getAddToCartUrlBase64($_item) ?>" class="link-cart"><?php echo $this->__('Add to Cart') ?></a>
                 <?php endif; ?>
             </div>
         </li>

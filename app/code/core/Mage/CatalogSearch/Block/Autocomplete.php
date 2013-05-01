@@ -44,12 +44,12 @@ class Mage_CatalogSearch_Block_Autocomplete extends Mage_Core_Block_Abstract
 		$firstHtml = '';
 		foreach ($collection as $item) {
 		    if ($item->getQueryText() == $query) {
-                $firstHtml.= '<li title="'.$item->getQueryText().'" class="'.((++$counter)%2?'odd':'even').'">';
-                $firstHtml.= '<div style="float:right">'.$item->getNumResults().'</div>'.$item->getQueryText().'</li>';
+                $firstHtml.= '<li title="'.$this->htmlEscape($item->getQueryText()).'" class="'.((++$counter)%2?'odd':'even').'">';
+                $firstHtml.= '<div style="float:right">'.$item->getNumResults().'</div>'.$this->htmlEscape($item->getQueryText()).'</li>';
 		    }
 		    else {
-		        $itemsHtml.= '<li title="'.$item->getQueryText().'" class="'.((++$counter)%2?'odd':'even').'">';
-                $itemsHtml.= '<div style="float:right">'.$item->getNumResults().'</div>'.$item->getQueryText().'</li>';
+		        $itemsHtml.= '<li title="'.$this->htmlEscape($item->getQueryText()).'" class="'.((++$counter)%2?'odd':'even').'">';
+                $itemsHtml.= '<div style="float:right">'.$item->getNumResults().'</div>'.$this->htmlEscape($item->getQueryText()).'</li>';
 		    }
 		}
 

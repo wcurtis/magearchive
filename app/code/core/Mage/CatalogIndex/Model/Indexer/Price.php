@@ -23,11 +23,10 @@
  * Catalog indexer price processor
  *
  */
-class Mage_CatalogIndex_Model_Indexer_Price
-    extends Mage_CatalogIndex_Model_Indexer_Abstract
-    implements Mage_CatalogIndex_Model_Indexer_Interface
+class Mage_CatalogIndex_Model_Indexer_Price extends Mage_CatalogIndex_Model_Indexer_Abstract
 {
     protected $_customerGroups = array();
+    protected $_processChildrenForConfigurable = false;
 
     protected function _construct()
     {
@@ -49,7 +48,6 @@ class Mage_CatalogIndex_Model_Indexer_Price
 
         if ($attribute->getAttributeCode() == 'price') {
             $result = array();
-//            $result[] = $data;
             foreach ($this->_customerGroups as $group) {
                 $object->setCustomerGroupId($group->getId());
                 $finalPrice = $object->getFinalPrice();
@@ -69,12 +67,21 @@ class Mage_CatalogIndex_Model_Indexer_Price
         if ($attribute->getFrontendInput() != 'price') {
             return false;
         }
+        if ($attribute->getAttributeCode() == 'tier_price') {
+            return false;
+        }
+        if ($attribute->getAttributeCode() == 'minimal_price') {
+            return false;
+        }
 
         return true;
     }
 
     protected function _getIndexableAttributeConditions()
     {
+        $conditions = "frontend_input = 'price' AND attribute_code <> 'price'";
+        return $conditions;
+
         $conditions = array();
         $conditions['frontend_input'] = 'price';
 

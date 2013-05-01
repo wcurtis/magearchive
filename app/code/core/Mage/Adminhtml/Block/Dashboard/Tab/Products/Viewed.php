@@ -90,7 +90,7 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Products_Viewed extends Mage_Adminhtml_
 
     public function getRowUrl($row)
     {
-        $params = array('id'=>$row->entity_id);
+        $params = array('id'=>$row->getId());
         if ($this->getRequest()->getParam('store')) {
             $params['store'] = $this->getRequest()->getParam('store');
         }

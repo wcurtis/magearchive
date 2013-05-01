@@ -71,6 +71,7 @@ class Mage_Adminhtml_Block_Newsletter_Problem_Grid extends Mage_Adminhtml_Block_
         $this->addColumn('queue_start', array(
             'header' => Mage::helper('newsletter')->__('Queue Date Start'),
             'index'  => 'queue_start_at',
+            'gmtoffset' => true,
             'type'	 => 'datetime'
         ));
 

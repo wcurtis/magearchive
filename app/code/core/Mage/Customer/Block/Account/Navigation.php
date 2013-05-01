@@ -32,13 +32,13 @@ class Mage_Customer_Block_Account_Navigation extends Mage_Core_Block_Template
 
     protected $_activeLink = false;
 
-    public function addLink($name, $path, $label, $base=null, $after=null)
+    public function addLink($name, $path, $label, $urlParams=array())
     {
         $this->_links[$name] = new Varien_Object(array(
             'name' => $name,
             'path' => $path,
             'label' => $label,
-            'url' => (is_null($base) ? Mage::getBaseUrl() : $base) . $path,
+            'url' => $this->getUrl($path, $urlParams),
         ));
         return $this;
     }

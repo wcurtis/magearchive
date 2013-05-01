@@ -76,7 +76,13 @@ class Mage_Customer_Block_Address_Renderer_Default extends Mage_Core_Block_Abstr
         }
 
         $formater = new Varien_Filter_Template();
-        $formater->setVariables(array_merge($address->getData(), array('country'=>$address->getCountryModel()->getName())));
+        $data = $address->getData();
+        if ($this->getType()->getHtmlEscape()) {
+            foreach ($data as $key => $value) {
+            	$data[$key] = $this->htmlEscape($value);
+            }
+        }
+        $formater->setVariables(array_merge($data, array('country'=>$address->getCountryModel()->getName())));
         return $formater->filter($format);
     }
 

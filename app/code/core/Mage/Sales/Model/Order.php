@@ -133,12 +133,16 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             return false;
         }
 
-        foreach ($this->getAllItems() as $item) {
+        /**
+         * Use only state for availability detect
+         */
+        /*foreach ($this->getAllItems() as $item) {
             if ($item->getQtyToCancel()>0) {
                 return true;
             }
         }
-        return false;
+        return false;*/
+        return true;
     }
 
     /**
@@ -274,7 +278,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
      */
     public function canReorder()
     {
-        if ($this->canUnhold()) {
+        if ($this->canUnhold() || !$this->getCustomerId()) {
             return false;
         }
 
@@ -282,19 +286,21 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
         foreach ($this->getItemsCollection() as $item) {
             $products[] = $item->getProductId();
         }
-        $productsCollection = Mage::getModel('catalog/product')->getCollection();
+        $productsCollection = Mage::getModel('catalog/product')->getCollection()
+            ->setStoreId($this->getStoreId());
 
         if (!empty($products)) {
             $productsCollection->addIdFilter($products)
+                ->addAttributeToSelect('status')
                 ->load();
             foreach ($productsCollection as $product) {
-                if ($product->isSalable()) {
-                    return true;
+                if (!$product->isSalable()) {
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -489,6 +495,16 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
                 }
                 $item->cancel();
             }
+
+            $this->setSubtotalCanceled($this->getSubtotal() - $this->getSubtotalInvoiced());
+            $this->setBaseSubtotalCanceled($this->getBaseSubtotal() - $this->getBaseSubtotalInvoiced());
+
+            $this->setTaxCanceled($this->getTaxAmount() - $this->getTaxInvoiced());
+            $this->setBaseTaxCanceled($this->getBaseTaxAmount() - $this->getBaseTaxInvoiced());
+
+            $this->setShippingCanceled($this->getShippingAmount() - $this->getShippingInvoiced());
+            $this->setBaseShippingCanceled($this->getBaseShippingAmount() - $this->getBaseShippingInvoiced());
+
             $this->setState($cancelState, true);
         }
         return $this;
@@ -995,6 +1011,7 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
                     ->addAttributeToSelect('increment_id')
                     ->addAttributeToSelect('created_at')
                     ->addAttributeToSelect('total_qty')
+                    ->addAttributeToSelect('email_sent')
                     ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id', null, 'left')
                     ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left')
                     ->setOrderFilter($this->getId())
@@ -1168,5 +1185,12 @@ class Mage_Sales_Model_Order extends Mage_Core_Model_Abstract
             $this->setState(self::STATE_PROCESSING, true);
         }
         return $this;
+    }
+
+    public function belongsToCurrentCustomer()
+    {
+        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+
+        return ($this->getCustomerId() == $customerId && $customerId != 0);
     }
 }

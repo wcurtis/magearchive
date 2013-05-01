@@ -164,7 +164,7 @@ if(!window.Flex) {
                 $(this.getFileId(file)).addClassName('progress');
                 $(this.getFileId(file)).removeClassName('new');
                 $(this.getFileId(file)).removeClassName('error');
-                if(file.progress) {
+                if (file.progress && file.progress.total) {
                     progress.update(this.fileProgressTemplate.evaluate(this.getFileProgressVars(file)));
                 } else {
                     progress.update('');
@@ -240,6 +240,9 @@ if(!window.Flex) {
                     break;
                 case 4: // Security error
                     error = 'Upload Security Error';
+                    break;
+                case 5: // SSL self-signed sertificate
+                    error = 'SSL Error: Invalid or self-signed sertificate';
                     break;
             }
 

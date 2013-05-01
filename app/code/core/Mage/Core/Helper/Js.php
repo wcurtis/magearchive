@@ -70,6 +70,8 @@ class Mage_Core_Helper_Js extends Mage_Core_Helper_Abstract
             'Please enter a valid number in this field.' => $this->__('Please enter a valid number in this field.'),
             'Please select State/Province.' => $this->__('Please select State/Province.'),
             'Please enter valid password.' => $this->__('Please enter valid password.'),
+            'Please enter 6 or more characters. Leading or trailing spaces will be ignored.' =>
+                $this->__('Please enter 6 or more characters. Leading or trailing spaces will be ignored.'),
             'Please enter a number greater than 0 in this field.' =>
                 $this->__('Please enter a number greater than 0 in this field.'),
             'Please enter a valid credit card number.' => $this->__('Please enter a valid credit card number.'),

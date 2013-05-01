@@ -245,5 +245,4 @@ class Mage_Adminhtml_DashboardController extends Mage_Adminhtml_Controller_Actio
     {
         return Mage::getSingleton('admin/session')->isAllowed('dashboard');
     }
-
 }

@@ -69,11 +69,6 @@ class Mage_Adminhtml_Sales_ShipmentController extends Mage_Adminhtml_Controller_
         }
     }
 
-    protected function _isAllowed()
-    {
-        return Mage::getSingleton('admin/session')->isAllowed('sales/shipment');
-    }
-
     public function pdfshipmentsAction(){
         $shipmentIds = $this->getRequest()->getPost('shipment_ids');
         if (!empty($shipmentIds)) {
@@ -104,5 +99,10 @@ class Mage_Adminhtml_Sales_ShipmentController extends Mage_Adminhtml_Controller_
         else {
             $this->_forward('noRoute');
         }
+    }
+
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('sales/shipment');
     }
 }

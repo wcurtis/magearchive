@@ -45,9 +45,12 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Price extends Mage_Eav_Model_
 
     public function afterSave($object)
     {
-        $oldValue = $object->getData($this->getAttribute()->getAttributeCode());
-
-        if ($object->getStoreId() != 0 || !$oldValue) {
+        $value = $object->getData($this->getAttribute()->getAttributeCode());
+        /**
+         * Orig value is only for existing objects
+         */
+        $origValue= $object->getOrigData($this->getAttribute()->getAttributeCode());
+        if ($object->getStoreId() != 0 || !$value || $origValue) {
             return;
         }
 
@@ -61,12 +64,15 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Price extends Mage_Eav_Model_
                 foreach ($storeIds as $storeId) {
                     $storeCurrency = Mage::app()->getStore($storeId)->getBaseCurrencyCode();
                     $rate = Mage::getModel('directory/currency')->load($baseCurrency)->getRate($storeCurrency);
-
-                    $newValue = $oldValue * $rate;
+                    if (!$rate) {
+                        $rate=1;
+                    }
+                    $newValue = $value * $rate;
                     $object->addAttributeUpdate($this->getAttribute()->getAttributeCode(), $newValue, $storeId);
                 }
             }
         }
+//die('123');
         return $this;
     }
 }

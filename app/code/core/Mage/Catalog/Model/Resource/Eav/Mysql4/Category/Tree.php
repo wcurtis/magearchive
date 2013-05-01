@@ -61,7 +61,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree extends Varien_Data_T
      * @param boolean $sorted
      * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree
      */
-    public function addCollectionData($collection=null, $sorted=false, $exclude=array())
+    public function addCollectionData($collection=null, $sorted=false, $exclude=array(), $toLoad=true, $onlyActive = false)
     {
         if (is_null($collection)) {
             $collection = $this->getCollection($sorted);
@@ -86,9 +86,16 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree extends Varien_Data_T
             }
         }
         $collection->addIdFilter($nodeIds);
-        $collection->load();
-        foreach ($collection as $category) {
-            $this->getNodeById($category->getId())->addData($category->getData());
+        if ($onlyActive) {
+            $collection->addAttributeToFilter('is_active', 1);
+        }
+
+        if($toLoad) {
+            $collection->load();
+
+            foreach ($collection as $category) {
+                $this->getNodeById($category->getId())->addData($category->getData());
+            }
         }
 
         return $this;
@@ -150,5 +157,15 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Tree extends Varien_Data_T
 
         return $collection;
      }
+
+    /**
+     * Executing parents move method and cleaning cache after it
+     *
+     */
+    public function move($category, $newParent, $prevNode = null) {
+        parent::move($category, $newParent, $prevNode);
+        Mage::app()->getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,
+            array(Mage_Catalog_Model_Category::CACHE_TAG));
+    }
 
 }

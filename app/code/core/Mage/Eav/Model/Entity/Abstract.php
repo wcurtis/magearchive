@@ -145,6 +145,8 @@ abstract class Mage_Eav_Model_Entity_Abstract
 
     /**
      * Retrieve connection for read data
+     *
+     * @return Zend_Db_Adapter_Abstract
      */
     protected function _getReadAdapter()
     {
@@ -153,6 +155,8 @@ abstract class Mage_Eav_Model_Entity_Abstract
 
     /**
      * Retrieve connection for write data
+     *
+     * @return Zend_Db_Adapter_Abstract
      */
     protected function _getWriteAdapter()
     {
@@ -325,6 +329,9 @@ abstract class Mage_Eav_Model_Entity_Abstract
             $attributeInstance = $attribute;
             $attributeCode = $attributeInstance->getAttributeCode();
             if (isset($this->_attributesByCode[$attributeCode])) {
+                $this->_attributesByCode[$attributeCode]->setAttributeSetId(
+                    $attribute->getAttributeSetId()
+                );
                 return $this->_attributesByCode[$attributeCode];
             }
         }

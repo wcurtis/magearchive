@@ -64,6 +64,7 @@ Customer account home dashboard layout
         <update handle="customer_account"/>
         <reference name="content">
             <block type="sales/order_history" name="sales.order.history"/>
+            <block type="customer/account_link" name="customer.account.link.back" template="customer/account/link/back.phtml"/>
         </reference>
     </sales_order_history>
 
@@ -130,16 +131,6 @@ Customer account home dashboard layout
             <block type="sales/order_view" name="sales.order.view"/>
         </reference>
     </sales_order_reorder>
-
-<!--    <sales_order_details>
-        <update handle="customer_account"/>
-        <reference name="root">
-            <action method="setHeaderTitle" translate="title" module="sales"><title>Order Details</title></action>
-        </reference>
-        <reference name="content">
-            <block type="sales/order_details" name="sales.order.details" template="sales/order/details.phtml"/>
-        </reference>
-    </sales_order_details>-->
 
     <sales_order_printinvoice>
         <reference name="root">

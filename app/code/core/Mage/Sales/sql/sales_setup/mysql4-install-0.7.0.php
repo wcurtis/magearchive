@@ -213,7 +213,7 @@ CREATE TABLE {$this->getTable('sales_invoice_entity_varchar')} (
   CONSTRAINT `FK_sales_invoice_entity_varchar` FOREIGN KEY (`entity_id`) REFERENCES {$this->getTable('sales_invoice_entity')} (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_sales_invoice_entity_varchar_attribute` FOREIGN KEY (`attribute_id`) REFERENCES {$this->getTable('eav_attribute')} (`attribute_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_sales_invoice_entity_varchar_entity_type` FOREIGN KEY (`entity_type_id`) REFERENCES {$this->getTable('eav_entity_type')} (`entity_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_sales_invoice_entity_varchar_store` FOREIGN KEY (`store_id`) REFERENCES `core_store` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_sales_invoice_entity_varchar_store` FOREIGN KEY (`store_id`) REFERENCES {$this->getTable('core_store')} (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `sales_invoice_entity_varchar` */

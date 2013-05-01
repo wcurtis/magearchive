@@ -57,11 +57,15 @@ abstract class Mage_Catalog_Model_Product_Type_Abstract
     public function getSetAttributes()
     {
         if (is_null($this->_setAttributes)) {
-            $this->_setAttributes = $this->getProduct()->getResource()
+            $attributes = $this->getProduct()->getResource()
                 ->loadAllAttributes($this->getProduct())
                 ->getAttributesByCode();
-            foreach ($this->_setAttributes as $attribute) {
-                $attribute->setDataObject($this->getProduct());
+            $this->_setAttributes = array();
+            foreach ($attributes as $attribute) {
+                if ($attribute->getAttributeSetId() == $this->getProduct()->getAttributeSetId()) {
+                    $attribute->setDataObject($this->getProduct());
+                    $this->_setAttributes[$attribute->getAttributeCode()] = $attribute;
+                }
             }
         }
         return $this->_setAttributes;

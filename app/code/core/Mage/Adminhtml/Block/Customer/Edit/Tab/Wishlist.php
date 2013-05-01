@@ -92,6 +92,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
         $this->addColumn('added_at', array(
             'header'    => Mage::helper('customer')->__('Date Added'),
             'index'     => 'added_at',
+            'gmtoffset' => true,
             'type'      => 'date'
         ));
 

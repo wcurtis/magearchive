@@ -39,15 +39,17 @@ class Mage_Rss_Helper_Data extends Mage_Core_Helper_Abstract
         }
     }
 
-    public function authAdmin()
+    public function authAdmin($path)
     {
         $session = Mage::getSingleton('rss/session');
         if ($session->isAdminLoggedIn()) {
             return;
         }
         list($username, $password) = $this->authValidate();
-        $user = Mage::getModel('admin/user')->login($username, $password);
-        if($user && $user->getId() && $user->getIsActive() == '1'){
+        $adminSession = Mage::getModel('admin/session');
+        $user = $adminSession->login($username, $password);
+        //$user = Mage::getModel('admin/user')->login($username, $password);
+        if($user && $user->getId() && $user->getIsActive() == '1' && $adminSession->isAllowed($path)){
             $session->setAdmin($user);
         } else {
             $this->authFailed();

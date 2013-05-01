@@ -21,18 +21,13 @@
 /**
  * Customer's tags edit block
  *
- * @category   Mage
- * @package    Mage_Tag
+ * @category    Mage
+ * @package     Mage_Tag
  */
 
 class Mage_Tag_Block_Customer_Edit extends Mage_Core_Block_Template
 {
     protected $_tag;
-
-    public function __construct()
-    {
-        $this->setTemplate('tag/customer/edit.phtml');
-    }
 
     public function getTag()
     {
@@ -45,6 +40,11 @@ class Mage_Tag_Block_Customer_Edit extends Mage_Core_Block_Template
 
     public function getFormAction()
     {
-        return Mage::getUrl('*/*/save', array('tagId' => $this->getTag()->getTagId()));
+        return $this->getUrl('*/*/save', array('tagId' => $this->getTag()->getTagId()));
+    }
+
+    public function getBackUrl()
+    {
+        return $this->getUrl('*/*/view', array('tagId' => $this->getTag()->getTagId()));
     }
 }

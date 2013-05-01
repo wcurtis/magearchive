@@ -119,6 +119,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </continue_shopping_url>
+                        <hide_cart_contents translate="label">
+                            <label>Hide Cart Contents During Checkout</label>
+                            <comment>If enabled, cart contents will be hidden after clicking on the Google Checkout button in the shopping cart, and restored if "Edit Cart" link was activated.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </hide_cart_contents>
                     </fields>
                 </checkout>
 
@@ -187,17 +197,14 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </address_category>
-<!--
-                        <default_unit>
-                            <label>Default Package Size Unit</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>googlecheckout/source_shipping_units</source_model>
+                        <default_price>
+                            <label>Default price for methods</label>
+                            <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </default_unit>
--->
+                        </default_price>
                         <default_width>
                             <label>Default Package Width (in)</label>
                             <frontend_type>text</frontend_type>

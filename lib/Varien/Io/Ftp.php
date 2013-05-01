@@ -251,6 +251,7 @@ class Varien_Io_Ftp extends Varien_Io_Abstract
                 $this->_error = self::ERROR_INVALID_SOURCE;
                 return false;
             }
+
             $result = ftp_fput($this->_conn, $filename, $stream, $this->_config['file_mode']);
             if (is_string($src)) {
                 fclose($stream);

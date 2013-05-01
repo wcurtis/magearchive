@@ -60,7 +60,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit extends Mage_Adminhtml
     public function getHeaderText()
     {
         if (Mage::registry('entity_attribute')->getId()) {
-            return Mage::helper('catalog')->__('Edit Product Attribute') . " '" . Mage::registry('entity_attribute')->getFrontendLabel() . "'";
+            return Mage::helper('catalog')->__('Edit Product Attribute "%s"', $this->htmlEscape(Mage::registry('entity_attribute')->getFrontendLabel()));
         }
         else {
             return Mage::helper('catalog')->__('New Product Attribute');

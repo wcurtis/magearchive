@@ -33,7 +33,7 @@
                 <?php foreach ($this->getCollection() as $_review): ?>
                 <tr>
                     <td><?php echo $this->dateFormat($_review->getCreatedAt()) ?></td>
-                    <td><a href="<?php echo $this->getProductLink() ?>id/<?php echo $_review->getEntityPkValue() ?>"><?php echo $_review->getName() ?></a></td>
+                    <td><a href="<?php echo $this->getProductLink() ?>id/<?php echo $_review->getEntityPkValue() ?>"><?php echo $this->htmlEscape($_review->getName()) ?></a></td>
                     <td>
                     <?php if($_review->getSum()): ?>
                         <div class="rating-box">
@@ -41,7 +41,7 @@
                         </div>
                     <?php endif; ?>
                     </td>
-                    <td><?php echo $this->helper('review')->getDetail($_review->getDetail()) ?></td>
+                    <td><?php echo $this->htmlEscape($this->helper('review')->getDetail($_review->getDetail())) ?></td>
                     <td class="last a-center"><a href="<?php echo $this->getReviewLink() ?>id/<?php echo $_review->getReviewId() ?>"><?php echo $this->__('View Details') ?></a></td>
                 </tr>
                 <?php endforeach; ?>
@@ -52,3 +52,6 @@
 <?php else: ?>
     <p><?php echo $this->__('You have submitted no reviews.') ?></p>
 <?php endif; ?>
+<div class="button-set">
+    <a href="<?php echo $this->getUrl('customer/account/') ?>" class="left">&laquo;<?php echo $this->__('Back') ?></a>
+</div>

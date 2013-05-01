@@ -28,12 +28,23 @@
 class Mage_Reports_Model_Mysql4_Wishlist_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
     protected $wishlistTable;
+        
+    public function setWishlistTable($value)
+    {
+        $this->_wishlistTable = $value;
+        return $this;
+    }
+    
+    public function getWishlistTable()
+    {
+        return $this->_wishlistTable;
+    }
     
     protected function _construct()
     {
         $this->_init('wishlist/wishlist');
         
-        $this->wishlistTable = Mage::getSingleton('core/resource')->getTableName('wishlist/wishlist');
+        $this->setWishlistTable(Mage::getSingleton('core/resource')->getTableName('wishlist/wishlist'));
     }
         
     public function getWishlistCustomerCount()
@@ -44,7 +55,7 @@ class Mage_Reports_Model_Mysql4_Wishlist_Collection extends Mage_Core_Model_Mysq
         $customers = $collection->count();
         
         $collection = Mage::getResourceModel('customer/customer_collection');
-        $collection->getSelect()->from(array('wt' => $this->wishlistTable))
+        $collection->getSelect()->from(array('wt' => $this->getWishlistTable()))
                     ->where('wt.customer_id=e.entity_id')
                     ->group('wt.wishlist_id');
         $collection->load();
@@ -55,7 +66,7 @@ class Mage_Reports_Model_Mysql4_Wishlist_Collection extends Mage_Core_Model_Mysq
     public function getSharedCount()
     {          
         $collection = Mage::getResourceModel('customer/customer_collection');
-        $collection->getSelect()->from(array('wt' => $this->wishlistTable))
+        $collection->getSelect()->from(array('wt' => $this->getWishlistTable()))
                     ->where('wt.customer_id=e.entity_id')
                     ->where('wt.shared=1')
                     ->group('wt.wishlist_id');

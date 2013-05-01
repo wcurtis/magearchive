@@ -83,6 +83,13 @@ class Mage_Rss_Block_Wishlist extends Mage_Core_Block_Template
 
             }
 
+        } else {
+             $data = array('title' => Mage::helper('rss')->__('Cannot retrieve the wishlist'),
+                    'description' => Mage::helper('rss')->__('Cannot retrieve the wishlist'),
+                    'link'        => Mage::getUrl(),
+                    'charset'     => 'UTF-8',
+                );
+                $rssObj->_addHeader($data);
         }
         return $rssObj->createRssXml();
     }

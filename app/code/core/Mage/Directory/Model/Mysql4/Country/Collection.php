@@ -60,14 +60,32 @@ class Mage_Directory_Model_Mysql4_Country_Collection extends Varien_Data_Collect
         return Mage::getResourceModel('directory/country');
     }
     
-    public function addCountryCodeFilter($countryCode, $iso='iso3')
+    public function addCountryCodeFilter($countryCode, $iso=array(0 => 'iso3', 'iso2'))
     {
         if (!empty($countryCode)) {
+            $where_expr = '';
             if (is_array($countryCode)) {
-                $this->_select->where("country.{$iso}_code IN ('".implode("','", $countryCode)."')");
+                if (is_array($iso)) {
+                    $i = 0;
+                    foreach ($iso as $iso_curr) {
+                        $where_expr .= ($i++ > 0 ? ' OR ' : '');
+                        $where_expr .= "country.{$iso_curr}_code IN ('".implode("','", $countryCode)."')";
+                    }
+                } else {
+                    $where_expr = "country.{$iso}_code IN ('".implode("','", $countryCode)."')";
+                }
             } else {
-                $this->_select->where("country.{$iso}_code = '{$countryCode}'");
+                if (is_array($iso)) {
+                    $i = 0;
+                    foreach ($iso as $iso_curr) {
+                        $where_expr .= ($i++ > 0 ? ' OR ' : '');
+                        $where_expr = "country.{$iso_curr}_code = '{$countryCode}'";
+                    }
+                } else {
+                    $where_expr = "country.{$iso}_code = '{$countryCode}'";
+                }
             }
+            $this->_select->where($where_expr);
         }
         return $this;
     }

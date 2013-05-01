@@ -58,7 +58,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
 
     protected function _prepareColumns()
     {
-        $datetimeFormat = Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_SHORT);
         $this->addColumn('id', array(
             'header'    =>  Mage::helper('customer')->__('ID'),
             'align'     =>  'left',
@@ -68,28 +67,27 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Newsletter_Grid extends Mage_Adminh
 
         $this->addColumn('start_at', array(
             'header'    =>  Mage::helper('customer')->__('Newsletter Start'),
-            'type'      =>  'date',
+            'type'      =>  'datetime',
             'align'     =>  'center',
             'index'     =>  'queue_start_at',
-            'format'    =>  $datetimeFormat,
             'default'   =>  ' ---- '
         ));
 
         $this->addColumn('finish_at', array(
             'header'    =>  Mage::helper('customer')->__('Newsletter Finish'),
-            'type'      =>  'date',
+            'type'      =>  'datetime',
             'align'     =>  'center',
             'index'     =>  'queue_finish_at',
-            'format'    =>  $datetimeFormat,
+            'gmtoffset' => true,
             'default'   =>  ' ---- '
         ));
 
         $this->addColumn('letter_sent_at', array(
             'header'    =>  Mage::helper('customer')->__('Newsletter Received'),
-            'type'      =>  'date',
+            'type'      =>  'datetime',
             'align'     =>  'center',
             'index'     =>  'letter_sent_at',
-            'format'    =>  $datetimeFormat,
+            'gmtoffset' => true,
             'default'   =>  ' ---- '
         ));
 

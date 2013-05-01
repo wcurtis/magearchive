@@ -55,6 +55,7 @@ class Mage_Adminhtml_Block_Newsletter_Template_Grid extends Mage_Adminhtml_Block
             array(
                 'header'=>Mage::helper('newsletter')->__('Date Added'),
                 'index'=>'added_at',
+                'gmtoffset' => true,
                 'type'=>'datetime'
         ));
 
@@ -62,6 +63,7 @@ class Mage_Adminhtml_Block_Newsletter_Template_Grid extends Mage_Adminhtml_Block
             array(
                 'header'=>Mage::helper('newsletter')->__('Date Updated'),
                 'index'=>'modified_at',
+                'gmtoffset' => true,
                 'type'=>'datetime'
         ));
 

@@ -39,6 +39,7 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
     {
         $collection = Mage::getModel('cms/page')->getCollection();
         /* @var $collection Mage_Cms_Model_Mysql4_Page_Collection */
+        $collection->setFirstStoreFlag(true);
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -114,7 +115,7 @@ class Mage_Adminhtml_Block_Cms_Page_Grid extends Mage_Adminhtml_Block_Widget_Gri
             'filter'    => false,
             'type'      => 'action',
             'actions'   => array(array(
-                'url'       => $baseUrl . '$identifier',
+                'url'       => $baseUrl . '$identifier?store=$store_code',
                 'caption'   => Mage::helper('cms')->__('Preview'),
                 'target'    => '_blank',
             ))

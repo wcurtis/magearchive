@@ -28,8 +28,12 @@ class Mage_Directory_CurrencyController extends Mage_Core_Controller_Front_Actio
 {
     public function switchAction()
     {
-        if ($curency = $this->getRequest()->getParam('currency')) {
+        if ($curency = (string) $this->getRequest()->getParam('currency')) {
             Mage::app()->getStore()->setCurrentCurrencyCode($curency);
+        }
+        if (Mage::getSingleton('checkout/session')->getQuote()) {
+            Mage::getSingleton('checkout/session')->getQuote()->collectTotals()
+                ->save();
         }
         $this->_redirectReferer(Mage::getBaseUrl());
     }

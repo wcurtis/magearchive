@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?php 
+<?php
 /**
  * Shopping cart template
  *
@@ -50,9 +50,9 @@
             <?php if ($this->helper('wishlist')->isAllowInCart()) : ?>
             <th class="a-center"><?php echo $this->__('Move to Wishlist') ?></th>
             <?php endif ?>
-            <th class="a-right"><?php echo $this->__('Unit Price') ?></th>
+            <th class="a-right"><?php echo $this->__('Unit Price') ?><?php echo $this->getIncExcTax(false) ?></th>
             <th class="a-center"><?php echo $this->__('Qty') ?></th>
-            <th class="a-right"><?php echo $this->__('Subtotal') ?></th>
+            <th class="a-right"><?php echo $this->__('Subtotal') ?><?php echo $this->getIncExcTax(false) ?></th>
         </tr>
     </thead>
     <tfoot>
@@ -70,7 +70,7 @@
         <tr>
             <td>
                 <a href="<?php echo $this->getItemUrl($_item) ?>">
-                    <img src="<?php echo $this->helper('catalog/image')->init($this->getItemProduct($_item), 'thumbnail')->resize(75); ?>" alt="<?php echo $this->htmlEscape($this->getItemName($_item)) ?>" width="75"/>
+                    <img src="<?php echo $this->helper('catalog/image')->init($this->getItemProductForThumbnail($_item), 'thumbnail')->resize(75); ?>" alt="<?php echo $this->htmlEscape($this->getItemName($_item)) ?>" width="75"/>
                 </a>
             </td>
             <td class="attributes-col">
@@ -96,7 +96,7 @@
                 <?php echo $this->helper('checkout')->formatPrice($_item->getCalculationPrice()) ?>
             </td>
             <td class="a-center">
-                <input name="cart[<?php echo $_item->getId() ?>][qty]" value="<?php echo $this->getItemQty($_item) ?>" size="2" class="input-text qty" maxlength="12"/>
+                <input name="cart[<?php echo $_item->getId() ?>][qty]" value="<?php echo $this->getItemQty($_item) ?>" size="4" class="input-text qty" maxlength="8"/>
             </td>
             <td class="a-right">
                 <?php echo $this->helper('checkout')->formatPrice($_item->getRowTotal()) ?>

@@ -315,17 +315,20 @@ Product.Config.prototype = {
         if(options) {
             var index = 1;
             for(var i=0;i<options.length;i++){
-                var canAddOption = true;
+                var allowedProducts = [];
                 if(prevConfig) {
-                    canAddOption = false;
                     for(var j=0;j<options[i].products.length;j++){
-                        if(prevConfig.config.products.indexOf(options[i].products[j])>-1){
-                            canAddOption = true;
-                            break;
+                        if(prevConfig.config.allowedProducts
+                            && prevConfig.config.allowedProducts.indexOf(options[i].products[j])>-1){
+                            allowedProducts.push(options[i].products[j]);
                         }
                     }
+                } else {
+                    allowedProducts = options[i].products.clone();
                 }
-                if(canAddOption){
+
+                if(allowedProducts.size()>0){
+                    options[i].allowedProducts = allowedProducts;
                     element.options[index] = new Option(this.getOptionLabel(options[i], options[i].price), options[i].id);
                     element.options[index].config = options[i];
                     index++;
@@ -355,8 +358,11 @@ Product.Config.prototype = {
                 str+= '+';
             }
         }
-        if (this.prices && this.prices[price]) {
-            str+= this.prices[price];
+
+        var roundedPrice = (Math.round(price*100)/100).toString();
+
+        if (this.prices && this.prices[roundedPrice]) {
+            str+= this.prices[roundedPrice];
         }
         else {
             str+= this.priceTemplate.evaluate({price:price.toFixed(2)});
@@ -388,6 +394,27 @@ Product.Config.prototype = {
 
         if($('product-price-'+this.config.productId)){
             $('product-price-'+this.config.productId).innerHTML = price;
+        }
+
+        this.reloadOldPrice();
+    },
+
+    reloadOldPrice: function(){
+        if ($('old-price-'+this.config.productId)) {
+
+            var price = parseFloat(this.config.oldPrice);
+            for(var i=this.settings.length-1;i>=0;i--){
+                var selected = this.settings[i].options[this.settings[i].selectedIndex];
+                if(selected.config){
+                    price+= parseFloat(selected.config.price);
+                }
+            }
+            price = this.formatPrice(price);
+
+            if($('old-price-'+this.config.productId)){
+                $('old-price-'+this.config.productId).innerHTML = price;
+            }
+
         }
     }
 }

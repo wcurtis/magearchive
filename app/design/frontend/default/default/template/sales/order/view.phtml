@@ -77,7 +77,7 @@ function giftMessageToogle(giftMessageIdentifier)
         <?php foreach ($_items as $_item): ?>
             <tr <?php echo ($_index++ > $_count ? ' class="last"' : '') ?> id="order-item-row-<?php echo $_item->getId() ?>">
                 <td>
-                    <?php echo $_item->getName() ?>
+                    <?php echo $this->htmlEscape($_item->getName()) ?>
                     <?php echo $_item->getDescription() ?>
                     <?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()): ?>
                         <br /><a href="#" id="order-item-gift-message-link-<?php echo $_item->getId() ?>" class="giftmessage-preview-link expand" onclick="return giftMessageToogle('<?php echo $_item->getId() ?>')"><?php echo $this->__('Gift Message') ?></a>

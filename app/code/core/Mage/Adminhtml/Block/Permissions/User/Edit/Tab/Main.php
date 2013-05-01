@@ -39,7 +39,7 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Main extends Mage_Adminhtml
         $fieldset = $form->addFieldset('base_fieldset', array('legend'=>Mage::helper('adminhtml')->__('Account Information')));
 
         if ($model->getUserId()) {
-        	$fieldset->addField('user_id', 'hidden', array(
+            $fieldset->addField('user_id', 'hidden', array(
                 'name' => 'user_id',
             ));
         } else {
@@ -116,17 +116,19 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Main extends Mage_Adminhtml
             ));
         }
 
-        $fieldset->addField('is_active', 'select', array(
-            'name'  	=> 'is_active',
-            'label' 	=> Mage::helper('adminhtml')->__('This account is'),
-            'id'    	=> 'is_active',
-            'title' 	=> Mage::helper('adminhtml')->__('Account status'),
-            'class' 	=> 'input-select',
-            'style'		=> 'width: 80px',
-            'options'	=> array('1' => Mage::helper('adminhtml')->__('Active'), '0' => Mage::helper('adminhtml')->__('Inactive')),
-        ));
+        if (Mage::getSingleton('admin/session')->getUser()->getId() != $model->getUserId()) {
+            $fieldset->addField('is_active', 'select', array(
+                'name'  	=> 'is_active',
+                'label' 	=> Mage::helper('adminhtml')->__('This account is'),
+                'id'    	=> 'is_active',
+                'title' 	=> Mage::helper('adminhtml')->__('Account status'),
+                'class' 	=> 'input-select',
+                'style'		=> 'width: 80px',
+                'options'	=> array('1' => Mage::helper('adminhtml')->__('Active'), '0' => Mage::helper('adminhtml')->__('Inactive')),
+            ));
+        }
 
-    	$fieldset->addField('user_roles', 'hidden', array(
+        $fieldset->addField('user_roles', 'hidden', array(
             'name' => 'user_roles',
             'id'   => '_user_roles',
         ));

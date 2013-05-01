@@ -27,6 +27,7 @@ class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_M
             $previousSelect = null;
             foreach ($fields as $table => $conditions) {
                 foreach ($conditions as $attributeId => $conditionValue) {
+                    $bindVarName = 'attribute_'.$attributeId;
                     $select = $this->getConnection()->select();
                     $select->from(array('t1' => $table), 'entity_id');
                     $conditionData = array();
@@ -39,7 +40,8 @@ class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_M
                             $conditionData[] = array('REGEXP \'(^|,)('.join('|', $conditionValue['in_set']).')(,|$)\'', $conditionValue['in_set']);
                         }
                         elseif (isset($conditionValue['like'])) {
-                            $conditionData[] = array('LIKE ?', $conditionValue['like']);
+                            $this->addBindParam($bindVarName, $conditionValue['like']);
+                            $conditionData[] = 'LIKE :'.$bindVarName;
                         }
                         elseif (isset($conditionValue['from']) && isset($conditionValue['to'])) {
                             if ($conditionValue['from']) {
@@ -61,7 +63,12 @@ class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_M
 
                     if (!is_numeric($attributeId)) {
                         foreach ($conditionData as $data) {
-                            $select->where('t1.'.$attributeId . ' ' . $data[0], $data[1]);
+                            if (is_array($data)) {
+                                $select->where('t1.'.$attributeId . ' ' . $data[0], $data[1]);
+                            }
+                            else {
+                                $select->where('t1.'.$attributeId . ' ' . $data);
+                            }
                         }
                     }
                     else {
@@ -75,7 +82,12 @@ class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_M
                         $select->where('t1.attribute_id = ?', $attributeId);
 
                         foreach ($conditionData as $data) {
-                            $select->where('IFNULL(t2.value, t1.value) ' . $data[0], $data[1]);
+                            if (is_array($data)) {
+                                $select->where('IFNULL(t2.value, t1.value) ' . $data[0], $data[1]);
+                            }
+                            else {
+                                $select->where('IFNULL(t2.value, t1.value) ' . $data);
+                            }
                         }
                     }
 
@@ -105,7 +117,6 @@ class Mage_CatalogSearch_Model_Mysql4_Advanced_Collection extends Mage_Catalog_M
             else {
                 $this->addFieldToFilter('entity_id', 'IS NULL');
             }*/
-
             $this->addFieldToFilter('entity_id', array('in' => new Zend_Db_Expr($select)));
         }
 

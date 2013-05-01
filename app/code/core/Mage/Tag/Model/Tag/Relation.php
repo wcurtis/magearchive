@@ -44,6 +44,16 @@ class Mage_Tag_Model_Tag_Relation extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    public function getProductIds()
+    {
+        $ids = $this->getData('product_ids');
+        if (is_null($ids)) {
+            $ids = $this->_getResource()->getProductIds($this);
+            $this->setProductIds($ids);
+        }
+        return $ids;
+    }
+
     public function deactivate()
     {
         $this->_getResource()->deactivate($this->getTagId(),  $this->getCustomerId());

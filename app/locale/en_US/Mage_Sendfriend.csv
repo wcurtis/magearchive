@@ -20,5 +20,7 @@
 "Send email","Send email"
 "Send product to a friend","Send product to a friend"
 "Sender:","Sender:"
+"Some emails was not sent","Some emails was not sent"
+"Some problems with data.","Some problems with data."
 "You cannot email this product to a friend","You cannot email this product to a friend"
 "You cannot send more than %d times in an hour","You cannot send more than %d times in an hour"

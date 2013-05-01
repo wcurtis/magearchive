@@ -40,13 +40,10 @@
     <?php if (count($_associatedProducts)): ?>
     <?php foreach ($_associatedProducts as $_item): ?>
         <tr>
-            <td><?php echo $_item->getName() ?></td>
+            <td><?php echo $this->htmlEscape($_item->getName()) ?></td>
             <td class="a-right">
-                <?php $_showTax = $_item->getShowTaxInCatalog() ?>
-                <?php $_priceAfterTax = $_item->getPriceAfterTax() ?>
-                <?php $_finalPriceAfterTax = $_item->getFinalPriceAfterTax() ?>
-                <?php $_price = $_showTax==1 ? $_priceAfterTax : $_item->getPrice() ?>
-                <?php $_finalPrice = $_showTax==1 ? $_finalPriceAfterTax : $_item->getFinalPrice() ?>
+                <?php $_price = $_item->getPrice() ?>
+                <?php $_finalPrice = $_item->getFinalPrice() ?>
                 <?php if ($_finalPrice == $_price): ?>
                     <span class="nobr"><?php echo Mage::helper('core')->currency($_price) ?></span><br />
                 <?php else: ?>
@@ -59,13 +56,13 @@
                             <span class="nobr"><?php echo $this->__('Buy %s for %s', $_tierPrice['price_qty']*1, $_tierPrice['formated_price']) ?></span>
                         <?php endif; ?>
                     <?php endforeach; ?>
-                <?php endif ?>
+                <?php endif; ?>
             </td>
             <?php if ($_product->isSaleable()): ?>
             <td class="a-center">
             <?php if ($_item->isSaleable()) : ?>
                 <input name="super_group[<?php echo $_item->getId() ?>]" value="<?php echo $_item->getQty()*1 ?>" type="text" class="input-text qty"/>
-            <?php else : ?>
+            <?php else: ?>
                 <?php echo $this->__('Out of stock.') ?>
             <?php endif; ?>
             </td>

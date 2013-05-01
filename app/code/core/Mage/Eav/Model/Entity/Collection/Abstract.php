@@ -214,8 +214,8 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
     public function addAttributeToFilter($attribute, $condition=null, $joinType='inner')
     {
         if($attribute===null) {
-        	$this->getSelect();
-        	return $this;
+            $this->getSelect();
+            return $this;
         }
 
         if (is_numeric($attribute)) {
@@ -225,8 +225,8 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
             $attribute = $attribute->getAttributeCode();
         }
 
-    	if (is_array($attribute)) {
-    		$sqlArr = array();
+        if (is_array($attribute)) {
+            $sqlArr = array();
             foreach ($attribute as $condition) {
                 $sqlArr[] = $this->_getAttributeConditionSql($condition['attribute'], $condition, $joinType);
             }
@@ -282,7 +282,13 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
                 $this->getSelect()->order($entityField.' '.$dir);
             } else {
                 $this->_addAttributeJoin($attribute);
-                $this->getSelect()->order($this->_getAttributeTableAlias($attribute).'.value '.$dir);
+                if (isset($this->_joinAttributes[$attribute])) {
+                    $this->getSelect()->order($attribute.' '.$dir);
+                }
+                else {
+                    $this->getSelect()->order($this->_getAttributeTableAlias($attribute).'.value '.$dir);
+                }
+                //
             }
         }
         return $this;
@@ -454,7 +460,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         if (is_string($bind)) {
             $bindAttribute = $this->getAttribute($bind);
         }
-        
+
         if (!$bindAttribute || (!$bindAttribute->getBackend()->isStatic() && !$bindAttribute->getId())) {
             throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('Invalid foreign key'));
         }
@@ -712,7 +718,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         $idsSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
         $idsSelect->reset(Zend_Db_Select::COLUMNS);
         $idsSelect->from(null, 'e.'.$this->getEntity()->getIdFieldName());
-        return $this->getConnection()->fetchCol($idsSelect);
+        return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
     }
 
     /**
@@ -831,6 +837,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         try {
             $rows = $this->_fetchAll($this->getSelect());
         } catch (Exception $e) {
+            Mage::printException($e, $this->getSelect());
             $this->printLogQuery(true, true, $this->getSelect());
             throw $e;
         }
@@ -843,7 +850,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
                 $this->_itemsById[$object->getId()][] = $object;
             }
             else {
-            	$this->_itemsById[$object->getId()] = array($object);
+                $this->_itemsById[$object->getId()] = array($object);
             }
         }
         return $this;
@@ -868,6 +875,7 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
             try {
                 $values = $this->_fetchAll($select);
             } catch (Exception $e) {
+                Mage::printException($e, $select);
                 $this->printLogQuery(true, true, $select);
                 throw $e;
             }
@@ -1019,14 +1027,17 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
         $joinMethod = ($joinType == 'left') ? 'joinLeft' : 'join';
 
         $this->_joinAttributeToSelect($joinMethod, $attribute, $attrTable, $condArr, $attributeCode, $attrFieldName);
-        /*$this->getSelect()->$joinMethod(
-            array($attrTable => $attribute->getBackend()->getTable()),
-            '('.join(') AND (', $condArr).')',
-            array($attributeCode=>$attrFieldName)
-        );*/
 
         $this->removeAttributeToSelect($attributeCode);
         $this->_filterAttributes[$attributeCode] = $attribute->getId();
+
+        /**
+         * Fix double join for using same as filter
+         */
+        $this->_joinFields[$attributeCode] = array(
+            'table' => '',
+            'field' => $attrFieldName,
+        );
 
         return $this;
     }
@@ -1078,7 +1089,13 @@ class Mage_Eav_Model_Entity_Collection_Abstract extends Varien_Data_Collection_D
             $conditionSql = $this->_getConditionSql('e.'.$attribute, $condition);
         } else {
             $this->_addAttributeJoin($attribute, $joinType);
-            $conditionSql = $this->_getConditionSql($this->_getAttributeTableAlias($attribute).'.value', $condition);
+            if (isset($this->_joinAttributes[$attribute]['condition_alias'])) {
+                $field = $this->_joinAttributes[$attribute]['condition_alias'];
+            }
+            else {
+                $field = $this->_getAttributeTableAlias($attribute).'.value';
+            }
+            $conditionSql = $this->_getConditionSql($field, $condition);
         }
         return $conditionSql;
     }

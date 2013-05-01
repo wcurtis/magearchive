@@ -49,4 +49,10 @@ class Mage_Catalog_Model_Observer
             }
         }
     }
+
+    public function categoryMove($observer)
+    {
+        $categoryId = $observer->getEvent()->getCategoryId();
+        Mage::getModel('catalog/url')->refreshCategoryRewrite($categoryId);
+    }
 }

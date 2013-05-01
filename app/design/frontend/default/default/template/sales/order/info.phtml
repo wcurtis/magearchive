@@ -2,7 +2,7 @@
 
 <div class="page-head button-level">
     <h3><?php echo $this->__('Order #%s - %s', $_order->getRealOrderId(), $_order->getStatusLabel()) ?></h3>
-        
+
 <?php if($this->helper('rss/order')->isStatusNotificationAllow()): ?>
 <a href="<?php echo $this->helper('rss/order')->getStatusHistoryRssUrl($_order) ?>" class="link-feed"><?php echo $this->__('Subscribe to Order Status') ?></a>
 <?php endif; ?>
@@ -17,7 +17,7 @@
 <?php echo $this->getStatusHistoryRssUrl($_order) ?>
 <div class="order-access">
 <div class="order-info">
-<?php echo $this->__('About Ihis Order:') ?>
+<?php echo $this->__('About This Order:') ?>
 <ul>
   <?php $_links = $this->getLinks(); ?>
                 <?php foreach ($_links as $_link): ?>

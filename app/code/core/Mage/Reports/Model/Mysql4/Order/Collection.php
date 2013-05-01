@@ -43,7 +43,7 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
 
         $this->addExpressionAttributeToSelect('quantity', 'COUNT({{attribute}})', 'entity_id')
             ->addExpressionAttributeToSelect('range', $this->_getRangeExpression($range), 'created_at')
-            ->addAttributeToFilter('created_at', $this->_getDateRange($range, $customStart, $customEnd))
+            ->addAttributeToFilter('created_at', $this->getDateRange($range, $customStart, $customEnd))
             ->groupByAttribute('range')
             ->getSelect()->order('range', 'asc');
 
@@ -69,16 +69,16 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
             case '2y':
             case 'custom':
             default:
-                $expression = 'DATE_FORMAT({{attribute}}, \'%Y-%m-01\')';
+                $expression = 'DATE_FORMAT({{attribute}}, \'%Y-%m\')';
                 break;
         }
 
         return $expression;
     }
 
-    protected function _getDateRange($range, $customStart, $customEnd)
+    public function getDateRange($range, $customStart, $customEnd, $returnObjects = false)
     {
-        $dateEnd = Mage::app()->getLocale()->date();
+        $dateEnd = new Zend_Date(Mage::getModel('core/date')->gmtTimestamp());
         $dateStart = clone $dateEnd;
 
         // go to the end of a day
@@ -93,12 +93,9 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
         switch ($range)
         {
             case '24h':
-                $dateEnd->setHour(date('H'));
-                $dateEnd->setMinute(date('i'));
-                $dateEnd->setSecond(date('s'));
-                $dateStart->setHour(date('H'));
-                $dateStart->setMinute(date('i'));
-                $dateStart->setSecond(date('s'));
+                $dateEnd = new Zend_Date(Mage::getModel('core/date')->gmtTimestamp());
+                $dateEnd->addHour(1);
+                $dateStart = clone $dateEnd;
                 $dateStart->subDay(1);
                 break;
 
@@ -118,17 +115,21 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
                 break;
 
             case '1y':
-                $dateStart->setDay(1);
                 $dateStart->setMonth(1);
+                $dateStart->setDay(1);
                 break;
             case '2y':
-                $dateStart->setDay(1);
                 $dateStart->setMonth(1);
+                $dateStart->setDay(1);
                 $dateStart->subYear(1);
                 break;
         }
 
-        return array('from'=>$dateStart, 'to'=>$dateEnd, 'datetime'=>true);
+        if ($returnObjects) {
+            return array($dateStart, $dateEnd);
+        } else {
+            return array('from'=>$dateStart, 'to'=>$dateEnd, 'datetime'=>true);
+        }
     }
 
     public function addItemCountExpr()
@@ -148,51 +149,54 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
         if ($isFilter == 0) {
             $this->addExpressionAttributeToSelect(
                     'revenue',
-                     'SUM(({{base_subtotal}}-{{base_discount_amount}}-{{base_total_refunded}}-{{base_total_canceled}})/{{store_to_base_rate}})',
-                     array('base_subtotal', 'base_discount_amount', 'store_to_base_rate', 'base_total_refunded', 'base_total_canceled'))
+                     'SUM(({{base_subtotal}}-IFNULL({{base_subtotal_refunded}},0)-IFNULL({{base_subtotal_canceled}},0))/{{store_to_base_rate}})',
+                     array('base_subtotal', 'store_to_base_rate', 'base_subtotal_refunded', 'base_subtotal_canceled'))
                 ->addExpressionAttributeToSelect(
                     'tax',
-                    'SUM({{base_tax_amount}}/{{store_to_base_rate}})',
-                    array('base_tax_amount', 'store_to_base_rate'))
+                    'SUM(({{base_tax_amount}}-IFNULL({{base_tax_refunded}},0)-IFNULL({{base_tax_canceled}},0))/{{store_to_base_rate}})',
+                    array('base_tax_amount', 'base_tax_canceled', 'base_tax_refunded', 'store_to_base_rate'))
                 ->addExpressionAttributeToSelect(
                     'shipping',
-                    'SUM({{base_shipping_amount}}/{{store_to_base_rate}})',
-                    array('base_shipping_amount', 'store_to_base_rate'));
+                    'SUM(({{base_shipping_amount}}-IFNULL({{base_shipping_refunded}},0)-IFNULL({{base_shipping_canceled}},0))/{{store_to_base_rate}})',
+                    array('base_shipping_amount', 'base_shipping_refunded', 'base_shipping_canceled', 'store_to_base_rate'));
         } else {
             $this->addExpressionAttributeToSelect(
                     'revenue',
-                     'SUM({{base_subtotal}}-{{base_discount_amount}}-{{base_total_refunded}}-{{base_total_canceled}})',
-                     array('base_subtotal', 'base_discount_amount', 'base_total_refunded', 'base_total_canceled'))
+                     'SUM({{base_subtotal}}-IFNULL({{base_subtotal_refunded}},0)-IFNULL({{base_subtotal_canceled}},0))',
+                     array('base_subtotal', 'base_subtotal_refunded', 'base_subtotal_canceled'))
                 ->addExpressionAttributeToSelect(
                     'tax',
-                    'SUM({{base_tax_amount}})',
-                    array('base_tax_amount'))
+                    'SUM({{base_tax_amount}}-IFNULL({{base_tax_refunded}},0)-IFNULL({{base_tax_canceled}},0))',
+                    array('base_tax_amount', 'base_tax_refunded', 'base_tax_canceled'))
                 ->addExpressionAttributeToSelect(
                     'shipping',
-                    'SUM({{base_shipping_amount}})',
-                    array('base_shipping_amount'));
+                    'SUM({{base_shipping_amount}}-IFNULL({{base_shipping_refunded}},0)-IFNULL({{base_shipping_canceled}},0))',
+                    array('base_shipping_amount', 'base_shipping_refunded', 'base_shipping_canceled'));
         }
 
         $this->addExpressionAttributeToSelect('quantity', 'COUNT({{entity_id}})', array('entity_id'))
+            ->addAttributeToFilter('state', array('neq' => Mage_Sales_Model_Order::STATE_CANCELED))
             ->groupByAttribute('entity_type_id');
+
         return $this;
     }
 
     public function calculateSales($isFilter = 0)
     {
         if ($isFilter == 0) {
-            $expr = "({{base_subtotal}}-{{base_discount_amount}}-{{base_total_refunded}}-{{base_total_canceled}})/{{store_to_base_rate}}";
-            $attrs = array('base_subtotal', 'base_discount_amount', 'store_to_base_rate', 'base_total_refunded', 'base_total_canceled');
+            $expr = "({{base_subtotal}}-IFNULL({{base_subtotal_refunded}},0)-IFNULL({{base_subtotal_canceled}},0))/{{store_to_base_rate}}";
+            $attrs = array('base_subtotal', 'store_to_base_rate', 'base_subtotal_refunded', 'base_subtotal_canceled');
             $this->addExpressionAttributeToSelect('lifetime', "SUM({$expr})", $attrs)
                 ->addExpressionAttributeToSelect('average', "AVG({$expr})", $attrs);
         } else {
-            $expr = "({{base_subtotal}}-{{base_discount_amount}}-{{base_total_refunded}}-{{base_total_canceled}})";
-            $attrs = array('base_subtotal', 'base_discount_amount', 'base_total_refunded', 'base_total_canceled');
+            $expr = "({{base_subtotal}}-IFNULL({{base_subtotal_refunded}},0)-IFNULL({{base_subtotal_canceled}},0))";
+            $attrs = array('base_subtotal', 'base_subtotal_refunded', 'base_subtotal_canceled');
             $this->addExpressionAttributeToSelect('lifetime', "SUM($expr)", $attrs)
                 ->addExpressionAttributeToSelect('average', "AVG($expr)", $attrs);
         }
 
-        $this->groupByAttribute('entity_type_id');
+        $this->addAttributeToFilter('state', array('neq' => Mage_Sales_Model_Order::STATE_CANCELED))
+            ->groupByAttribute('entity_type_id');
         return $this;
     }
 
@@ -346,14 +350,14 @@ class Mage_Reports_Model_Mysql4_Order_Collection extends Mage_Sales_Model_Entity
             /**
              * calculate average and total amount
              */
-            $expr = "(e.base_subtotal-e.base_discount_amount-e.base_total_canceled-e.base_total_refunded)/_s2br_{$storeToBaseRateTableName}.{$storeToBaseRateFieldName}";
+            $expr = "(e.base_subtotal-IFNULL(e.base_subtotal_refunded,0)-IFNULL(e.base_subtotal_canceled,0))/_s2br_{$storeToBaseRateTableName}.{$storeToBaseRateFieldName}";
 
         } else {
 
             /**
              * calculate average and total amount
              */
-            $expr = "e.base_subtotal-e.base_discount_amount-e.base_total_canceled-e.base_total_refunded";
+            $expr = "e.base_subtotal-IFNULL(e.base_subtotal_canceled,0)-IFNULL(e.base_subtotal_refunded,0)";
         }
 
         $this->getSelect()

@@ -18,47 +18,63 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?php $_product = $this->getProduct() ?>
-<?php if (!$_product->isGrouped()): ?>
-<div class="price-box">
-<?php $_id = $_product->getId() ?>
-<?php $_showTax = $_product->getShowTaxInCatalog() ?>
-<?php $_priceAfterTax = $_product->getPriceAfterTax() ?>
-<?php $_finalPriceAfterTax = $_product->getFinalPriceAfterTax() ?>
-<?php $_price = $_showTax==1 ? $_priceAfterTax : $_product->getPrice() ?>
-<?php $_finalPrice = $_showTax==1 ? $_finalPriceAfterTax : $_product->getFinalPrice() ?>
 
-<?php if ($_finalPrice == $_price): ?>
-    <span class="regular-price" id="product-price-<?php echo $_id ?>">
-        <?php echo Mage::helper('core')->currency($_price) ?>
-    </span>
-    <br/>
-<?php else: ?>
-    <span class="old-price">
-        <span class="label"><?php echo $this->__('Regular Price:') ?></span>
-        <span class="price" id="old-price-<?php echo $_id ?>">
+<?php $_product = $this->getProduct() ?>
+<?php $_minimalPrice = $_product->getMinimalPrice() ?>
+<?php $_id = $_product->getId() ?>
+
+<?php if (!$_product->isGrouped()): ?>
+    
+    <div class="price-box">
+    <?php $_price = $_product->getPrice() ?>
+    <?php $_finalPrice = $_product->getFinalPrice() ?>
+    
+    <?php if ($_finalPrice == $_price): ?>
+        <span class="regular-price" id="product-price-<?php echo $_id ?>">
             <?php echo Mage::helper('core')->currency($_price) ?>
         </span>
-    </span>
-    <br/>
-    <span class="special-price">
-        <span class="label"><?php echo $this->__('Special Price:') ?></span>
-        <span class="price" id="product-price-<?php echo $_id ?>">
-            <?php echo Mage::helper('core')->currency($_finalPrice) ?>
+        <br/>
+    <?php else: /* if ($_finalPrice == $_price): */ ?>
+        <span class="old-price">
+            <span class="label"><?php echo $this->__('Regular Price:') ?></span>
+            <span class="price" id="old-price-<?php echo $_id ?>">
+                <?php echo Mage::helper('core')->currency($_price) ?>
+            </span>
         </span>
-    </span>
-    <br/>
-<?php endif ?>
-
-<?php if ($_showTax==2): ?>
-    <span class="price-after-tax">
-        <span class="label"><?php echo $this->__('Including Tax:') ?></span>
-        <span class="regular-price" id="price-after-tax-<?php echo $_id ?>">
-            <?php echo Mage::helper('core')->currency($_finalPriceAfterTax) ?>
+        <br/>
+        <span class="special-price">
+            <span class="label"><?php echo $this->__('Special Price:') ?></span>
+            <span class="price" id="product-price-<?php echo $_id ?>">
+                <?php echo Mage::helper('core')->currency($_finalPrice) ?>
+            </span>
         </span>
-    </span>
-    <br/>
-<?php endif ?>
+        <br/>
+    <?php endif; /* if ($_finalPrice == $_price): */ ?>
+    
+    <?php if ($this->getDisplayMinimalPrice() && $_minimalPrice && $_minimalPrice < $_finalPrice): ?>
+        <span class="minimal-price">
+            <span class="label"><?php echo $this->__('As low as:') ?></span>
+            <span class="price" id="product-minimal-price-<?php echo $_id ?>">
+                <?php echo Mage::helper('core')->currency($_minimalPrice) ?>
+            </span>
+        </span>
+        <br/>
+    <?php endif; /* if ($this->getDisplayMinimalPrice() && $_minimalPrice && $_minimalPrice < $_finalPrice): */ ?>
+    
+    </div>
+    
+<?php else: /* if (!$_product->isGrouped()): */ ?>
+    
+    <?php if ($this->getDisplayMinimalPrice() && $_minimalPrice): ?>
+        <div class="price-box">
+            <span class="minimal-price">
+                <span class="label"><?php echo $this->__('Starting at:') ?></span>
+                <span class="price" id="product-minimal-price-<?php echo $_id ?>">
+                    <?php echo Mage::helper('core')->currency($_minimalPrice) ?>
+                </span>
+            </span>
+            <br/>
+        </div>
+    <?php endif; /* if ($this->getDisplayMinimalPrice() && $_minimalPrice): */ ?>
 
-</div>
-<?php endif; ?>
+<?php endif; /* if (!$_product->isGrouped()): */ ?>

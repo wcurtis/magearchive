@@ -125,7 +125,7 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
         if ($shipment = $this->_initShipment()) {
             $this->loadLayout()
                 ->_setActiveMenu('sales/order')
-                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_shipment_view'))
+                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_shipment_view')->updateBackButtonUrl())
                 ->renderLayout();
         }
         else {

@@ -245,6 +245,27 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
         $this->getOrder()->setBaseTotalRefunded($baseOrderRefund);
         $this->getOrder()->setTotalRefunded($orderRefund);
 
+        $this->getOrder()->setBaseSubtotalRefunded(
+            $this->getOrder()->getBaseSubtotalRefunded()+$this->getBaseSubtotal()
+        );
+        $this->getOrder()->setSubtotalRefunded(
+            $this->getOrder()->getSubtotalRefunded()+$this->getSubtotal()
+        );
+
+        $this->getOrder()->setBaseTaxRefunded(
+            $this->getOrder()->getBaseTaxRefunded()+$this->getBaseTaxAmount()
+        );
+        $this->getOrder()->setTaxRefunded(
+            $this->getOrder()->getTaxRefunded()+$this->getTaxAmount()
+        );
+
+        $this->getOrder()->setBaseShippingRefunded(
+            $this->getOrder()->getBaseShippingRefunded()+$this->getBaseShippingAmount()
+        );
+        $this->getOrder()->setShippingRefunded(
+            $this->getOrder()->getShippingRefunded()+$this->getShippingAmount()
+        );
+
         $this->getOrder()->setAdjustmentPositive(
             $this->getOrder()->getAdjustmentPositive()+$this->getAdjustmentPositive()
         );
@@ -298,6 +319,15 @@ class Mage_Sales_Model_Order_Creditmemo extends Mage_Core_Model_Abstract
                 $this->getOrder()->getBaseTotalOfflineRefunded()-$this->getBaseGrandTotal()
             );
         }
+
+        $this->getOrder()->setBaseSubtotalRefunded($this->getOrder()->getBaseSubtotalRefunded()-$this->getBaseSubtotal());
+        $this->getOrder()->setSubtotalRefunded($this->getOrder()->getSubtotalRefunded()-$this->getSubtotal());
+
+        $this->getOrder()->setBaseTaxRefunded($this->getOrder()->getBaseTaxRefunded()-$this->getBaseTaxAmount());
+        $this->getOrder()->setTaxRefunded($this->getOrder()->getTaxRefunded()-$this->getTaxAmount());
+
+        $this->getOrder()->setBaseShippingRefunded($this->getOrder()->getBaseShippingRefunded()-$this->getBaseShippingAmount());
+        $this->getOrder()->setShippingRefunded($this->getOrder()->getShippingRefunded()-$this->getShippingAmount());
 
         Mage::dispatchEvent('sales_order_creditmemo_cancel', array($this->_eventObject=>$this));
         return $this;

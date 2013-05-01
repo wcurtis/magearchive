@@ -23,25 +23,25 @@
  *
  * @category   Mage
  * @package    Mage_Backup
- */ 
+ */
 class Mage_Backup_Model_Backup extends Varien_Object
 {
     /* backup types */
     const BACKUP_DB     = 'db';
     const BACKUP_VIEW   = 'view';
     const BACKUP_MEDIA  = 'media';
-    
+
     /* internal constants */
     const BACKUP_EXTENSION  = 'backup';
     const COMPRESS_RATE     = 7;
 
     /**
      * Type of backup file
-     * 
+     *
      * @var string db|media|view
      */
     private $_type  = 'db';
-    
+
     /**
      * Load backup file info
      *
@@ -61,7 +61,7 @@ class Mage_Backup_Model_Backup extends Varien_Object
         $this->setType($type);
         return $this;
     }
-    
+
     /**
      * Checks backup file exists.
      *
@@ -71,7 +71,7 @@ class Mage_Backup_Model_Backup extends Varien_Object
     {
         return is_file($this->getPath() . DS . $this->getFileName());
     }
-    
+
     /**
      * Return file name of backup file
      *
@@ -79,10 +79,10 @@ class Mage_Backup_Model_Backup extends Varien_Object
      */
     public function getFileName()
     {
-        return $this->getTime() . "_" . $this->getType() 
+        return $this->getTime() . "_" . $this->getType()
                . "." . self::BACKUP_EXTENSION;
     }
-    
+
     /**
      * Sets type of file
      *
@@ -93,13 +93,13 @@ class Mage_Backup_Model_Backup extends Varien_Object
         if(!in_array($value, array('db','media','view'))) {
             $value = 'db';
         }
-        
+
         $this->_type = $value;
         $this->setData('type', $this->_type);
-        
+
         return $this;
     }
-    
+
     /**
      * Returns type of backup file
      *
@@ -109,7 +109,7 @@ class Mage_Backup_Model_Backup extends Varien_Object
     {
         return $this->_type;
     }
-    
+
     /**
      * Set the backup file content
      *
@@ -122,70 +122,71 @@ class Mage_Backup_Model_Backup extends Varien_Object
         if (!$this->hasData('time') || !$this->hasData('type') || !$this->hasData('path')) {
             Mage::throwException(Mage::helper('backup')->__('Wrong order of creation for new backup'));
         }
-        
+
         $ioProxy = new Varien_Io_File();
+        $ioProxy->setAllowCreateFolders(true);
         $ioProxy->open(array('path'=>$this->getPath()));
-        
+
         $compress = 0;
         if (extension_loaded("zlib")) {
             $compress = 1;
         }
-        
+
         $rawContent = '';
         if ( $compress ) {
             $rawContent = gzcompress( $content, self::COMPRESS_RATE );
         } else {
             $rawContent = $content;
         }
-        
+
         $fileHeaders = pack("ll", $compress, strlen($rawContent));
         $ioProxy->write($this->getFileName(), $fileHeaders . $rawContent);
         return $this;
     }
-    
+
     /**
      * Return content of backup file
      *
-     * @todo rewrite to Varien_IO, but there no possibility read part of files. 
+     * @todo rewrite to Varien_IO, but there no possibility read part of files.
      * @return string
      * @throws Mage_Backup_Exception
      */
-    public function &getFile() 
+    public function &getFile()
     {
-        
+
         if (!$this->exists()) {
             Mage::throwException(Mage::helper('backup')->__("Backup file doesn't exist"));
         }
-        
+
         $fResource = @fopen($this->getPath() . DS . $this->getFileName(), "rb");
         if (!$fResource) {
             Mage::throwException(Mage::helper('backup')->__("Cannot read backup file"));
         }
-        
+
         $content = '';
         $compressed = 0;
-        
+
         $info = unpack("lcompress/llength", fread($fResource, 8));
         if ($info['compress']) { // If file compressed by zlib
             $compressed = 1;
         }
-        
+
         if ($compressed && !extension_loaded("zlib")) {
             fclose($fResource);
             Mage::throwException(Mage::helper('backup')->__('File compressed with Zlib, but this extension is not installed on server'));
         }
-        
+
         if ($compressed) {
             $content = gzuncompress(fread($fResource, $info['length']));
         } else {
             $content = fread($fResource, $info['length']);
         }
-        
+
         fclose($fResource);
-        
+
         return $content;
     }
-    
+
     /**
      * Delete backup file
      *
@@ -196,11 +197,11 @@ class Mage_Backup_Model_Backup extends Varien_Object
         if (!$this->exists()) {
             Mage::throwException(Mage::helper('backup')->__("Backup file doesn't exist"));
         }
-        
+
         $ioProxy = new Varien_Io_File();
         $ioProxy->open(array('path'=>$this->getPath()));
         $ioProxy->rm($this->getFileName());
         return $this;
     }
-    
+
 }

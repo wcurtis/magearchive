@@ -38,58 +38,117 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
 
         $fDel = $this->getVar('delimiter', ',');
         $fEnc = $this->getVar('enclose', '"');
-        if ($fDel=='\\t') {
+        if ($fDel == '\\t') {
             $fDel = "\t";
         }
 
+        $adapterName   = $this->getVar('adapter', null);
+        $adapterMethod = $this->getVar('method', null);
+
+        if (!$adapterName || !$adapterMethod) {
+            $message = Mage::helper('dataflow')->__('Please declare "adapter" and "method" node first');
+            $this->addException($message, Mage_Dataflow_Model_Convert_Exception::FATAL);
+            return $this;
+        }
+
+        try {
+            $adapter = Mage::getModel($adapterName);
+        }
+        catch (Exception $e) {
+            $message = Mage::helper('dataflow')->__('Declared adapter %s not found', $adapterName);
+            $this->addException($message, Mage_Dataflow_Model_Convert_Exception::FATAL);
+            return $this;
+        }
+
+        if (!is_callable(array($adapter, $adapterMethod))) {
+            $message = Mage::helper('dataflow')->__('Method "%s" not defined in adapter %s', $adapterMethod, $adapterName);
+            $this->addException($message, Mage_Dataflow_Model_Convert_Exception::FATAL);
+            return $this;
+        }
+
+        $batchModel = $this->getBatchModel();
+        $batchIoAdapter = $this->getBatchModel()->getIoAdapter();
 
         if (Mage::app()->getRequest()->getParam('files')) {
-            $path = Mage::app()->getConfig()->getTempVarDir().'/import/';
-            $file = $path.Mage::app()->getRequest()->getParam('files');
-            if (file_exists($file)) {
-                $fh = fopen($file, "r");
-            }
-            else {
-                return $this;
-            }
+            $file = Mage::app()->getConfig()->getTempVarDir().'/import/'
+                . Mage::app()->getRequest()->getParam('files');
+            $this->_copy($file);
+        }
+
+        $batchIoAdapter->open(false);
+
+        $isFieldNames = $this->getVar('fieldnames', '') == 'true' ? true : false;
+        if (!$isFieldNames && is_array($this->getVar('map'))) {
+            $fieldNames = $this->getVar('map');
         }
         else {
-            $data = $this->getData();
-            $fh = tmpfile();
-            fwrite($fh, $data);
-            fseek($fh, 0);
+            $fieldNames = array();
+            foreach ($batchIoAdapter->read(true, $fDel, $fEnc) as $v) {
+                $fieldNames[$v] = $v;
+            }
         }
 
-        // fix for field mapping
-        if ($mapfields = $this->getProfile()->getDataflowProfile()) {
-            $this->_mapfields = array_values($mapfields['gui_data']['map'][$mapfields['entity_type']]['db']);
-        } // end
-
-        if (!$this->getVar('fieldnames') && !$this->_mapfields) {
-            $this->addException('Please define field mapping', Mage_Dataflow_Model_Convert_Exception::FATAL);
-            return;
-        }
-
-        if ($this->getVar('adapter') && $this->getVar('method')) {
-            $adapter = Mage::getModel($this->getVar('adapter'));
-        }
-
-        $i = 0;
-        while (($line = fgetcsv($fh, null, $fDel, $fEnc)) !== FALSE) {
-            $row = $this->parseRow($i, $line);
-
-            if (!$this->getVar('fieldnames') && $i == 0 && $row) {
-                $i = 1;
+        $countRows = 0;
+        while (($csvData = $batchIoAdapter->read(true, $fDel, $fEnc)) !== false) {
+            if (count($csvData) == 1 && $csvData[0] === null) {
+                continue;
             }
 
-            if ($row) {
-                $loadMethod = $this->getVar('method');
-                $adapter->$loadMethod(compact('i', 'row'));
+            $itemData = array();
+            $countRows ++; $i = 0;
+            foreach ($fieldNames as $field) {
+                $itemData[$field] = isset($csvData[$i]) ? $csvData[$i] : null;
+                $i ++;
             }
-            $i++;
+
+            $batchImportModel = $this->getBatchImportModel()
+                ->setId(null)
+                ->setBatchId($this->getBatchModel()->getId())
+                ->setBatchData($itemData)
+                ->setStatus(1)
+                ->save();
         }
+
+        $this->addException(Mage::helper('dataflow')->__('Found %d rows', $countRows));
+        $this->addException(Mage::helper('dataflow')->__('Starting %s :: %s', $adapterName, $adapterMethod));
+
+        $batchModel->setAdapter($adapterName)
+            ->save();
+
+        //$adapter->$adapterMethod();
 
         return $this;
+
+//        // fix for field mapping
+//        if ($mapfields = $this->getProfile()->getDataflowProfile()) {
+//            $this->_mapfields = array_values($mapfields['gui_data']['map'][$mapfields['entity_type']]['db']);
+//        } // end
+//
+//        if (!$this->getVar('fieldnames') && !$this->_mapfields) {
+//            $this->addException('Please define field mapping', Mage_Dataflow_Model_Convert_Exception::FATAL);
+//            return;
+//        }
+//
+//        if ($this->getVar('adapter') && $this->getVar('method')) {
+//            $adapter = Mage::getModel($this->getVar('adapter'));
+//        }
+//
+//        $i = 0;
+//        while (($line = fgetcsv($fh, null, $fDel, $fEnc)) !== FALSE) {
+//            $row = $this->parseRow($i, $line);
+//
+//            if (!$this->getVar('fieldnames') && $i == 0 && $row) {
+//                $i = 1;
+//            }
+//
+//            if ($row) {
+//                $loadMethod = $this->getVar('method');
+//                $adapter->$loadMethod(compact('i', 'row'));
+//            }
+//            $i++;
+//        }
+//
+//        return $this;
     }
 
     public function parseRow($i, $line)
@@ -116,38 +175,43 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
         return $resultRow;
     }
 
+    /**
+     * Read data collection and write to temporary file
+     *
+     * @return Mage_Dataflow_Model_Convert_Parser_Csv
+     */
     public function unparse()
     {
-        $csv = '';
+        $batchExport = $this->getBatchExportModel()
+            ->setBatchId($this->getBatchModel()->getId());
+        $fieldList = $this->getBatchModel()->getFieldList();
+        $batchExportIds = $batchExport->getIdCollection();
 
-        $fDel = $this->getVar('delimiter', ',');
-        $fEnc = $this->getVar('enclose', '"');
-        $fEsc = $this->getVar('escape', '\\');
-        $lDel = "\r\n";
-
-        if ($fDel=='\\t') {
-            $fDel = "\t";
+        if (!$batchExportIds) {
+            return $this;
         }
 
-        $data = $this->getData();
-        $this->_fields = $this->getGridFields($data);
-        $lines = array();
+        $io = $this->getBatchModel()->getIoAdapter();
+        $io->open();
 
         if ($this->getVar('fieldnames')) {
-            $line = array();
-            foreach ($this->_fields as $f) {
-                $v = isset($f) ? str_replace('\\', $fEsc.'\\', $f) : '';
-                $line[] = str_replace('"', '\"', $v);
-                //$line[] = $fEnc.str_replace(array('"', '\\'), array('\"', $fEsc.'\\'), $f).$fEnc;
+            $csvData = $this->getCsvString($fieldList);
+            $io->write($csvData);
+        }
+
+        foreach ($batchExportIds as $batchExportId) {
+            $csvData = array();
+            $batchExport->load($batchExportId);
+            $row = $batchExport->getBatchData();
+
+            foreach ($fieldList as $field) {
+                $csvData[] = isset($row[$field]) ? $row[$field] : '';
             }
-            $lines[] = join($fDel, $line);
+            $csvData = $this->getCsvString($csvData);
+            $io->write($csvData);
         }
-        foreach ($data as $i=>$row) {
-//            $lines[] = $this->unparseRow(compact($i, $row));
-            $lines[] = $this->unparseRow(compact('i', 'row'));
-        }
-        $result = join($lDel, $lines);
-        $this->setData($result);
+
+        $io->close();
 
         return $this;
     }
@@ -175,4 +239,45 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
         return join($fDel, $line);
     }
 
+    /**
+     * Retrieve csv string from array
+     *
+     * @param array $fields
+     * @return sting
+     */
+    public function getCsvString($fields = array()) {
+        $delimiter  = $this->getVar('delimiter', ',');
+        $enclosure  = $this->getVar('enclose', '"');
+        $escapeChar = $this->getVar('escape', '\\');
+
+        $str = '';
+
+        foreach ($fields as $value) {
+            if (strpos($value, $delimiter) !== false ||
+                strpos($value, $enclosure) !== false ||
+                strpos($value, "\n") !== false ||
+                strpos($value, "\r") !== false ||
+                strpos($value, "\t") !== false ||
+                strpos($value, ' ') !== false) {
+                $str2 = $enclosure;
+                $escaped = 0;
+                $len = strlen($value);
+                for ($i=0;$i<$len;$i++) {
+                    if ($value[$i] == $escapeChar) {
+                        $escaped = 1;
+                    } else if (!$escaped && $value[$i] == $enclosure) {
+                        $str2 .= $enclosure;
+                    } else {
+                        $escaped = 0;
+                    }
+                        $str2 .= $value[$i];
+                }
+                $str2 .= $enclosure;
+                $str .= $str2.$delimiter;
+            } else {
+                $str .= $enclosure.$value.$enclosure.$delimiter;
+            }
+        }
+        return substr($str, 0, -1) . "\n";
+    }
 }

@@ -66,7 +66,10 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
                 ->addTagFilter($this->getTag()->getId())
                 ->addStoreFilter()
                 ->addUrlRewrite();
+            Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($this->_productCollection);
+            Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($this->_productCollection);
         }
+        
         return $this->_productCollection;
     }
 
@@ -82,7 +85,7 @@ class Mage_Tag_Block_Product_Result extends Mage_Core_Block_Template
     public function getHeaderText()
     {
         if( $this->getTag()->getName() ) {
-            return Mage::helper('tag')->__("Products tagged with '%s'", $this->getTag()->getName());
+            return Mage::helper('tag')->__("Products tagged with '%s'", $this->htmlEscape($this->getTag()->getName()));
         } else {
             return false;
         }

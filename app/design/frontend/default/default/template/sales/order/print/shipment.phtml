@@ -40,12 +40,7 @@
         <div class="col-1">
             <h4><?php echo $this->__('Shipping Address') ?></h4>
             <?php $_shipping = $_shipment->getShippingAddress() ?>
-            <address><?php echo $_shipping->getFirstname() ?> <?php echo $_shipping->getLastname() ?><br/>
-            <?php echo $_shipping->getCompany() ?><br/>
-            <?php echo $_shipping->getStreet() ?><br/>
-            <?php echo $_shipping->getCity() ?>, <?php echo $_shipping->getRegion() ?> <?php echo $_shipping->getPostcode() ?><br/>
-            <strong>T</strong> | <?php echo $_shipping->getTelephone();
-            if ($_shipping->getFax()): ?><br /><strong>F</strong> | <?php echo $_shipping->getFax() ?><?php endif; ?></address>
+            <address><?php echo $_shipping->format('html') ?></address>
         </div>
         <div class="col-2">
             <h4><?php echo $this->__('Billing Address') ?></h4>
@@ -81,7 +76,7 @@
             <?php foreach ($_items as $_item): ?>
                 <tr<?php echo ($_index++ > $_count ? ' class="last"' : '') ?>>
                 <td>
-                    <?php echo $_item->getName() ?>
+                    <?php echo $this->htmlEscape($_item->getName()) ?>
                     <?php echo $_item->getDescription() ?>
                 </td>
                 <td class="a-center"><?php echo $_item->getSku() ?></td>

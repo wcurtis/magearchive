@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Reports>
-            <version>0.7.5</version>
+            <version>0.7.6</version>
             <depends>
                 <Mage_Customer />
                 <Mage_Catalog />
@@ -81,7 +81,7 @@
                     </reports>
                 </observers>
             </customer_login>
-            <catalog_product_view>
+            <catalog_controller_product_view>
                 <observers>
                     <reports>
                         <type>singleton</type>
@@ -89,7 +89,7 @@
                         <method>catalogProductView</method>
                     </reports>
                 </observers>
-            </catalog_product_view>
+            </catalog_controller_product_view>
             <sendfriend_product>
                 <observers>
                     <reports>
@@ -405,4 +405,12 @@
             </updates>
         </layout>
     </frontend>
+    
+     <default>
+        <catalog>
+            <recently_products>
+                <scope>website</scope>
+            </recently_products>
+        </catalog>
+    </default>
 </config>

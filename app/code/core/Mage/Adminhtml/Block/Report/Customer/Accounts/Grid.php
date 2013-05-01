@@ -44,7 +44,8 @@ class Mage_Adminhtml_Block_Report_Customer_Accounts_Grid extends Mage_Adminhtml_
         $this->addColumn('accounts', array(
             'header'    =>Mage::helper('reports')->__('Number of New Accounts'),
             'index'     =>'accounts',
-            'total'     =>'sum'
+            'total'     =>'sum',
+            'type'      =>'number'
         ));
 
         $this->addExportType('*/*/exportAccountsCsv', Mage::helper('reports')->__('CSV'));

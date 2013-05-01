@@ -25,11 +25,21 @@
  */
 class Mage_CatalogIndex_Model_Observer extends Mage_Core_Model_Abstract
 {
-    protected $_indexers = array();
+    protected $_parentProductIds = array();
 
-    protected function _construct()
+    protected function _construct() {}
+
+    public function reindexAll()
     {
+        Mage::getSingleton('catalogindex/indexer')->reindex();
     }
+
+    public function reindexDaily()
+    {
+        Mage::getSingleton('catalogindex/indexer')->reindexPrices();
+    }
+
+    // event handlers
 
     public function processAfterSaveEvent(Varien_Event_Observer $observer)
     {
@@ -37,13 +47,37 @@ class Mage_CatalogIndex_Model_Observer extends Mage_Core_Model_Abstract
         Mage::getSingleton('catalogindex/indexer')->index($eventProduct);
     }
 
-    public function reindexAll()
+    public function processPriceScopeChange(Varien_Event_Observer $observer)
     {
-        Mage::getSingleton('catalogindex/indexer')->reindex();
+        Mage::getSingleton('catalogindex/indexer')->reindexPrices();
     }
 
     public function processPriceRuleApplication(Varien_Event_Observer $observer)
     {
-        Mage::getSingleton('catalogindex/indexer')->update($observer->getEvent()->getPrices());
+        $eventProduct = $observer->getEvent()->getProduct();
+        Mage::getSingleton('catalogindex/indexer')->reindexPrices($eventProduct);
+    }
+
+    public function registerParentIds(Varien_Event_Observer $observer)
+    {
+        $observer->getEvent()->getProduct()->loadParentProductIds();
+    }
+
+    public function processAfterDeleteEvent(Varien_Event_Observer $observer)
+    {
+        $eventProduct = $observer->getEvent()->getProduct();
+        Mage::getSingleton('catalogindex/indexer')->cleanup($eventProduct);
+        $parentProductIds = $eventProduct->getParentProductIds();
+
+        foreach ($parentProductIds as $parent) {
+            Mage::getSingleton('catalogindex/indexer')->index($parent);
+        }
+    }
+
+    public function processAttributeChangeEvent(Varien_Event_Observer $observer)
+    {
+        if ($observer->getAttribute()->getIsFilterable() != 0) {
+            Mage::getSingleton('catalogindex/indexer')->reindex();
+        }
     }
 }

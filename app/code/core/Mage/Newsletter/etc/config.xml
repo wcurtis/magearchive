@@ -177,6 +177,9 @@
                                 <queue>
                                     <title>Newsletter Queue</title>
                                 </queue>
+                                <subscriber>
+                                    <title>Newsletter Subscribers</title>
+                                </subscriber>
                                 <template>
                                     <title>Newsletter Templates</title>
                                 </template>

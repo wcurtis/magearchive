@@ -135,7 +135,7 @@ billing.onSave = function(evt){
                     <span class="numeration"><?php echo $this->__('Item %d of %d', $_index+1, $this->countItems()) ?></span>
                </div>
                <div class="left">
-                    <h5 class="giftmessage-product-info"><?php echo $_product->getName() ?></h5>
+                    <h5 class="giftmessage-product-info"><?php echo $this->htmlEscape($_product->getName()) ?></h5>
                     <fieldset class="group-select">
                         <input type="hidden" name="giftmessage[<?php echo $_item->getId() ?>][type]"  value="quote_item"/>
                         <ul class="no-padding">
@@ -222,7 +222,7 @@ billing.onSave = function(evt){
                 <span class="numeration"><?php echo $this->__('Item %d of %d', $_index+1, $this->countItems()) ?></span>
            </div>
            <div class="left">
-                <h5 class="giftmessage-product-info"><?php echo $_product->getName() ?></h5>
+                <h5 class="giftmessage-product-info"><?php echo $this->htmlEscape($_product->getName()) ?></h5>
                 <fieldset class="group-select no-padding no-border">
                     <input type="hidden" name="giftmessage[<?php echo $_item->getId() ?>][type]"  value="quote_address_item"/>
                     <ul class="no-padding">

@@ -69,7 +69,6 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
         $attributes = array();
         $options = array();
         $store = Mage::app()->getStore();
-
         foreach ($this->getAllowProducts() as $product) {
             $productId  = $product->getId();
 
@@ -87,7 +86,9 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
             }
         }
 
-        $this->_resPrices = array($this->getProduct()->getFinalPrice());
+        $this->_resPrices = array(
+            $this->_preparePrice($this->getProduct()->getFinalPrice())
+        );
 
         foreach ($this->getAllowAttributes() as $attribute) {
             $productAttribute = $attribute->getProductAttribute();
@@ -100,19 +101,22 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
             );
 
             $optionPrices = array();
-            foreach ($attribute->getPrices() as $value) {
-                if(!$this->_validateAttributeValue($attributeId, $value, $options)) {
-                    continue;
-                }
+            $prices = $attribute->getPrices();
+            if (is_array($prices)) {
+                foreach ($prices as $value) {
+                    if(!$this->_validateAttributeValue($attributeId, $value, $options)) {
+                        continue;
+                    }
 
-                $info['options'][] = array(
-                    'id'    => $value['value_index'],
-                    'label' => $value['label'],
-                    'price' => $this->_preparePrice($value['pricing_value'], $value['is_percent']),
-                    'products'   => isset($options[$attributeId][$value['value_index']]) ? $options[$attributeId][$value['value_index']] : array(),
-                );
-                $optionPrices[] = $value['pricing_value'];
-                $this->_registerAdditionalJsPrice($value['pricing_value'], $value['is_percent']);
+                    $info['options'][] = array(
+                        'id'    => $value['value_index'],
+                        'label' => $value['label'],
+                        'price' => $this->_preparePrice($value['pricing_value'], $value['is_percent']),
+                        'products'   => isset($options[$attributeId][$value['value_index']]) ? $options[$attributeId][$value['value_index']] : array(),
+                    );
+                    $optionPrices[] = $this->_preparePrice($value['pricing_value'], $value['is_percent']);
+                    $this->_registerAdditionalJsPrice($value['pricing_value'], $value['is_percent']);
+                }
             }
             /**
              * Prepare formated values for options choose
@@ -133,7 +137,8 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
             'attributes'=> $attributes,
             'template'  => str_replace('%s', '#{price}', $store->getCurrentCurrency()->getOutputFormat()),
             'prices'    => $this->_prices,
-            'basePrice' => $this->_registerJsPrice($this->getProduct()->getFinalPrice()),
+            'basePrice' => $this->_registerJsPrice($this->_convertPrice($this->getProduct()->getFinalPrice())),
+            'oldPrice'  => $this->_registerJsPrice($this->_convertPrice($this->getProduct()->getPrice())),
             'productId' => $this->getProduct()->getId(),
             'chooseText'=> Mage::helper('catalog')->__('Choose option...'),
         );
@@ -174,14 +179,11 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
 
     protected function _preparePrice($price, $isPercent=false)
     {
-        if ($isPercent) {
+        if ($isPercent && !empty($price)) {
             $price = $this->getProduct()->getFinalPrice()*$price/100;
         }
-        else {
-            $price = Mage::app()->getStore()->convertPrice($price);
-        }
-        $price = Mage::app()->getStore()->roundPrice($price);
-        return $this->_registerJsPrice($price);
+
+        return $this->_registerJsPrice($this->_convertPrice($price, true));
     }
 
     protected function _registerJsPrice($price)
@@ -194,15 +196,37 @@ class Mage_Catalog_Block_Product_View_Type_Configurable extends Mage_Catalog_Blo
         return $jsPrice;
     }
 
+    protected function _convertPrice($price, $round=false)
+    {
+        if (empty($price)) {
+            return 0;
+        }
+
+        $price = Mage::app()->getStore()->convertPrice($price);
+        if ($round) {
+            $price = Mage::app()->getStore()->roundPrice($price);
+        }
+
+
+        return $price;
+    }
+
     protected function _registerAdditionalJsPrice($price, $isPercent=false)
     {
+        if (empty($price) && isset($this->_prices[0])) {
+            return $this;
+        }
+
         $basePrice = $this->getProduct()->getFinalPrice();
         if ($isPercent) {
             $price = $basePrice*$price/100;
         }
         else {
-            $price = Mage::app()->getStore()->convertPrice($price);
+            $price = $price;
         }
+
+        $price = $this->_convertPrice($price);
+
         foreach ($this->_resPrices as $prevPrice) {
         	$additionalPrice = $prevPrice + $price;
         	$this->_resPrices[] = $additionalPrice;

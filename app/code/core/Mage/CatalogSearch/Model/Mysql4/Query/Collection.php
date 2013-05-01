@@ -49,9 +49,6 @@ class Mage_CatalogSearch_Model_Mysql4_Query_Collection extends Mage_Core_Model_M
     			array('name'=>"if(ifnull(synonim_for,'')<>'', synonim_for, query_text)", 'num_results')
     		);
         if ($storeIds) {
-            if (is_array($storeIds)) {
-                $storeIds = implode(',', $storeIds);
-            }
             $this->getSelect()->where('num_results>0 and store_id in (?)', $storeIds);
         } else if ($storeIds === null){
     		$this->getSelect()->where('num_results>0 and store_id=?',Mage::app()->getStore()->getId());

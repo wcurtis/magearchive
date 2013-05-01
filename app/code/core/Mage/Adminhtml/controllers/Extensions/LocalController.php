@@ -31,6 +31,10 @@ class Mage_Adminhtml_Extensions_LocalController extends Mage_Adminhtml_Controlle
 {
     public function indexAction()
     {
+        $url = Mage::getBaseUrl('web').'downloader/?return='.urlencode(Mage::getUrl('adminhtml'));
+        $this->getResponse()->setRedirect($url);
+        return;
+
         $this->loadLayout();
 
         $this->_setActiveMenu('system/extensions/local');
@@ -188,5 +192,9 @@ class Mage_Adminhtml_Extensions_LocalController extends Mage_Adminhtml_Controlle
         }
         Mage::app()->getFrontController()->getResponse()->clearAllHeaders();
     }
-}
 
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('system/extensions/local');
+    }
+}

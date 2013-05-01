@@ -102,7 +102,7 @@ class Mage_Directory_Model_Mysql4_Region_Collection extends Varien_Data_Collecti
             );
         }
         if (count($options)>0) {
-            array_unshift($options, array('title'=>null, 'value'=>'0', 'label'=>Mage::helper('directory')->__('')));
+            array_unshift($options, array('title'=>null, 'value'=>'0', 'label'=>Mage::helper('directory')->__('-- Please select --')));
         }
         return $options;
     }

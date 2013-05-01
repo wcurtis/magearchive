@@ -72,15 +72,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </list_per_page>
-                        <price_range_layered_navigation translate="label">
-                            <label>Display Price Range in Layered Navigation</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>4</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </price_range_layered_navigation>
                     </fields>
                 </frontend>
                 <product translate="label">
@@ -159,6 +150,26 @@
                         </title_separator>
                     </fields>
                 </seo>
+                <price translate="label">
+                    <label>Price</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>400</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <scope translate="label">
+                            <label>Catalog Price Scope</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_price_scope</source_model>
+                            <backend_model>adminhtml/system_config_backend_price_scope</backend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </scope>
+                    </fields>
+                </price>
             </groups>
         </catalog>
         <design>

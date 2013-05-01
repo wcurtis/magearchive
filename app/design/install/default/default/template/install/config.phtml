@@ -61,7 +61,7 @@
         <li>
             <div class="input-box">
                 <label for="prefix"><?php echo $this->__('Tables Prefix') ?><br/>
-                <input type="text" name="config[db_prefix]" id="prefix" value="<?php echo $this->getFormData()->getDbPrefix() ?>" title="<?php echo $this->__('Tables Prefix') ?>" class="input-text"/>
+                <input type="text" name="config[db_prefix]" id="prefix" value="<?php echo $this->getFormData()->getDbPrefix() ?>" title="<?php echo $this->__('Tables Prefix') ?>" class="validate-data input-text"/>
                 <p style="margin-top:4px; line-height:1.3em; color:#666;">
                     <small><?php echo $this->__('(Optional. Leave blank for no prefix)') ?></small>
                 </p>
@@ -101,14 +101,14 @@
             </p>
         </li>
         <li>
-            <input type="checkbox" name="config[use_secure_admin]" id="use_secure_admin" value="1" <?php if($this->getUseSecureAdmin()): ?>checked="checked"<?php endif ?>>
+            <input type="checkbox" name="config[use_secure_admin]" id="use_secure_admin" value="1" <?php if($this->getFormData()->getUseSecureAdmin()): ?>checked="checked"<?php endif ?>>
             <label for="use_secure_admin"><?php echo $this->__('Run admin interface with SSL') ?></label><br/>
             <p style="margin-top:4px; line-height:1.3em; color:#666;">
                 <small><?php echo $this->__('') ?></small>
             </p>
         </li>
         <li>
-            <input type="checkbox" name="skip_url_validation" id="skip_url_validation" value="1" <?php if($this->getSkipSecureValidation()): ?>checked="checked"<?php endif ?>>
+            <input type="checkbox" name="skip_url_validation" id="skip_url_validation" value="1" <?php if($this->getSkipUrlValidation()): ?>checked="checked"<?php endif ?>>
             <label for="skip_url_validation"><?php echo $this->__('Skip Secure URL validation before next step') ?></label><br/>
             <p style="margin-top:4px; line-height:1.3em; color:#666;">
                 <small><?php echo $this->__('Check this box only if it is not possible to automatically validate Secure URL, for example if HTTP authentication is required.') ?></small>

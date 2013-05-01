@@ -61,7 +61,10 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
 
                     $quoteShippingAddress->addItem($addressItem);
                 }
-                $quoteShippingAddress->setCollectShippingRates(true);
+                /**
+                 * Collect rates before display shipping methods
+                 */
+                //$quoteShippingAddress->setCollectShippingRates(true);
             }
 
             if ($this->getCustomerDefaultBillingAddress()) {
@@ -127,6 +130,18 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
     public function setShippingItemsInformation($info)
     {
         if (is_array($info)) {
+            $allQty = 0;
+            foreach ($info as $itemData) {
+                foreach ($itemData as $quoteItemId => $data) {
+                    $allQty += $data['qty'];
+                }
+            }
+
+            $maxQty = (int)Mage::getStoreConfig('shipping/option/checkout_multiple_maximum_qty');
+            if ($allQty > $maxQty) {
+                Mage::throwException(Mage::helper('checkout')->__('Maximum qty allowed for Shipping to multiple addresses is %s', $maxQty));
+            }
+
             $addresses  = $this->getQuote()->getAllShippingAddresses();
             foreach ($addresses as $address) {
                 $this->getQuote()->removeAddress($address->getId());
@@ -173,7 +188,11 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
                         ->setQty($qty);
                     $quoteAddress->addItem($quoteAddressItem);
                 }
-                $quoteAddress->setCollectShippingRates(true);
+                /**
+                 * Collect rates for shipping method page only
+                 */
+                //$quoteAddress->setCollectShippingRates(true);
+                $quoteAddress->setCollectShippingRates((boolean) $this->getCollectRatesFlag());
             }
         }
         return $this;
@@ -250,9 +269,36 @@ class Mage_Checkout_Model_Type_Multishipping extends Mage_Checkout_Model_Type_Ab
         return $order;
     }
 
+    protected function _validate()
+    {
+        $helper = Mage::helper('checkout');
+        if (!$this->getQuote()->getIsMultiShipping()) {
+            Mage::throwException($helper->__('Invalid checkout type.'));
+        }
+
+        $addresses = $this->getQuote()->getAllShippingAddresses();
+        foreach ($addresses as $address) {
+            $addressValidation = $address->validate();
+            if ($addressValidation !== true) {
+                Mage::throwException($helper->__('Please check shipping addresses information.'));
+            }
+        	$method= $address->getShippingMethod();
+        	$rate  = $address->getShippingRateByCode($method);
+        	if (!$method || !$rate) {
+        	    Mage::throwException($helper->__('Please specify shipping methods for all addresses.'));
+        	}
+        }
+        $addressValidation = $this->getQuote()->getBillingAddress()->validate();
+        if ($addressValidation !== true) {
+            Mage::throwException($helper->__('Please check billing address information.'));
+        }
+        return $this;
+    }
+
     public function createOrders()
     {
         $orderIds = array();
+        $this->_validate();
         $shippingAddresses = $this->getQuote()->getAllShippingAddresses();
         $orders = array();
         foreach ($shippingAddresses as $address) {

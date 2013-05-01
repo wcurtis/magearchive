@@ -55,12 +55,12 @@ Default layout, loads most of the pages
                 <action method="chooseTemplate"/>
 
                 <block type="core/text_list" name="checkout.cart.top_methods" as="top_methods">
-                    <block type="checkout/onepage_link" name="checkout.cart.methods.onepage"/>
+                    <block type="checkout/onepage_link" name="checkout.cart.methods.onepage" template="checkout/onepage/link.phtml"/>
                 </block>
 
                 <block type="core/text_list" name="checkout.cart.methods" as="methods">
-                    <block type="checkout/onepage_link" name="checkout.cart.methods.onepage"/>
-                    <block type="checkout/multishipping_link" name="checkout.cart.methods.multishipping"/>
+                    <block type="checkout/onepage_link" name="checkout.cart.methods.onepage" template="checkout/onepage/link.phtml"/>
+                    <block type="checkout/multishipping_link" name="checkout.cart.methods.multishipping" template="checkout/multishipping/link.phtml"/>
                 </block>
 
                 <block type="checkout/cart_coupon" name="checkout.cart.coupon" as="coupon" template="checkout/cart/coupon.phtml"/>
@@ -220,7 +220,6 @@ One page checkout main layout
 
     <checkout_onepage_index>
         <!-- Mage_Checkout -->
-        <remove name="right"/>
         <remove name="left"/>
 
         <reference name="root">

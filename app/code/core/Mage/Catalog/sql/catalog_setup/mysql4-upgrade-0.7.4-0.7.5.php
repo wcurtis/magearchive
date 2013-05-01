@@ -28,9 +28,9 @@ CREATE TABLE {$this->getTable('catalog_product_website')} (
   `website_id` SMALLINT(5) UNSIGNED NOT NULL,
   PRIMARY KEY (`product_id`, `website_id`),
   CONSTRAINT `FK_CATALOG_PRODUCT_WEBSITE_WEBSITE` FOREIGN KEY `FK_CATALOG_PRODUCT_WEBSITE_WEBSITE` (`website_id`)
-    REFERENCES `core_website` (`website_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    REFERENCES `{$this->getTable('core_website')}` (`website_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_CATALOG_WEBSITE_PRODUCT_PRODUCT` FOREIGN KEY `FK_CATALOG_WEBSITE_PRODUCT_PRODUCT` (`product_id`)
-    REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE
+    REFERENCES `{$this->getTable('catalog_product_entity')}` (`entity_id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS {$this->getTable('catalog_product_status')};

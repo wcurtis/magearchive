@@ -13,27 +13,15 @@
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
  * @category   Mage
- * @package    Mage_Admin
+ * @package    Mage_Permissions
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-/**
- * Users collection
- *
- * @category   Mage
- * @package    Mage_Admin
- */
-class Mage_Admin_Model_Mysql4_User_Collection extends Varien_Data_Collection_Db
+class Mage_Admin_Model_Mysql4_User_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
-    protected $_userTable;
-    
-    public function __construct() 
+    protected function _construct()
     {
-        parent::__construct(Mage::getSingleton('core/resource')->getConnection('admin_read'));
-        $this->_userTable = Mage::getSingleton('core/resource')->getTableName('admin/user');
-        $this->_select->from($this->_userTable);
-        
-        $this->setItemObjectClass(Mage::getConfig()->getModelClassName('admin/user'));
+        $this->_init('admin/user');
     }
 }

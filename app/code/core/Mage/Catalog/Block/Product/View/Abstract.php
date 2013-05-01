@@ -51,8 +51,10 @@ abstract class Mage_Catalog_Block_Product_View_Abstract extends Mage_Core_Block_
                     }
                 }
                 else {
-                    $price['savePercent'] = ceil(100 - (( 100/$product->getPrice() ) * $price['price'] ));
-                    $res[] = $price;
+                    if ($price['price']<$product->getPrice()) {
+                        $price['savePercent'] = ceil(100 - (( 100/$product->getPrice() ) * $price['price'] ));
+                        $res[] = $price;
+                    }
                 }
             }
         }

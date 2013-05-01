@@ -84,7 +84,8 @@ class Mage_Adminhtml_Block_Report_Product_Lowstock_Grid extends Mage_Adminhtml_B
             'align'     =>'right',
             'sortable'  =>false,
             'filter'    =>'adminhtml/widget_grid_column_filter_range',
-            'index'     =>'qty'
+            'index'     =>'qty',
+            'type'      =>'number'
         ));
 
         $this->addExportType('*/*/exportLowstockCsv', Mage::helper('reports')->__('CSV'));

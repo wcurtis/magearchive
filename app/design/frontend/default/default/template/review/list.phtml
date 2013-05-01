@@ -25,7 +25,11 @@
             <?php if( $this->getUseBackLink() ): ?>
             <small>&laquo; <a href="<?php echo $backLink ?>"><?php echo $this->__('Back') ?></a></small>
             <?php else: ?>
-            <a href="<?php echo $reviewLink ?>"><small><?php echo $this->__('View All Reviews') ?></small></a><?php endif; ?><?php endif; ?><span class="pipe">|</span><a href="<?php echo $this->getAddLink() ?>#review-form"><small><?php echo $this->__('Add Your Review') ?></small></a>
+            <a href="<?php echo $reviewLink ?>"><small><?php echo $this->__('View All Reviews') ?></small></a>
+            <?php endif; ?>
+        <?php endif; ?>
+        <span class="pipe">|</span>
+        <a href="<?php echo $this->getAddLink() ?>#review-form"><small><?php echo $this->__('Add Your Review') ?></small></a>
     </div>
     <?php if( $this->getUseBackLink() ): ?>
     <?php echo $this->getToolbarHtml() ?>
@@ -34,14 +38,13 @@
     <?php foreach ($this->getCollection() as $_review): ?>
         <li>
         <?php if( is_array($_review->getRatingVotes()->getItems()) && $this->getAverage($_review->getRatingVotes()) ): ?>
-
             <div class="rating-box">
                 <div class="rating" style="width:<?php echo $this->getAverage($_review->getRatingVotes()) ?>%;"></div>
             </div>
-
         <?php endif; ?>
-            <a href="<?php echo $_review->getReviewUrl() ?>" name="<?php echo $_review->getTitle() ?>"><strong><?php echo $_review->getTitle() ?></strong></a> <?php echo $this->__('Review by %s', $_review->getNickname()) ?>
-            <p class="no-padding"><?php echo nl2br($_review->getDetail()) ?></p>
+            <a href="<?php echo $_review->getReviewUrl() ?>" name="<?php echo $this->htmlEscape($_review->getTitle()) ?>"><strong><?php echo $this->htmlEscape($_review->getTitle()) ?></strong></a>
+            <?php echo $this->__('Review by %s', $this->htmlEscape($_review->getNickname())) ?>
+            <p class="no-padding"><?php echo nl2br($this->htmlEscape($_review->getDetail())) ?></p>
         </li>
     <?php endforeach; ?>
     </ol>

@@ -23,7 +23,7 @@
     <li id="<?php echo $item['id'] ?>" url="<?php echo $item['url'] ?>">
         <div style="float:right; color:red; font-weight:bold;">[<?php echo $item['type'] ?>]</div>
         <strong><?php echo $item['name'] ?></strong><br/>
-        <span class="informal"><?php echo $item['description'] ?></span>
+        <span class="informal"><?php echo $this->htmlEscape($item['description']) ?></span>
     </li>
 <?php endforeach ?>
 </ul>

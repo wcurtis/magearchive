@@ -38,15 +38,11 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
 
     protected $_addresses = null;
 
-    protected $_regions   = null;
-    protected $_website   = null;
     protected $_errors    = array();
 
     function _construct()
     {
         $this->_init('customer/customer');
-        $this->_regions = Mage::getResourceModel('directory/region_collection');
-        $this->_website = Mage::getModel('core/website');
     }
 
     /**
@@ -180,7 +176,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
                 ->addAttributeToSelect('*')
                 ->load();
             foreach ($collection as $address) {
-            	$this->_addresses[] = $address;
+                $this->_addresses[] = $address;
             }
         }
 
@@ -446,7 +442,7 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     public function getTaxClassId()
     {
         if (!$this->getData('tax_class_id')) {
-            $this->setTaxClassId(Mage::getModel('customer/group')->load($this->getGroupId())->getTaxClassId());
+            $this->setTaxClassId(Mage::getModel('customer/group')->getTaxClassId($this->getGroupId()));
         }
         return $this->getData('tax_class_id');
     }
@@ -502,23 +498,43 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get regions collection object
+     * Validate customer attribute values
      *
-     * @return unknown
+     * @return bool
      */
-    public function getRegionCollection()
+    public function validate()
     {
-        return $this->_regions;
-    }
+        $errors = array();
+        $helper = Mage::helper('customer');
 
-    /**
-     * Retrieve website
-     *
-     * @return uMage_Core_Model_Website
-     */
-    public function getWebsite()
-    {
-        return $this->_website;
+        if (!Zend_Validate::is($this->getFirstname(), 'NotEmpty')) {
+            $errors[] = $helper->__('First name can\'t be empty');
+        }
+
+        if (!Zend_Validate::is($this->getLastname(), 'NotEmpty')) {
+            $errors[] = $helper->__('Last name can\'t be empty');
+        }
+
+        if (!Zend_Validate::is($this->getEmail(), 'EmailAddress')) {
+            $errors[] = $helper->__('Invalid email address');
+        }
+
+        $password = $this->getPassword();
+        if (!$this->getId() && !Zend_Validate::is($password, 'NotEmpty')) {
+            $errors[] = $helper->__('Password can\'t be empty');
+        }
+        if ($password && !Zend_Validate::is($password, 'StringLength', array(6))) {
+            $errors[] = $helper->__('Password minimal length must be more %s', 6);
+        }
+        $confirmation = $this->getConfirmation();
+        if ($password != $confirmation) {
+            $errors[] = $helper->__('Please make sure your passwords match.');
+        }
+
+        if (empty($errors)) {
+            return true;
+        }
+        return $errors;
     }
 
     /**
@@ -534,10 +550,10 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
         $line = $row['i'];
         $row = $row['row'];
 
-        $regions = $this->getRegionCollection();
+        $regions = Mage::getResourceModel('directory/region_collection');
 //        $config = Mage::getSingleton('eav/config')->getEntityType('customer');
 
-        $website = $this->getWebsite()->load($row['website_code'], 'code');
+        $website = Mage::getModel('core/website')->load($row['website_code'], 'code');
 
         if (!$website->getId()) {
             $this->addError($hlp->__('Invalid website, skipping the record, line: %s', $line));
@@ -635,10 +651,14 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
             $billingAddress->setLastname($row['lastname']);
             $billingAddress->setCity($row['billing_city']);
             $billingAddress->setRegion($row['billing_region']);
-            $billingAddress->setRegionId($regionId);
+            if (isset($regionId)) $billingAddress->setRegionId($regionId);
             $billingAddress->setCountryId($row['billing_country']);
             $billingAddress->setPostcode($row['billing_postcode']);
-            $billingAddress->setStreet(array($row['billing_street1'],$row['billing_street2']));
+            if (isset($row['billing_street2'])) {
+                $billingAddress->setStreet(array($row['billing_street1'],$row['billing_street2']));
+            } else {
+                $billingAddress->setStreet(array($row['billing_street1']));
+            }
             if (isset($row['billing_telephone'])) {
                 $billingAddress->setTelephone($row['billing_telephone']);
             }
@@ -671,10 +691,14 @@ class Mage_Customer_Model_Customer extends Mage_Core_Model_Abstract
             $shippingAddress->setLastname($row['lastname']);
             $shippingAddress->setCity($row['shipping_city']);
             $shippingAddress->setRegion($row['shipping_region']);
-            $shippingAddress->setRegionId($regionId);
+            if (isset($regionId)) $shippingAddress->setRegionId($regionId);
             $shippingAddress->setCountryId($row['shipping_country']);
             $shippingAddress->setPostcode($row['shipping_postcode']);
-            $shippingAddress->setStreet(array($row['shipping_street1'], $row['shipping_street2']));
+            if (isset($row['shipping_street2'])) {
+                $shippingAddress->setStreet(array($row['shipping_street1'], $row['shipping_street2']));
+            } else {
+                $shippingAddress->setStreet(array($row['shipping_street1']));
+            }
             if (!empty($row['shipping_telephone'])) {
                 $shippingAddress->setTelephone($row['shipping_telephone']);
             }

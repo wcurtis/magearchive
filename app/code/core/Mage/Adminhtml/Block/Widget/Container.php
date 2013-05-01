@@ -77,6 +77,9 @@ class Mage_Adminhtml_Block_Widget_Container extends Mage_Adminhtml_Block_Templat
         foreach ($this->_buttons as $level => $buttons) {
             if (isset($buttons[$id])) {
                 if (!empty($key)) {
+                    if ($child = $this->getChild($id . '_button')) {
+                    	$child->setData($key, $data);
+                    }
                     $this->_buttons[$level][$id][$key] = $data;
                 } else {
                     $this->_buttons[$level][$id] = $data;

@@ -32,18 +32,16 @@ require_once 'Zend/Validate/Interface.php';
  * @subpackage Element
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Element.php 8756 2008-03-11 19:56:04Z matthew $
+ * @version    $Id: Element.php 8983 2008-03-21 21:15:08Z matthew $
  */
 class Zend_Form_Element implements Zend_Validate_Interface
 {
-    /**#@+
-     * Constants
-     * @const string
+    /**
+     * Element Constants
      */
     const DECORATOR = 'DECORATOR';
     const FILTER    = 'FILTER';
     const VALIDATE  = 'VALIDATE';
-    /**#@-*/
 
     /**
      * Default view helper to use
@@ -221,9 +219,23 @@ class Zend_Form_Element implements Zend_Validate_Interface
         }
 
         /**
+         * Extensions
+         */
+        $this->init();
+
+        /**
          * Register ViewHelper decorator by default
          */
         $this->loadDefaultDecorators();
+    }
+
+    /**
+     * Initialize object; used by extending classes
+     * 
+     * @return void
+     */
+    public function init()
+    {
     }
 
     /**
@@ -1128,6 +1140,7 @@ class Zend_Form_Element implements Zend_Validate_Interface
     public function clearValidators()
     {
         $this->_validators = array();
+        return $this;
     }
 
     /**

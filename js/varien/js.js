@@ -30,9 +30,15 @@ function setPLocation(url, setFocus){
     window.opener.location.href = url;
 }
 
-function setLanguageCode(code){
+function setLanguageCode(code, fromCode){
     //TODO: javascript cookies have different domain and path than php cookies
     var href = window.location.href;
+    var after = '', dash;
+    if (dash = href.match(/\#(.*)$/)) {
+        href = href.replace(/\#(.*)$/, '');
+        after = dash[0];
+    }
+
     if (href.match(/[?]/)) {
         var re = /([?&]store=)[a-z0-9_]*/;
         if (href.match(re)) {
@@ -43,6 +49,11 @@ function setLanguageCode(code){
     } else {
         href += '?store='+code;
     }
+    if (typeof(fromCode) != 'undefined') {
+        href += '&from_store='+fromCode;
+    }
+    href += after;
+
     setLocation(href);
 }
 

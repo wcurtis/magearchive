@@ -674,4 +674,26 @@ class Varien_Object
         $this->_construct();
     }
 */
+    public function debug($data=null, &$objects=array())
+    {
+        if (is_null($data)) {
+            $hash = spl_object_hash($this);
+            if (!empty($objects[$hash])) {
+                return '*** RECURSION ***';
+            }
+            $objects[$hash] = true;
+            $data = $this->getData();
+        }
+        $debug = array();
+        foreach ($data as $key=>$value) {
+            if (is_scalar($value)) {
+                $debug[$key] = $value;
+            } elseif (is_array($value)) {
+                $debug[$key] = $this->debug($value, $objects);
+            } elseif ($value instanceof Varien_Object) {
+                $debug[$key.' ('.get_class($value).')'] = $value->debug(null, $objects);
+            }
+        }
+        return $debug;
+    }
 }

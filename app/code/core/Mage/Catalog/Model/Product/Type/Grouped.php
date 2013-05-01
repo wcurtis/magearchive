@@ -83,7 +83,7 @@ class Mage_Catalog_Model_Product_Type_Grouped extends Mage_Catalog_Model_Product
     public function isSalable()
     {
         $salable = $this->getProduct()->getIsSalable();
-        if (!is_null($salable)) {
+        if (!is_null($salable) && !$salable) {
             return $salable;
         }
 

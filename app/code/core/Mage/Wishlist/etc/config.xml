@@ -81,6 +81,17 @@
                 </wishlist_email_email_template>
             </email>
         </template>
+        <events>
+            <checkout_cart_after_add>
+                <observers>
+                    <wishlist>
+                        <type>singleton</type>
+                        <class>wishlist/observer</class>
+                        <method>processAddToCart</method>
+                    </wishlist>
+                </observers>
+            </checkout_cart_after_add>
+        </events>
     </global>
     <frontend>
         <routers>

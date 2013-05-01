@@ -66,7 +66,7 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             $r->setProduct($request->getLimitMethod());
         } else {
             $r->setAction($this->getCode('action', 'all'));
-            $r->setProduct('GNDRES');
+            $r->setProduct('GND'.$this->getConfigData('dest_type'));
         }
 
         if ($request->getUpsPickup()) {
@@ -104,11 +104,24 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             $r->setOrigPostal(Mage::getStoreConfig('shipping/origin/postcode', $this->getStore()));
         }
 
+        if ($request->getOrigCity()) {
+            $r->setOrigCity($request->getOrigCity());
+        } else {
+            $r->setOrigCity(Mage::getStoreConfig('shipping/origin/city', $this->getStore()));
+        }
+
+
         if ($request->getDestCountryId()) {
             $destCountry = $request->getDestCountryId();
         } else {
             $destCountry = self::USA_COUNTRY_ID;
         }
+
+        //for UPS, puero rico state for US will assume as puerto rico country
+        if ($destCountry==self::USA_COUNTRY_ID && ($request->getDestPostcode()=='00912' || $request->getDestRegionCode()==self::PUERTORICO_COUNTRY_ID)) {
+            $destCountry = self::PUERTORICO_COUNTRY_ID;
+        }
+
         $r->setDestCountry(Mage::getModel('directory/country')->load($destCountry)->getIso2Code());
 
         if ($request->getDestPostcode()) {
@@ -117,7 +130,8 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
 
         }
 
-        $r->setWeight($request->getPackageWeight());
+        $weight = $this->getTotalNumOfBoxes($request->getPackageWeight());
+        $r->setWeight($weight);
         if ($request->getFreeMethodWeight()!=$request->getPackageWeight()) {
             $r->setFreeMethodWeight($request->getFreeMethodWeight());
         }
@@ -145,10 +159,10 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
     {
         switch ($this->getConfigData('type')) {
             case 'UPS':
-        	   return $this->_getCgiQuotes();
+               return $this->_getCgiQuotes();
 
             case 'UPS_XML':
-        	   return $this->_getXmlQuotes();
+               return $this->_getXmlQuotes();
         }
         return null;
     }
@@ -157,7 +171,8 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
     {
         $r = $this->_rawRequest;
 
-        $r->setWeight($r->getFreeMethodWeight());
+        $weight = $this->getTotalNumOfBoxes($r->getFreeMethodWeight());
+        $r->setWeight($weight);
         $r->setAction($this->getCode('action', 'single'));
         $r->setProduct($freeMethod);
     }
@@ -172,14 +187,17 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             '13_product'     => $r->getProduct(),
             '14_origCountry' => $r->getOrigCountry(),
             '15_origPostal'  => $r->getOrigPostal(),
+            'origCity'       => $r->getOrigCity(),
             '19_destPostal'  => $r->getDestPostal(),
             '22_destCountry' => $r->getDestCountry(),
             '23_weight'      => $r->getWeight(),
             '47_rate_chart'  => $r->getPickup(),
             '48_container'   => $r->getContainer(),
             '49_residential' => $r->getDestType(),
+            'weight_std'     => strtolower($r->getUnitMeasure()),
         );
         $params['47_rate_chart'] = $params['47_rate_chart']['label'];
+
         try {
             $url = $this->getConfigData('gateway_url');
             if (!$url) {
@@ -198,46 +216,48 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
         return $this->_parseCgiResponse($responseBody);
     }
 
-	public function getShipmentByCode($code,$origin = null){
-		if($origin===null){
-			$origin = $this->getConfigData('origin_shipment');
-		}
-		$arr = $this->getCode('originShipment',$origin);
-		if(isset($arr[$code]))
-			return $arr[$code];
-		else
-			return false;
-	}
+    public function getShipmentByCode($code,$origin = null){
+        if($origin===null){
+            $origin = $this->getConfigData('origin_shipment');
+        }
+        $arr = $this->getCode('originShipment',$origin);
+        if(isset($arr[$code]))
+            return $arr[$code];
+        else
+            return false;
+    }
 
 
     protected function _parseCgiResponse($response)
     {
-        $rRows = explode("\n", $response);
         $costArr = array();
         $priceArr = array();
         $errorTitle = Mage::helper('usa')->__('Unknown error');
-        $allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
-        foreach ($rRows as $rRow) {
-            $r = explode('%', $rRow);
-            switch (substr($r[0],-1)) {
-                case 3: case 4:
-                    if (in_array($r[1], $allowedMethods)) {
-                        $costArr[$r[1]] = $r[8];
-                        $priceArr[$r[1]] = $this->getMethodPrice($r[8], $r[1]);
-                    }
-                    break;
-                case 5:
-                    $errorTitle = $r[1];
-                    break;
-                case 6:
-                    if (in_array($r[3], $allowedMethods)) {
-                        $costArr[$r[3]] = $r[10];
-                        $priceArr[$r[3]] = $this->getMethodPrice($r[10], $r[3]);
-                    }
-                    break;
+        if (strlen(trim($response))>0) {
+            $rRows = explode("\n", $response);
+            $allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
+            foreach ($rRows as $rRow) {
+                $r = explode('%', $rRow);
+                switch (substr($r[0],-1)) {
+                    case 3: case 4:
+                        if (in_array($r[1], $allowedMethods)) {
+                            $costArr[$r[1]] = $r[8];
+                            $priceArr[$r[1]] = $this->getMethodPrice($r[8], $r[1]);
+                        }
+                        break;
+                    case 5:
+                        $errorTitle = $r[1];
+                        break;
+                    case 6:
+                        if (in_array($r[3], $allowedMethods)) {
+                            $costArr[$r[3]] = $r[10];
+                            $priceArr[$r[3]] = $this->getMethodPrice($r[10], $r[3]);
+                        }
+                        break;
+                }
             }
+            asort($priceArr);
         }
-        asort($priceArr);
 
         $result = Mage::getModel('shipping/rate_result');
         $defaults = $this->getDefaults();
@@ -245,7 +265,8 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             $error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('ups');
             $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($errorTitle);
+            //$error->setErrorMessage($errorTitle);
+            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
         } else {
             foreach ($priceArr as $method=>$price) {
@@ -264,19 +285,6 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
         return $result;
     }
 
-    public function getMethodPrice($cost, $method='')
-    {
-    	$r = $this->_rawRequest;
-        if ($this->getConfigData('cutoff_cost') != ''
-         && $method == $this->getConfigData('free_method')
-         && $this->getConfigData('cutoff_cost') <= $r->getValue()) {
-             $price = '0.00';
-        } else {
-            $price = $cost + $this->getConfigData('handling');
-        }
-        return $price;
-    }
-
 /*
     public function isEligibleForFree($method)
     {
@@ -293,93 +301,93 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             ),
 
             'originShipment'=>array(
-            	// United States Domestic Shipments
-	            'United States Domestic Shipments' => array(
-	                '01' => 'UPS Next Day Air',
-	                '02' => 'UPS Second Day Air',
-	                '03' => 'UPS Ground',
-	                '07' => 'UPS Worldwide Express',
-	                '08' => 'UPS Worldwide Expedited',
-	                '11' => 'UPS Standard',
-	                '12' => 'UPS Three-Day Select',
-	                '13' => 'UPS Next Day Air Saver',
-	                '14' => 'UPS Next Day Air Early A.M.',
-	                '54' => 'UPS Worldwide Express Plus',
-	                '59' => 'UPS Second Day Air A.M.',
-	                '65' => 'UPS Saver',
-	            ),
-	            // Shipments Originating in United States
-	            'Shipments Originating in United States' => array(
-	                '01' => 'UPS Next Day Air',
-	                '02' => 'UPS Second Day Air',
-	                '03' => 'UPS Ground',
-	                '07' => 'UPS Worldwide Express',
-	                '08' => 'UPS Worldwide Expedited',
-	                '11' => 'UPS Standard',
-	                '12' => 'UPS Three-Day Select',
-	                '14' => 'UPS Next Day Air Early A.M.',
-	                '54' => 'UPS Worldwide Express Plus',
-	                '59' => 'UPS Second Day Air A.M.',
-	                '65' => 'UPS Saver',
-	            ),
-	            // Shipments Originating in Canada
-	            'Shipments Originating in Canada' => array(
-	                '01' => 'UPS Express',
-	                '02' => 'UPS Expedited',
-	                '07' => 'UPS Worldwide Express',
-	                '08' => 'UPS Worldwide Expedited',
-	                '11' => 'UPS Standard',
-	                '12' => 'UPS Three-Day Select',
-	                '14' => 'UPS Express Early A.M.',
-	                '65' => 'UPS Saver',
-	            ),
-	            // Shipments Originating in the European Union
-	            'Shipments Originating in the European Union' => array(
-	                '07' => 'UPS Express',
-	                '08' => 'UPS Expedited',
-	                '11' => 'UPS Standard',
-	                '54' => 'UPS Worldwide Express PlusSM',
-	                '65' => 'UPS Saver',
-	            ),
-	            // Polish Domestic Shipments
-	            'Polish Domestic Shipments' => array(
-	                '07' => 'UPS Express',
-	                '08' => 'UPS Expedited',
-	                '11' => 'UPS Standard',
-	                '54' => 'UPS Worldwide Express Plus',
-	                '65' => 'UPS Saver',
-	                '82' => 'UPS Today Standard',
-	                '83' => 'UPS Today Dedicated Courrier',
-	                '84' => 'UPS Today Intercity',
-	                '85' => 'UPS Today Express',
-	                '86' => 'UPS Today Express Saver',
-	            ),
-	            // Puerto Rico Origin
-	            'Puerto Rico Origin' => array(
-	                '01' => 'UPS Next Day Air',
-	                '02' => 'UPS Second Day Air',
-	                '03' => 'UPS Ground',
-	                '07' => 'UPS Worldwide Express',
-	                '08' => 'UPS Worldwide Expedited',
-	                '14' => 'UPS Next Day Air Early A.M.',
-	                '54' => 'UPS Worldwide Express Plus',
-	                '65' => 'UPS Saver',
-	            ),
-	            // Shipments Originating in Mexico
-	            'Shipments Originating in Mexico' => array(
-	                '07' => 'UPS Express',
-	                '08' => 'UPS Expedited',
-	                '54' => 'UPS Express Plus',
-	                '65' => 'UPS Saver',
-	            ),
-	            // Shipments Originating in Other Countries
-	            'Shipments Originating in Other Countries' => array(
-	                '07' => 'UPS Express',
-	                '08' => 'UPS Worldwide Expedited',
-	                '11' => 'UPS Standard',
-	                '54' => 'UPS Worldwide Express Plus',
-	                '65' => 'UPS Saver'
-	            )
+                // United States Domestic Shipments
+                'United States Domestic Shipments' => array(
+                    '01' => 'UPS Next Day Air',
+                    '02' => 'UPS Second Day Air',
+                    '03' => 'UPS Ground',
+                    '07' => 'UPS Worldwide Express',
+                    '08' => 'UPS Worldwide Expedited',
+                    '11' => 'UPS Standard',
+                    '12' => 'UPS Three-Day Select',
+                    '13' => 'UPS Next Day Air Saver',
+                    '14' => 'UPS Next Day Air Early A.M.',
+                    '54' => 'UPS Worldwide Express Plus',
+                    '59' => 'UPS Second Day Air A.M.',
+                    '65' => 'UPS Saver',
+                ),
+                // Shipments Originating in United States
+                'Shipments Originating in United States' => array(
+                    '01' => 'UPS Next Day Air',
+                    '02' => 'UPS Second Day Air',
+                    '03' => 'UPS Ground',
+                    '07' => 'UPS Worldwide Express',
+                    '08' => 'UPS Worldwide Expedited',
+                    '11' => 'UPS Standard',
+                    '12' => 'UPS Three-Day Select',
+                    '14' => 'UPS Next Day Air Early A.M.',
+                    '54' => 'UPS Worldwide Express Plus',
+                    '59' => 'UPS Second Day Air A.M.',
+                    '65' => 'UPS Saver',
+                ),
+                // Shipments Originating in Canada
+                'Shipments Originating in Canada' => array(
+                    '01' => 'UPS Express',
+                    '02' => 'UPS Expedited',
+                    '07' => 'UPS Worldwide Express',
+                    '08' => 'UPS Worldwide Expedited',
+                    '11' => 'UPS Standard',
+                    '12' => 'UPS Three-Day Select',
+                    '14' => 'UPS Express Early A.M.',
+                    '65' => 'UPS Saver',
+                ),
+                // Shipments Originating in the European Union
+                'Shipments Originating in the European Union' => array(
+                    '07' => 'UPS Express',
+                    '08' => 'UPS Expedited',
+                    '11' => 'UPS Standard',
+                    '54' => 'UPS Worldwide Express PlusSM',
+                    '65' => 'UPS Saver',
+                ),
+                // Polish Domestic Shipments
+                'Polish Domestic Shipments' => array(
+                    '07' => 'UPS Express',
+                    '08' => 'UPS Expedited',
+                    '11' => 'UPS Standard',
+                    '54' => 'UPS Worldwide Express Plus',
+                    '65' => 'UPS Saver',
+                    '82' => 'UPS Today Standard',
+                    '83' => 'UPS Today Dedicated Courrier',
+                    '84' => 'UPS Today Intercity',
+                    '85' => 'UPS Today Express',
+                    '86' => 'UPS Today Express Saver',
+                ),
+                // Puerto Rico Origin
+                'Puerto Rico Origin' => array(
+                    '01' => 'UPS Next Day Air',
+                    '02' => 'UPS Second Day Air',
+                    '03' => 'UPS Ground',
+                    '07' => 'UPS Worldwide Express',
+                    '08' => 'UPS Worldwide Expedited',
+                    '14' => 'UPS Next Day Air Early A.M.',
+                    '54' => 'UPS Worldwide Express Plus',
+                    '65' => 'UPS Saver',
+                ),
+                // Shipments Originating in Mexico
+                'Shipments Originating in Mexico' => array(
+                    '07' => 'UPS Express',
+                    '08' => 'UPS Expedited',
+                    '54' => 'UPS Express Plus',
+                    '65' => 'UPS Saver',
+                ),
+                // Shipments Originating in Other Countries
+                'Shipments Originating in Other Countries' => array(
+                    '07' => 'UPS Express',
+                    '08' => 'UPS Worldwide Expedited',
+                    '11' => 'UPS Standard',
+                    '54' => 'UPS Worldwide Express Plus',
+                    '65' => 'UPS Saver'
+                )
             ),
 
             'method'=>array(
@@ -434,8 +442,8 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
             ),
 
             'dest_type'=>array(
-                'RES'    => '1', // Residential
-                'COM'    => '2', // Commercial
+                'RES'    => '01', // Residential
+                'COM'    => '02', // Commercial
             ),
 
             'dest_type_description'=>array(
@@ -467,18 +475,19 @@ class Mage_Usa_Model_Shipping_Carrier_Ups
 
     protected function _getXmlQuotes()
     {
-		$url = $this->getConfigData('gateway_xml_url');
+        $url = $this->getConfigData('gateway_xml_url');
 
         $this->setXMLAccessRequest();
         $xmlRequest=$this->_xmlAccessRequest;
 
-		$r = $this->_rawRequest;
-		$params = array(
+        $r = $this->_rawRequest;
+        $params = array(
             'accept_UPS_license_agreement' => 'yes',
             '10_action'      => $r->getAction(),
             '13_product'     => $r->getProduct(),
             '14_origCountry' => $r->getOrigCountry(),
             '15_origPostal'  => $r->getOrigPostal(),
+            'origCity'       => $r->getOrigCity(),
             '19_destPostal'  => $r->getDestPostal(),
             '22_destCountry' => $r->getDestCountry(),
             '23_weight'      => $r->getWeight(),
@@ -499,43 +508,49 @@ $xmlRequest .= <<< XMLRequest
     <RequestOption>{$params['10_action']}</RequestOption>
   </Request>
   <Service>
-  	<Code></Code>
-  	<Description></Description>
+      <Code></Code>
+      <Description></Description>
   </Service>
   <PickupType>
-  		<Code>{$params['47_rate_chart']['code']}</Code>
-  		<Description>{$params['47_rate_chart']['label']}</Description>
+          <Code>{$params['47_rate_chart']['code']}</Code>
+          <Description>{$params['47_rate_chart']['label']}</Description>
   </PickupType>
 
   <Shipment>
 
-  	<Shipper>
+      <Shipper>
       <Address>
-      	<PostalCode>{$params['15_origPostal']}</PostalCode>
-      	<CountryCode>{$params['14_origCountry']}</CountryCode>
+          <City>{$params['origCity']}</City>
+          <PostalCode>{$params['15_origPostal']}</PostalCode>
+          <CountryCode>{$params['14_origCountry']}</CountryCode>
       </Address>
     </Shipper>
 
     <ShipTo>
       <Address>
-      	<PostalCode>{$params['19_destPostal']}</PostalCode>
-      	<CountryCode>{$params['22_destCountry']}</CountryCode>
-      	<ResidentialAddress>{$params['49_residential']}</ResidentialAddress>
+          <PostalCode>{$params['19_destPostal']}</PostalCode>
+          <CountryCode>{$params['22_destCountry']}</CountryCode>
+          <ResidentialAddress>{$params['49_residential']}</ResidentialAddress>
+XMLRequest;
+
+          $xmlRequest .= ($params['49_residential']==='01' ? "<ResidentialAddressIndicator>{$params['49_residential']}</ResidentialAddressIndicator>" : '');
+
+$xmlRequest .= <<< XMLRequest
       </Address>
     </ShipTo>
 
 
     <ShipFrom>
       <Address>
-      	<PostalCode>{$params['15_origPostal']}</PostalCode>
-      	<CountryCode>{$params['14_origCountry']}</CountryCode>
+          <PostalCode>{$params['15_origPostal']}</PostalCode>
+          <CountryCode>{$params['14_origCountry']}</CountryCode>
       </Address>
     </ShipFrom>
 
     <Package>
       <PackagingType><Code>{$params['48_container']}</Code></PackagingType>
       <PackageWeight>
-     	<UnitOfMeasurement><Code>{$r->getUnitMeasure()}</Code></UnitOfMeasurement>
+         <UnitOfMeasurement><Code>{$r->getUnitMeasure()}</Code></UnitOfMeasurement>
         <Weight>{$params['23_weight']}</Weight>
       </PackageWeight>
     </Package>
@@ -543,48 +558,52 @@ $xmlRequest .= <<< XMLRequest
   </Shipment>
 </RatingServiceSelectionRequest>
 XMLRequest;
-
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-		$xmlResponse = curl_exec ($ch);
-		return $this->_parseXmlResponse($xmlResponse);
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            $xmlResponse = curl_exec ($ch);
+        } catch (Exception $e) {
+            $xmlResponse = '';
+        }
+        return $this->_parseXmlResponse($xmlResponse);
     }
 
     protected function _parseXmlResponse($xmlResponse)
     {
-    	$xml = new Varien_Simplexml_Config();
-		$xml->loadString($xmlResponse);
-		$arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/ResponseStatusCode/text()");
-		$success = (int)$arr[0][0];
-		$result = Mage::getModel('shipping/rate_result');
-
-		if($success===1){
-			$arr = $xml->getXpath("//RatingServiceSelectionResponse/RatedShipment");
-			$allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
-			$costArr = array();
-	        $priceArr = array();
-			foreach ($arr as $shipElement){
-				$code = (string)$shipElement->Service->Code;
-				#$shipment = $this->getShipmentByCode($code);
-				if (in_array($code, $allowedMethods)) {
-                    $costArr[$code] = $shipElement->TotalCharges->MonetaryValue;
-                    $priceArr[$code] = $this->getMethodPrice(floatval($shipElement->TotalCharges->MonetaryValue),$code);
+        $costArr = array();
+        $priceArr = array();
+        if (strlen(trim($xmlResponse))>0) {
+            $xml = new Varien_Simplexml_Config();
+            $xml->loadString($xmlResponse);
+            $arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/ResponseStatusCode/text()");
+            $success = (int)$arr[0][0];
+            $result = Mage::getModel('shipping/rate_result');
+            if($success===1){
+                $arr = $xml->getXpath("//RatingServiceSelectionResponse/RatedShipment");
+                $allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
+                foreach ($arr as $shipElement){
+                    $code = (string)$shipElement->Service->Code;
+                    #$shipment = $this->getShipmentByCode($code);
+                    if (in_array($code, $allowedMethods)) {
+                        $costArr[$code] = $shipElement->TotalCharges->MonetaryValue;
+                        $priceArr[$code] = $this->getMethodPrice(floatval($shipElement->TotalCharges->MonetaryValue),$code);
+                    }
                 }
-			}
-		} else {
-			$arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/Error/ErrorDescription/text()");
-			$errorTitle = (string)$arr[0][0];
-			$error = Mage::getModel('shipping/rate_result_error');
-            $error->setCarrier('ups');
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($errorTitle);
-
-		}
+            } else {
+                $arr = $xml->getXpath("//RatingServiceSelectionResponse/Response/Error/ErrorDescription/text()");
+                $errorTitle = (string)$arr[0][0];
+                $error = Mage::getModel('shipping/rate_result_error');
+                $error->setCarrier('ups');
+                $error->setCarrierTitle($this->getConfigData('title'));
+                //$error->setErrorMessage($errorTitle);
+                $error->setErrorMessage($this->getConfigData('specificerrmsg'));
+            }
+        }
 
 
         $defaults = $this->getDefaults();
@@ -593,9 +612,10 @@ XMLRequest;
             $error->setCarrier('ups');
             $error->setCarrierTitle($this->getConfigData('title'));
             if(!isset($errorTitle)){
-            	$errorTitle = Mage::helper('usa')->__('Sorry not Found');
-			}
-            $error->setErrorMessage($errorTitle);
+                $errorTitle = Mage::helper('usa')->__('Cannot retrieve shipping rates');
+            }
+            //$error->setErrorMessage($errorTitle);
+            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
         } else {
             foreach ($priceArr as $method=>$price) {
@@ -622,7 +642,7 @@ XMLRequest;
         }
 
         if ($this->getConfigData('type')=='UPS') {
-        	$this->_getCgiTracking($trackings);
+            $this->_getCgiTracking($trackings);
         } elseif ($this->getConfigData('type')=='UPS_XML'){
             $this->setXMLAccessRequest();
             $this->_getXmlTracking($trackings);
@@ -634,10 +654,10 @@ XMLRequest;
     protected function setXMLAccessRequest()
     {
         $userid = $this->getConfigData('username');
-		$userid_pass = $this->getConfigData('password');
-		$access_key = $this->getConfigData('access_license_number');
+        $userid_pass = $this->getConfigData('password');
+        $access_key = $this->getConfigData('access_license_number');
 
-		$this->_xmlAccessRequest =  <<<XMLAuth
+        $this->_xmlAccessRequest =  <<<XMLAuth
 <?xml version="1.0"?>
 <AccessRequest xml:lang="en-US">
   <AccessLicenseNumber>$access_key</AccessLicenseNumber>
@@ -690,14 +710,14 @@ $xmlRequest .=  <<<XMLAuth
 XMLAuth;
             try {
                 $ch = curl_init();
-               	curl_setopt($ch, CURLOPT_URL, $url);
-            	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            	curl_setopt($ch, CURLOPT_HEADER, 0);
-            	curl_setopt($ch, CURLOPT_POST, 1);
-            	curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
-            	curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            	$xmlResponse = curl_exec ($ch);
-            	curl_close ($ch);
+                   curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                $xmlResponse = curl_exec ($ch);
+                curl_close ($ch);
             }catch (Exception $e) {
                 $xmlResponse = '';
             }
@@ -710,80 +730,84 @@ XMLAuth;
 
     protected function _parseXmlTrackingResponse($trackingvalue, $xmlResponse)
     {
-        $xml = new Varien_Simplexml_Config();
-		$xml->loadString($xmlResponse);
-		$arr = $xml->getXpath("//TrackResponse/Response/ResponseStatusCode/text()");
-		$success = (int)$arr[0][0];
-		$errorTitle = 'Unable to retrieve tracking';
-		$resultArr = array();
-		$packageProgress = array();
-        if($success===1){
-            $arr = $xml->getXpath("//TrackResponse/Shipment/Service/Description/text()");
-            $resultArr['service'] = (string)$arr[0];
+        $errorTitle = 'Unable to retrieve tracking';
+        $resultArr = array();
+        $packageProgress = array();
 
-            $arr = $xml->getXpath("//TrackResponse/Shipment/PickupDate/text()");
-            $resultArr['shippeddate'] = (string)$arr[0];
+        if ($xmlResponse) {
+            $xml = new Varien_Simplexml_Config();
+            $xml->loadString($xmlResponse);
+            $arr = $xml->getXpath("//TrackResponse/Response/ResponseStatusCode/text()");
+            $success = (int)$arr[0][0];
 
-            $arr = $xml->getXpath("//TrackResponse/Shipment/Package/PackageWeight/Weight/text()");
-            $weight = (string)$arr[0];
+            if($success===1){
+                $arr = $xml->getXpath("//TrackResponse/Shipment/Service/Description/text()");
+                $resultArr['service'] = (string)$arr[0];
 
-            $arr = $xml->getXpath("//TrackResponse/Shipment/Package/PackageWeight/UnitOfMeasurement/Code/text()");
-            $unit = (string)$arr[0];
+                $arr = $xml->getXpath("//TrackResponse/Shipment/PickupDate/text()");
+                $resultArr['shippeddate'] = (string)$arr[0];
 
-            $resultArr['weight'] = "{$weight} {$unit}";
+                $arr = $xml->getXpath("//TrackResponse/Shipment/Package/PackageWeight/Weight/text()");
+                $weight = (string)$arr[0];
 
-            $activityTags = $xml->getXpath("//TrackResponse/Shipment/Package/Activity");
-            if ($activityTags) {
-                $i=1;
-                foreach ($activityTags as $activityTag) {
-                    $addArr=array();
-                    if (isset($activityTag->ActivityLocation->Address->City)) {
-                        $addArr[] = (string)$activityTag->ActivityLocation->Address->City;
+                $arr = $xml->getXpath("//TrackResponse/Shipment/Package/PackageWeight/UnitOfMeasurement/Code/text()");
+                $unit = (string)$arr[0];
+
+                $resultArr['weight'] = "{$weight} {$unit}";
+
+                $activityTags = $xml->getXpath("//TrackResponse/Shipment/Package/Activity");
+                if ($activityTags) {
+                    $i=1;
+                    foreach ($activityTags as $activityTag) {
+                        $addArr=array();
+                        if (isset($activityTag->ActivityLocation->Address->City)) {
+                            $addArr[] = (string)$activityTag->ActivityLocation->Address->City;
+                        }
+                        if (isset($activityTag->ActivityLocation->Address->StateProvinceCode)) {
+                            $addArr[] = (string)$activityTag->ActivityLocation->Address->StateProvinceCode;
+                        }
+                        if (isset($activityTag->ActivityLocation->Address->CountryCode)) {
+                            $addArr[] = (string)$activityTag->ActivityLocation->Address->CountryCode;
+                        }
+                        $dateArr = array();
+                        $date = (string)$activityTag->Date;//YYYYMMDD
+                        $dateArr[] = substr($date,0,4);
+                        $dateArr[] = substr($date,4,2);
+                        $dateArr[] = substr($date,-2,2);
+
+                        $timeArr = array();
+                        $time = (string)$activityTag->Time;//HHMMSS
+                        $timeArr[] = substr($time,0,2);
+                        $timeArr[] = substr($time,2,2);
+                        $timeArr[] = substr($time,-2,2);
+
+                        if($i==1){
+                           $resultArr['status'] = (string)$activityTag->Status->StatusType->Description;
+                           $resultArr['deliverydate'] = implode('-',$dateArr);//YYYY-MM-DD
+                           $resultArr['deliverytime'] = implode(':',$timeArr);//HH:MM:SS
+                           $resultArr['deliverylocation'] = (string)$activityTag->ActivityLocation->Description;
+                           $resultArr['signedby'] = (string)$activityTag->ActivityLocation->SignedForByName;
+                           if ($addArr) {
+                            $resultArr['deliveryto']=implode(', ',$addArr);
+                           }
+                        }else{
+                           $tempArr=array();
+                           $tempArr['activity'] = (string)$activityTag->Status->StatusType->Description;
+                           $tempArr['deliverydate'] = implode('-',$dateArr);//YYYY-MM-DD
+                           $tempArr['deliverytime'] = implode(':',$timeArr);//HH:MM:SS
+                           if ($addArr) {
+                            $tempArr['deliverylocation']=implode(', ',$addArr);
+                           }
+                           $packageProgress[] = $tempArr;
+                        }
+                        $i++;
                     }
-                    if (isset($activityTag->ActivityLocation->Address->StateProvinceCode)) {
-                        $addArr[] = (string)$activityTag->ActivityLocation->Address->StateProvinceCode;
-                    }
-                    if (isset($activityTag->ActivityLocation->Address->CountryCode)) {
-                        $addArr[] = (string)$activityTag->ActivityLocation->Address->CountryCode;
-                    }
-                    $dateArr = array();
-                    $date = (string)$activityTag->Date;//YYYYMMDD
-                    $dateArr[] = substr($date,0,4);
-                    $dateArr[] = substr($date,4,2);
-                    $dateArr[] = substr($date,-2,2);
-
-                    $timeArr = array();
-                    $time = (string)$activityTag->Time;//HHMMSS
-                    $timeArr[] = substr($time,0,2);
-                    $timeArr[] = substr($time,2,2);
-                    $timeArr[] = substr($time,-2,2);
-
-                    if($i==1){
-                       $resultArr['status'] = (string)$activityTag->Status->StatusType->Description;
-                       $resultArr['deliverydate'] = implode('-',$dateArr);//YYYY-MM-DD
-                       $resultArr['deliverytime'] = implode(':',$timeArr);//HH:MM:SS
-                       $resultArr['deliverylocation'] = (string)$activityTag->ActivityLocation->Description;
-                       $resultArr['signedby'] = (string)$activityTag->ActivityLocation->SignedForByName;
-                       if ($addArr) {
-                        $resultArr['deliveryto']=implode(', ',$addArr);
-                       }
-                    }else{
-                       $tempArr=array();
-                       $tempArr['activity'] = (string)$activityTag->Status->StatusType->Description;
-                       $tempArr['deliverydate'] = implode('-',$dateArr);//YYYY-MM-DD
-                       $tempArr['deliverytime'] = implode(':',$timeArr);//HH:MM:SS
-                       if ($addArr) {
-                        $tempArr['deliverylocation']=implode(', ',$addArr);
-                       }
-                       $packageProgress[] = $tempArr;
-                    }
-                    $i++;
+                    $resultArr['progressdetail'] = $packageProgress;
                 }
-                $resultArr['progressdetail'] = $packageProgress;
+            } else {
+                $arr = $xml->getXpath("//TrackResponse/Response/Error/ErrorDescription/text()");
+                $errorTitle = (string)$arr[0][0];
             }
-        } else {
-            $arr = $xml->getXpath("//TrackResponse/Response/Error/ErrorDescription/text()");
-            $errorTitle = (string)$arr[0][0];
         }
 
         if (!$this->_result) {
@@ -798,7 +822,6 @@ XMLAuth;
             $tracking->setCarrierTitle($this->getConfigData('title'));
             $tracking->setTracking($trackingvalue);
             $tracking->addData($resultArr);
-
             $this->_result->append($tracking);
         } else {
             $error = Mage::getModel('shipping/tracking_result_error');

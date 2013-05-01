@@ -78,10 +78,9 @@ class Mage_Sales_Model_Quote_Address_Total_Discount
         $address->setBaseDiscountAmount($baseTotalDiscountAmount);
         $address->setBaseSubtotalWithDiscount($baseSubtotalWithDiscount);
 
-        if (!$hasDiscount) {
+        if (!$hasDiscount && !$address->getFreeShipping()) {
             $quote->setCouponCode(null);
         }
-
         $address->setGrandTotal($address->getGrandTotal() - $address->getDiscountAmount());
         $address->setBaseGrandTotal($address->getBaseGrandTotal()-$address->getBaseDiscountAmount());
         return $this;

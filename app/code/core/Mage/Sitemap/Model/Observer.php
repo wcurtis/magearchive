@@ -63,39 +63,27 @@ class Mage_Sitemap_Model_Observer
         $errors = array();
 
         // check if scheduled generation enabled
-        if ( !Mage::getStoreConfigFlag(self::XML_PATH_GENERATION_ENABLED) ) {
+        if (!Mage::getStoreConfigFlag(self::XML_PATH_GENERATION_ENABLED)) {
             return;
         }
 
         $collection = Mage::getModel('sitemap/sitemap')->getCollection();
         /* @var $collection Mage_Sitemap_Model_Mysql4_Sitemap_Collection */
-        $collection->load();
-
-        $io = new Varien_Io_File();
-        $io->setAllowCreateFolders(true);
-        foreach ($collection as $sitemap){
+        foreach ($collection as $sitemap) {
             /* @var $sitemap Mage_Sitemap_Model_Sitemap */
+
             try {
-                // if sitemap record exists
-                if ($sitemap->getId()) {
-                    // generate sitemap
-                    $xml = $sitemap->generateXml();
-                    // save it to a file
-
-                    $destinationFolder['path'] = $io->getDestinationFolder($sitemap->getPreparedFilename());
-                    $io->open($destinationFolder);
-                    $io->write($sitemap->getPreparedFilename(), $xml);
-                }
-
-            } catch (Exception $e) {
-                // add to error messages
-                $errors[] = Mage::helper('sitemap')->__('ERROR:') . ' ' . $e->getMessage();
+                $sitemap->generateXml();
+            }
+            catch (Exception $e) {
+                $errors[] = $e->getMessage();
             }
         }
-        if ( sizeof($errors)  ) {
+
+        if ($errors && Mage::getStoreConfig(self::XML_PATH_ERROR_RECIPIENT)) {
             $emailTemplate = Mage::getModel('core/email_template');
             /* @var $emailTemplate Mage_Core_Model_Email_Template */
-            $emailTemplate->setDesignConfig(array('area'  => 'backend'))
+            $emailTemplate->setDesignConfig(array('area' => 'backend'))
                 ->sendTransactional(
                     Mage::getStoreConfig(self::XML_PATH_ERROR_TEMPLATE),
                     Mage::getStoreConfig(self::XML_PATH_ERROR_IDENTITY),
@@ -104,7 +92,5 @@ class Mage_Sitemap_Model_Observer
                     array('warnings' => join("\n", $errors))
                 );
         }
-
     }
-
 }

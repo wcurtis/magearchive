@@ -100,10 +100,14 @@ Validation.prototype = {
         var result = false;
         var useTitles = this.options.useTitles;
         var callback = this.options.onElementValidate;
-        if(this.options.stopOnFirst) {
-            result = Form.getElements(this.form).all(function(elm) { return Validation.validate(elm,{useTitle : useTitles, onElementValidate : callback}); });
-        } else {
-            result = Form.getElements(this.form).collect(function(elm) { return Validation.validate(elm,{useTitle : useTitles, onElementValidate : callback}); }).all();
+        try {
+            if(this.options.stopOnFirst) {
+                result = Form.getElements(this.form).all(function(elm) { return Validation.validate(elm,{useTitle : useTitles, onElementValidate : callback}); });
+            } else {
+                result = Form.getElements(this.form).collect(function(elm) { return Validation.validate(elm,{useTitle : useTitles, onElementValidate : callback}); }).all();
+            }
+        } catch (e) {
+
         }
         if(!result && this.options.focusOnError) {
             try{
@@ -136,11 +140,11 @@ Object.extend(Validation, {
         });
     },
     insertAdvice : function(elm, advice){
-        var container = elm.up('.field-row');
+        var container = $(elm).up('.field-row');
         if(container){
             new Insertion.After(container, advice);
         }
-        else if ($(elm.advaiceContainer)) {
+        else if (elm.advaiceContainer && $(elm.advaiceContainer)) {
             $(elm.advaiceContainer).update(advice);
         }
         else {
@@ -212,7 +216,7 @@ Object.extend(Validation, {
                 }
                 this.showAdvice(elm, advice, name);
             //}
-            elm[prop] = true;
+            elm[prop] = 1;
             elm.removeClassName('validation-passed');
             elm.addClassName('validation-failed');
             return false;
@@ -253,7 +257,8 @@ Object.extend(Validation, {
 
         advice = '<div class="validation-advice" id="advice-' + name + '-' + Validation.getElmID(elm) +'" style="display:none">' + errorMsg + '</div>'
 
-        this.insertAdvice(elm, advice);
+
+        Validation.insertAdvice(elm, advice);
         advice = Validation.getAdvice(name, elm);
         if($(elm).hasClassName('absolute-advice')) {
             var dimensions = $(elm).getDimensions();
@@ -320,16 +325,16 @@ Validation.addAllThese([
     ['validate-digits', 'Please use numbers only in this field. please avoid spaces or other characters such as dots or commas.', function(v) {
                 return Validation.get('IsEmpty').test(v) ||  !/[^\d]/.test(v);
             }],
-    ['validate-alpha', 'Please use letters only (a-z) in this field.', function (v) {
+    ['validate-alpha', 'Please use letters only (a-z or A-Z) in this field.', function (v) {
                 return Validation.get('IsEmpty').test(v) ||  /^[a-zA-Z]+$/.test(v)
             }],
     ['validate-code', 'Please use only letters (a-z), numbers (0-9) or underscore(_) in this field, first character should be a letter.', function (v) {
                 return Validation.get('IsEmpty').test(v) ||  /^[a-z]+[a-z0-9_]+$/.test(v)
             }],
-    ['validate-alphanum', 'Please use only letters (a-z) or numbers (0-9) only in this field. No spaces or other characters are allowed.', function(v) {
-                return Validation.get('IsEmpty').test(v) ||  !/\W/.test(v)
+    ['validate-alphanum', 'Please use only letters (a-z or A-Z) or numbers (0-9) only in this field. No spaces or other characters are allowed.', function(v) {
+                return Validation.get('IsEmpty').test(v) ||  /^[a-zA-Z0-9]+$/.test(v) /*!/\W/.test(v)*/
             }],
-    ['validate-street', 'Please use only letters (a-z) or numbers (0-9) or spaces and # only in this field.', function(v) {
+    ['validate-street', 'Please use only letters (a-z or A-Z) or numbers (0-9) or spaces and # only in this field.', function(v) {
                 return Validation.get('IsEmpty').test(v) ||  /^[ \w]{3,}([A-Za-z]\.)?([ \w]*\#\d+)?(\r\n| )[ \w]{3,}/.test(v)
             }],
     ['validate-phoneStrict', 'Please enter a valid phone number. For example (123) 456-7890 or 123-456-7890.', function(v) {
@@ -364,6 +369,9 @@ Validation.addAllThese([
             }],
     ['validate-clean-url', 'Please enter a valid URL. For example http://www.example.com or www.example.com', function (v) {
                 return Validation.get('IsEmpty').test(v) || /^(http|https|ftp):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+.(com|org|net|dk|at|us|tv|info|uk|co.uk|biz|se)$)(:(\d+))?\/?/i.test(v) || /^(www)((\.[A-Z0-9][A-Z0-9_-]*)+.(com|org|net|dk|at|us|tv|info|uk|co.uk|biz|se)$)(:(\d+))?\/?/i.test(v)
+            }],
+    ['validate-identifier', 'Please enter a valid Identifier. For example example-page or example-page.html', function (v) {
+                return Validation.get('IsEmpty').test(v) || /^[A-Z0-9][A-Z0-9_-]+(\.[A-Z0-9_-]+)*$/i.test(v)
             }],
     ['validate-ssn', 'Please enter a valid social security number. For example 123-45-6789.', function(v) {
             return Validation.get('IsEmpty').test(v) || /^\d{3}-?\d{2}-?\d{4}$/.test(v);
@@ -450,6 +458,10 @@ Validation.addAllThese([
                 return validateCreditCard(v);
             }],
     ['validate-cc-type', 'Credit card number doesn\'t match credit card type', function(v, elm) {
+                // remove credit card number delimiters such as "-" and space
+                elm.value = removeDelimiters(elm.value);
+                v         = removeDelimiters(v);
+
                 var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_number')) + '_cc_type');
                 if (!ccTypeContainer) {
                     return true;
@@ -484,7 +496,7 @@ Validation.addAllThese([
 
                 return true;
             }],
-     ['validate-cc-type-select', 'Credit type doesn\'t match credit card number', function(v, elm) {
+     ['validate-cc-type-select', 'Card type doesn\'t match credit card number', function(v, elm) {
                 var ccNumberContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_type')) + '_cc_number');
                 return Validation.get('validate-cc-type').test(ccNumberContainer.value, ccNumberContainer);
             }],
@@ -516,7 +528,13 @@ Validation.addAllThese([
 
                 return false;
             }],
-     ['validate-ajax', '', function(v, elm) { return true; }]
+     ['validate-ajax', '', function(v, elm) { return true; }],
+     ['validate-data', 'Please use only letters (a-z or A-Z), numbers (0-9) or underscore(_) in this field, first character should be a letter.', function (v) {
+                if(v != '' && v) {
+                    return /^[A-Za-z]+[A-Za-z0-9_]+$/.test(v);
+                }
+                return true;
+            }]
 ]);
 
 
@@ -547,4 +565,10 @@ function validateCreditCard(s) {
     }
     for (i=0; i<k+m; i++) c += w.charAt(i*2+1-m) * 1;
     return (c%10 == 0);
+}
+
+function removeDelimiters (v) {
+    v = v.replace(/\s/g, '');
+    v = v.replace(/\-/g, '');
+    return v;
 }

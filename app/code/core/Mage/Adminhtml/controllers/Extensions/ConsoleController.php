@@ -76,4 +76,9 @@ class Mage_Adminhtml_Extensions_ConsoleController extends Mage_Adminhtml_Control
         }
         $pear->runHtmlConsole($run);
     }
+
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('system/extensions');
+    }
 }

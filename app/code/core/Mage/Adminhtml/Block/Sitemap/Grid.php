@@ -72,7 +72,7 @@ class Mage_Adminhtml_Block_Sitemap_Grid extends Mage_Adminhtml_Block_Widget_Grid
             'header'    => Mage::helper('sitemap')->__('Last Time Generated'),
             'width'     => '150px',
             'index'     => 'sitemap_time',
-            'renderer'  => 'adminhtml/sitemap_grid_renderer_time',
+            'type'      => 'datetime',
         ));
 
 

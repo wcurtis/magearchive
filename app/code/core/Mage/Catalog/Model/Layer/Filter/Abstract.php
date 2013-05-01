@@ -129,4 +129,25 @@ abstract class Mage_Catalog_Model_Layer_Filter_Abstract extends Varien_Object
 
         return $ids;
     }
+
+    public function setAttributeModel($attribute)
+    {
+        $this->setRequestVar($attribute->getAttributeCode());
+        $this->setData('attribute_model', $attribute);
+        return $this;
+    }
+
+    public function getAttributeModel()
+    {
+        $attribute = $this->getData('attribute_model');
+        if (is_null($attribute)) {
+            Mage::throwException(Mage::helper('catalog')->__('Attribute model not defined'));
+        }
+        return $attribute;
+    }
+
+    public function getName()
+    {
+        return $this->getAttributeModel()->getFrontend()->getLabel();
+    }
 }

@@ -25,6 +25,7 @@
 class Mage_Directory_Model_Observer
 {
     const CRON_STRING_PATH = 'crontab/jobs/currency_rates_update/schedule/cron_expr';
+    const IMPORT_ENABLE = 'currency/import/enabled';
     const IMPORT_SERVICE = 'currency/import/service';
 
     const XML_PATH_ERROR_TEMPLATE = 'currency/import/error_email_template';
@@ -34,8 +35,7 @@ class Mage_Directory_Model_Observer
     public function scheduledUpdateCurrencyRates($schedule)
     {
         $importWarnings = array();
-
-        if( !Mage::getStoreConfig(self::CRON_STRING_PATH ) ) {
+        if(!Mage::getStoreConfig(self::IMPORT_ENABLE) || !Mage::getStoreConfig(self::CRON_STRING_PATH)) {
             return;
         }
 

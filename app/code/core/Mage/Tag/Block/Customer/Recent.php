@@ -21,20 +21,19 @@
 /**
  * Tags Customer Reviews Block
  *
- * @category   Mage
- * @package    Mage_Tag
+ * @category    Mage
+ * @package     Mage_Tag
  */
 
 class Mage_Tag_Block_Customer_Recent extends Mage_Core_Block_Template
 {
-    public function __construct()
+    protected $_collection;
+
+    protected function _construct()
     {
-        parent::__construct();
-        $this->setTemplate('tag/customer/list.phtml');
+        parent::_construct();
 
-        $this->_collection = Mage::getModel('tag/tag')->getEntityCollection();
-
-        $this->_collection
+        $this->_collection = Mage::getModel('tag/tag')->getEntityCollection()
             ->addStoreFilter(Mage::app()->getStore()->getId())
             ->addCustomerFilter(Mage::getSingleton('customer/session')->getCustomerId())
             ->setDescOrder()

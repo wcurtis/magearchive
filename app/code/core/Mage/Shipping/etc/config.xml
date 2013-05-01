@@ -157,20 +157,21 @@
             </updates>
         </layout>
     </frontend>
-    
+
     <default>
         <shipping>
             <option>
                 <checkout_multiple>1</checkout_multiple>
+                <checkout_multiple_maximum_qty>100</checkout_multiple_maximum_qty>
             </option>
-            
+
             <origin>
                 <country_id>US</country_id>
                 <postcode>90034</postcode>
                 <region_id>12</region_id>
             </origin>
         </shipping>
-        
+
         <carriers>
             <flatrate>
                 <active>1</active>
@@ -180,8 +181,10 @@
                 <price>5.00</price>
                 <title>Flat Rate</title>
                 <type>I</type>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
             </flatrate>
-            
+
             <freeshipping>
                 <active>0</active>
                 <sallowspecific>0</sallowspecific>
@@ -189,8 +192,9 @@
                 <model>shipping/carrier_freeshipping</model>
                 <name>Free</name>
                 <title>Free Shipping</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
             </freeshipping>
-            
+
             <tablerate>
                 <active>0</active>
                 <sallowspecific>0</sallowspecific>
@@ -198,6 +202,8 @@
                 <model>shipping/carrier_tablerate</model>
                 <name>Table Rate</name>
                 <title>Best Way</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
             </tablerate>
         </carriers>
     </default>

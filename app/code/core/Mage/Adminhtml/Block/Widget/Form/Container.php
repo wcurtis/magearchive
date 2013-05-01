@@ -31,6 +31,7 @@ class Mage_Adminhtml_Block_Widget_Form_Container extends Mage_Adminhtml_Block_Wi
     protected $_formScripts = array();
     protected $_formInitScripts = array();
     protected $_mode = 'edit';
+    protected $_blockGroup = 'adminhtml';
 
     public function __construct()
     {
@@ -70,7 +71,7 @@ class Mage_Adminhtml_Block_Widget_Form_Container extends Mage_Adminhtml_Block_Wi
 
     protected function _prepareLayout()
     {
-        $this->setChild('form', $this->getLayout()->createBlock('adminhtml/' . $this->_controller . '_' . $this->_mode . '_form'));
+        $this->setChild('form', $this->getLayout()->createBlock($this->_blockGroup.'/' . $this->_controller . '_' . $this->_mode . '_form'));
         return parent::_prepareLayout();
     }
 

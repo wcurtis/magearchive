@@ -135,4 +135,9 @@ class Mage_Adminhtml_Block_Sales_Order_Creditmemo_View extends Mage_Adminhtml_Bl
             'invoice_id' => $this->getCreditmemo()->getId()
         ));
     }
+    
+    public function updateBackButtonUrl()
+    {
+        return $this->_updateButton('back', 'onclick', 'setLocation(\'' . $this->getUrl('*/sales_creditmemo/') . '\')');
+    }
 }

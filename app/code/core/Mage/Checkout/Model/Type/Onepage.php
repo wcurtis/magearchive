@@ -65,6 +65,10 @@ class Mage_Checkout_Model_Type_Onepage
         if ($customer) {
             $this->getQuote()->assignCustomer($customer);
         }
+        if ($this->getQuote()->getIsMultiShipping()) {
+            $this->getQuote()->setIsMultiShipping(false);
+            $this->getQuote()->save();
+        }
         return $this;
     }
 
@@ -135,6 +139,15 @@ class Mage_Checkout_Model_Type_Onepage
         } else {
             $address->addData($data);
         }
+
+        if (($validateRes = $address->validate())!==true) {
+            $res = array(
+                'error' => 1,
+                'message' => $validateRes
+            );
+            return $res;
+        }
+
         if (!$this->getQuote()->getCustomerId() && 'register' == $this->getQuote()->getCheckoutMethod()) {
             $email = $address->getEmail();
             $customer = Mage::getModel('customer/customer')->loadByEmail($email);
@@ -237,6 +250,15 @@ class Mage_Checkout_Model_Type_Onepage
         }
         $address->implodeStreetAddress();
         $address->setCollectShippingRates(true);
+
+        if (($validateRes = $address->validate())!==true) {
+            $res = array(
+                'error' => 1,
+                'message' => $validateRes
+            );
+            return $res;
+        }
+
         $this->getQuote()->collectTotals()->save();
 
         $this->getCheckout()
@@ -251,7 +273,15 @@ class Mage_Checkout_Model_Type_Onepage
         if (empty($shippingMethod)) {
             $res = array(
                 'error' => -1,
-                'message' => Mage::helper('checkout')->__('Invalid data')
+                'message' => Mage::helper('checkout')->__('Invalid shipping method.')
+            );
+            return $res;
+        }
+        $rate = $this->getQuote()->getShippingAddress()->getShippingRateByCode($shippingMethod);
+        if (!$rate) {
+            $res = array(
+                'error' => -1,
+                'message' => Mage::helper('checkout')->__('Invalid shipping method.')
             );
             return $res;
         }
@@ -287,8 +317,29 @@ class Mage_Checkout_Model_Type_Onepage
 
     protected function validateOrder()
     {
-        if (is_null($this->getQuote()->getShippingAddress()->getShippingMethod())) {
-            Mage::throwException('Select shipping method please.');
+        $helper = Mage::helper('checkout');
+        if ($this->getQuote()->getIsMultiShipping()) {
+            Mage::throwException($helper->__('Invalid checkout type.'));
+        }
+
+        $address = $this->getQuote()->getShippingAddress();
+        $addressValidation = $address->validate();
+        if ($addressValidation !== true) {
+            Mage::throwException($helper->__('Please check shipping address information.'));
+        }
+    	$method= $address->getShippingMethod();
+    	$rate  = $address->getShippingRateByCode($method);
+    	if (!$method || !$rate) {
+    	    Mage::throwException($helper->__('Please specify shipping method.'));
+    	}
+
+        $addressValidation = $this->getQuote()->getBillingAddress()->validate();
+        if ($addressValidation !== true) {
+            Mage::throwException($helper->__('Please check billing address information.'));
+        }
+
+        if (!($this->getQuote()->getPayment()->getMethod())) {
+            Mage::throwException('Please select valid payment method.');
         }
     }
 
@@ -299,8 +350,8 @@ class Mage_Checkout_Model_Type_Onepage
      */
     public function saveOrder()
     {
-        $this->validateOrder();
 
+        $this->validateOrder();
         $billing = $this->getQuote()->getBillingAddress();
         $shipping = $this->getQuote()->getShippingAddress();
 
@@ -342,6 +393,7 @@ class Mage_Checkout_Model_Type_Onepage
                 $customerShipping = $shipping->exportCustomerAddress();
                 $customer->addAddress($customerShipping);
             }
+            $customer->setSavedFromQuote(true);
             $customer->save();
 
             $changed = false;

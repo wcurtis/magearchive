@@ -122,4 +122,9 @@ class Mage_Adminhtml_Extensions_RemoteController extends Mage_Adminhtml_Controll
         }
         Mage::app()->getFrontController()->getResponse()->clearAllHeaders();
     }
+
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('system/extensions/remote');
+    }
 }

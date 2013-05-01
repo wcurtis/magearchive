@@ -670,7 +670,10 @@ abstract class Mage_Core_Block_Abstract extends Varien_Object
      */
     public function helper($name)
     {
-        return $this->getLayout()->helper($name);
+        if ($this->getLayout()) {
+            return $this->getLayout()->helper($name);
+        }
+        return Mage::helper($name);
     }
 
     /**

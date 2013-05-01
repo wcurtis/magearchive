@@ -283,7 +283,8 @@ abstract class Mage_Paypal_Model_Api_Abstract extends Varien_Object
 
     public function getCurrencyCode()
     {
-        return $this->getSessionData('currency_code', 'USD');
+        //return $this->getSessionData('currency_code', 'USD');
+        return $this->getSessionData('currency_code', Mage::app()->getStore()->getBaseCurrencyCode());
     }
 
     public function setCurrencyCode($data)
@@ -320,5 +321,10 @@ abstract class Mage_Paypal_Model_Api_Abstract extends Varien_Object
     {
         $types = array('AE'=>Mage::helper('paypal')->__('Amex'), 'VI'=>Mage::helper('paypal')->__('Visa'), 'MC'=>Mage::helper('paypal')->__('MasterCard'), 'DI'=>Mage::helper('paypal')->__('Discover'));
         return isset($types[$ccType]) ? $types[$ccType] : false;
+    }
+
+    public function unsError()
+    {
+        return $this->setSessionData('error', null);
     }
 }

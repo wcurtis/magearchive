@@ -103,7 +103,12 @@
 
     <form method="post" action="<?php echo $this->getUrl('paypaluk/express/saveOrder') ?>">
         <p class="a-right">
-            <input type="image" src="<?php echo $this->getSkinUrl('images/btn_place_order.gif') ?>" value="<?php echo $this->__('Place an Order') ?>" onclick="return saveOrder();"/>
+             <span id="review-please-wait" style="display:none;" class="opc-please-wait">
+                <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" class="v-middle" alt=""/> &nbsp; <?php echo $this->__('Submitting order information...') ?> &nbsp;
+            </span>
+            <span id="review-buttons-container">
+                <input type="image"  id="review-button" src="<?php echo $this->getSkinUrl('images/btn_place_order.gif') ?>" value="<?php echo $this->__('Place an Order') ?>" onclick="return saveOrder();"/>
+            </span>
         </p>
     </form>
 
@@ -113,6 +118,7 @@
 
 <script type="text/javascript">
     $('update_shipping_method') && $('update_shipping_method').hide();
+    var submitted = false;
 
     function saveShippingMethod(value)
     {
@@ -124,10 +130,22 @@
 
     function saveOrder()
     {
+        if (submitted) {
+            return false;
+        }
         if ($('shipping_method').value=='') {
             alert('Please select a valid shipping method before submitting the order.');
             return false;
         }
+        submitted = true;
+        showLoader();
         return true;
+    }
+
+
+    function showLoader()
+    {
+        Element.show('review-please-wait');
+        Element.setStyle('review-buttons-container', {opacity:.5});
     }
 </script>

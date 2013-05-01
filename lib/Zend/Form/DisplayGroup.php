@@ -25,7 +25,7 @@
  * @package    Zend_Form
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DisplayGroup.php 8604 2008-03-06 21:52:58Z matthew $
+ * @version    $Id: DisplayGroup.php 8980 2008-03-21 21:04:51Z matthew $
  */
 class Zend_Form_DisplayGroup implements Iterator,Countable
 {
@@ -125,7 +125,19 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
             $this->setConfig($options);
         }
 
+        // Extensions...
+        $this->init();
+
         $this->loadDefaultDecorators();
+    }
+
+    /**
+     * Initialize object; used by extending classes
+     * 
+     * @return void
+     */
+    public function init()
+    {
     }
 
     /**

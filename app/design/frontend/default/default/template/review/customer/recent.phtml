@@ -30,7 +30,7 @@
         <li <?php if($iterator % 2 == 0): ?>class="odd"<?php endif; ?>>
             <div class="count"><?php echo ++$iterator ?></div>
             <div class="content">
-                <a href="<?php echo $this->getReviewUrl($_review->getReviewId()) ?>"><?php echo $_review->getName() ?></a>
+                <a href="<?php echo $this->getReviewUrl($_review->getReviewId()) ?>"><?php echo $this->htmlEscape($_review->getName()) ?></a>
                 <?php if($_review->getSum()): ?>
                 <div class="ratings">
                     <small><?php echo $this->__('Rating:') ?></small>

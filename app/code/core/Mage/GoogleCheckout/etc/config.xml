@@ -166,6 +166,7 @@
             </checkout>
             <checkout_shipping_carrier>
                 <address_category>COMMERCIAL</address_category>
+                <default_price>0</default_price>
                 <default_height>10</default_height>
                 <default_length>10</default_length>
                 <default_width>10</default_width>

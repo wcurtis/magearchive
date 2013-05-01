@@ -126,7 +126,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Giftmessage_Form extends Mage_Admi
             )
         );
 
-        $fieldset->setHtmlIdPrefix($this->_getFieldIdPrefix());
+        $form->setHtmlIdPrefix($this->_getFieldIdPrefix());
 
         $fieldset->addField('sender','text',
             array(

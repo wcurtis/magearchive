@@ -29,8 +29,8 @@
 <?php else: ?>
 <tr class="hidden">
     <td class="label"><?php echo trim($_element->getLabelHtml()) ?></td>
-    <td class="value value"><?php echo trim($_element->getElementHtml()) ?></td>
-    <td class="value scope-label"><?php echo $this->getScopeLabel() ?></td>
+    <td class="value"><?php echo trim($_element->getElementHtml()) ?></td>
+    <td class="scope-label"><?php echo $this->getScopeLabel() ?></td>
     <?php if ($this->canDisplayUseDefault()): ?>
     <td class="value use-default">
         <input type="checkbox" name="use_default[]" id="<?php echo $_element->getHtmlId() ?>_default"<?php if ($this->usedDefault()): ?> checked<?php endif; ?> onclick="toggleValueElements(this, this.parentNode.parentNode)" value="<?php echo $this->getAttributeCode() ?>"/>

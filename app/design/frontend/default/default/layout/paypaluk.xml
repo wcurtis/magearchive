@@ -29,7 +29,7 @@ Shopping cart
     <checkout_cart_index>
         <!-- Mage_Paypal -->
         <reference name="checkout.cart.methods">
-            <block type="paypaluk/link_shortcut" name="checkout.cart.methods.paypaluk_express"/>
+            <block type="paypaluk/link_shortcut" name="checkout.cart.methods.paypaluk_express" template="paypaluk/link.phtml"/>
         </reference>
     </checkout_cart_index>
 

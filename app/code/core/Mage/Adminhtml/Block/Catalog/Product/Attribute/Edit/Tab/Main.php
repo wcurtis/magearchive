@@ -70,16 +70,22 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
             'required' => true,
         ));
 
+        $scopes = array(
+            Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE =>Mage::helper('catalog')->__('Store View'),
+            Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE =>Mage::helper('catalog')->__('Website'),
+            Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL =>Mage::helper('catalog')->__('Global'),
+        );
+
+        if ($model->getAttributeCode() == 'status') {
+            unset($scopes[Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE]);
+        }
+
         $fieldset->addField('is_global', 'select', array(
             'name'  => 'is_global',
             'label' => Mage::helper('catalog')->__('Scope'),
             'title' => Mage::helper('catalog')->__('Scope'),
-            'note'  => Mage::helper('catalog')->__('Declare atrribute value saving scope'),
-            'values'=> array(
-                Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE =>Mage::helper('catalog')->__('Store View'),
-                Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE =>Mage::helper('catalog')->__('Website'),
-                Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL =>Mage::helper('catalog')->__('Global'),
-            )
+            'note'  => Mage::helper('catalog')->__('Declare attribute value saving scope'),
+            'values'=> $scopes
         ));
 
         $fieldset->addField('frontend_input', 'select', array(
@@ -115,10 +121,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
                 array(
                     'value' => 'price',
                     'label' => Mage::helper('catalog')->__('Price')
-                ),
-                array(
-                    'value' => 'image',
-                    'label' => Mage::helper('catalog')->__('Image')
                 ),
                 array(
                     'value' => 'gallery',
@@ -207,7 +209,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
                 ),
                 array(
                     'value' => 'validate-alphanum',
-                    'label' => Mage::helper('catalog')->__('Letters(a-z) or Numbers(0-9)')
+                    'label' => Mage::helper('catalog')->__('Letters(a-zA-Z) or Numbers(0-9)')
                 ),
             )
         ));
@@ -265,8 +267,8 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
         $fieldset->addField('is_filterable', 'select', array(
             'name' => 'is_filterable',
             'label' => Mage::helper('catalog')->__("Use In Layered Navigation"),
-            'title' => Mage::helper('catalog')->__('Can be used only with catalog input type Dropdown'),
-            'note' => Mage::helper('catalog')->__('Can be used only with catalog input type Dropdown'),
+            'title' => Mage::helper('catalog')->__('Can be used only with catalog input type Dropdown, Multiple Select and Price'),
+            'note' => Mage::helper('catalog')->__('Can be used only with catalog input type Dropdown, Multiple Select and Price'),
             'values' => array(
                 array('value' => '0', 'label' => Mage::helper('catalog')->__('No')),
                 array('value' => '1', 'label' => Mage::helper('catalog')->__('Filterable (with results)')),
@@ -304,10 +306,11 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
 
         $form->getElement('apply_to')->setSize(5);
 
-        if ($model->getApplyTo()) {
-             $form->getElement('apply_to')->setValue(explode(',', $model->getApplyTo()));
+        if ($applyTo = $model->getApplyTo()) {
+            $applyTo = is_array($applyTo) ? $applyTo : explode(',', $applyTo);
+            $form->getElement('apply_to')->setValue($applyTo);
         } else {
-             $form->getElement('apply_to')->addClass('no-display ignore-validate');
+            $form->getElement('apply_to')->addClass('no-display ignore-validate');
         }
 
         $this->setForm($form);

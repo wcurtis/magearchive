@@ -58,10 +58,10 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
         foreach ($methods as $code => $methodConfig) {
             $prefix = self::XML_PATH_PAYMENT_METHODS.'/'.$code.'/';
 
-            if (!Mage::getStoreConfigFlag($prefix.'active')) {
+            if (!Mage::getStoreConfigFlag($prefix.'active', $store)) {
                 continue;
             }
-            if (!$model = Mage::getStoreConfig($prefix.'model')) {
+            if (!$model = Mage::getStoreConfig($prefix.'model', $store)) {
                 continue;
             }
 
@@ -78,7 +78,7 @@ class Mage_Payment_Helper_Data extends Mage_Core_Helper_Abstract
                 continue;
             }
 
-            $sortOrder = (int)Mage::getStoreConfig($prefix.'sort_order');
+            $sortOrder = (int)Mage::getStoreConfig($prefix.'sort_order', $store);
             $methodInstance->setSortOrder($sortOrder);
 //            while (isset($res[$sortOrder])) {
 //                $sortOrder++;

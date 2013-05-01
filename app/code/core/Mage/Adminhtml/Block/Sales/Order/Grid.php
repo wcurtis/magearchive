@@ -129,25 +129,26 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
             'options' => Mage::getSingleton('sales/order_config')->getStatuses(),
         ));
 
-        $this->addColumn('action',
-            array(
-                'header'    => Mage::helper('sales')->__('Action'),
-                'width'     => '50px',
-                'type'      => 'action',
-                'getter'     => 'getId',
-                'actions'   => array(
-                    array(
-                        'caption' => Mage::helper('sales')->__('View'),
-                        'url'     => array('base'=>'*/*/view'),
-                        'field'   => 'order_id'
-                    )
-                ),
-                'filter'    => false,
-                'sortable'  => false,
-                'index'     => 'stores',
-                'is_system' => true,
-        ));
-
+        if (Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/view')) {
+            $this->addColumn('action',
+                array(
+                    'header'    => Mage::helper('sales')->__('Action'),
+                    'width'     => '50px',
+                    'type'      => 'action',
+                    'getter'     => 'getId',
+                    'actions'   => array(
+                        array(
+                            'caption' => Mage::helper('sales')->__('View'),
+                            'url'     => array('base'=>'*/*/view'),
+                            'field'   => 'order_id'
+                        )
+                    ),
+                    'filter'    => false,
+                    'sortable'  => false,
+                    'index'     => 'stores',
+                    'is_system' => true,
+            ));
+        }
         $this->addRssList('rss/order/new', Mage::helper('sales')->__('New Order RSS'));
 
         return parent::_prepareColumns();
@@ -234,7 +235,10 @@ class Mage_Adminhtml_Block_Sales_Order_Grid extends Mage_Adminhtml_Block_Widget_
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/*/view', array('order_id' => $row->getId()));
+        if (Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/view')) {
+            return $this->getUrl('*/*/view', array('order_id' => $row->getId()));
+        }
+        return false;
     }
 
     public function getGridUrl()

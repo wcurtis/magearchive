@@ -1,4 +1,22 @@
 <?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Mage
+ * @package    Mage_GoogleCheckout
+ * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
 
 set_include_path(get_include_path().PS.Mage::getBaseDir('base').DS.'lib'.DS.'googlecheckout');
 
@@ -58,7 +76,8 @@ abstract class Mage_GoogleCheckout_Model_Api_Xml_Abstract extends Varien_Object
     public function getCurrency()
     {
         if (!$this->hasData('currency')) {
-            $this->setData('currency', $this->getLocale()=='en_US' ? 'USD' : 'GBP');
+            $this->setData('currency', Mage::app()->getStore()->getBaseCurrencyCode());
+            //$this->setData('currency', $this->getLocale()=='en_US' ? 'USD' : 'GBP');
         }
         return $this->getData('currency');
     }

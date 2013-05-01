@@ -245,15 +245,21 @@ class Varien_Data_Tree_Dbp extends Varien_Data_Tree
 
         $this->_conn->beginTransaction();
 
+        $reorderData = array($this->_orderField => new Zend_Db_Expr("$this->_orderField + 1"));
         try {
             if ($prevNode && $prevNode->getId()) {
-                $reorderData = array($this->_orderField => new Zend_Db_Expr("$this->_orderField + 1"));
                 $reorderCondition = "{$this->_orderField} > {$prevNode->getData($this->_orderField)}";
-                $this->_conn->update($this->_table, $reorderData, $reorderCondition);
                 $position = $prevNode->getData($this->_orderField) + 1;
-            }
-            $this->_conn->update($this->_table, $data, $condition);
+            } else {
+                $reorderCondition = $this->_conn->quoteInto("{$this->_pathField} REGEXP ?", "^{$newParent->getData($this->_pathField)}/[0-9]+$");
+                $select = $this->_conn->select()
+                    ->from($this->_table, new Zend_Db_Expr("MIN({$this->_orderField})"))
+                    ->where($reorderCondition);
 
+                $position = (int) $this->_conn->fetchOne($select);
+            }
+            $this->_conn->update($this->_table, $reorderData, $reorderCondition);
+            $this->_conn->update($this->_table, $data, $condition);
             $this->_conn->update($this->_table, array($this->_orderField => $position),
                 $this->_conn->quoteInto("{$this->_idField} = ?", $category->getId())
             );

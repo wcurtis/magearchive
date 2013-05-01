@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?php 
+<?php
 
 $numColumns = sizeof($this->getColumns());
 ?>
@@ -50,9 +50,9 @@ $numColumns = sizeof($this->getColumns());
         </tr>
     <?php endforeach; ?>
     <?php elseif ($this->getEmptyText()): ?>
-    	<tr>
-    		<td class="empty-text <?php echo $this->getEmptyTextClass() ?>" colspan="100"><?php echo $this->getEmptyText() ?></td>
-    	</tr>
+        <tr>
+            <td class="empty-text <?php echo $this->getEmptyTextClass() ?>" colspan="100"><?php echo $this->getEmptyText() ?></td>
+        </tr>
     <?php endif; ?>
     </tbody>
 </table>

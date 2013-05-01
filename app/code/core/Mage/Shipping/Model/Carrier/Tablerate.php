@@ -25,6 +25,7 @@ class Mage_Shipping_Model_Carrier_Tablerate
 {
 
     protected $_code = 'tablerate';
+    protected $_default_condition_name = 'package_weight';
 
     protected $_conditionNames = array();
 
@@ -49,7 +50,7 @@ class Mage_Shipping_Model_Carrier_Tablerate
         }
 
         if (!$request->getConditionName()) {
-            $request->setConditionName($this->getConfigData('condition_name'));
+            $request->setConditionName($this->getConfigData('condition_name') ? $this->getConfigData('condition_name') : $this->_default_condition_name);
         }
 
         $result = Mage::getModel('shipping/rate_result');
@@ -63,7 +64,7 @@ class Mage_Shipping_Model_Carrier_Tablerate
             $method->setMethod('bestway');
             $method->setMethodTitle($this->getConfigData('name'));
 
-            $shippingPrice = ($rate['price'] + $this->getConfigData('handling_fee'));
+            $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
 
             $method->setPrice($shippingPrice);
             $method->setCost($rate['cost']);

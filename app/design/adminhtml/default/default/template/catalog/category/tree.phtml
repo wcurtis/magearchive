@@ -43,7 +43,7 @@ Ext.onReady(function(){
 
     // set the root node
     var root = new Ext.tree.TreeNode({
-        text: '<?php echo $this->getRoot()->getName() ?>',
+        text: '<?php echo htmlentities($this->getRoot()->getName(), ENT_QUOTES) ?>',
         draggable:false,
         allowDrop: <?php if($this->getRoot()->getIsVisible()): ?>true<?php else : ?>false<?php endif; ?>,
         id:'<?php echo $this->getRoot()->getId() ?>'

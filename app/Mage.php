@@ -21,6 +21,7 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('BP', dirname(dirname(__FILE__)));
+define('DEVELOPER_MODE', FALSE);
 
 /**
  * Error reporting
@@ -74,9 +75,11 @@ final class Mage {
 
     static private $_objects;
 
+    static private $_isDownloader = false;
+
     public static function getVersion()
     {
-        return '0.9.17740';
+        return '1.0';
     }
 
     /**
@@ -423,7 +426,7 @@ final class Mage {
             Varien_Profiler::stop('app');
         }
         catch (Exception $e) {
-            if (self::app()->isInstalled()) {
+            if (self::app()->isInstalled() || self::$_isDownloader) {
                 self::printException($e);
                 exit();
             }
@@ -514,13 +517,32 @@ final class Mage {
      *
      * @param Exception $e
      */
-    public static function printException(Exception $e)
+    public static function printException(Exception $e, $extra = '')
     {
+        ob_start();
         mageSendErrorHeader();
-        echo "<pre>";
-        echo $e;
-        echo "</pre>";
+        if ($extra != '') {
+            echo $extra."\n";
+        }
+        echo $e->getMessage();
         mageSendErrorFooter();
+        $trace = ob_get_clean();
+	#exit;
+        if ( DEVELOPER_MODE ) {
+            echo '<pre>'.$trace.'</pre>';
+        } else {
+            $file = microtime(true)*100;
+            $traceFile = Mage::getBaseDir('var').DS.$file;
+            file_put_contents($traceFile, $trace);
+            chmod($traceFile, 0777);
+            $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB).'report?id='.$file.'&s='.Mage::app()->getStore()->getCode();
+            if (!headers_sent()) {
+                header('Location: '.$url);
+            } else {
+                echo "<script type='text/javascript'>location.href='".$url."'</script>";
+            }
+            die;
+        }
     }
 
 
@@ -556,4 +578,8 @@ final class Mage {
         return $result;
     }
 
+    public static function setIsDownloader($flag=true)
+    {
+        self::$_isDownloader = $flag;
+    }
 }

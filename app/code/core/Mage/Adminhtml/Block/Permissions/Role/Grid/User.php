@@ -45,12 +45,12 @@ class Mage_Adminhtml_Block_Permissions_Role_Grid_User extends Mage_Adminhtml_Blo
                 $inRoleIds = 0;
             }
             if ($column->getFilter()->getValue()) {
-            	$this->getCollection()->addFieldToFilter('user_id', array('in'=>$inRoleIds));
+                $this->getCollection()->addFieldToFilter('user_id', array('in'=>$inRoleIds));
             }
             else {
                 if($inRoleIds) {
-                	$this->getCollection()->addFieldToFilter('user_id', array('nin'=>$inRoleIds));
-            	}
+                    $this->getCollection()->addFieldToFilter('user_id', array('nin'=>$inRoleIds));
+                }
             }
         }
         else {
@@ -63,7 +63,7 @@ class Mage_Adminhtml_Block_Permissions_Role_Grid_User extends Mage_Adminhtml_Blo
     {
         $roleId = $this->getRequest()->getParam('rid');
         Mage::register('RID', $roleId);
-        $collection = Mage::getModel('admin/permissions_roles')->getUsersCollection();
+        $collection = Mage::getModel('admin/roles')->getUsersCollection();
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -153,7 +153,7 @@ class Mage_Adminhtml_Block_Permissions_Role_Grid_User extends Mage_Adminhtml_Blo
             return $this->getRequest()->getParam('in_role_user');
         }
         $roleId = ( $this->getRequest()->getParam('rid') > 0 ) ? $this->getRequest()->getParam('rid') : Mage::registry('RID');
-        $users  = Mage::getModel('admin/permissions_roles')->setId($roleId)->getRoleUsers();
+        $users  = Mage::getModel('admin/roles')->setId($roleId)->getRoleUsers();
         if (sizeof($users) > 0) {
             if ( $json ) {
                 $jsonUsers = Array();

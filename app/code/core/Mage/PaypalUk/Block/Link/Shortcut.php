@@ -24,26 +24,29 @@
  * @category   Mage
  * @package    Mage_Paypal
  */
-class Mage_PaypalUk_Block_Link_Shortcut extends Mage_Core_Block_Text_List_Link
+class Mage_PaypalUk_Block_Link_Shortcut extends Mage_Core_Block_Template
 {
-    public function getAParams()
+    public function getCheckoutUrl()
     {
-        return array(
-            'href'=>$this->getUrl('paypaluk/express/shortcut', array('_secure'=>true))
-        );
+        return $this->getUrl('paypaluk/express/shortcut', array('_secure'=>true));
     }
 
-    public function getInnerText()
+    public function getImageUrl()
     {
         $locale = Mage::app()->getLocale()->getLocaleCode();
         if (strpos('en_GB', $locale)===false) {
             $locale = 'en_US';
         }
-        return '<img src="https://www.paypal.com/'.$locale.'/i/btn/btn_xpressCheckout.gif" alt="'.Mage::helper('paypalUk')->__('Paypal UK Checkout').'"/>';
+
+        return 'https://www.paypal.com/'.$locale.'/i/btn/btn_xpressCheckout.gif';
     }
 
-    public function _beforeToHtml()
+    public function _toHtml()
     {
-        return (bool)Mage::getStoreConfig('payment/paypaluk_express/active');
+        if((bool)Mage::getStoreConfig('payment/paypaluk_express/active')) {
+            return parent::_toHtml();
+        }
+
+        return '';
     }
 }

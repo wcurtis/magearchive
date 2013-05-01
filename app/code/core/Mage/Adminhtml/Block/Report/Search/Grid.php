@@ -52,7 +52,8 @@ class Mage_Adminhtml_Block_Report_Search_Grid extends Mage_Adminhtml_Block_Widge
             'header'    =>Mage::helper('reports')->__('ID'),
             'width'     =>'50px',
             'filter'    =>false,
-            'index'     =>'query_id'
+            'index'     =>'query_id',
+            'type'      =>'number'
         ));
 
         $this->addColumn('query_text', array(

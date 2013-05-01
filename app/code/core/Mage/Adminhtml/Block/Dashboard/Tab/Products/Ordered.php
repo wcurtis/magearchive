@@ -81,7 +81,8 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Products_Ordered extends Mage_Adminhtml
             'width'     =>'120px',
             'align'     =>'right',
             'sortable'  => false,
-            'index'     =>'ordered_qty'
+            'index'     =>'ordered_qty',
+            'type'      =>'number'
         ));
 
         $this->setFilterVisibility(false);
@@ -92,7 +93,7 @@ class Mage_Adminhtml_Block_Dashboard_Tab_Products_Ordered extends Mage_Adminhtml
 
     public function getRowUrl($row)
     {
-        $params = array('id'=>$row->entity_id);
+        $params = array('id'=>$row->getId());
         if ($this->getRequest()->getParam('store')) {
             $params['store'] = $this->getRequest()->getParam('store');
         }

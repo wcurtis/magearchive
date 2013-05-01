@@ -211,7 +211,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Super_Config_Grid extends Ma
                         'caption' => Mage::helper('catalog')->__('Edit'),
                         'url'     => $this->getEditParamsForAssociated(),
                         'field'   => 'id',
-                        'popup'  => true
+                        'onclick'  => 'superProduct.createPopup(this.href);return false;'
                     )
                 ),
                 'filter'    => false,

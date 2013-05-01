@@ -63,7 +63,7 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canCapturePartial       = false;
-    protected $_canRefund               = true;
+    protected $_canRefund               = false;
     protected $_canVoid                 = true;
     protected $_canUseInternal          = true;
     protected $_canUseCheckout          = true;
@@ -81,6 +81,7 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
     {
         $p = $this->getPayment();
         $a = $this->getBillingAddress();
+        $s = $this->getShippingAddress();
 
         $proArr = array(
             'TENDER'        => self::TENDER_CC,
@@ -92,6 +93,7 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
                 'ACCT'      => $p->getCcNumber(),
                 'EXPDATE'   => sprintf('%02d',$p->getCcExpMonth()).substr($p->getCcExpYear(),-2,2),
                 'CVV2'      => $p->getCcCid(),
+                'CURRENCY'      => $this->getCurrencyCode(),
                 'EMAIL'     => $p->getOrder()->getCustomerEmail(),
 
                 'FIRSTNAME' => $a->getFirstname(),
@@ -101,6 +103,15 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
                 'STATE'     => $a->getRegionCode(),
                 'ZIP'       => $a->getPostcode(),
                 'COUNTRY'   => $a->getCountry(),
+
+                'SHIPTOFIRSTNAME' => $s->getFirstname(),
+                'SHIPTOLASTNAME' => $s->getLastname(),
+                'SHIPTOSTREET' => $s->getStreet(1),
+                'SHIPTOSTREET2' => $s->getStreet(2),
+                'SHIPTOCITY' => $s->getCity(),
+                'SHIPTOSTATE' => $s->getRegion(),
+                'SHIPTOZIP' => $s->getPostcode(),
+                'SHIPTOCOUNTRY' => $s->getCountry(),
             ), $proArr);
 
             if($p->getCcSsIssue()){
@@ -146,7 +157,7 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
             } else {
                 $default = 'https://www.paypal.com/cgi-bin/';
             }
-            $default .= 'webscr&cmd=_express-checkout&useraction='.$this->getUserAction().'&token=';
+            $default .= 'webscr?cmd=_express-checkout&useraction='.$this->getUserAction().'&token=';
 
             $url = $this->getConfigData('paypal_url', $default);
         } else {
@@ -225,11 +236,11 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
             $a->setEmail($result->getEmail());
             $a->setFirstname($result->getFirstname());
             $a->setLastname($result->getLastname());
-            $a->setStreet($result->getShiptostreet());
-            if($result->getShiptostreet2()){
-                $a->setStreet2($result->getShiptostreet2());
+            $street = array($result->getShiptostreet());
+            if ($result->getShiptostreet2()) {
+                $street[] = $result->getShiptostreet2();
             }
-            //$a->setStreet2(isset($result->getgetShipToStreet2()) ? $result->getShipToStreet2() : '');
+            $a->setStreet($street);
             $a->setCity($result->getShiptocity());
             $a->setRegion($result->getShiptostate());
             $a->setPostcode($result->getShiptozip());
@@ -336,9 +347,9 @@ class Mage_PaypalUk_Model_Api_Pro extends  Mage_PaypalUk_Model_Api_Abstract
                 ->setRequestBody($proReq)
                 ->save();
         }
-
-
         $http = new Varien_Http_Adapter_Curl();
+        $config = array('timeout' => 30);
+        $http->setConfig($config);
         $http->write(Zend_Http_Client::POST, $this->getApiUrl(), '1.1', array(), $proReq);
         $response = $http->read();
         $response = preg_split('/^\r?$/m', $response, 2);

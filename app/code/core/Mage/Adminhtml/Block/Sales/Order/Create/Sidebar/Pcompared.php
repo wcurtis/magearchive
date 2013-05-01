@@ -62,9 +62,16 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Pcompared extends Mage_Adm
 
             $collection = $this->getCreateOrderModel()->getCustomerCompareList();
 
+            $stores = array();
+            $website = Mage::app()->getStore($this->getStoreId())->getWebsite();
+            foreach ($website->getStores() as $store) {
+                $stores[] = $store->getId();
+            }
+
             $collection = Mage::getModel('reports/event')
                 ->getCollection()
-                ->addRecentlyFiler(3, $this->getCustomerId(), 0, $ignore);
+                ->addStoreFilter($stores)
+                ->addRecentlyFiler(Mage_Reports_Model_Event::EVENT_PRODUCT_COMPARE, $this->getCustomerId(), 0, $ignore);
             $productIds = array();
             foreach ($collection as $event) {
                 $productIds[] = $event->getObjectId();
@@ -78,6 +85,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Sidebar_Pcompared extends Mage_Adm
                     ->addAttributeToSelect('price')
                     ->addAttributeToSelect('small_image')
                     ->addIdFilter($productIds)
+                    ->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
                     ->load();
             }
             $this->setData('item_collection', $productCollection);

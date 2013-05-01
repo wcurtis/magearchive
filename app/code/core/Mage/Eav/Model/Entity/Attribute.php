@@ -98,6 +98,14 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
         return parent::_afterSave();
     }
 
+    protected function _beforeDelete()
+    {
+        if ($this->_getResource()->isUsedBySuperProducts($this)) {
+            Mage::throwException(Mage::helper('eav')->__('Attribute used in configurable products.'));
+        }
+        return parent::_beforeDelete();
+    }
+
     /**
      * Detect backend storage type using frontend input type
      *

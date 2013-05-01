@@ -60,6 +60,9 @@ class Mage_Catalog_Model_Product_Link extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * @return Mage_Catalog_Model_Product_Link
+     */
     public function useCrossSellLinks()
     {
         $this->setLinkTypeId(self::LINK_TYPE_CROSSSELL);

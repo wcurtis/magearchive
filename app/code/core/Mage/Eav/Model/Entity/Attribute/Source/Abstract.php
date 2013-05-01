@@ -39,7 +39,7 @@ abstract class Mage_Eav_Model_Entity_Attribute_Source_Abstract implements Mage_E
      *
      * @var array
      */
-    protected $_options = array();
+    protected $_options;
 
     /**
      * Set attribute instance

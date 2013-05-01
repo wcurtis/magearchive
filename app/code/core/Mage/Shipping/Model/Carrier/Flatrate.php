@@ -53,7 +53,7 @@ class Mage_Shipping_Model_Carrier_Flatrate
             $shippingPrice = false;
         }
 
-        $shippingPrice+= $this->getConfigData('handling_fee');
+        $shippingPrice = $this->getFinalPriceWithHandlingFee($shippingPrice);
 
         if ($shippingPrice) {
             $method = Mage::getModel('shipping/rate_result_method');

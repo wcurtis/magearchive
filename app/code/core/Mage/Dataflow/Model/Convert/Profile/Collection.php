@@ -101,7 +101,7 @@ class Mage_Dataflow_Model_Convert_Profile_Collection
     public function importXml($xml)
     {
         if (is_string($xml)) {
-            $xml = simplexml_load_string($xml, $this->_simplexmlDefaultClass);
+            $xml = @simplexml_load_string($xml, $this->_simplexmlDefaultClass);
         }
         if (!$xml instanceof SimpleXMLElement) {
             return $this;
@@ -151,7 +151,16 @@ class Mage_Dataflow_Model_Convert_Profile_Collection
                 $this->addContainer($action->getParam('name'), $container);
             }
             foreach ($actionNode->var as $varNode) {
-                $container->setVar((string)$varNode['name'], (string)$varNode);
+                if ($varNode['name'] == 'map') {
+                    $mapData = array();
+                    foreach ($varNode->map as $mapNode) {
+                        $mapData[(string)$mapNode['name']] = (string)$mapNode;
+                    }
+                    $container->setVar((string)$varNode['name'], $mapData);
+                }
+                else {
+                    $container->setVar((string)$varNode['name'], (string)$varNode);
+                }
             }
         }
 

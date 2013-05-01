@@ -51,7 +51,8 @@ class Mage_Adminhtml_Block_Report_Sales_Coupons_Grid extends Mage_Adminhtml_Bloc
             'header'    => $this->__('Number of Use'),
             'sortable'  => false,
             'index'     => 'uses',
-            'total'     => 'sum'
+            'total'     => 'sum',
+            'type'      => 'number'
         ));
 
         $currency_code = (string) Mage::app()->getStore((int)$this->getParam('store'))->getBaseCurrencyCode();

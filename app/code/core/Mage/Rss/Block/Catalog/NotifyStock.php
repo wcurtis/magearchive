@@ -38,7 +38,7 @@ class Mage_Rss_Block_Catalog_NotifyStock extends Mage_Rss_Block_Abstract
     protected function _toHtml()
     {
         $newurl = Mage::getUrl('rss/catalog/notifystock');
-        $title = Mage::helper('rss')->__('Following products are low stock level');
+        $title = Mage::helper('rss')->__('Low Stock Products');
 
         $rssObj = Mage::getModel('rss/rss');
         $data = array('title' => $title,

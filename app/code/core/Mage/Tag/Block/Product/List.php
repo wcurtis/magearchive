@@ -22,11 +22,6 @@ class Mage_Tag_Block_Product_List extends Mage_Core_Block_Template
 {
 	protected $_collection;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function getCount()
     {
         return count($this->getTags());
@@ -37,9 +32,12 @@ class Mage_Tag_Block_Product_List extends Mage_Core_Block_Template
         return $this->_getCollection()->getItems();
     }
 
-    public function getFormAction()
+    public function getProductId()
     {
-        return Mage::getUrl('tag/index/save', $this->_getPathArray());
+        if ($product = Mage::registry('current_product')) {
+            return $product->getId();
+        }
+        return false;
     }
 
     protected function _getCollection()
@@ -58,46 +56,20 @@ class Mage_Tag_Block_Product_List extends Mage_Core_Block_Template
         return $this->_collection;
     }
 
-    protected function _checkPath()
-    {
-        if (!$this->getProductId()) {
-            $currentProduct = Mage::registry('current_product');
-            if ($currentProduct instanceof Mage_Catalog_Model_Product){
-                $this->setProductId($currentProduct->getId());
-            }
-        }
-
-        if (!$this->getCategoryId()) {
-            $currentCategory = Mage::registry('current_category');
-            if ($currentCategory instanceof Mage_Catalog_Model_Category){
-                $this->setCategoryId($currentCategory->getId());
-            }
-        }
-    }
-
-    protected function _getPathArray()
-    {
-        $pathArray = array();
-
-        if ($this->getProductId()) {
-            $pathArray['product'] = $this->getProductId();
-        }
-
-        if ($this->getCategoryId()) {
-            $pathArray['category'] = $this->getCategoryId();
-        }
-
-        return $pathArray;
-    }
-
     protected function _beforeToHtml()
     {
-        $this->_checkPath();
-
         if (!$this->getProductId()) {
             return false;
         }
 
         return parent::_beforeToHtml();
+    }
+
+    public function getFormAction()
+    {
+        return Mage::getUrl('tag/index/save', array(
+            'product' => $this->getProductId(),
+            Mage_Core_Controller_Front_Action::PARAM_NAME_URL_ENCODED => Mage::helper('core/url')->getEncodedUrl()
+        ));
     }
 }

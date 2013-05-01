@@ -133,10 +133,6 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Review>
-        <Mage_SearchLucene>
-            <active>true</active>
-            <codePool>core</codePool>
-        </Mage_SearchLucene>
         <Mage_Tag>
             <active>true</active>
             <codePool>core</codePool>
@@ -185,7 +181,7 @@
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Media>
-         <Mage_Sitemap>
+        <Mage_Sitemap>
             <active>true</active>
             <codePool>core</codePool>
         </Mage_Sitemap>

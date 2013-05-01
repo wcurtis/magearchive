@@ -21,20 +21,39 @@
 
 class Mage_Tax_Model_Class_Source_Product extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
-	public function getAllOptions($addEmptyOption = true)
+	public function getAllOptions($withEmpty = true)
 	{
-		if (!$this->_options) {
+		if (is_null($this->_options)) {
 			$this->_options = Mage::getResourceModel('tax/class_collection')
         		->addFieldToFilter('class_type', 'PRODUCT')
         		->load()
         		->toOptionArray();
-
-            if ($addEmptyOption) {
-                array_unshift($this->_options, array('value'=>'', 'label'=>''));
-            }
 		}
-		return $this->_options;
+
+		$options = $this->_options;
+        if ($withEmpty) {
+            array_unshift($options, array('value'=>'', 'label'=>Mage::helper('tax')->__('-- Please Select --')));
+        }
+        return $options;
 	}
+
+	/**
+     * Get a text for option value
+     *
+     * @param string|integer $value
+     * @return string
+     */
+    public function getOptionText($value)
+    {
+        $options = $this->getAllOptions(false);
+
+        foreach ($options as $item) {
+            if ($item['value'] == $value) {
+                return $item['label'];
+            }
+        }
+        return false;
+    }
 
 	public function toOptionArray()
 	{

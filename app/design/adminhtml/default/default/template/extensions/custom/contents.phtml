@@ -40,7 +40,7 @@
                 <tr id="contents_template" style="display:none">
 <?php function showContentsTemplate($self, $_i=0) { ?>
                     <td style="margin-bottom:5px;">
-                        <select name="contents[role][]">
+                        <select name="contents[role][]" style="width:170px">
                             <optgroup label="Magento">
                             <?php foreach ($self->getMageRoles() as $_value=>$_label): ?>
                                 <option value="<?php echo $_value ?>" <?php echo $self->getSelected('contents/role/'.$_i, $_value) ?>><?php echo $_label ?></option>
@@ -55,7 +55,7 @@
                      </td><td style="margin-bottom:5px;">
                         <input class="input-text" style="width:150px" name="contents[path][]" value="<?php echo $self->getValue('contents/path/'.$_i) ?>"/>
                      </td><td style="margin-bottom:5px;">
-                        <select name="contents[type][]">
+                        <select name="contents[type][]" style="width:100px">
                             <option value="file" <?php echo $self->getSelected('contents/type/'.$_i, 'file') ?>><?php echo $self->__("File") ?></option>
                             <option value="dir" <?php echo $self->getSelected('contents/type/'.$_i, 'dir') ?>><?php echo $self->__("Recursive Dir") ?></option>
                         </select>

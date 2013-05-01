@@ -50,12 +50,13 @@ function giftMessageToogle(giftMessageIdentifier)
 </script>
 <?php endif; ?>
 <?php  $_order = $this->getOrder() ?>
-<a href="<?php echo $this->getPrintAllShipmentsUrl($_order) ?>" target="_blank"><?php echo $this->__('Print All Shipments') ?></a>
 <?php  if ($_order->getTracksCollection()->count()) : ?>
 <div style="float:right">
 <a href="#" id="linkId" onclick="popWin('<?php echo $this->helper('shipping')->getTrackingPopUpUrlByOrderId($_order->getId()) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?php echo $this->__('Track all shipment(s)') ?>"><?php echo $this->__('Track all shipments') ?></a>
 </div>
 <?php endif; ?>
+<a href="<?php echo $this->getPrintAllShipmentsUrl($_order) ?>" target="_blank"><?php echo $this->__('Print All Shipments') ?></a>
+<br />
 <?php foreach ($_order->getShipmentsCollection() as $_shipment): ?>
 <br />
 <div class="head">
@@ -104,7 +105,7 @@ function giftMessageToogle(giftMessageIdentifier)
         <?php foreach ($_items as $_item): ?>
         <tr <?php echo ($_index++ > $_count ? ' class="last"' : '') ?> id="order-item-row-<?php echo $_item->getId() ?>">
             <td>
-                <?php echo $_item->getName() ?>
+                <?php echo $this->htmlEscape($_item->getName()) ?>
                 <?php echo $_item->getDescription() ?>
             </td>
             <td><?php echo $_item->getSku() ?></td>

@@ -78,7 +78,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
         $this->_addContent(
             $this->getLayout()->createBlock('adminhtml/permissions_buttons')
                 ->setRoleId($roleId)
-                ->setRoleInfo(Mage::getModel('admin/permissions_roles')->load($roleId))
+                ->setRoleInfo(Mage::getModel('admin/roles')->load($roleId))
                 ->setTemplate('permissions/roleinfo.phtml')
         );
         $this->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('permissions/role_users_grid_js.phtml'));
@@ -88,7 +88,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
     public function deleteAction()
     {
         $rid = $this->getRequest()->getParam('rid', false);
-        $currentUser = Mage::getModel('admin/permissions_user')->setId(Mage::getSingleton('admin/session')->getUser()->getId());
+        $currentUser = Mage::getModel('admin/user')->setId(Mage::getSingleton('admin/session')->getUser()->getId());
         if ( in_array($rid, $currentUser->getRoles()) ) {
             Mage::getSingleton('adminhtml/session')->addError($this->__('You can not delete self assigned roles.'));
             $this->_redirect('*/*/editrole', array('rid' => $rid));
@@ -96,7 +96,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
         }
 
         try {
-            Mage::getModel("admin/permissions_roles")->setId($rid)->delete();
+            Mage::getModel("admin/roles")->setId($rid)->delete();
             Mage::getSingleton('adminhtml/session')->addSuccess($this->__('Role successfully deleted.'));
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')->addError($this->__('Error while deleting this role. Please try again later.'));
@@ -118,19 +118,19 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
             $resource = array("all");
 
         try {
-            $role = Mage::getModel("admin/permissions_roles")
+            $role = Mage::getModel("admin/roles")
                     ->setId($rid)
                     ->setName($this->getRequest()->getParam('rolename', false))
                     ->setPid($this->getRequest()->getParam('parent_id', false))
                     ->setRoleType('G')
                     ->save();
 
-            Mage::getModel("admin/permissions_rules")
+            Mage::getModel("admin/rules")
                 ->setRoleId($role->getId())
                 ->setResources($resource)
                 ->saveRel();
 
-            $oldRoleUsers = Mage::getModel("admin/permissions_roles")->setId($role->getId())->getRoleUsers($role);
+            $oldRoleUsers = Mage::getModel("admin/roles")->setId($role->getId())->getRoleUsers($role);
             if ( sizeof($oldRoleUsers) > 0 ) {
                 foreach($oldRoleUsers as $oUid) {
                     $this->_deleteUserFromRole($oUid, $role->getId());
@@ -160,7 +160,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
     protected function _deleteUserFromRole($userId, $roleId)
     {
         try {
-            Mage::getModel("admin/permissions_user")
+            Mage::getModel("admin/user")
                 ->setRoleId($roleId)
                 ->setUserId($userId)
                 ->deleteFromRole();
@@ -173,7 +173,7 @@ class Mage_Adminhtml_Permissions_RoleController extends Mage_Adminhtml_Controlle
 
     protected function _addUserToRole($userId, $roleId)
     {
-        $user = Mage::getModel("admin/permissions_user")->load($userId);
+        $user = Mage::getModel("admin/user")->load($userId);
         $user->setRoleId($roleId)->setUserId($userId);
 
         if( $user->roleUserExists() === true ) {

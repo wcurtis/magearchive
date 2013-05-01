@@ -27,7 +27,6 @@
  */
 class Mage_Newsletter_ManageController extends Mage_Core_Controller_Front_Action
 {
-
     /**
      * Action predispatch
      *
@@ -36,12 +35,9 @@ class Mage_Newsletter_ManageController extends Mage_Core_Controller_Front_Action
     public function preDispatch()
     {
         parent::preDispatch();
-
-        $action = $this->getRequest()->getActionName();
-
-       if (!Mage::getSingleton('customer/session')->authenticate($this)) {
-                $this->setFlag('', 'no-dispatch', true);
-       }
+        if (!Mage::getSingleton('customer/session')->authenticate($this)) {
+            $this->setFlag('', 'no-dispatch', true);
+        }
     }
 
     public function indexAction()
@@ -56,13 +52,11 @@ class Mage_Newsletter_ManageController extends Mage_Core_Controller_Front_Action
             Mage::getSingleton('customer/session')->getCustomer()
                 ->setIsSubscribed((boolean)$this->getRequest()->getParam('is_subscribed', false))
                 ->save();
-            Mage::getSingleton('customer/session')->addSuccess(Mage::helper('newsletter')->__('The subscription was successfully saved'));
+            Mage::getSingleton('customer/session')->addSuccess($this->__('The subscription was successfully saved'));
         }
         catch (Exception $e) {
-            Mage::getSingleton('customer/session')->addError(Mage::helper('newsletter')->__('There was an error while saving your subscription'));
+            Mage::getSingleton('customer/session')->addError($this->__('There was an error while saving your subscription'));
         }
-
         $this->_redirect('customer/account/');
     }
-
 }

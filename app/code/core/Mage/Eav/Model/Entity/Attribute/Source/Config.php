@@ -34,29 +34,31 @@ class Mage_Eav_Model_Entity_Attribute_Source_Config extends Mage_Eav_Model_Entit
      */
     public function getAllOptions()
     {
-        $this->_options = array();
-        return $this->_options;
-        if (!$this->_options) {
-            $rootNode = false;
-            if ($this->getConfig()->rootNode) {
-                $rootNode = Mage::getConfig()->getNode((string)$this->getConfig()->rootNode);
-            } elseif ($this->getConfig()->rootNodeXpath) {
-                $rootNode = Mage::getConfig()->getXpath((string)$this->getConfig()->rootNode);
-            }
+        if (is_null($this->_options)) {
+            $this->_options = array();
+            return $this->_options;
+            if (!$this->_options) {
+                $rootNode = false;
+                if ($this->getConfig()->rootNode) {
+                    $rootNode = Mage::getConfig()->getNode((string)$this->getConfig()->rootNode);
+                } elseif ($this->getConfig()->rootNodeXpath) {
+                    $rootNode = Mage::getConfig()->getXpath((string)$this->getConfig()->rootNode);
+                }
 
-            if (!$rootNode) {
-                $rootNode = $this->getConfig()->options;
-            }
+                if (!$rootNode) {
+                    $rootNode = $this->getConfig()->options;
+                }
 
-            if (!$rootNode) {
-                throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('No options root node found'));
-            }
-            foreach ($rootNode->children() as $option) {
-                //$this->_options[(string)$option->value] = (string)$option->label;
-                $this->_options[] = array(
-                    'value' => (string)$option->value,
-                    'label' => (string)$option->label
-                );
+                if (!$rootNode) {
+                    throw Mage::exception('Mage_Eav', Mage::helper('eav')->__('No options root node found'));
+                }
+                foreach ($rootNode->children() as $option) {
+                    //$this->_options[(string)$option->value] = (string)$option->label;
+                    $this->_options[] = array(
+                        'value' => (string)$option->value,
+                        'label' => (string)$option->label
+                    );
+                }
             }
         }
 

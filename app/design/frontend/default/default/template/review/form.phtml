@@ -21,7 +21,7 @@
 <div class="page-head">
     <h3><?php echo $this->__('Write Your Own Review') ?></h3>
 </div>
-<h4><?php echo $this->__("You're reviewing: %s", $this->getProductInfo()->getName()) ?></h4>
+<h4><?php echo $this->__("You're reviewing: %s", $this->htmlEscape($this->getProductInfo()->getName())) ?></h4>
 <form action="<?php echo $this->getAction() ?>" method="post" id="review-form">
 <div>
     <?php if( $this->getRatings() && $this->getRatings()->getSize()): ?>
@@ -60,17 +60,17 @@
         <?php // do not remove div - some problem whith validator in IE ?>
         <div>
         <label for="nickname_field"><?php echo $this->__('Nickname') ?><span class="required">*</span></label><br/>
-        <input class="input-text required-entry" name="nickname" id="nickname_field" style="width: 450px;" type="text" value="<?php echo $data->getNickname() ?>"/>
+        <input class="input-text required-entry" name="nickname" id="nickname_field" style="width: 450px;" type="text" value="<?php echo $this->htmlEscape($data->getNickname()) ?>"/>
         </div>
 
         <div>
         <label for="summary_field"><?php echo $this->__('Summary of Your Review') ?><span class="required">*</span></label><br/>
-        <input name="title" class="input-text  required-entry" id="summary_field" style="width: 450px;" type="text" value="<?php echo $data->getTitle() ?>"/>
+        <input name="title" class="input-text  required-entry" id="summary_field" style="width: 450px;" type="text" value="<?php echo $this->htmlEscape($data->getTitle()) ?>"/>
         </div>
 
         <div>
         <label for="review_field"><?php echo $this->__('Review') ?><span class="required">*</span></label><br/>
-        <textarea class="required-entry" name="detail" id="review_field" cols="53" rows="10" style="width: 450px;"><?php echo $data->getDetail() ?></textarea>
+        <textarea class="required-entry" name="detail" id="review_field" cols="53" rows="10" style="width: 450px;"><?php echo $this->htmlEscape($data->getDetail()) ?></textarea>
         </div>
 
     <div class="button-set">

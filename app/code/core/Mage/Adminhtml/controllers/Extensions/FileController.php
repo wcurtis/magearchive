@@ -90,4 +90,9 @@ class Mage_Adminhtml_Extensions_FileController extends Mage_Adminhtml_Controller
             Mage::app()->cleanCache();
         }
     }
+
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('system/extensions');
+    }
 }

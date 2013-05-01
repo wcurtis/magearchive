@@ -56,6 +56,7 @@ class Mage_Adminhtml_System_CurrencyController extends Mage_Adminhtml_Controller
     {
         try {
             $service = $this->getRequest()->getParam('rate_services');
+            $this->_getSession()->setCurrencyRateService($service);
             if( !$service ) {
                 throw new Exception(Mage::helper('adminhtml')->__('Invalid Import Service Specified'));
             }
@@ -70,7 +71,7 @@ class Mage_Adminhtml_System_CurrencyController extends Mage_Adminhtml_Controller
                 foreach ($errors as $error) {
                 	Mage::getSingleton('adminhtml/session')->addWarning($error);
                 }
-                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('All possible rates were fetched, click on "Save" to apply'));
+                Mage::getSingleton('adminhtml/session')->addWarning(Mage::helper('adminhtml')->__('All possible rates were fetched, click on "Save" to apply'));
             } else {
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('All rates were fetched, click on "Save" to apply'));
             }

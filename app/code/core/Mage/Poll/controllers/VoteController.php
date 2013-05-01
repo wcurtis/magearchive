@@ -34,24 +34,22 @@ class Mage_Poll_VoteController extends Mage_Core_Controller_Front_Action
      */
     public function addAction()
     {
-        $this->_redirectReferer();
+        $pollId     = intval( $this->getRequest()->getParam('poll_id') );
+        $answerId   = intval( $this->getRequest()->getParam('vote') );
 
-        $pollId = intval( $this->getRequest()->getParam('poll_id') );
-        $answerId = intval( $this->getRequest()->getParam('vote') );
-        if( $pollId === 0 || $answerId === 0 || Mage::getSingleton('poll/poll')->isVoted($pollId) ) {
-            return;
+        if( $pollId && $answerId && !Mage::getSingleton('poll/poll')->isVoted($pollId) ) {
+            Mage::getSingleton('poll/poll_vote')
+                ->setPollId($pollId)
+                ->setIpAddress(ip2long($this->getRequest()->getServer('REMOTE_ADDR')))
+                ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
+                ->setVoteTime(now())
+                ->setPollAnswerId($answerId)
+                ->addVote();
+
+            Mage::getSingleton('core/session')->setJustVotedPoll($pollId);
+            Mage::getSingleton('poll/poll')->setVoted($pollId);
         }
 
-        Mage::getSingleton('poll/poll_vote')
-            ->setPollId( $pollId )
-            ->setIpAddress( ip2long($this->getRequest()->getServer('REMOTE_ADDR')) )
-            ->setCustomerId( Mage::getSingleton('customer/session')->getCustomerId() )
-            ->setVoteTime(now())
-            ->setPollAnswerId($answerId)
-            ->addVote();
-
-        Mage::getSingleton('core/session')->setJustVotedPoll($pollId);
-
-        Mage::getSingleton('poll/poll')->setVoted($pollId);
+        $this->_redirectReferer();
     }
 }

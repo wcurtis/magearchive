@@ -102,6 +102,12 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         return $data;
     }
 
+    public function setTypeInstance($instance)
+    {
+        $this->setData('_type_instance', $instance);
+        return $this;
+    }
+
     /**
      * Retrieve type instance
      *
@@ -215,8 +221,8 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
             $storeIds = array();
             if ($websiteIds = $this->getWebsiteIds()) {
                 foreach ($websiteIds as $websiteId) {
-                	$websiteStores = Mage::app()->getWebsite($websiteId)->getStoreIds();
-                	$storeIds = array_merge($storeIds, $websiteStores);
+                    $websiteStores = Mage::app()->getWebsite($websiteId)->getStoreIds();
+                    $storeIds = array_merge($storeIds, $websiteStores);
                 }
             }
             $this->setStoreIds($storeIds);
@@ -288,9 +294,9 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
      * @param   array $value
      * @return  double
      */
-    public function getPricingValue($value)
+    public function getPricingValue($value, $qty = null)
     {
-        return $this->_priceModel->getPricingValue($value, $this);
+        return $this->_priceModel->getPricingValue($value, $this, $qty);
     }
 
     /**
@@ -388,7 +394,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         if (!$this->hasRelatedProductIds()) {
             $ids = array();
             foreach ($this->getRelatedProducts() as $product) {
-            	$ids[] = $product->getId();
+                $ids[] = $product->getId();
             }
             $this->setRelatedProductIds($ids);
         }
@@ -417,7 +423,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         if (!$this->hasUpSellProducts()) {
             $products = array();
             foreach ($this->getUpSellProductCollection() as $product) {
-            	$products[] = $product;
+                $products[] = $product;
             }
             $this->setUpSellProducts($products);
         }
@@ -434,7 +440,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         if (!$this->hasUpSellProductIds()) {
             $ids = array();
             foreach ($this->getUpSellProducts() as $product) {
-            	$ids[] = $product->getId();
+                $ids[] = $product->getId();
             }
             $this->setUpSellProductIds($ids);
         }
@@ -463,7 +469,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         if (!$this->hasCrossSellProducts()) {
             $products = array();
             foreach ($this->getCrossSellProductCollection() as $product) {
-            	$products[] = $product;
+                $products[] = $product;
             }
             $this->setCrossSellProducts($products);
         }
@@ -480,7 +486,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         if (!$this->hasCrossSellProductIds()) {
             $ids = array();
             foreach ($this->getCrossSellProducts() as $product) {
-            	$ids[] = $product->getId();
+                $ids[] = $product->getId();
             }
             $this->setCrossSellProductIds($ids);
         }
@@ -546,6 +552,27 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
     }
 
     /**
+     * Add image to media gallery
+     *
+     * @param string        $file              file path of image in file system
+     * @param string|array  $mediaAttribute    code of attribute with type 'media_image',
+     *                                         leave blank if image should be only in gallery
+     * @param boolean       $move              if true, it will move source file
+     * @param boolean       $exclude           mark image as disabled in product page view
+     */
+    public function addImageToMediaGallery($file, $mediaAttribute=null, $move=false, $exclude=true)
+    {
+        $attributes = $this->getTypeInstance()->getSetAttributes();
+        if (!isset($attributes['media_gallery'])) {
+            return $this;
+        }
+        $mediaGalleryAttribute = $attributes['media_gallery'];
+        /* @var $mediaGalleryAttribute Mage_Catalog_Model_Resource_Eav_Attribute */
+        $mediaGalleryAttribute->getBackend()->addImage($this, $file, $mediaAttribute, $move, $exclude);
+        return $this;
+    }
+
+    /**
      * Retrive product media config
      *
      * @return Mage_Catalog_Model_Product_Media_Config
@@ -576,8 +603,8 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
 
         /*if ($storeIds = $this->getWebsiteIds()) {
             foreach ($storeIds as $storeId) {
-            	$this->setStoreId($storeId)
-            	   ->load($this->getId());
+                $this->setStoreId($storeId)
+                   ->load($this->getId());
 
                 $newProduct->setData($this->getData())
                     ->setSku(null)
@@ -758,7 +785,11 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
                 if ($storeId) $this->setStoreId($storeId);
             }
         } else {
-            $this->setStoreId(0);
+            if ($row['store'] && $storeId = Mage::app()->getStore($row['store'])->getId()) {
+                $this->setStoreId($storeId);
+            } else {
+                $this->setStoreId(0);
+            }
 
             // if attribute_set not set use default
             if (empty($row['attribute_set'])) {
@@ -811,6 +842,116 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
                 $optionId = $catalogConfig->getSourceOptionId($source, $value);
                 if (is_null($optionId)) {
                     $this->printError($hlp->__("Invalid attribute option specified for attribute attribute %s (%s)", $field, $value), $line);
+                }
+                $value = $optionId;
+            }
+
+            $this->setData($field, $value);
+        }
+
+        $postedStores = array(0=>0);
+        if (isset($row['store'])) {
+            foreach (explode(',', $row['store']) as $store) {
+                $storeId = Mage::app()->getStore($store)->getId();
+                if (!$this->hasStoreId()) {
+                    $this->setStoreId($storeId);
+                }
+                $postedStores[$storeId] = $this->getStoreId();
+            }
+        }
+
+        $this->setPostedStores($postedStores);
+
+        if (isset($row['categories'])) {
+            $this->setCategoryIds($row['categories']);
+        }
+        return $this;
+    }
+
+    public function importFromTextArraySilently(array $row)
+    {
+        $hlp = Mage::helper('catalog');
+        $line = $row['i'];
+        $row = $row['row'];
+        $isError = false;
+        $this->unsetData();
+        $catalogConfig = Mage::getSingleton('catalog/config');
+        unset($row['entity_id']);
+        $productId = null;
+        // validate SKU
+        if (empty($row['sku'])) {
+            //$this->printError($hlp->__('SKU is required'), $line);
+            //return ;
+            $this->addError($hlp->__('SKU is required line: %s', $line));
+        } else {
+            $productId = $this->getIdBySku($row['sku']);
+        }
+
+        if ($productId) {
+            $this->unsetData();
+            $this->load($productId);
+            if (isset($row['store'])) {
+                $storeId = Mage::app()->getStore($row['store'])->getId();
+                if ($storeId) $this->setStoreId($storeId);
+            }
+        } else {
+            if ($row['store'] && $storeId = Mage::app()->getStore($row['store'])->getId()) {
+                $this->setStoreId($storeId);
+            } else {
+                $this->setStoreId(0);
+            }
+
+            // if attribute_set not set use default
+            if (empty($row['attribute_set'])) {
+                $row['attribute_set'] = !empty($row['attribute_set_id']) ? $row['attribute_set_id'] : 'Default';
+            }
+
+            if ($row['attribute_set']) {
+                // get attribute_set_id, if not throw error
+                $attributeSetId = $catalogConfig->getAttributeSetId('catalog_product', $row['attribute_set']);
+            }
+            if (!isset($attributeSetId)) {
+//                $this->printError($hlp->__("Invalid attribute set specified"), $line);
+//                return;
+                  $this->addError($hlp->__("Invalid attribute set specified line: %s", $line));
+            }
+
+            $this->setAttributeSetId($attributeSetId);
+
+            if (empty($row['type'])) {
+                $row['type'] = !empty($row['type_id']) ? $row['type_id'] : 'Simple Product';
+            }
+            // get product type_id, if not throw error
+            $typeId = $catalogConfig->getProductTypeId($row['type']);
+            if (!$typeId) {
+                  $this->addError($hlp->__("Invalid product type specified line: %s", $line));
+//                $this->printError($hlp->__("Invalid product type specified"), $line);
+//                return;
+            }
+            $this->setTypeId($typeId);
+        }
+
+        if ($errors = $this->getErrors()) {
+            $this->unsetData();
+//            $this->printError(join("<br />",$errors));
+            $this->resetErrors();
+            return false;
+        }
+
+        $entity = $this->getResource();
+
+        //print_r($entity);
+        foreach ($row as $field=>$value) {
+            $attribute = $entity->getAttribute($field);
+            if (!$attribute) {
+                continue;
+            }
+
+            if ($attribute->usesSource()) {
+                $source = $attribute->getSource();
+                $optionId = $catalogConfig->getSourceOptionId($source, $value);
+                if (is_null($optionId)) {
+                    //$this->printError($hlp->__("Invalid attribute option specified for attribute attribute %s (%s)", $field, $value), $line);
                 }
                 $value = $optionId;
             }
@@ -899,6 +1040,18 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
             unset($data['stock_item']);
         }
         $this->setData($data);
+        return $this;
+    }
+
+    public function loadParentProductIds()
+    {
+        return $this->setParentProductIds($this->_getResource()->getParentProductIds($this));
+    }
+
+    public function delete()
+    {
+        parent::delete();
+        Mage::dispatchEvent($this->_eventPrefix.'_delete_after_done', array($this->_eventObject=>$this));
         return $this;
     }
 }

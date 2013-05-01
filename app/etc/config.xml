@@ -29,6 +29,8 @@
                 <codes>
                     <ar_EG/><!-- Arabic (Egypt) -->
                     <ar_KW/><!-- Arabic (Kuwait) -->
+                    <ar_SA/><!-- Arabic (Saudi Arabia) -->
+                    <bg_BG/><!-- Bulgarian (Bulgaria) -->
                     <cs_CZ/><!-- Czech (Czech Republic) -->
                     <da_DK/><!-- Danish (Denmark) -->
                     <de_CH/><!-- German (Switzerland) -->
@@ -38,34 +40,35 @@
                     <en_GB/><!-- English (United Kingdom) -->
                     <en_US/><!-- English (United States) -->
                     <es_ES/><!-- Spanish (Spain) -->
+                    <es_AR/><!-- Spanish (Argentina) -->
                     <fa_IR/><!-- Persian (Iran) -->
                     <fi_FI/><!-- Finnish (Finland) -->
                     <fr_FR/><!-- French (France) -->
+                    <he_IL/><!-- Hebrew (Israel) -->
                     <hr_HR/><!-- Croatian (Croatia) -->
                     <hu_HU/><!-- Hungarian (Hungary) -->
                     <id_ID/><!-- Indonesian (Indonesia) -->
                     <it_IT/><!-- Italian (Italy) -->
-                    <iw_IL/><!-- Hebrew (Israel) -->
                     <ja_JP/><!-- Japanese (Japan) -->
                     <lt_LT/><!-- Lithuanian (Lithuania) -->
-                    <mc_MC/><!-- Macedonian (Macedonia) -->
+                    <mk_MK/><!-- Macedonian (Macedonia) -->
                     <ms_MY/><!-- Malaysian (Malaysia) -->
                     <nl_NL/><!-- Dutch (Netherlands) -->
-                    <no_NO/><!-- Norwegian (Norway) -->
+                    <nn_NO/><!-- Norwegian (Norway) -->
                     <pl_PL/><!-- Polish (Poland) -->
                     <pt_BR/><!-- Portuguese (Brazil) -->
                     <pt_PT/><!-- Portuguese (Portugal) -->
                     <ro_RO/><!-- Romanian (Romania) -->
                     <ru_RU/><!-- Russian (Russia) -->
                     <sk_SK/><!-- Slovak (Slovakia) -->
-                    <sl_SL/><!-- Slovenian (Slovenia) -->
+                    <sl_SI/><!-- Slovenian (Slovenia) -->
                     <sr_RS/><!-- Serbian (Serbia) -->
                     <sv_SE/><!-- Swedish (Sweden) -->
                     <th_TH/><!-- Thai (Thailand) -->
                     <tr_TR/><!-- Turkish (Turkey) -->
                     <uk_UA/><!-- Ukrainian (Ukraine) -->
                     <vi_VN/><!-- Vietnamese (Vietnam) -->
-                    <zh_CH/><!-- Chinese (China) -->
+                    <zh_CN/><!-- Chinese (China) -->
                     <zh_TW/><!-- Chinese (Taiwan) -->
                 </codes>
                 <currencies>
@@ -114,7 +117,6 @@
                     <KMF/><!-- Comoro Franc -->
                     <CDF/><!-- Congolese Franc Congolais -->
                     <CRC/><!-- Costa Rican Colon -->
-                    <HRD/><!-- Croatian Dinar -->
                     <HRK/><!-- Croatian Kuna -->
                     <CUP/><!-- Cuban Peso -->
                     <CYP/><!-- Cyprus Pound -->
@@ -196,7 +198,6 @@
                     <NAD/><!-- Namibia Dollar -->
                     <NPR/><!-- Nepalese Rupee -->
                     <ANG/><!-- Netherlands Antillan Guilder -->
-                    <NLG/><!-- Netherlands Guilder -->
                     <TRY/><!-- New Turkish Lira -->
                     <NZD/><!-- New Zealand Dollar -->
                     <NIC/><!-- Nicaraguan Cordoba -->
@@ -322,6 +323,9 @@
                     <pdo_mysql>
                         <class>Mage_Core_Model_Resource_Type_Db_Pdo_Mysql</class>
                     </pdo_mysql>
+                    <mysqli>
+                        <class>Mage_Core_Model_Resource_Type_Db_Mysqli</class>
+                    </mysqli>
                 </types>
             </connection>
         </resource>

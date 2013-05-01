@@ -178,6 +178,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column extends Mage_Adminhtml_Block_Widge
             case 'store':
                 $rendererClass = 'adminhtml/widget_grid_column_renderer_store';
                 break;
+            case 'wrapline':
+                $rendererClass = 'adminhtml/widget_grid_column_renderer_wrapline';
+                break;
             default:
                 $rendererClass = 'adminhtml/widget_grid_column_renderer_text';
                 break;

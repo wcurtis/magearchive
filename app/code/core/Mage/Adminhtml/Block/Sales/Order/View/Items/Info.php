@@ -38,7 +38,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Items_Info extends Mage_Adminhtml_Bl
      *
      * @var Mage_GiftMessage_Model_Message
      */
-    protected $_giftMessage;
+    protected $_giftMessage = array();
 
     public function __construct()
     {
@@ -147,7 +147,7 @@ class Mage_Adminhtml_Block_Sales_Order_View_Items_Info extends Mage_Adminhtml_Bl
      */
     protected function _initMessage()
     {
-        $this->_giftMessage = $this->helper('giftmessage/message')->getGiftMessage(
+        $this->_giftMessage[$this->getEntity()->getGiftMessageId()] = $this->helper('giftmessage/message')->getGiftMessage(
                                    $this->getEntity()->getGiftMessageId()
                               );
 
@@ -169,11 +169,11 @@ class Mage_Adminhtml_Block_Sales_Order_View_Items_Info extends Mage_Adminhtml_Bl
      */
     public function getMessage()
     {
-        if(is_null($this->_giftMessage)) {
+        if(!isset($this->_giftMessage[$this->getEntity()->getGiftMessageId()])) {
             $this->_initMessage();
         }
 
-        return $this->_giftMessage;
+        return $this->_giftMessage[$this->getEntity()->getGiftMessageId()];
     }
 
     public function getSaveUrl()

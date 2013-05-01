@@ -64,6 +64,7 @@ class Mage_Adminhtml_Block_Dashboard_Searches_Top extends Mage_Adminhtml_Block_D
             'header'    => $this->__('Search Term'),
             'sortable'  => false,
             'index'     => 'query_text',
+            'renderer'  => 'adminhtml/dashboard_searches_renderer_searchquery',
         ));
 
         $this->addColumn('num_results', array(
@@ -88,6 +89,6 @@ class Mage_Adminhtml_Block_Dashboard_Searches_Top extends Mage_Adminhtml_Block_D
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/catalog_search/edit', array('id'=>$row->query_id));
+        return $this->getUrl('*/catalog_search/edit', array('id'=>$row->getId()));
     }
 }

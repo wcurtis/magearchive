@@ -37,10 +37,28 @@ class Mage_Adminhtml_Block_Sales_Order_Create extends Mage_Adminhtml_Block_Widge
 
         $this->setId('sales_order_create');
 
+        $customerId = $this->_getSession()->getCustomerId();
+        $storeId    = $this->_getSession()->getStoreId();
+
+
         $this->_updateButton('save', 'label', Mage::helper('sales')->__('Submit Order'));
         $this->_updateButton('save', 'onclick', "order.submit()");
+        $this->_updateButton('save', 'id', 'submit_order_top_button');
+        if (is_null($customerId) || !$storeId) {
+            $this->_updateButton('save', 'style', 'display:none');
+        }
 
-        $this->_removeButton('back');
+        $this->_updateButton('back', 'id', 'back_order_top_button');
+        $this->_updateButton('reset', 'id', 'reset_order_top_button');
+
+        if (is_null($customerId)) {
+            $this->_updateButton('reset', 'style', 'display:none');
+        } else {
+            $this->_updateButton('back', 'style', 'display:none');
+        }
+
+        //$this->_removeButton('back');
+        $this->_updateButton('back', 'onclick', 'setLocation(\'' . $this->getUrl('*/sales_order/') . '\');');
 
         $confirm = Mage::helper('sales')->__('Are you sure you want to cancel this order?');
         $this->_updateButton('reset', 'label', Mage::helper('sales')->__('Cancel'));
@@ -62,9 +80,19 @@ class Mage_Adminhtml_Block_Sales_Order_Create extends Mage_Adminhtml_Block_Widge
         return 'width: 70%;';
     }
 
+    /**
+     * Retrieve quote session object
+     *
+     * @return Mage_Adminhtml_Model_Session_Quote
+     */
+    protected function _getSession()
+    {
+        return Mage::getSingleton('adminhtml/session_quote');
+    }
+
     public function getCancelUrl()
     {
-        if (Mage::getSingleton('adminhtml/session_quote')->getOrder()->getId()) {
+        if ($this->_getSession()->getOrder()->getId()) {
             $url = $this->getUrl('*/sales_order/view', array(
                 'order_id'=>Mage::getSingleton('adminhtml/session_quote')->getOrder()->getId()
             ));

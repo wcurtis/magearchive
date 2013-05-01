@@ -75,7 +75,7 @@ class Mage_CatalogSearch_Block_Term extends Mage_Core_Block_Template
 	    * url encoding will be done in Url.php http_build_query
 	    * so no need to explicitly called urlencode for the text
 	    */
-	    $url->setQueryParam('q', $obj->name);
+	    $url->setQueryParam('q', $obj->getName());
 	    return $url->getUrl('catalogsearch/result');
 	}
 

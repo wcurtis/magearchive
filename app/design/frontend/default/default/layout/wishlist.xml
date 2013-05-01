@@ -64,18 +64,35 @@ Customer account home dashboard layout
     </customer_account_index>
 
 <!--
-Wishlist page
+Wishlist pages
 -->
 
     <wishlist_index_index>
         <!-- Mage_Wishlist -->
         <update handle="customer_account"/>
         <reference name="content">
-            <block type="wishlist/customer_wishlist" name="customer.wishlist"/>
+            <block type="wishlist/customer_wishlist" name="customer.wishlist" template="wishlist/view.phtml"/>
         </reference>
         <reference name="right">
             <action method="unsetChild"><name>wishlist_customer_sidebar</name></action>
         </reference>
     </wishlist_index_index>
 
+    <wishlist_index_share>
+        <!-- Mage_Wishlist -->
+        <update handle="customer_account"/>
+        <reference name="content">
+            <block type="wishlist/customer_sharing" name="wishlist.sharing" template="wishlist/sharing.phtml"/>
+        </reference>
+        <reference name="right">
+            <action method="unsetChild"><name>wishlist_customer_sidebar</name></action>
+        </reference>
+    </wishlist_index_share>
+
+    <wishlist_shared_index>
+        <!-- Mage_Wishlist -->
+        <reference name="content">
+            <block type="wishlist/share_wishlist" name="customer.wishlist" template="wishlist/shared.phtml"/>
+        </reference>
+    </wishlist_shared_index>
 </layout>

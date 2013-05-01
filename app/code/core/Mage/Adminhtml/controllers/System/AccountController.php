@@ -40,8 +40,8 @@ class Mage_Adminhtml_System_AccountController extends Mage_Adminhtml_Controller_
     {
         $userId = Mage::getSingleton('admin/session')->getUser()->getId();
         $pwd    = null;
-        
-        $user = Mage::getModel("admin/permissions_user")
+
+        $user = Mage::getModel("admin/user")
                 ->setId($userId)
                 ->setUsername($this->getRequest()->getParam('username', false))
                 ->setFirstname($this->getRequest()->getParam('firstname', false))
@@ -68,6 +68,6 @@ class Mage_Adminhtml_System_AccountController extends Mage_Adminhtml_Controller_
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('system/myaccount');
+        return Mage::getSingleton('admin/session')->isAllowed('system/myaccount');
     }
 }

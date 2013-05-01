@@ -173,7 +173,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
         if ($creditmemo = $this->_initCreditmemo()) {
             $this->loadLayout()
                 ->_setActiveMenu('sales/order')
-                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_creditmemo_view'))
+                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_creditmemo_view')->updateBackButtonUrl())
                 ->renderLayout();
         }
         else {

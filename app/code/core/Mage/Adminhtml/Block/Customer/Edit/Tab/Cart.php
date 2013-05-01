@@ -28,10 +28,10 @@
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_Widget_Grid
 {
 
-    public function __construct()
+    public function __construct($attributes=array())
     {
-        parent::__construct();
-        $this->setId('customer_cart_grid');
+        parent::__construct($attributes);
+        $this->setId('customer_cart_grid'.$this->getWebsiteId());
         $this->setUseAjax(true);
         $this->_parentTemplate = $this->getTemplate();
         $this->setTemplate('customer/tab/cart.phtml');
@@ -39,7 +39,12 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
 
     protected function _prepareCollection()
     {
-        $quote = Mage::getModel('sales/quote')->loadByCustomer(Mage::registry('current_customer'));
+        $customer = Mage::registry('current_customer');
+        $storeIds = Mage::app()->getWebsite($this->getWebsiteId())->getStoreIds();
+
+        $quote = Mage::getModel('sales/quote')
+            ->setSharedStoreIds($storeIds)
+            ->loadByCustomer($customer);
 
         if ($quote) {
             $collection = $quote->getItemsCollection(false);
@@ -113,7 +118,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/cart', array('_current'=>true));
+        return $this->getUrl('*/*/cart', array('_current'=>true, 'website_id' => $this->getWebsiteId()));
     }
 
     public function getGridParentHtml()
@@ -126,5 +131,4 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
     {
         return $this->getUrl('*/catalog_product/edit', array('id' => $row->getProductId()));
     }
-
 }

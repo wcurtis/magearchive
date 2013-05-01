@@ -188,4 +188,9 @@ abstract class Mage_Core_Model_Mysql4_Collection_Abstract extends Varien_Data_Co
         }
         return $this;
     }
+
+    protected function _canUseCache()
+    {
+        return Mage::app()->useCache('collections');
+    }
 }

@@ -41,6 +41,6 @@ class Mage_Adminhtml_Block_Extensions_Remote_Edit extends Mage_Adminhtml_Block_W
     public function getHeaderText()
     {
         $ext = Mage::registry('remote_extension');
-        return $ext->getName();
+        return $this->htmlEscape($ext->getName());
     }
 }

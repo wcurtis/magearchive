@@ -27,17 +27,50 @@
 
 class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
 {
-    protected $productEntityId;
-    protected $productEntityTableName;
-    protected $productEntityTypeId;
+    protected $_productEntityId;
+    protected $_productEntityTableName;
+    protected $_productEntityTypeId;
+
+    public function setProductEntityId($value)
+    {
+        $this->_productEntityId = $value;
+        return $this;
+    }
+
+    public function getProductEntityId()
+    {
+        return $this->_productEntityId;
+    }
+
+    public function setProductEntityTableName($value)
+    {
+        $this->_productEntityTableName = $value;
+        return $this;
+    }
+
+    public function getProductEntityTableName()
+    {
+        return $this->_productEntityTableName;
+    }
+
+    public function setProductEntityTypeId($value)
+    {
+        $this->_productEntityTypeId = $value;
+        return $this;
+    }
+
+    public function getProductEntityTypeId()
+    {
+        return $this->_productEntityTypeId;
+    }
 
     public function __construct()
     {
         $product = Mage::getResourceSingleton('catalog/product');
         /* @var $product Mage_Catalog_Model_Entity_Product */
-        $this->productEntityId = $product->getEntityIdField();
-        $this->productEntityTableName = $product->getEntityTable();
-        $this->productEntityTypeId = $product->getTypeId();
+        $this->setProductEntityId($product->getEntityIdField());
+        $this->setProductEntityTableName($product->getEntityTable());
+        $this->setProductEntityTypeId($product->getTypeId());
 
         parent::__construct();
     }
@@ -99,7 +132,7 @@ class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Re
 
         $this->getSelect()
             ->from("", array("carts" => "({$countSelect})"))
-            ->group("e.{$this->productEntityId}");
+            ->group("e.{$this->getProductEntityId()}");
 
         return $this;
     }
@@ -116,9 +149,9 @@ class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Re
 
         $this->getSelect()
             ->joinLeft(array("order_items" => $tableName),
-                "order_items.{$fieldName} = e.{$this->productEntityId} and order_items.attribute_id = {$attrId}", array())
+                "order_items.{$fieldName} = e.{$this->getProductEntityId()} and order_items.attribute_id = {$attrId}", array())
             ->from("", array("orders" => "count(`order_items2`.entity_id)"))
-            ->group("e.{$this->productEntityId}");
+            ->group("e.{$this->getProductEntityId()}");
 
         if ($from != '' && $to != '') {
             $dateFilter = " and order_items2.created_at BETWEEN '{$from}' AND '{$to}'";
@@ -159,12 +192,12 @@ class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Re
             ->from(
                 array('order_items2' => $qtyOrderedTableName),
                 array('ordered_qty' => "sum(order_items2.{$qtyOrderedFieldName})"))
-            ->joinLeft(
+            ->joinInner(
                 array('order_items' => $productIdTableName),
                 "order_items.entity_id = order_items2.entity_id and order_items.attribute_id = {$productIdAttrId}",
                 array())
-            ->joinLeft(array('e' => $this->productEntityTableName),
-                "e.entity_id = order_items.{$productIdFieldName} AND e.entity_type_id = {$this->productEntityTypeId}")
+            ->joinInner(array('e' => $this->getProductEntityTableName()),
+                "e.entity_id = order_items.{$productIdFieldName} AND e.entity_type_id = {$this->getProductEntityTypeId()}")
             ->joinInner(array('order' => $this->getTable('sales/order_entity')),
                 "order.entity_id = order_items.entity_id".$dateFilter, array())
             ->where("order_items2.attribute_id = {$qtyOrderedAttrId}")
@@ -206,10 +239,10 @@ class Mage_Reports_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Re
             ->from(
                 array('_table_views' => $this->getTable('reports/event')),
                 array('views' => 'COUNT(_table_views.event_id)'))
-            ->joinLeft(array('e' => $this->productEntityTableName),
-                "e.entity_id = _table_views.object_id AND e.entity_type_id = {$this->productEntityTypeId}")
+            ->join(array('e' => $this->getProductEntityTableName()),
+                "e.entity_id = _table_views.object_id AND e.entity_type_id = {$this->getProductEntityTypeId()}")
             ->where('_table_views.event_type_id = ?', $productViewEvent)
-            ->group('_table_views.object_id')
+            ->group('e.entity_id')
             ->order('views desc')
             ->having('views > 0');
 

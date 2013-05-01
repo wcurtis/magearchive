@@ -34,32 +34,10 @@ class Mage_Catalog_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Layer
         $this->_requestVar = 'attribute';
     }
 
-    public function setAttributeModel($attribute)
-    {
-        $this->setRequestVar($attribute->getAttributeCode());
-        $this->setData('attribute_model', $attribute);
-        return $this;
-    }
-
-    public function getAttributeModel()
-    {
-        $attribute = $this->getData('attribute_model');
-        if (is_null($attribute)) {
-            Mage::throwException(Mage::helper('catalog')->__('Attribute model not defined'));
-        }
-        return $attribute;
-    }
-
     protected  function _getOptionText($optionId)
     {
         return $this->getAttributeModel()->getFrontend()->getOption($optionId);
     }
-
-    public function getName()
-    {
-        return Mage::helper('catalog')->__($this->getAttributeModel()->getFrontend()->getLabel());
-    }
-
 
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {

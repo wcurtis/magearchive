@@ -38,50 +38,33 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Group extends Mage_Core_Model_Mysql
         return true;
     }
 
-    public function save(Mage_Core_Model_Abstract $object) {
-        $write = $this->_getWriteAdapter();
-        $groupId = $object->getId();
-
-        $data = array(
-            'attribute_set_id' => $object->getAttributeSetId(),
-            'attribute_group_name' => $object->getAttributeGroupName(),
-            'sort_order' => ( $object->getSortOrder() > 0 ) ? $object->getSortOrder() : ($this->_getMaxSortOrder($object) + 1)
-        );
-
-        try {
-            if( $groupId > 0 ) {
-                $condition = $write->quoteInto("{$this->getMainTable()}.{$this->getIdFieldName()} = ?", $groupId);
-                $write->update($this->getMainTable(), $data, $condition);
-            } else {
-                $write->insert($this->getMainTable(), $data);
-                $object->setId($write->lastInsertId());
-            }
-            if( $object->getAttributes() ) {
-                $insertId = $write->lastInsertId();
-                foreach( $object->getAttributes() as $attribute ) {
-                    if( $insertId > 0 ) {
-                        $attribute->setAttributeGroupId($insertId);
-                    }
-                    $attribute->save();
-                }
-            }
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+    /**
+     * Perform actions before object save
+     *
+     * @param Mage_Core_Model_Abstract $object
+     */
+    protected function _beforeSave(Mage_Core_Model_Abstract $object)
+    {
+        if (!$object->getSortOrder()) {
+            $object->setSortOrder($this->_getMaxSortOrder($object) + 1);
         }
-        return $this;
+        return parent::_beforeSave($object);
     }
 
-    public function delete(Mage_Core_Model_Abstract $object)
+    /**
+     * Perform actions after object save
+     *
+     * @param Mage_Core_Model_Abstract $object
+     */
+    protected function _afterSave(Mage_Core_Model_Abstract $object)
     {
-        $groups = $object->getGroupsArray();
-        $setId = $object->getSetId();
-        $write = $this->_getWriteAdapter();
-
-        $condition = $write->quoteInto("{$this->getTable('entity_attribute')}.attribute_group_id = ?", $object->getId());
-        $write->delete($this->getTable('entity_attribute'),  $condition);
-
-        $condition = $write->quoteInto('attribute_group_id = ?', $object->getId());
-        $write->delete($this->getMainTable(), $condition);
+        if ($object->getAttributes()) {
+            foreach ($object->getAttributes() as $attribute) {
+                $attribute->setAttributeGroupId($object->getId());
+                $attribute->save();
+            }
+        }
+        return parent::_afterSave($object);
     }
 
     private function _getMaxSortOrder($object)

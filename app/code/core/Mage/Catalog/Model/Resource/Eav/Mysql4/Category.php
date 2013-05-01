@@ -90,8 +90,6 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category extends Mage_Catalog_Model
 
     protected function _afterSave(Varien_Object $object)
     {
-        parent::_afterSave($object);
-
         $this->_saveCategoryProducts($object);
 
         /**
@@ -103,7 +101,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category extends Mage_Catalog_Model
             //$this->save($object);
         }
 
-        return $this;
+        return parent::_afterSave($object);
     }
 
     protected function _savePath($object)
@@ -156,6 +154,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category extends Mage_Catalog_Model
      */
     protected function _saveCategoryProducts($category)
     {
+        $category->setIsChangedProductList(false);
         // new category-product relationships
         $products = $category->getPostedProducts();
 
@@ -238,6 +237,10 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category extends Mage_Catalog_Model
                     .' and '.$write->quoteInto('category_id=?', $catId)
                 );
             }
+        }
+
+        if (!empty($insert) || !empty($update) || !empty($delete)) {
+            $category->setIsChangedProductList(true);
         }
 
         return $this;
@@ -354,6 +357,29 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Category extends Mage_Catalog_Model
         $select = $this->_getReadAdapter()->select()
             ->from($this->getEntityTable(), 'entity_id')
             ->where('entity_id=?', $id);
+        return $this->_getReadAdapter()->fetchOne($select);
+    }
+
+    public function verifyIds(array $ids)
+    {
+        $validIds = array();
+        $select = $this->_getWriteAdapter()->select()
+            ->from($this->getEntityTable(), 'entity_id')
+            ->where('entity_id IN(?)', $ids);
+        $query = $this->_getWriteAdapter()->query($select);
+        while ($row = $query->fetch()) {
+            $validIds[] = $row['entity_id'];
+        }
+        return $validIds;
+    }
+
+    public function getChildrenAmount($category, $isActiveFlag = true)
+    {
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->getEntityTable(), array('COUNT(entity_id)'))
+            ->where('path like ?', $category->getPath() . '/%')
+            ->where('is_active = ?', $isActiveFlag);
+
         return $this->_getReadAdapter()->fetchOne($select);
     }
 }

@@ -72,6 +72,9 @@ class Mage_Page_Block_Template_Links extends Mage_Core_Block_Template
     public function addLink($label, $url='', $title='', $prepare=false, $urlParams=array(),
         $position=null, $liParams=null, $aParams=null, $beforeText='', $afterText='')
     {
+        if (is_null($label) || false===$label) {
+            return $this;
+        }
         $link = new Varien_Object(array(
             'label'         => $label,
             'url'           => ($prepare ? $this->getUrl($url, (is_array($urlParams) ? $urlParams : array())) : $url),
@@ -83,9 +86,17 @@ class Mage_Page_Block_Template_Links extends Mage_Core_Block_Template
         ));
 
         if (is_int($position)) {
-            $this->_links = array_splice($this->_links, $position, 0, array($link));
+            while (isset($this->_links[$position])) {
+                $position++;
+            }
+            $this->_links[$position] = $link;
+            ksort($this->_links);
         } else {
-            $this->_links[] = $link;
+            $position = 0;
+            foreach ($this->_links as $k=>$v) {
+                $position = $k;
+            }
+            $this->_links[$position+10] = $link;
         }
 
         return $this;

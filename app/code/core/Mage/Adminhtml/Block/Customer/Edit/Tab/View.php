@@ -125,7 +125,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_View extends Mage_Adminhtml_Block_T
     {
         $html = '';
         if ($address = $this->getCustomer()->getPrimaryBillingAddress()) {
-            $html = $address->toString($address->getHtmlFormat());
+            $html = $address->format('html');
         }
         else {
             $html = Mage::helper('customer')->__("Customer doesn't have primary billing address");

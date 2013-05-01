@@ -32,7 +32,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Header extends Mage_Adminhtml_Bloc
 
         $customerId = $this->getCustomerId();
         $storeId    = $this->getStoreId();
-        $out = '<h3 class="icon-head head-sales-order">';
+        $out = '';
         if ($customerId && $storeId) {
             $out.= Mage::helper('sales')->__('Create New Order for %s in %s', $this->getCustomer()->getName(), $this->getStore()->getName());
         }
@@ -48,7 +48,8 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Header extends Mage_Adminhtml_Bloc
         else {
             $out.= Mage::helper('sales')->__('Create New Order');
         }
-        $out .= '</h3>';
+        $out = $this->htmlEscape($out);
+        $out = '<h3 class="icon-head head-sales-order">' . $out . '</h3>';
         return $out;
     }
 }

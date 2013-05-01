@@ -100,7 +100,7 @@ class Mage_Adminhtml_Block_Report_Tag_Popular_Grid extends Mage_Adminhtml_Block_
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/*/tagDetail', array('id'=>$row->tag_id));
+        return $this->getUrl('*/*/tagDetail', array('id'=>$row->getTagId()));
     }
 
 }

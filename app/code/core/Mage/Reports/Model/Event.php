@@ -27,6 +27,13 @@
 
 class Mage_Reports_Model_Event extends Mage_Core_Model_Abstract
 {
+    const EVENT_PRODUCT_VIEW    = 1;
+    const EVENT_PRODUCT_SEND    = 2;
+    const EVENT_PRODUCT_COMPARE = 3;
+    const EVENT_PRODUCT_TO_CART = 4;
+    const EVENT_PRODUCT_TO_WISHLIST = 5;
+    const EVENT_WISHLIST_SHARE  = 6;
+
     protected function _construct()
     {
         $this->_init('reports/event');
@@ -37,7 +44,7 @@ class Mage_Reports_Model_Event extends Mage_Core_Model_Abstract
         $this->setLoggedAt(Mage::getModel('core/date')->gmtDate());
         return parent::_beforeSave();
     }
-    
+
     public function updateCustomerType($visitorId, $customerId, $types = null)
     {
         if (is_null($types)) {

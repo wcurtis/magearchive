@@ -47,7 +47,7 @@ class Mage_PaypalUk_Block_Direct_Info extends Mage_Payment_Block_Info_Cc
     }
 
     /**
-     * Retrieve CC start month for switch/solor card
+     * Retrieve CC start month for switch/solo card
      *
      * @return string
      */
@@ -58,5 +58,11 @@ class Mage_PaypalUk_Block_Direct_Info extends Mage_Payment_Block_Info_Cc
             $month = '0'.$month;
         }
         return $month;
+    }
+    
+    public function toPdf()
+    {
+        $this->setTemplate('paypaluk/direct/pdf/info.phtml');
+        return $this->toHtml();
     }
 }

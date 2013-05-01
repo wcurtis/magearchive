@@ -110,11 +110,13 @@ class Mage_CatalogInventory_Model_Stock extends Mage_Core_Model_Abstract
     {
         if (($productId = $item->getProductId()) && ($qty = $item->getQtyToShip())) {
             $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
-            if ($item->getStoreId()) {
-                $stockItem->setStoreId($item->getStoreId());
+            if ($stockItem->getId()) {
+                if ($item->getStoreId()) {
+                    $stockItem->setStoreId($item->getStoreId());
+                }
+                $stockItem->addQty($qty)
+                    ->save();
             }
-            $stockItem->addQty($qty)
-                ->save();
         }
         return $this;
     }
@@ -129,5 +131,17 @@ class Mage_CatalogInventory_Model_Stock extends Mage_Core_Model_Abstract
     {
         $this->_getResource()->lockProductItems($this, $productIds);
         return $this;
+    }
+
+    /**
+     * Enter description here...
+     *
+     * @param Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Link_Product_Collection $collection
+     * @return Mage_CatalogInventory_Model_Stock $this
+     */
+    public function addInStockFilterToCollection($collection)
+    {
+    	$this->getResource()->setInStockFilterToCollection($collection);
+    	return $this;
     }
 }

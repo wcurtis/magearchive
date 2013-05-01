@@ -19,12 +19,12 @@
  */
 
 /**
- * Review Mysql4 resource model
+ * Review resource model
  *
- * @category   Mage
- * @package    Mage_Review
+ * @category    Mage
+ * @package     Mage_Review
  */
-class Mage_Review_Model_Mysql4_Review
+class Mage_Review_Model_Mysql4_Review extends Mage_Core_Model_Mysql4_Abstract
 {
     protected $_reviewTable;
     protected $_reviewDetailTable;
@@ -32,195 +32,150 @@ class Mage_Review_Model_Mysql4_Review
     protected $_reviewEntityTable;
     protected $_reviewStoreTable;
 
-    /**
-     * Read connection
-     *
-     * @var Zend_Db_Adapter_Abstract
-     */
-    protected $_read;
-
-    /**
-     * Write connection
-     *
-     * @var Zend_Db_Adapter_Abstract
-     */
-    protected $_write;
-
-    public function __construct()
+    protected function _construct()
     {
-        $resources = Mage::getSingleton('core/resource');
-
-        $this->_reviewTable         = $resources->getTableName('review/review');
-        $this->_reviewDetailTable   = $resources->getTableName('review/review_detail');
-        $this->_reviewStatusTable   = $resources->getTableName('review/review_status');
-        $this->_reviewEntityTable   = $resources->getTableName('review/review_entity');
-        $this->_reviewStoreTable   = $resources->getTableName('review/review_store');
-        $this->_aggregateTable      = $resources->getTableName('review/review_aggregate');
-
-        $this->_read    = $resources->getConnection('review_read');
-        $this->_write   = $resources->getConnection('review_write');
+        $this->_init('review/review', 'review_id');
+        $this->_reviewTable         = $this->getTable('review/review');
+        $this->_reviewDetailTable   = $this->getTable('review/review_detail');
+        $this->_reviewStatusTable   = $this->getTable('review/review_status');
+        $this->_reviewEntityTable   = $this->getTable('review/review_entity');
+        $this->_reviewStoreTable    = $this->getTable('review/review_store');
+        $this->_aggregateTable      = $this->getTable('review/review_aggregate');
     }
 
-    public function load($reviewId)
+    /**
+     * Retrieve select object for load object data
+     *
+     * @param   string $field
+     * @param   mixed $value
+     * @return  Zend_Db_Select
+     */
+    protected function _getLoadSelect($field, $value, $object)
     {
-        $select = $this->_read->select();
-        $select->from($this->_reviewTable)
-            ->join($this->_reviewDetailTable, "{$this->_reviewTable}.review_id = {$this->_reviewDetailTable}.review_id")
-            ->where("{$this->_reviewTable}.review_id = ?", $reviewId);
-        $data = $this->_read->fetchRow($select);
+           $select = parent::_getLoadSelect($field, $value, $object);
+        $select->join($this->_reviewDetailTable, $this->getMainTable().".review_id = {$this->_reviewDetailTable}.review_id");
+        return $select;
+    }
 
-        $data['stores'] = array();
+    /**
+     * Perform actions before object save
+     *
+     * @param Varien_Object $object
+     */
+    protected function _beforeSave(Mage_Core_Model_Abstract $object)
+    {
+        if (!$object->getId()) {
+            $object->setCreatedAt(Mage::getSingleton('core/date')->gmtDate());
+        }
+        if ($object->hasData('stores') && is_array($object->getStores())) {
+            $stores = $object->getStores();
+            $stores[] = 0;
+            $object->setStores($stores);
+        } elseif ($object->hasData('stores')) {
+            $object->setStores(array($object->getStores(), 0));
+        }
+        return $this;
+    }
 
-        $storesSelect = $this->_read->select();
+    /**
+     * Perform actions after object save
+     *
+     * @param Varien_Object $object
+     */
+    protected function _afterSave(Mage_Core_Model_Abstract $object)
+    {
+        /**
+         * save detale
+         */
+        $detail = array(
+            'title'     => $object->getTitle(),
+            'detail'    => $object->getDetail(),
+            'nickname'  => $object->getNickname(),
+        );
+        $select = $this->_getWriteAdapter()->select()
+            ->from($this->_reviewDetailTable, 'detail_id')
+            ->where('review_id=?', $object->getId());
+        $detailId = $this->_getWriteAdapter()->fetchOne($select);
 
-        $storesSelect
-            ->from($this->_reviewStoreTable)
-            ->where('review_id=?', $reviewId);
-
-        $stores = $this->_read->fetchAll($storesSelect);
-
-        foreach ($stores as $store) {
-            $data['stores'][] = $store['store_id'];
+        if ($detailId) {
+            $this->_getWriteAdapter()->update($this->_reviewDetailTable,
+                $detail,
+                'detail_id='.$detailId
+            );
+        }
+        else {
+            $detail['store_id']   = $object->getStoreId();
+            $detail['customer_id']= $object->getCustomerId();
+            $detail['review_id']  = $object->getId();
+            $this->_getWriteAdapter()->insert($this->_reviewDetailTable, $detail);
         }
 
-        return $data;
-    }
 
-    public function save(Mage_Review_Model_Review $review)
-    {
-        $this->_write->beginTransaction();
-        try {
-            if ($review->getId()) {
-                $data = $this->_prepareUpdateData($review);
-                $condition = $this->_write->quoteInto('review_id = ?', $review->getId());
+        /**
+         * save stores
+         */
+        $stores = $object->getStores();
+        if(!empty($stores)) {
+            $condition = $this->_getWriteAdapter()->quoteInto('review_id = ?', $object->getId());
+            $this->_getWriteAdapter()->delete($this->_reviewStoreTable, $condition);
 
-                $this->_write->update($this->_reviewTable, $data['base'], $condition);
-                $this->_write->update($this->_reviewDetailTable, $data['detail'], $condition);
-            }
-            else {
-                $data = $this->_prepareInsertData($review);
-
-                $data['base']['created_at'] = now();
-                $this->_write->insert($this->_reviewTable, $data['base']);
-
-                $review->setId($this->_write->lastInsertId());
-                $data['detail']['review_id'] = $review->getId();
-                $this->_write->insert($this->_reviewDetailTable, $data['detail']);
-            }
-
-            if(isset($data['stores'])) {
-                $condition = $this->_write->quoteInto('review_id = ?', $review->getId());
-                $this->_write->delete($this->_reviewStoreTable, $condition);
-		$insertedStoreIds = array();
-                foreach ($data['stores'] as $storeId) {
-                    if (in_array($storeId, $insertedStoreIds))
-		        continue;
-
-		    $insertedStoreIds[] = $storeId;
-                    $storeInsert = array();
-                    $storeInsert['store_id'] = $storeId;
-                    $storeInsert['review_id'] = $review->getId();
-                    $this->_write->insert($this->_reviewStoreTable, $storeInsert);
+            $insertedStoreIds = array();
+            foreach ($stores as $storeId) {
+                if (in_array($storeId, $insertedStoreIds)) {
+                    continue;
                 }
+
+                $insertedStoreIds[] = $storeId;
+                $storeInsert = array(
+                    'store_id' => $storeId,
+                    'review_id'=> $object->getId()
+                );
+                $this->_getWriteAdapter()->insert($this->_reviewStoreTable, $storeInsert);
             }
-            $this->_write->commit();
         }
-        catch (Exception $e){
-            $this->_write->rollBack();
-            throw new Exception($e->getMessage());
-        }
+        return $this;
     }
 
     /**
-     * Prepare data for review insert
+     * Perform actions after object load
      *
-     * @todo    validate data
-     * @param   Mage_Review_Model_Review $review
-     * @return  array
+     * @param Varien_Object $object
      */
-    protected function _prepareInsertData(Mage_Review_Model_Review $review)
+    protected function _afterLoad(Mage_Core_Model_Abstract $object)
     {
-        $data = array(
-            'base'  => array(
-                'entity_id'         => $review->getEntityId(),
-                'entity_pk_value'   => $review->getEntityPkValue(),
-                'status_id'         => $review->getStatusId()
-            ),
-            'detail'=> array(
-                'title'     => strip_tags($review->getTitle()),
-                'detail'    => strip_tags($review->getDetail()),
-                'store_id'=> $review->getStoreId(),
-                'customer_id' => $review->getCustomerId(),
-                'nickname'  => strip_tags($review->getNickname())
-            )
-        );
-
-        if ($review->hasData('stores') && is_array($review->getStores())) {
-            $stores = $review->getStores();
-            $stores[] = 0;
-            $data['stores'] = $stores;
-        } elseif ($review->hasData('stores')) {
-            $data['stores'] = array();
-        }
-
-        return $data;
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->_reviewStoreTable, array('store_id'))
+            ->where('review_id=?', $object->getId());
+        $stores = $this->_getReadAdapter()->fetchCol($select);
+        $object->setStores($stores);
+        return $this;
     }
 
-    public function _prepareUpdateData(Mage_Review_Model_Review $review)
+    /**
+     * Perform actions after object delete
+     *
+     * @param Varien_Object $object
+     */
+    protected function _afterDelete(Mage_Core_Model_Abstract $object)
     {
-        $data = array(
-            'detail'=> array(
-                'title'     => strip_tags($review->getTitle()),
-                'detail'    => strip_tags($review->getDetail()),
-                'nickname'  => strip_tags($review->getNickname())
-            ),
-            'base' => array(
-                'status_id' => $review->getStatusId()
-            )
-        );
-
-        if ($review->hasData('stores') && is_array($review->getStores())) {
-            $stores = $review->getStores();
-            $stores[] = 0;
-            $data['stores'] = $stores;
-        } elseif ($review->hasData('stores')) {
-            $data['stores'] = array();
-        }
-
-        return $data;
-    }
-
-    public function delete(Mage_Review_Model_Review $review)
-    {
-        if( $review->getId() ) {
-            try {
-                $this->_write->beginTransaction();
-                $condition = $this->_write->quoteInto('review_id = ?', $review->getId());
-                $review->load($review->getId());
-                $this->_write->delete($this->_reviewTable, $condition);
-                $this->_write->commit();
-                $this->aggregate($review);
-            } catch (Exception $e) {
-                throw new Exception($e->getMessage());
-            }
-        }
+        $this->aggregate($object);
+        return $this;
     }
 
     public function getTotalReviews($entityPkValue, $approvedOnly=false, $storeId=0)
     {
-        $read = clone $this->_read;
-        $select = $read->select();
-        $select->from($this->_reviewTable, "COUNT(*)")
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->_reviewTable, "COUNT(*)")
             ->where("{$this->_reviewTable}.entity_pk_value = ?", $entityPkValue);
 
         if($storeId > 0) {
-            $select->join(array('store'=>$this->_reviewStoreTable), $this->_reviewTable.'.review_id=store.review_id AND store.store_id=' . (int)$storeId, array());
+            $select->join(array('store'=>$this->_reviewStoreTable),
+                $this->_reviewTable.'.review_id=store.review_id AND store.store_id=' . (int)$storeId, array());
         }
-
         if( $approvedOnly ) {
             $select->where("{$this->_reviewTable}.status_id = ?", 1);
         }
-        return $read->fetchOne($select);
+        return $this->_getReadAdapter()->fetchOne($select);
     }
 
     public function aggregate($object)
@@ -229,8 +184,8 @@ class Mage_Review_Model_Mysql4_Review
             $object->load($object->getReviewId());
         }
 
-        $ratingModel = Mage::getModel('rating/rating');
-        $ratingSummaries = $ratingModel->getEntitySummary($object->getEntityPkValue(), false);
+        $ratingModel    = Mage::getModel('rating/rating');
+        $ratingSummaries= $ratingModel->getEntitySummary($object->getEntityPkValue(), false);
 
         $nonDelete = array();
         foreach($ratingSummaries as $ratingSummaryObject) {
@@ -241,13 +196,13 @@ class Mage_Review_Model_Mysql4_Review
             }
 
             $reviewsCount = $this->getTotalReviews($object->getEntityPkValue(), true, $ratingSummaryObject->getStoreId());
-            $select = $this->_read->select();
-            $select->from($this->_aggregateTable)
+            $select = $this->_getReadAdapter()->select()
+                ->from($this->_aggregateTable)
                 ->where("{$this->_aggregateTable}.entity_pk_value = ?", $object->getEntityPkValue())
                 ->where("{$this->_aggregateTable}.entity_type = ?", $object->getEntityId())
                 ->where("{$this->_aggregateTable}.store_id = ?", $ratingSummaryObject->getStoreId());
 
-            $oldData = $this->_read->fetchRow($select);
+            $oldData = $this->_getReadAdapter()->fetchRow($select);
 
             $data = new Varien_Object();
 
@@ -257,19 +212,18 @@ class Mage_Review_Model_Mysql4_Review
                 ->setRatingSummary( ($ratingSummary > 0) ? $ratingSummary : 0 )
                 ->setStoreId($ratingSummaryObject->getStoreId());
 
-            $this->_write->beginTransaction();
+            $this->_getWriteAdapter()->beginTransaction();
             try {
                 if( $oldData['primary_id'] > 0 ) {
-                    $condition = $this->_write->quoteInto("{$this->_aggregateTable}.primary_id = ?", $oldData['primary_id']);
-                    $this->_write->update($this->_aggregateTable, $data->getData(), $condition);
+                    $condition = $this->_getWriteAdapter()->quoteInto("{$this->_aggregateTable}.primary_id = ?", $oldData['primary_id']);
+                    $this->_getWriteAdapter()->update($this->_aggregateTable, $data->getData(), $condition);
                 } else {
-                    $this->_write->insert($this->_aggregateTable, $data->getData());
+                    $this->_getWriteAdapter()->insert($this->_aggregateTable, $data->getData());
                 }
-                $this->_write->commit();
+                $this->_getWriteAdapter()->commit();
             } catch (Exception $e) {
-                $this->_write->rollBack();
+                $this->_getWriteAdapter()->rollBack();
             }
         }
-
     }
 }

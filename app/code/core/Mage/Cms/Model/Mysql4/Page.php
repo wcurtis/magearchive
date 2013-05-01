@@ -31,12 +31,6 @@ class Mage_Cms_Model_Mysql4_Page extends Mage_Core_Model_Mysql4_Abstract
     protected function _construct()
     {
         $this->_init('cms/page', 'page_id');
-        $this->_uniqueFields = array(
-            array(
-                'field' => array('identifier','store_id'),
-                'title' => Mage::helper('cms')->__('Page Identifier for specified store')
-            ),
-        );
     }
 
     /**
@@ -46,6 +40,14 @@ class Mage_Cms_Model_Mysql4_Page extends Mage_Core_Model_Mysql4_Abstract
      */
     protected function _beforeSave(Mage_Core_Model_Abstract $object)
     {
+        if (!$this->getIsUniquePageToStores($object)) {
+            Mage::throwException(Mage::helper('cms')->__('Page Identifier for specified store already exist.'));
+        }
+
+        if ($this->isNumericPageIdentifier($object)) {
+            Mage::throwException(Mage::helper('cms')->__('Page Identifier cannot consist only of numbers.'));
+        }
+
         if (! $object->getId()) {
             $object->setCreationTime(now());
         }
@@ -71,7 +73,7 @@ class Mage_Cms_Model_Mysql4_Page extends Mage_Core_Model_Mysql4_Abstract
         $condition = $this->_getWriteAdapter()->quoteInto('page_id = ?', $object->getId());
         $this->_getWriteAdapter()->delete($this->getTable('cms/page_store'), $condition);
 
-        foreach ($object->stores as $store) {
+        foreach ((array)$object->getData('stores') as $store) {
             $storeArray = array();
             $storeArray['page_id'] = $object->getId();
             $storeArray['store_id'] = $store;
@@ -83,7 +85,7 @@ class Mage_Cms_Model_Mysql4_Page extends Mage_Core_Model_Mysql4_Abstract
 
     public function load(Mage_Core_Model_Abstract $object, $value, $field=null)
     {
-        if (!intval($value) && is_string($value)) {
+        if (strcmp($value, (int)$value) !== 0) {
             $field = 'identifier';
         }
         return parent::load($object, $value, $field);
@@ -122,9 +124,47 @@ class Mage_Cms_Model_Mysql4_Page extends Mage_Core_Model_Mysql4_Abstract
         $select = parent::_getLoadSelect($field, $value, $object);
 
         if ($object->getStoreId()) {
-            $select->join(array('cps' => $this->getTable('cms/page_store')), $this->getMainTable().'.page_id = cps.page_id');
-            $select->where('is_active=1 AND cps.store_id in (0, ?) ', $object->getStoreId());
+            $select->join(array('cps' => $this->getTable('cms/page_store')), $this->getMainTable().'.page_id = `cps`.page_id')
+                    ->where('is_active=1 AND `cps`.store_id in (0, ?) ', $object->getStoreId())
+                    ->order('store_id DESC')
+                    ->limit(1);
         }
         return $select;
+    }
+
+    /**
+     * Check for unique of identifier of page to selected store(s).
+     *
+     * @param Mage_Core_Model_Abstract $object
+     * @return bool
+     */
+    public function getIsUniquePageToStores(Mage_Core_Model_Abstract $object)
+    {
+        $select = $this->_getWriteAdapter()->select()
+                ->from($this->getMainTable())
+                ->join(array('cps' => $this->getTable('cms/page_store')), $this->getMainTable().'.page_id = `cps`.page_id')
+                ->where($this->getMainTable().'.identifier = ?', $object->getData('identifier'));
+        if ($object->getId()) {
+            $select->where($this->getMainTable().'.page_id <> ?',$object->getId());
+        }
+        $select->where('`cps`.store_id IN (?)', (array)$object->getData('stores'));
+
+        if ($this->_getWriteAdapter()->fetchRow($select)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *  Check whether page identifier is numeric
+     *
+     *  @param    Mage_Core_Model_Abstract $object
+     *  @return	  bool
+     *  @date	  Wed Mar 26 18:12:28 EET 2008
+     */
+    protected function isNumericPageIdentifier (Mage_Core_Model_Abstract $object)
+    {
+        return preg_match('/^[0-9]+$/', $object->getData('identifier'));
     }
 }

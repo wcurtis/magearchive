@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PEAR_PATH="downloader/pearlib"
+
 # initial setup
 if test "x$1" = "xmage-setup"; then
     echo 'Running initial setup...'
@@ -10,7 +12,7 @@ if test "x$1" = "xmage-setup"; then
         MAGE_ROOT_DIR="`pwd`"
     fi
 
-    MAGE_PEAR_ROOT_DIR="$MAGE_ROOT_DIR/lib/pear"
+    MAGE_PEAR_ROOT_DIR="$MAGE_ROOT_DIR/$PEAR_PATH"
 
     $0 config-set bin_dir "$MAGE_PEAR_ROOT_DIR"
     $0 config-set doc_dir "$MAGE_PEAR_ROOT_DIR/docs"
@@ -64,7 +66,7 @@ fi
 
 # get default pear dir of not set
 if test "x$MAGE_PEAR_ROOT_DIR" = "x"; then
-  MAGE_PEAR_ROOT_DIR="./lib/pear"
+  MAGE_PEAR_ROOT_DIR="./$PEAR_PATH"
 fi
 
 # look for the right pear include dir

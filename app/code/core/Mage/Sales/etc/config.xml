@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Sales>
-            <version>0.8.18</version>
+            <version>0.8.21</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Customer />
@@ -140,12 +140,12 @@
             </quote>
             <order>
                 <statuses>
-                    <pending><label>Pending</label></pending>
-                    <processing><label>Processing</label></processing>
-                    <holded><label>On Hold</label></holded>
-                    <complete><label>Complete</label></complete>
-                    <closed><label>Closed</label></closed>
-                    <canceled><label>Canceled</label></canceled>
+                    <pending translate="label"><label>Pending</label></pending>
+                    <processing translate="label"><label>Processing</label></processing>
+                    <holded translate="label"><label>On Hold</label></holded>
+                    <complete translate="label"><label>Complete</label></complete>
+                    <closed translate="label"><label>Closed</label></closed>
+                    <canceled translate="label"><label>Canceled</label></canceled>
                 </statuses>
                 <states>
                     <new>
@@ -297,7 +297,6 @@
                                                 <reorder translate="title"><title>Reorder</title></reorder>
                                                 <edit translate="title"><title>Edit</title></edit>
                                                 <cancel translate="title"><title>Cancel</title></cancel>
-                                                <authorize translate="title"><title>Authorize</title></authorize>
                                                 <capture translate="title"><title>Capture</title></capture>
                                                 <invoice translate="title"><title>Invoice</title></invoice>
                                                 <creditmemo translate="title"><title>Creditmemo</title></creditmemo>
@@ -360,7 +359,7 @@
                 <apply_after_discount>0</apply_after_discount>
                 <shipping_tax_class></shipping_tax_class>
                 <based_on>shipping</based_on>
-                <show_in_catalog>0</show_in_catalog>
+                <price_includes_tax>0</price_includes_tax>
             </tax>
         </sales>
         <sales_email>

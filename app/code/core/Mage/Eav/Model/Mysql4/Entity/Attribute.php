@@ -45,7 +45,7 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
                 ->where('entity_type_id=?', $entityTypeId);
             $data = $this->_getReadAdapter()->fetchAll($select);
             foreach ($data as $row) {
-            	self::$_entityAttributes[$entityTypeId][$row['attribute_code']] = $row;
+                self::$_entityAttributes[$entityTypeId][$row['attribute_code']] = $row;
             }
         }
         return $this;
@@ -116,6 +116,11 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
             $attribute = Mage::getModel('eav/entity_attribute')
                 ->load($data['attribute_id'])
                 ->setEntity(Mage::getSingleton('catalog/product')->getResource());
+
+            if ($this->isUsedBySuperProducts($attribute, $data['attribute_set_id'])) {
+                Mage::throwException(Mage::helper('eav')->__("Attribute '%s' used in configurable products.", $attribute->getAttributeCode()));
+            }
+
             if ($backendTable = $attribute->getBackend()->getTable()) {
                 $clearCondition = array(
                     $write->quoteInto('entity_type_id=?',$attribute->getEntityTypeId()),
@@ -158,7 +163,6 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
         if (is_array($applyTo)) {
             $object->setApplyTo(implode(',', $applyTo));
         }
-
 
         /**
          * @todo need use default source model of entity type !!!
@@ -304,4 +308,22 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute extends Mage_Core_Model_Mysql4_Abst
         return $this;
     }
 
+    public function isUsedBySuperProducts(Mage_Core_Model_Abstract $object, $attributeSet=null)
+    {
+        $read = $this->_getReadAdapter();
+        $attrTable = $this->getTable('catalog/product_super_attribute');
+        $productTable = $this->getTable('catalog/product');
+        $select = $read->select()
+            ->from(array('_main_table' => $attrTable), 'COUNT(*)')
+            ->join(array('_entity'=> $productTable), '_main_table.product_id = _entity.entity_id')
+            ->where("_main_table.attribute_id = ?", $object->getAttributeId())
+            ->group('_main_table.attribute_id')
+            ->limit(1);
+
+        if (!is_null($attributeSet)) {
+            $select->where('_entity.attribute_set_id = ?', $attributeSet);
+        }
+        $valueCount = $read->fetchOne($select);
+        return $valueCount;
+    }
 }

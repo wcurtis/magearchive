@@ -126,9 +126,10 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
      * Retrieve product price html block
      *
      * @param   Mage_Catalog_Model_Product $product
+     * @param   bool $displayMinimalPrice
      * @return  string
      */
-    public function getPriceHtml($product)
+    public function getPriceHtml($product, $displayMinimalPrice = false)
     {
         if (is_null($this->_priceBlock)) {
             $className = Mage::getConfig()->getBlockClassName('core/template');
@@ -142,6 +143,7 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
         $html = '';
 
         $this->_priceBlock->setProduct($product);
+        $this->_priceBlock->setDisplayMinimalPrice($displayMinimalPrice);
 
         return $this->_priceBlock->toHtml();
     }
@@ -215,5 +217,4 @@ class Mage_Catalog_Helper_Product extends Mage_Core_Helper_Url
 
         return false;
     }
-
 }

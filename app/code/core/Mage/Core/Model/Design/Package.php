@@ -300,17 +300,26 @@ class Mage_Core_Model_Design_Package
     	}
 		$filename = $this->validateFile($file, $params);
 		if (false===$filename) {
-			if ($this->getDefaultTheme()===$params['_theme']) {
-				return $params['_default'];
-			}
-			$params['_theme'] = $this->getDefaultTheme();
+			$params['_theme'] = $this->getFallbackTheme();
 			$filename = $this->validateFile($file, $params);
 			if (false===$filename) {
-				return $params['_default'];
+        		if ($this->getDefaultTheme()===$params['_theme']) {
+        			return $params['_default'];
+        		}
+    			$params['_theme'] = $this->getDefaultTheme();
+    			$filename = $this->validateFile($file, $params);
+    			if (false===$filename) {
+    				return $params['_default'];
+    			}
 			}
 		}
 		Varien_Profiler::stop(__METHOD__);
 		return $filename;
+    }
+
+    public function getFallbackTheme()
+    {
+        return Mage::getStoreConfig('design/theme/default');
     }
 
     public function getLayoutFilename($file, array $params=array())
@@ -351,14 +360,20 @@ class Mage_Core_Model_Design_Package
     	if (!empty($file)) {
 			$filename = $this->validateFile($file, $params);
 			if (false===$filename) {
-				if ($this->getDefaultTheme()===$params['_theme']) {
-					return $params['_default'];
-				}
-				$params['_theme'] = $this->getDefaultTheme();
-				$filename = $this->validateFile($file, $params);
-				if (false===$filename) {
-					return $params['_default'];
-				}
+
+    			$params['_theme'] = $this->getFallbackTheme();
+    			$filename = $this->validateFile($file, $params);
+    			if (false===$filename) {
+            		if ($this->getDefaultTheme()===$params['_theme']) {
+            			return $params['_default'];
+            		}
+        			$params['_theme'] = $this->getDefaultTheme();
+        			$filename = $this->validateFile($file, $params);
+        			if (false===$filename) {
+        				return $params['_default'];
+        			}
+    			}
+
 			}
     	}
 

@@ -68,8 +68,8 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Actions extends Mage_Adminhtml_B
         ));
 
         $fieldset->addField('simple_free_shipping', 'select', array(
-            'label'     => Mage::helper('salesrule')->__('Free ground shipping'),
-            'title'     => Mage::helper('salesrule')->__('Free ground shipping'),
+            'label'     => Mage::helper('salesrule')->__('Free shipping'),
+            'title'     => Mage::helper('salesrule')->__('Free shipping'),
             'name'      => 'simple_free_shipping',
             'options'    => array(
                 0 => Mage::helper('salesrule')->__('No'),
@@ -96,7 +96,7 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Actions extends Mage_Adminhtml_B
             'legend'=>Mage::helper('salesrule')->__('Apply the rule only to cart items matching the following conditions (leave blank for all items)')
         ))->setRenderer($renderer);
 
-    	$fieldset->addField('actions', 'text', array(
+        $fieldset->addField('actions', 'text', array(
             'name' => 'actions',
             'label' => Mage::helper('salesrule')->__('Apply to'),
             'title' => Mage::helper('salesrule')->__('Apply to'),

@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Core URL helper
  *
@@ -26,14 +26,14 @@ class Mage_Core_Helper_Url extends Mage_Core_Helper_Abstract
 {
     /**
      * Retrieve current url
-     * 
+     *
      * @return string
      */
     public function getCurrentUrl()
     {
         return $this->_getUrl('*/*/*', array('_current'=>true));
     }
-    
+
     /**
      * Retrieve current url in base64 encoding
      *
@@ -43,7 +43,15 @@ class Mage_Core_Helper_Url extends Mage_Core_Helper_Abstract
     {
         return base64_encode($this->getCurrentUrl());
     }
-    
+
+    public function getEncodedUrl($url=null)
+    {
+        if (!$url) {
+            $url = $this->getCurrentUrl();
+        }
+        return $this->urlEncode($url);
+    }
+
     /**
      * Retrieve homepage url
      *
@@ -53,13 +61,13 @@ class Mage_Core_Helper_Url extends Mage_Core_Helper_Abstract
     {
         return Mage::getBaseUrl();
     }
-    
+
     protected function _prepareString($string)
     {
         $string = preg_replace('#[^0-9a-z]+#i', '-', $string);
         $string = strtolower($string);
         $string = trim($string, '-');
-    	
+
         return $string;
     }
 }

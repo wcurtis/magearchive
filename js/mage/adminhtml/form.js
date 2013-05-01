@@ -168,6 +168,8 @@ RegionUpdater.prototype = {
             this.lastCountryId = this.countryEl.value;
         }
 
+        this.countryEl.changeUpdater = this.update.bind(this);
+
         Event.observe(this.countryEl, 'change', this.update.bind(this));
     },
 

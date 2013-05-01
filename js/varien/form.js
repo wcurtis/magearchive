@@ -42,7 +42,7 @@ VarienForm.prototype = {
 
     submit : function(url){
         if(this.validator && this.validator.validate()){
-            this.form.submit();
+             this.form.submit();
         }
         return false;
     },
@@ -206,6 +206,7 @@ RegionUpdater.prototype = {
                 if (this.regionTextEl) {
                     this.regionTextEl.style.display = 'none';
                 }
+
                 this.regionSelectEl.style.display = '';
             } else if (this.disableAction=='disable') {
                 if (this.regionTextEl) {
@@ -220,6 +221,7 @@ RegionUpdater.prototype = {
                     this.regionTextEl.style.display = '';
                 }
                 this.regionSelectEl.style.display = 'none';
+                Validation.reset(this.regionSelectEl);
             } else if (this.disableAction=='disable') {
                 if (this.regionTextEl) {
                     this.regionTextEl.disabled = false;

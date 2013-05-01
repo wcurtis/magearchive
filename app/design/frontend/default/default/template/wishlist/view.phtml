@@ -25,7 +25,7 @@
 <?php if($this->getWishlist()->getSize()): ?>
     <?php if($this->helper('wishlist')->isRssAllow()): ?>
         <p class="a-right">
-        <a href="<?php echo $this->helper('wishlist')->getRssUrl(); ?>">RSS FEED</a>
+        <a href="<?php echo $this->helper('wishlist')->getRssUrl(); ?>" class="link-feed"><?php echo $this->__('RSS Feed') ?></a>
         </p>
     <?php endif; ?>
 <form action="<?php echo $this->getUrl('*/*/update') ?>" method="post">
@@ -47,7 +47,7 @@
             <tr>
                 <td>
                     <div><a href="<?php echo $item->getProductUrl() ?>"><img src="<?php echo $this->helper('catalog/image')->init($item, 'small_image')->resize(113, 113); ?>" alt="<?php echo $this->htmlEscape($item->getName()) ?>" width="113"/></a></div>
-                    <div><a href="<?php echo $item->getProductUrl() ?>" title="<?php echo $this->htmlEscape($item->getName()) ?>"><?php echo $item->getName() ?></a></div>
+                    <div><a href="<?php echo $item->getProductUrl() ?>" title="<?php echo $this->htmlEscape($item->getName()) ?>"><?php echo $this->htmlEscape($item->getName()) ?></a></div>
                     <?php echo $this->helper('catalog/product')->getPriceHtml($item) ?>
                 </td>
                 <td align="center">
@@ -69,13 +69,18 @@
 <script type="text/javascript">decorateTable('wishlist-table')</script>
     <div class="button-set">
         <button onclick="setLocation('<?php echo $this->getUrl('*/*/share') ?>')" class="form-button-alt" type="button"><span><?php echo $this->__('Share Wishlist') ?></span></button>&nbsp;
+        <?php if($this->isSaleable()):?>
         <button onclick="setLocation('<?php echo $this->getUrl('*/*/allcart') ?>')" class="form-button-alt"  type="button"><span><?php echo $this->__('Add All to Cart') ?></span></button>&nbsp;
+        <?php endif;?>
         <button type="submit" class="form-button" name="do"><span><?php echo $this->__('Update Wishlist') ?></span></button>
     </div>
 </form>
 <?php else: ?>
     <p><?php echo $this->__('You have no items in your wishlist.') ?></p>
 <?php endif ?>
+<div class="button-set">
+    <a href="<?php echo $this->getBackUrl() ?>" class="left">&laquo; <?php echo $this->__('Back') ?></a>
+</div>
 <script type="text/javascript">
 function confirmRemoveWishlistItem(url){
     if(confirm('<?php echo $this->__('Are you sure you want to remove this product from your wishlist?') ?>')) {

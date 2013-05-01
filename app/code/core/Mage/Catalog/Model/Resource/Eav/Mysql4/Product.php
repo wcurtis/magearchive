@@ -94,9 +94,12 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
            $object->setId($this->getIdBySku($object->getSku()));
         }
 
-        if (is_array($object->getData('category_ids'))) {
-            $object->setData('category_ids', implode(',', $object->getData('category_ids')));
+        $categoryIds = $object->getCategoryIds();
+        if ($categoryIds) {
+            $categoryIds = Mage::getModel('catalog/category')->verifyIds($categoryIds);
         }
+
+        $object->setData('category_ids', implode(',', $categoryIds));
 
         return parent::_beforeSave($object);
     }
@@ -118,18 +121,42 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
      */
     protected function _saveWebsiteIds($product)
     {
-        $ids = $product->getWebsiteIds();
+        $websiteIds = $product->getWebsiteIds();
+        $oldWebsiteIds = array();
 
-        $this->_getWriteAdapter()->delete(
-            $this->_productWebsiteTable,
-            $this->_getWriteAdapter()->quoteInto('product_id=?', $product->getId())
-        );
+        $product->setIsChangedWebsites(false);
 
-        foreach ($ids as $websiteId) {
-            $this->_getWriteAdapter()->insert(
-                $this->_productWebsiteTable,
-                array('product_id'=>$product->getId(), 'website_id'=>$websiteId)
-            );
+        $select = $this->_getWriteAdapter()->select()
+            ->from($this->_productWebsiteTable)
+            ->where('product_id=?', $product->getId());
+        $query  = $this->_getWriteAdapter()->query($select);
+        while ($row = $query->fetch()) {
+            $oldWebsiteIds[] = $row['website_id'];
+        }
+
+        $insert = array_diff($websiteIds, $oldWebsiteIds);
+        $delete = array_diff($oldWebsiteIds, $websiteIds);
+
+        if (!empty($insert)) {
+            foreach ($insert as $websiteId) {
+                $this->_getWriteAdapter()->insert($this->_productWebsiteTable, array(
+                    'product_id' => $product->getId(),
+                    'website_id' => $websiteId
+                ));
+            }
+        }
+
+        if (!empty($delete)) {
+            foreach ($delete as $websiteId) {
+                $this->_getWriteAdapter()->delete($this->_productWebsiteTable, array(
+                    $this->_getWriteAdapter()->quoteInto('product_id=?', $product->getId()),
+                    $this->_getWriteAdapter()->quoteInto('website_id=?', $websiteId)
+                ));
+            }
+        }
+
+        if (!empty($insert) || !empty($delete)) {
+            $product->setIsChangedWebsites(true);
         }
 
         return $this;
@@ -148,6 +175,8 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
         $oldCategoryIds = $object->getOrigData('category_ids');
         $oldCategoryIds = !empty($oldCategoryIds) ? explode(',', $oldCategoryIds) : array();
 
+        $object->setIsChangedCategories(false);
+
         $insert = array_diff($categoryIds, $oldCategoryIds);
         $delete = array_diff($oldCategoryIds, $categoryIds);
 
@@ -159,7 +188,9 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
                     $insertSql[] = '('.(int)$v.','.$object->getId().',0)';
                 }
             };
-            $write->query("insert into {$this->_productCategoryTable} (category_id, product_id, position) values ".join(',', $insertSql));
+            if ($insertSql) {
+                $write->query("insert into {$this->_productCategoryTable} (category_id, product_id, position) values ".join(',', $insertSql));
+            }
 
         }
 
@@ -168,6 +199,10 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
                 $write->quoteInto('product_id=?', $object->getId())
                 .' and '.$write->quoteInto('category_id in (?)', $delete)
             );
+        }
+
+        if (!empty($insert) || !empty($delete)) {
+            $object->setIsChangedCategories(true);
         }
 
         return $this;
@@ -207,5 +242,32 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product extends Mage_Catalog_Model_
     {
         parent::validate($object);
         return $this;
+    }
+
+
+    public function getParentProductIds($object)
+    {
+        $childId = $object->getId();
+
+        $groupedProductsTable = $this->getTable('catalog/product_link');
+        $groupedLinkTypeId = Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED;
+
+        $configurableProductsTable = $this->getTable('catalog/product_super_link');
+
+        $groupedSelect = $this->_getReadAdapter()->select()
+            ->from(array('g'=>$groupedProductsTable), 'g.product_id')
+            ->where("g.linked_product_id = ?", $childId)
+            ->where("link_type_id = ?", $groupedLinkTypeId);
+
+        $configurableSelect = $this->_getReadAdapter()->select()
+            ->from(array('c'=>$configurableProductsTable), 'c.parent_id')
+            ->where("c.product_id = ?", $childId);
+
+        $select = $this->_getReadAdapter()->select();
+        $select
+            ->from(array('e'=>$this->getTable('catalog/product')), 'DISTINCT(e.entity_id)')
+            ->where('e.entity_id in ('.new Zend_Db_Expr($groupedSelect).' UNION '.new Zend_Db_Expr($configurableSelect).')');
+
+        return $this->_getReadAdapter()->fetchCol($select);
     }
 }

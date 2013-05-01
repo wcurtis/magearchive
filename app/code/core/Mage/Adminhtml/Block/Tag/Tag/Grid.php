@@ -97,6 +97,7 @@ class Mage_Adminhtml_Block_Tag_Tag_Grid extends Mage_Adminhtml_Block_Widget_Grid
             $this->addColumn('visible_in', array(
                 'header'    => Mage::helper('tag')->__('Visible In'),
                 'type'      => 'store',
+                'skipAllStoresLabel' => true,
                 'index'     => 'stores',
                 'sortable'  => false,
                 'store_view'=> true

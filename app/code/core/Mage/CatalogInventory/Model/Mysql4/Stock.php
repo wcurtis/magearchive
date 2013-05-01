@@ -45,4 +45,17 @@ class Mage_CatalogInventory_Model_Mysql4_Stock extends Mage_Core_Model_Mysql4_Ab
         $this->_getWriteAdapter()->query($select);
         return $this;
     }
+    
+    /**
+     * add join to select only in stock products
+     *
+     * @param Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Link_Product_Collection $collection
+     * @return Mage_CatalogInventory_Model_Mysql4_Stock
+     */
+    public function setInStockFilterToCollection( $collection)
+    {
+    	$collection->joinField('inventory_in_stock', 'cataloginventory/stock_item',
+    							'is_in_stock', 'product_id=entity_id', '{{table}}.is_in_stock=1');
+    	return $this;
+    }
 }

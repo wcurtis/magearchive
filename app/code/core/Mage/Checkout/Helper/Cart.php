@@ -123,13 +123,7 @@ class Mage_Checkout_Helper_Cart extends Mage_Core_Helper_Url
 
     public function getSummaryCount()
     {
-        if (Mage::getStoreConfig('checkout/cart_link/use_qty')) {
-            $count = $this->getItemsQty()*1;
-        }
-        else {
-            $count = $this->getItemsCount()*1;
-        }
-        return $count;
+        return Mage::getSingleton('checkout/cart')->getSummaryQty();
     }
 
 }

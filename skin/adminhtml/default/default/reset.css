@@ -61,6 +61,7 @@ fieldset                { border:none; }
 legend                  { display:none; }
 label                   { color:#333; }
 input, select           { vertical-align:middle; }
+textarea                { overflow:auto; }
 
 /* Lists */
 dt                      { display:block; }

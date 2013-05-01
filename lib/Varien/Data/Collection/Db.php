@@ -52,6 +52,8 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
      */
     protected $_idFieldName;
 
+    protected $_bindParams = array();
+
     public function __construct($conn=null)
     {
         parent::__construct();
@@ -59,6 +61,12 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
         if (!is_null($conn)) {
             $this->setConnection($conn);
         }
+    }
+
+    public function addBindParam($name, $value)
+    {
+        $this->_bindParams[$name] = $value;
+        return $this;
     }
 
     public function initCache($object, $idPrefix, $tags)
@@ -129,7 +137,7 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
     {
         if (is_null($this->_totalRecords)) {
             $sql = $this->getSelectCountSql();
-            $this->_totalRecords = $this->getConnection()->fetchOne($sql);
+            $this->_totalRecords = $this->getConnection()->fetchOne($sql, $this->_bindParams);
         }
         return intval($this->_totalRecords);
     }
@@ -293,6 +301,7 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
     	}
 
         $sql = '';
+        $fieldName = $this->_getConditionFieldName($fieldName);
         if (is_array($condition)) {
             if (isset($condition['from']) || isset($condition['to'])) {
                 if (isset($condition['from'])) {
@@ -383,6 +392,11 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
             $sql = $this->getConnection()->quoteInto("$fieldName = ?", (string)$condition);
         }
         return $sql;
+    }
+
+    protected function _getConditionFieldName($fieldName)
+    {
+        return $fieldName;
     }
 
     /**
@@ -630,18 +644,23 @@ class Varien_Data_Collection_Db extends Varien_Data_Collection
      */
     protected function _fetchAll($select)
     {
-        if ($object = $this->_getCacheInstance()) {
+        if ($this->_canUseCache() && ($object = $this->_getCacheInstance())) {
             if ($data = $object->load($this->_getSelectCacheId($select))) {
                 $data = unserialize($data);
             }
             else {
-                $data = $this->getConnection()->fetchAll($select);
+                $data = $this->getConnection()->fetchAll($select, $this->_bindParams);
                 $object->save(serialize($data), $this->_getSelectCacheId($select), $this->_getCacheTags());
             }
         } else {
-            $data = $this->getConnection()->fetchAll($select);
+            $data = $this->getConnection()->fetchAll($select, $this->_bindParams);
         }
         return $data;
+    }
+
+    protected function _canUseCache()
+    {
+        return false;
     }
 
     protected function _getSelectCacheId($select)

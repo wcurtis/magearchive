@@ -41,7 +41,7 @@ class Mage_Customer_Block_Address_Book extends Mage_Core_Block_Template
 
     public function getBackUrl()
     {
-        return $this->getUrl('customer/account/index', array('_secure'=>true));
+        return $this->getUrl('customer/account/', array('_secure'=>true));
     }
 
     public function getDeleteUrl()

@@ -66,7 +66,7 @@ class Mage_Sales_Model_Entity_Quote_Item_Collection extends Mage_Eav_Model_Entit
                 $product = false;
             }
             if ($this->_quote) {
-            	$item->setQuote($this->_quote);
+                $item->setQuote($this->_quote);
             }
             if (!$product) {
                 $item->isDeleted(true);
@@ -76,6 +76,11 @@ class Mage_Sales_Model_Entity_Quote_Item_Collection extends Mage_Eav_Model_Entit
 
             if ($item->getSuperProductId()) {
                 $superProduct = $productCollection->getItemById($item->getSuperProductId());
+                if (!$superProduct) {
+                    $item->isDeleted(true);
+                    $recollectQuote = true;
+                    continue;
+                }
             }
             else {
                 $superProduct = null;
@@ -119,12 +124,15 @@ class Mage_Sales_Model_Entity_Quote_Item_Collection extends Mage_Eav_Model_Entit
             ->addIdFilter($productIds)
             ->addAttributeToSelect('*')
             ->addStoreFilter()
-            ->addUrlRewrite()
-            ->initCache(
+            ->addUrlRewrite();
+
+        if (Mage::app()->useCache('checkout_quote')) {
+            $collection->initCache(
                 $this->_getCacheInstance(),
                 $this->_cacheConf['prefix'].'_PRODUCTS',
                 $this->_getCacheTags()
             );
+        }
 
         return $collection;
     }

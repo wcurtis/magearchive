@@ -29,7 +29,7 @@ class Mage_Adminhtml_Model_System_Config_Source_Order_Status_Processing
         $options = array();
         $options[] = array(
                'value' => '',
-               'label' => ''
+               'label' => Mage::helper('adminhtml')->__('-- Please Select --')
             );
         foreach ($statuses as $code=>$label) {
             $options[] = array(

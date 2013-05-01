@@ -83,15 +83,16 @@ class Mage_Adminhtml_Catalog_SearchController extends Mage_Adminhtml_Controller_
     {
         if ($data = $this->getRequest()->getPost()) {
             $model = Mage::getModel('catalogsearch/query');
-//            if ($id = $this->getRequest()->getParam('page_id')) {
-//                $model->load($id);
-//                if ($id != $model->getId()) {
-//                    Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('The page you are trying to save no longer exists'));
-//                    Mage::getSingleton('adminhtml/session')->setPageData($data);
-//                    $this->_redirect('*/*/edit', array('page_id' => $this->getRequest()->getParam('page_id')));
-//                    return;
-//                }
-//            }
+
+            if ($queryText = $this->getRequest()->getParam('query_text')) {
+                $model->load($queryText);
+                if ($this->getRequest()->getParam('id') != $model->getId()) {
+                    Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('Search Term with such search query already exist.'));
+                    Mage::getSingleton('adminhtml/session')->setPageData($data);
+                    $this->_redirect('*/*/edit', array('id' => $this->getRequest()->getParam('id')));
+                    return;
+                }
+            }
 
             $model->addData($data);
             Mage::getSingleton('adminhtml/session')->setPageData($model->getData());
@@ -160,5 +161,4 @@ class Mage_Adminhtml_Catalog_SearchController extends Mage_Adminhtml_Controller_
     {
 	    return Mage::getSingleton('admin/session')->isAllowed('catalog/search');
     }
-
 }

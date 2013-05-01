@@ -31,9 +31,7 @@ class Mage_Review_Block_Form extends Mage_Core_Block_Template
         parent::__construct();
 
         $data =  Mage::getSingleton('review/session')->getFormData(true);
-        if (!$data) {
-            $data = new Varien_Object();
-        }
+        $data = new Varien_Object($data);
 
         $this->setTemplate('review/form.phtml')
             ->assign('data', $data)

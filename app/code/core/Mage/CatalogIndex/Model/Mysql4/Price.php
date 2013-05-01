@@ -42,6 +42,16 @@ class Mage_CatalogIndex_Model_Mysql4_Price extends Mage_CatalogIndex_Model_Mysql
         return $this->_rate;
     }
 
+    public function setCustomerGroupId($customerGroupId)
+    {
+        $this->_customerGroupId = $customerGroupId;
+    }
+
+    public function getCustomerGroupId()
+    {
+        return $this->_customerGroupId;
+    }
+
     public function getMaxValue($attribute = null, $entityIdsFilter = array())
     {
         $select = $this->_getReadAdapter()->select();
@@ -51,6 +61,9 @@ class Mage_CatalogIndex_Model_Mysql4_Price extends Mage_CatalogIndex_Model_Mysql
             ->where('store_id = ?', $this->getStoreId())
             ->where('attribute_id = ?', $attribute->getId());
 
+        if ($attribute->getAttributeCode() == 'price')
+            $select->where('customer_group_id = ?', $this->getCustomerGroupId());
+
         return $this->_getReadAdapter()->fetchOne($select);
     }
 
@@ -58,13 +71,16 @@ class Mage_CatalogIndex_Model_Mysql4_Price extends Mage_CatalogIndex_Model_Mysql
     {
         $select = $this->_getReadAdapter()->select();
 
-        $fields = array('count'=>'COUNT(DISTINCT entity_id)', 'range'=>"CEIL(((value*{$this->getRate()})+0.01)/{$range})");
+        $fields = array('count'=>'COUNT(DISTINCT entity_id)', 'range'=>"FLOOR((value*{$this->getRate()})/{$range})+1");
 
         $select->from($this->getMainTable(), $fields)
             ->group('range')
             ->where('entity_id in (?)', $entityIdsFilter)
             ->where('store_id = ?', $this->getStoreId())
             ->where('attribute_id = ?', $attribute->getId());
+
+        if ($attribute->getAttributeCode() == 'price')
+            $select->where('customer_group_id = ?', $this->getCustomerGroupId());
 
         $result = $this->_getReadAdapter()->fetchAll($select);
 
@@ -86,9 +102,22 @@ class Mage_CatalogIndex_Model_Mysql4_Price extends Mage_CatalogIndex_Model_Mysql
             ->where('store_id = ?', $this->getStoreId())
             ->where('attribute_id = ?', $attribute->getId());
 
+        if ($attribute->getAttributeCode() == 'price')
+            $select->where('customer_group_id = ?', $this->getCustomerGroupId());
+
         $select->where("(value*{$this->getRate()}) >= ?", ($index-1)*$range);
-        $select->where("(value*{$this->getRate()}) <= ?", $index*$range);
+        $select->where("(value*{$this->getRate()}) < ?", $index*$range);
 
         return $this->_getReadAdapter()->fetchCol($select);
+    }
+
+    public function getMinimalPrices($productIds)
+    {
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->getTable('catalogindex/minimal_price'), array('entity_id', 'value'))
+            ->where('store_id = ?', $this->getStoreId())
+            ->where('customer_group_id = ?', $this->getCustomerGroupId())
+            ->where('entity_id IN(?)', $productIds);
+        return $this->_getReadAdapter()->fetchAll($select);
     }
 }

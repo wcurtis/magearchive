@@ -88,7 +88,7 @@ class Mage_Catalog_Model_Product_Type_Configurable extends Mage_Catalog_Model_Pr
      */
     public function canUseAttribute(Mage_Eav_Model_Entity_Attribute $attribute)
     {
-        $allow = $attribute->getIsGlobal()
+        $allow = $attribute->getIsGlobal() == Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL
             && $attribute->getIsVisible()
             && $attribute->getIsConfigurable()
             && $attribute->usesSource();
@@ -157,7 +157,8 @@ class Mage_Catalog_Model_Product_Type_Configurable extends Mage_Catalog_Model_Pr
     {
         if (is_null($this->_configurableAttributes)) {
             $this->_configurableAttributes = $this->getConfigurableAttributeCollection()
-                ->orderByPosition();
+                ->orderByPosition()
+                ->load();
 
         }
         return $this->_configurableAttributes;
@@ -212,6 +213,13 @@ class Mage_Catalog_Model_Product_Type_Configurable extends Mage_Catalog_Model_Pr
     public function getUsedProducts($requiredAttributeIds=null)
     {
         if (is_null($this->_usedProducts)) {
+            if (is_null($requiredAttributeIds) && is_null($this->_configurableAttributes)) {
+                // If used products load before attributes, we will load attributes.
+                $this->getConfigurableAttributes();
+                // After attributes loading products loaded too.
+                return $this->_usedProducts;
+            }
+
             $this->_usedProducts = array();
             $collection = $this->getUsedProductCollection()
                 ->addAttributeToSelect('*');
@@ -219,7 +227,8 @@ class Mage_Catalog_Model_Product_Type_Configurable extends Mage_Catalog_Model_Pr
             if (is_array($requiredAttributeIds)) {
                 foreach ($requiredAttributeIds as $attributeId) {
                     $attribute = $this->getAttributeById($attributeId);
-                    $collection->addAttributeToFilter($attribute->getAttributeCode(), array('notnull'=>1));
+                    if (!is_null($attribute))
+                        $collection->addAttributeToFilter($attribute->getAttributeCode(), array('notnull'=>1));
                 }
             }
 
@@ -272,7 +281,8 @@ class Mage_Catalog_Model_Product_Type_Configurable extends Mage_Catalog_Model_Pr
         /**
          * Save product relations
          */
-        if ($data = $this->getProduct()->getConfigurableProductsData()) {
+        $data = $this->getProduct()->getConfigurableProductsData();
+        if (is_array($data)) {
             $productIds = array_keys($data);
             Mage::getResourceModel('catalog/product_type_configurable')
                 ->saveProducts($this->getProduct()->getId(), $productIds);
@@ -288,7 +298,7 @@ class Mage_Catalog_Model_Product_Type_Configurable extends Mage_Catalog_Model_Pr
     public function isSalable()
     {
         $salable = $this->getProduct()->getIsSalable();
-        if (!is_null($salable)) {
+        if (!is_null($salable) && !$salable) {
             return $salable;
         }
 

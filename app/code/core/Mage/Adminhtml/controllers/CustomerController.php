@@ -195,7 +195,7 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
                 }
 
                 $customer->save();
-                if ($isNewCustomer && $customer->hasData('sendemail')) {
+                if ($isNewCustomer && $customer->hasData('sendemail') && $customer->getWebsiteId()) {
                     $customer->sendNewAccountEmail();
                 }
 
@@ -243,15 +243,19 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
         $this->_sendUploadResponse($fileName, $content);
     }
 
-    protected function _sendUploadResponse($fileName, $content)
+    protected function _sendUploadResponse($fileName, $content, $contentType='application/octet-stream')
     {
         $response = $this->getResponse();
         $response->setHeader('HTTP/1.1 200 OK','');
+
+        $response->setHeader('Pragma', 'public', true);
+        $response->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true);
+
         $response->setHeader('Content-Disposition', 'attachment; filename='.$fileName);
         $response->setHeader('Last-Modified', date('r'));
         $response->setHeader('Accept-Ranges', 'bytes');
         $response->setHeader('Content-Length', strlen($content));
-        $response->setHeader('Content-type', 'application/octet-stream');
+        $response->setHeader('Content-type', $contentType);
         $response->setBody($content);
         $response->sendResponse();
         die;
@@ -306,7 +310,11 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
             $quote->removeItem($deleteItemId);
             $quote->save();
         }
-        $this->getResponse()->setBody($this->getLayout()->createBlock('adminhtml/customer_edit_tab_cart')->toHtml());
+        $websiteId = $this->getRequest()->getParam('website_id');
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('adminhtml/customer_edit_tab_cart', '', array('website_id'=>$websiteId))
+                ->toHtml()
+        );
     }
 
     public function tagGridAction()
@@ -459,7 +467,6 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
 
     protected function _isAllowed()
     {
-        //print $this->getRequest()->getActionName();
         return Mage::getSingleton('admin/session')->isAllowed('customer/manage');
     }
 }

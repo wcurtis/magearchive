@@ -69,6 +69,7 @@
     <frontend>
         <secure_url>
             <paypal_express>/paypal/express</paypal_express>
+            <paypal_standard>/paypal/standard</paypal_standard>
         </secure_url>
         <routers>
             <paypal>

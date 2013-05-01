@@ -23,6 +23,8 @@
 class Mage_Customer_Model_Convert_Parser_Customer
     extends Mage_Eav_Model_Convert_Parser_Abstract
 {
+    const MULTI_DELIMITER = ' , ';
+
     protected $_resource;
 
     /**
@@ -31,6 +33,139 @@ class Mage_Customer_Model_Convert_Parser_Customer
      * @var array
      */
     protected $_collections;
+
+    protected $_customerModel;
+    protected $_customerAddressModel;
+    protected $_newsletterModel;
+    protected $_store;
+    protected $_storeId;
+
+    protected $_stores;
+
+    /**
+     * Website collection array
+     *
+     * @var array
+     */
+    protected $_websites;
+    protected $_attributes = array();
+
+    /**
+     * Retrieve customer model cache
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    public function getCustomerModel()
+    {
+        if (is_null($this->_customerModel)) {
+            $object = Mage::getModel('customer/customer');
+            $this->_customerModel = Varien_Object_Cache::singleton()->save($object);
+        }
+        return Varien_Object_Cache::singleton()->load($this->_customerModel);
+    }
+
+    /**
+     * Retrieve customer address model cache
+     *
+     * @return Mage_Customer_Model_Address
+     */
+    public function getCustomerAddressModel()
+    {
+        if (is_null($this->_customerAddressModel)) {
+            $object = Mage::getModel('customer/address');
+            $this->_customerAddressModel = Varien_Object_Cache::singleton()->save($object);
+        }
+        return Varien_Object_Cache::singleton()->load($this->_customerAddressModel);
+    }
+
+    /**
+     * Retrieve newsletter subscribers model cache
+     *
+     * @return Mage_Newsletter_Model_Subscriber
+     */
+    public function getNewsletterModel()
+    {
+        if (is_null($this->_newsletterModel)) {
+            $object = Mage::getModel('newsletter/subscriber');
+            $this->_newsletterModel = Varien_Object_Cache::singleton()->save($object);
+        }
+        return Varien_Object_Cache::singleton()->load($this->_newsletterModel);
+    }
+
+    /**
+     * Retrieve current store model
+     *
+     * @return Mage_Core_Model_Store
+     */
+    public function getStore()
+    {
+        if (is_null($this->_store)) {
+            try {
+                $store = Mage::app()->getStore($this->getVar('store'));
+            }
+            catch (Exception $e) {
+                $this->addException(Mage::helper('catalog')->__('Invalid store specified'), Varien_Convert_Exception::FATAL);
+                throw $e;
+            }
+            $this->_store = $store;
+        }
+        return $this->_store;
+    }
+
+    /**
+     * Retrieve store ID
+     *
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if (is_null($this->_storeId)) {
+            $this->_storeId = $this->getStore()->getId();
+        }
+        return $this->_storeId;
+    }
+
+    public function getStoreById($storeId)
+    {
+        if (is_null($this->_stores)) {
+            $this->_stores = Mage::app()->getStores(true);
+        }
+        if (isset($this->_stores[$storeId])) {
+            return $this->_stores[$storeId];
+        }
+        return false;
+    }
+
+    /**
+     * Retrieve website model by id
+     *
+     * @param int $websiteId
+     * @return Mage_Core_Model_Website
+     */
+    public function getWebsiteById($websiteId)
+    {
+        if (is_null($this->_websites)) {
+            $this->_websites = Mage::app()->getWebsites(true);
+        }
+        if (isset($this->_websites[$websiteId])) {
+            return $this->_websites[$websiteId];
+        }
+        return false;
+    }
+
+    /**
+     * Retrieve eav entity attribute model
+     *
+     * @param string $code
+     * @return Mage_Eav_Model_Entity_Attribute
+     */
+    public function getAttribute($code)
+    {
+        if (!isset($this->_attributes[$code])) {
+            $this->_attributes[$code] = $this->getCustomerModel()->getResource()->getAttribute($code);
+        }
+        return $this->_attributes[$code];
+    }
 
     /**
      * @return Mage_Catalog_Model_Mysql4_Convert
@@ -254,12 +389,170 @@ class Mage_Customer_Model_Convert_Parser_Customer
             }
         }
         $this->setData($this->_collections);
-		return $this;
+        return $this;
     }
 
     public function unparse()
     {
-        $systemFields = array('store_id', 'attribute_set_id', 'entity_type_id', 'parent_id', 'created_at', 'updated_at', 'type_id','group_id', 'website_id', 'default_billing', 'default_shipping');
+        $systemFields = array(
+            'store_id',
+            'entity_id',
+            'attribute_set_id',
+            'entity_type_id',
+            'increment_id',
+            'parent_id',
+            'created_at',
+            'updated_at',
+            'type_id',
+            'created_in',
+            'website_id',
+            'default_billing',
+            'default_shipping',
+        );
+
+        $entityIds = $this->getData();
+
+        foreach ($entityIds as $i => $entityId) {
+            $customer = $this->getCustomerModel()
+                ->setData(array())
+                ->load($entityId);
+            /* @var $customer Mage_Customer_Model_Customer */
+
+            $position = Mage::helper('catalog')->__('Line %d, Email: %s', ($i+1), $customer->getEmail());
+            $this->setPosition($position);
+
+            $row = array();
+
+            foreach ($customer->getData() as $field => $value) {
+                if ($field == 'website_id') {
+                    $website = $this->getWebsiteById($value);
+                    if ($website === false) {
+                        $website = $this->getWebsiteById(0);
+                    }
+                    $row['website'] = $website->getCode();
+                    continue;
+                }
+
+                if (in_array($field, $systemFields) || is_object($value)) {
+                    continue;
+                }
+
+                $attribute = $this->getAttribute($field);
+                if (!$attribute) {
+                    continue;
+                }
+
+                if ($attribute->usesSource()) {
+
+                    $option = $attribute->getSource()->getOptionText($value);
+                    if ($value && empty($option)) {
+                        $message = Mage::helper('catalog')->__("Invalid option id specified for %s (%s), skipping the record", $field, $value);
+                        $this->addException($message, Mage_Dataflow_Model_Convert_Exception::ERROR);
+                        continue;
+                    }
+                    if (is_array($option)) {
+                        $value = join(self::MULTI_DELIMITER, $option);
+                    } else {
+                        $value = $option;
+                    }
+                    unset($option);
+                }
+                elseif (is_array($value)) {
+                    continue;
+                }
+                $row[$field] = $value;
+            }
+
+            $defaultBillingId  = $customer->getDefaultBilling();
+            $defaultShippingId = $customer->getDefaultShipping();
+
+            $customerAddress = $this->getCustomerAddressModel();
+
+            if (!$defaultBillingId) {
+                $row['billing_firstname']   = null;
+                $row['billing_lastname']    = null;
+                $row['billing_company']     = null;
+                $row['billing_street1']     = null;
+                $row['billing_street2']     = null;
+                $row['billing_city']        = null;
+                $row['billing_region']      = null;
+                $row['billing_country']     = null;
+                $row['billing_postcode']    = null;
+                $row['billing_telephone']   = null;
+                $row['billing_fax']         = null;
+            }
+            else {
+                $customerAddress->load($defaultBillingId);
+                $customerAddress->explodeStreetAddress();
+
+                $row['billing_firstname']   = $customerAddress->getFirstname();
+                $row['billing_lastname']    = $customerAddress->getLastname();
+                $row['billing_company']     = $customerAddress->getCompany();
+                $row['billing_street1']     = $customerAddress->getStreet1();
+                $row['billing_street2']     = $customerAddress->getStreet2();
+                $row['billing_city']        = $customerAddress->getCity();
+                $row['billing_region']      = $customerAddress->getRegion();
+                $row['billing_country']     = $customerAddress->getCountry();
+                $row['billing_postcode']    = $customerAddress->getPostcode();
+                $row['billing_telephone']   = $customerAddress->getTelephone();
+                $row['billing_fax']         = $customerAddress->getFax();
+            }
+
+            if (!$defaultShippingId) {
+                $row['shipping_firstname']  = null;
+                $row['shipping_lastname']   = null;
+                $row['shipping_company']    = null;
+                $row['shipping_street1']    = null;
+                $row['shipping_street2']    = null;
+                $row['shipping_city']       = null;
+                $row['shipping_region']     = null;
+                $row['shipping_country']    = null;
+                $row['shipping_postcode']   = null;
+                $row['shipping_telephone']  = null;
+                $row['shipping_fax']        = null;
+            }
+            else {
+                if ($defaultShippingId != $defaultBillingId) {
+                    $customerAddress->load($defaultShippingId);
+                    $customerAddress->explodeStreetAddress();
+                }
+                $row['shipping_firstname']  = $customerAddress->getFirstname();
+                $row['shipping_lastname']   = $customerAddress->getLastname();
+                $row['shipping_company']    = $customerAddress->getCompany();
+                $row['shipping_street1']    = $customerAddress->getStreet1();
+                $row['shipping_street2']    = $customerAddress->getStreet2();
+                $row['shipping_city']       = $customerAddress->getCity();
+                $row['shipping_region']     = $customerAddress->getRegion();
+                $row['shipping_country']    = $customerAddress->getCountry();
+                $row['shipping_postcode']   = $customerAddress->getPostcode();
+                $row['shipping_telephone']  = $customerAddress->getTelephone();
+                $row['shipping_fax']        = $customerAddress->getFax();
+            }
+
+            $store = $this->getStoreById($customer->getStoreId());
+            if ($store === false) {
+                $store = $this->getStoreById(0);
+            }
+            $row['created_in'] = $store->getCode();
+
+            $newsletter = $this->getNewsletterModel()
+                ->loadByCustomer($customer);
+            $row['is_subscribed'] = ($newsletter->getId()
+                && $newsletter->getSubscriberStatus() == Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED)
+                ? 1 : 0;
+
+            $batchExport = $this->getBatchExportModel()
+                ->setId(null)
+                ->setBatchId($this->getBatchModel()->getId())
+                ->setBatchData($row)
+                ->setStatus(1)
+                ->save();
+        }
+
+        return $this;
+
+        /* ########### THE CODE BELOW AT THIS METHOD DON'T USED ############# */
+
         $collections = $this->getData();
 //        if ($collections instanceof Mage_Eav_Model_Entity_Collection_Abstract) {
 //            $collections = array($collections->getEntity()->getStoreId()=>$collections);
@@ -276,6 +569,8 @@ class Mage_Customer_Model_Convert_Parser_Customer
 
             foreach ($collections->getIterator() as $i=>$model) {
                 $this->setPosition('Line: '.($i+1).', Email: '.$model->getEmail());
+
+
 
                 // Will be removed after confirmation from Dima or Moshe
                 $row = array(
@@ -361,7 +656,16 @@ class Mage_Customer_Model_Convert_Parser_Customer
 
     public function getExternalAttributes()
     {
-        $internal = array('store_id', 'created_in', 'default_billing', 'default_shipping', 'country_id');
+        $internal = array(
+            'store_id',
+            'entity_id',
+            'website_id',
+            'group_id',
+            'created_in',
+            'default_billing',
+            'default_shipping',
+            'country_id'
+        );
 
         $entityTypeId = Mage::getSingleton('eav/config')->getEntityType('customer')->getId();
         $customerAttributes = Mage::getResourceModel('eav/entity_attribute_collection')
@@ -374,9 +678,10 @@ class Mage_Customer_Model_Convert_Parser_Customer
             ->load()->getIterator();
 
         $attributes = array(
-            'store'=>'store',
-            'entity_id'=>'entity_id',
-            'group'=>'group',
+            'website'   => 'website',
+            'email'     => 'email',
+            'group'     => 'group',
+            'create_in' => 'create_in'
         );
 
         foreach ($customerAttributes as $attr) {

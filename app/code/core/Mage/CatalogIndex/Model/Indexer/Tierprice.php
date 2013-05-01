@@ -23,14 +23,15 @@
  * Tier Price indexer
  *
  */
-class Mage_CatalogIndex_Model_Indexer_Tierprice
-    extends Mage_CatalogIndex_Model_Indexer_Abstract
-    implements Mage_CatalogIndex_Model_Indexer_Interface
+class Mage_CatalogIndex_Model_Indexer_Tierprice extends Mage_CatalogIndex_Model_Indexer_Abstract
 {
+    protected $_processChildren = false;
+
     protected function _construct()
     {
         $this->_init('catalogindex/indexer_price');
         $this->_currencyModel = Mage::getModel('directory/currency');
+        $this->_customerGroups = Mage::getModel('customer/group')->getCollection();
 
         return parent::_construct();
     }
@@ -42,22 +43,31 @@ class Mage_CatalogIndex_Model_Indexer_Tierprice
         $data['store_id'] = $attribute->getStoreId();
         $data['entity_id'] = $object->getId();
         $data['attribute_id'] = $attribute->getId();
-        $data['customer_group_id'] = '';
-        $data['qty'] = '';
-        $data['value'] = $object->getData($attribute->getAttributeCode());
 
-        $origData = $data;
         $result = array();
-        foreach ($data['value'] as $row) {
-            if (isset($row['delete']) && $row['delete'])
+        $values = $object->getData($attribute->getAttributeCode());
+
+        if (!is_array($values)) {
+            return $result;
+        }
+
+        foreach ($values as $row) {
+            if (isset($row['delete']) && $row['delete']) {
                 continue;
+            }
 
             $data['qty'] = $row['price_qty'];
-            $data['customer_group_id'] = $row['cust_group'];
             $data['value'] = $row['price'];
+            if ($row['cust_group'] == Mage_Customer_Model_Group::CUST_GROUP_ALL) {
+                foreach ($this->_customerGroups as $group) {
+                    $data['customer_group_id'] = $group->getId();
+                    $result[] = $data;
+                }
+            } else {
+                $data['customer_group_id'] = $row['cust_group'];
+                $result[] = $data;
+            }
 
-            $result[] = $data;
-            $data = $origData;
         }
 
         return $result;

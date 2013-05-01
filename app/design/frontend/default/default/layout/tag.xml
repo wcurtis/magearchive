@@ -37,6 +37,17 @@ Default layout, loads most of the pages
     </default>
 
 <!--
+Customer account pages, rendered for all tabs in dashboard
+-->
+
+    <customer_account>
+        <!-- Mage_Tag -->
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="tag"><name>tags</name><path>tag/customer/</path><label>My Tags</label></action>
+        </reference>
+    </customer_account>
+
+<!--
 Customer account home dashboard layout
 -->
 
@@ -84,7 +95,7 @@ All tags page
             <action method="setHeaderTitle" translate="title" module="customer"><title>My Account</title></action>
         </reference>
         <reference name="content">
-            <block type="tag/customer_tags" name="customer_tags"/>
+            <block type="tag/customer_tags" name="customer_tags" template="tag/customer/tags.phtml"/>
         </reference>
     </tag_customer_index>
 
@@ -94,7 +105,7 @@ All tags page
             <action method="setHeaderTitle" translate="title" module="customer"><title>My Account</title></action>
         </reference>
         <reference name="content">
-            <block type="tag/customer_view" name="customer_view"/>
+            <block type="tag/customer_view" name="customer_view" template="tag/customer/view.phtml"/>
         </reference>
     </tag_customer_view>
 
@@ -104,7 +115,7 @@ All tags page
             <action method="setHeaderTitle" translate="title" module="customer"><title>My Account</title></action>
         </reference>
         <reference name="content">
-            <block type="tag/customer_edit" name="customer_edit"/>
+            <block type="tag/customer_edit" name="customer_edit" template="tag/customer/edit.phtml"/>
         </reference>
     </tag_customer_edit>
 </layout>

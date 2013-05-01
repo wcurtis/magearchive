@@ -57,7 +57,8 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_View extends Mage_Adminhtml_Block
             );
         }
 
-        if ($this->getInvoice()->canCapture()) {
+        if (Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/capture')
+            && $this->getInvoice()->canCapture()) {
             $this->_addButton('capture', array(
                 'label'     => Mage::helper('sales')->__('Capture'),
                 'class'     => 'save',
@@ -74,7 +75,7 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_View extends Mage_Adminhtml_Block
                 )
             );
         }
-        
+
         if ($this->getInvoice()->getId()) {
             $this->_addButton('print', array(
                 'label'     => Mage::helper('sales')->__('Print'),
@@ -118,7 +119,7 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_View extends Mage_Adminhtml_Block
     }
 
     public function getBackUrl()
-    {
+    {//return 'http://google.com.ua';
         return $this->getUrl(
             '*/sales_order/view',
             array(
@@ -155,5 +156,10 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_View extends Mage_Adminhtml_Block
         return $this->getUrl('*/*/print', array(
             'invoice_id' => $this->getInvoice()->getId()
         ));
+    }
+    
+    public function updateBackButtonUrl()
+    {
+        return $this->_updateButton('back', 'onclick', 'setLocation(\'' . $this->getUrl('*/sales_invoice/') . '\')');
     }
 }

@@ -188,6 +188,8 @@ $attributes = array(
 $select = new Zend_Db_Select($installer->getConnection());
 $select->from(array('e' => $this->getTable('sales_order_entity')));
 
+
+
 $attributeIds = array();
 foreach ($attributes as $code => $params) {
     $attributes[$code] = $installer->getAttribute($orderEntityTypeId, $code);
@@ -195,6 +197,11 @@ foreach ($attributes as $code => $params) {
         $select->joinLeft(array("_table_{$code}" => "{$this->getTable('sales_order_entity')}_{$attributes[$code]['backend_type']}"),
                 "_table_{$code}.attribute_id = {$attributes[$code]['attribute_id']} AND _table_{$code}.entity_id = e.entity_id",
                 array($code => 'value'));
+        $select->join(
+            array("_eav_atr_" => $this->getTable('eav/attribute')),
+            "_eav_atr_.attribute_id = {$attributes[$code]['attribute_id']}",
+            array()
+        );
         $attributeIds[] = $attributes[$code]['attribute_id'];
     }
 }
@@ -220,7 +227,7 @@ foreach ($orders as $order) {
     $tables = array("varchar", "int", "datetime", "text", "decimal");
     foreach ($tables as $table) {
         $delete = array();
-        $attrs = $installer->getConnection()->fetchAll("SELECT * FROM {$this->getTable('sales_order_entity')}_{$table} WHERE entity_id={$old_entity_id}");
+        $attrs = $installer->getConnection()->fetchAll("SELECT tt.* FROM {$this->getTable('sales_order_entity')}_{$table} tt JOIN eav_attribute on eav_attribute.attribute_id = tt.attribute_id  WHERE entity_id={$old_entity_id}");
         foreach($attrs as $attr ) {
             if (!in_array($attr['attribute_id'], $attributeIds)) {
                 unset($attr['value_id']);

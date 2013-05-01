@@ -81,8 +81,8 @@ class Mage_Backup_Model_Fs_Collection extends Varien_Data_Collection
 	            $ioProxy->open(array('path'=>$readPath));
 	        }
 	        catch (Exception $e) {
-	            $ioProxy->mkdir($readPath, 0755);
-	            $ioProxy->chmod($readPath, 0755);
+	            $ioProxy->mkdir($readPath, 0777);
+	            $ioProxy->chmod($readPath, 0777);
 	            $ioProxy->open(array('path'=>$readPath));
 	        }
 	                

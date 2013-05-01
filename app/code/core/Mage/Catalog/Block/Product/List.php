@@ -91,7 +91,7 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
      */
     protected function _beforeToHtml()
     {
-        $toolbar = $this->getLayout()->createBlock('catalog/product_list_toolbar', time());
+        $toolbar = $this->getLayout()->createBlock('catalog/product_list_toolbar', microtime());
         if ($orders = $this->getAvailableOrders()) {
             $toolbar->setAvailableOrders($orders);
         }

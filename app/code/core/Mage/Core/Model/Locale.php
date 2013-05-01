@@ -380,7 +380,7 @@ class Mage_Core_Model_Locale
      */
     public function getTimeStrFormat($type)
     {
-        $convert = array('a'=>'%p', 'hh'=>'%I', 'HH'=>'%H', 'mm'=>'%M', 'ss'=>'%S', 'z'=>'%Z', 'v'=>'%Z');
+        $convert = array('a'=>'%p', 'hh'=>'%I', 'h'=>'%I', 'HH'=>'%H', 'mm'=>'%M', 'ss'=>'%S', 'z'=>'%Z', 'v'=>'%Z');
 
         $format = $this->getTimeFormat($type);
         foreach ($convert as $key=>$value) {
@@ -412,6 +412,7 @@ class Mage_Core_Model_Locale
             //$date->add(-(substr($date->get(Zend_Date::GMT_DIFF), 0,3)), Zend_Date::HOUR);
         }
         catch (Exception $e){
+            echo $e;
             return null;
         }
         return $date;

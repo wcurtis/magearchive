@@ -43,11 +43,7 @@ function toggleCal(id) {
     <?php echo $this->getStoreSwitcherHtml() ?>
     <table cellspacing="25" width="100%">
         <tr>
-            <td>
-                <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?php echo $this->__('Sales Statistics') ?></h4></div>
-                    <fieldset><?php echo $this->getChildHtml('sales') ?></fieldset>
-                </div>
+            <td><?php echo $this->getChildHtml('sales') ?>
                 <div class="entry-edit">
                     <div class="entry-edit-head"><h4><?php echo $this->__('Last 5 Orders') ?></h4></div>
                     <fieldset class="np"><?php echo $this->getChildHtml('lastOrders'); ?></fieldset>

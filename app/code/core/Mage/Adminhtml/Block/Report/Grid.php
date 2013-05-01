@@ -121,10 +121,13 @@ class Mage_Adminhtml_Block_Report_Grid extends Mage_Adminhtml_Block_Widget_Grid
         $collection = Mage::getResourceModel('reports/report_collection');
 
         $collection->setPeriod($this->getFilter('report_period'));
-        $collection->setInterval(
-            $this->getLocale()->date($this->getFilter('report_from'), Zend_Date::DATE_SHORT, null, false),
-            $this->getLocale()->date($this->getFilter('report_to'), Zend_Date::DATE_SHORT, null, false)
-            );
+
+        if ($this->getFilter('report_from') && $this->getFilter('report_from')) {
+            $collection->setInterval(
+                $this->getLocale()->date($this->getFilter('report_from'), Zend_Date::DATE_SHORT, null, false),
+                $this->getLocale()->date($this->getFilter('report_to'), Zend_Date::DATE_SHORT, null, false)
+                );
+        }
 
         /**
          * Getting and saving store ids for website & group

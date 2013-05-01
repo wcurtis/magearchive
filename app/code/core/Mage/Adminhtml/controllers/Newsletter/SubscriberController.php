@@ -121,4 +121,4 @@ class Mage_Adminhtml_Newsletter_SubscriberController extends Mage_Adminhtml_Cont
     {
 	    return Mage::getSingleton('admin/session')->isAllowed('newsletter/subscriber');
     }
-}// Class Mage_Adminhtml_Newsletter_SubscriberController END
+}

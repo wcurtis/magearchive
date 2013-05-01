@@ -48,11 +48,7 @@
         <models>
             <usa>
                 <class>Mage_Usa_Model</class>
-                <resourceModel>usa_mysql4</resourceModel>
             </usa>
-            <usa_mysql4>
-                <class>Mage_Usa_Model_Mysql4</class>
-            </usa_mysql4>
         </models>
         <sales>
             <shipping>
@@ -109,7 +105,7 @@
                 <account></account>
                 <active>0</active>
                 <sallowspecific>0</sallowspecific>
-                <allowed_methods>E,N,S,G</allowed_methods>
+                <allowed_methods>E,N,S,G,IE</allowed_methods>
                 <contentdesc>Big Box</contentdesc>
                 <cutoff_cost></cutoff_cost>
                 <dutypaymenttype>R</dutypaymenttype>
@@ -122,6 +118,10 @@
                 <shipping_key backend_model="adminhtml/system_config_backend_encrypted"></shipping_key>
                 <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"></shipping_intlkey>
                 <title>DHL</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
             </dhl>
 
             <fedex>
@@ -137,6 +137,10 @@
                 <model>usa/shipping_carrier_fedex</model>
                 <packaging>YOURPACKAGING</packaging>
                 <title>Federal Express</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
             </fedex>
 
             <ups>
@@ -158,6 +162,10 @@
                 <unit_of_measure>LBS</unit_of_measure>
                 <username backend_model="adminhtml/system_config_backend_encrypted"/>
                 <password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
             </ups>
 
             <usps>
@@ -175,6 +183,10 @@
                 <size>REGULAR</size>
                 <title>United States Postal Service</title>
                 <userid backend_model="adminhtml/system_config_backend_encrypted"/>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <max_package_weight>70</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
             </usps>
         </carriers>
     </default>

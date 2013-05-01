@@ -260,11 +260,6 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
         }
 
         $regions = array();
-        $regionCollection = Mage::getModel('directory/region')->getCollection()
-            ->addCountryFilter('US');
-        foreach ($regionCollection as $region) {
-            $regions[$region->getCode()] = $region->getRegionId();
-        }
 
         if ($csvData[0] == $csvFields) {
             Mage::getModel('tax/rate')->deleteAllRates();
@@ -274,12 +269,29 @@ class Mage_Adminhtml_Tax_RateController extends Mage_Adminhtml_Controller_Action
                     continue;
                 }
                 if (count($csvFields) != count($v)) {
-                    Mage::throwException(Mage::helper('tax')->__('Invalid file format upload attempt'));
+                    Mage::getSingleton('adminhtml/session')->addError(Mage::helper('tax')->__('Invalid file upload attempt'));
+                    
+                }
+
+                if (empty($v[0])) {
+                    Mage::throwException(Mage::helper('tax')->__('One of row has invalid country code.'));
+                }
+
+                if (!isset($regions[$v[0]])) {
+                    $regionCollection = Mage::getModel('directory/region')->getCollection()
+                        ->addCountryFilter($v[0]);
+                    if ($regionCollection->getSize()) {
+                        foreach ($regionCollection as $region) {
+                            $regions[$v[0]][$region->getCode()] = $region->getRegionId();
+                        }
+                    } else {
+                        Mage::getSingleton('adminhtml/session')->addError(Mage::helper('tax')->__('One of row has invalid country code.'));
+                    }
                 }
 
                 $rateData  = array(
-                    'tax_country_id' => $regions[$v[0]],
-                    'tax_region_id' => $regions[$v[1]],
+                    'tax_country_id' => $v[0],
+                    'tax_region_id' => $regions[$v[0]][$v[1]],
                     'tax_postcode'  => (empty($v[2]) || $v[2]=='*') ? null : $v[2]
                 );
 

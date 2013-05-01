@@ -62,7 +62,7 @@ class Mage_Wishlist_Model_Mysql4_Item_Collection extends Mage_Catalog_Model_Reso
         $this->joinField('store_name', 'core/store', 'name', 'store_id=store_id')
             ->joinField('days_in_wishlist',
                 'wishlist/item',
-                "(TO_DAYS('" . now() . "') - TO_DAYS(".$dayTable.".added_at))",
+                "(TO_DAYS('" . Mage::getSingleton('core/date')->date() . "') - TO_DAYS(DATE_ADD(".$dayTable.".added_at, INTERVAL " .(int) Mage::getSingleton('core/date')->getGmtOffset() . " SECOND)))",
                 'wishlist_item_id=wishlist_item_id');
 
         return $this;
@@ -74,6 +74,11 @@ class Mage_Wishlist_Model_Mysql4_Item_Collection extends Mage_Catalog_Model_Reso
             return $this->_joinFields[$attributeCode]['field'];
         }
         return parent::_getAttributeFieldName($attributeCode);
+    }
+
+    public function load($p=false, $l=false)
+    {
+        return parent::load($p, $l);
     }
 
 }

@@ -33,6 +33,8 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
     protected $_addUrlRewrite = false;
     protected $_urlRewriteCategory = '';
 
+    protected $_addMinimalPrice = false;
+
     /**
      * Initialize resources
      */
@@ -52,6 +54,9 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
     {
     	if ($this->_addUrlRewrite) {
     	   $this->_addUrlRewrite($this->_urlRewriteCategory);
+    	}
+    	if ($this->_addMinimalPrice) {
+    	   $this->_addMinimalPrice();
     	}
         if (count($this)>0) {
             Mage::dispatchEvent('catalog_product_collection_load_after', array('collection'=>$this));
@@ -419,5 +424,17 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
                 $item->setData('request_path', $urlRewrites[$item->getEntityId()]);
             }
         }
+    }
+
+    public function addMinimalPrice()
+    {
+        $this->_addMinimalPrice = true;
+        return $this;
+    }
+
+    protected function _addMinimalPrice()
+    {
+        Mage::getSingleton('catalogindex/price')->addMinimalPrices($this);
+        return $this;
     }
 }

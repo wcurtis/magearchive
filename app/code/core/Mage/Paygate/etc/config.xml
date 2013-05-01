@@ -112,6 +112,7 @@
                 <debug>0</debug>
                 <model>paygate/payflow_pro</model>
                 <order_status>1</order_status>
+                <fraud_order_status>holded</fraud_order_status>
                 <partner></partner>
                 <payment_action>authorize</payment_action>
                 <pwd backend_model="adminhtml/system_config_backend_encrypted"/>

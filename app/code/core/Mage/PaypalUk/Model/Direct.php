@@ -77,6 +77,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
             ->setTrxtype(Mage_PaypalUk_Model_Api_Pro::TRXTYPE_AUTH_ONLY)
             ->setAmount($amount)
             ->setBillingAddress($payment->getOrder()->getBillingAddress())
+            ->setShippingAddress($payment->getOrder()->getShippingAddress())
             ->setPayment($payment);
 
          if($api->callDoDirectPayment()!==false) {
@@ -88,7 +89,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
                 ->setCcCidStatus($api->getCvv2Match());
          }else{
             $e = $api->getError();
-            Mage::throwException($e['message']?$e['message']:Mage::helper('paypalUk')->__('Error in capture payment'));
+            Mage::throwException($e['message']?$e['message']:Mage::helper('paypalUk')->__('There has been an error processing your payment. Please try later or contact us for help.'));
          }
 
     }
@@ -107,6 +108,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
             ->setAmount($amount)
             ->setTransactionId($payment->getCcTransId())
             ->setBillingAddress($payment->getOrder()->getBillingAddress())
+            ->setShippingAddress($payment->getOrder()->getShippingAddress())
             ->setPayment($payment);
 
          if ($api->callDoDirectPayment()!==false) {
@@ -118,7 +120,7 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
                 ->setCcCidStatus($api->getCvv2Match());
          } else {
             $e = $api->getError();
-            Mage::throwException($e['message']?$e['message']:Mage::helper('paypalUk')->__('Error in capture payment'));
+            Mage::throwException($e['message']?$e['message']:Mage::helper('paypalUk')->__('There has been an error processing your payment. Please try later or contact us for help.'));
          }
 
          return $this;

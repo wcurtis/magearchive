@@ -36,6 +36,11 @@ class Mage_Shipping_Model_Shipping
     protected $_result = null;
 
 
+    /**
+     * Get shipping rate result model
+     *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
     public function getResult()
     {
         if (empty($this->_result)) {
@@ -90,7 +95,7 @@ class Mage_Shipping_Model_Shipping
 
         $limitCarrier = $request->getLimitCarrier();
         if (!$limitCarrier) {
-            $carriers = Mage::getStoreConfig('carriers');
+            $carriers = Mage::getStoreConfig('carriers', $request->getStoreId());
 
             foreach ($carriers as $carrierCode=>$carrierConfig) {
                 $this->collectCarrierRates($carrierCode, $request);
@@ -100,7 +105,7 @@ class Mage_Shipping_Model_Shipping
                 $limitCarrier = array($limitCarrier);
             }
             foreach ($limitCarrier as $carrierCode) {
-                $carrierConfig = Mage::getStoreConfig('carriers/'.$carrierCode);
+                $carrierConfig = Mage::getStoreConfig('carriers/'.$carrierCode, $request->getStoreId());
                 if (!$carrierConfig) {
                     continue;
                 }
@@ -113,7 +118,7 @@ class Mage_Shipping_Model_Shipping
 
     public function collectCarrierRates($carrierCode, $request)
     {
-        $carrier = $this->getCarrierByCode($carrierCode);
+        $carrier = $this->getCarrierByCode($carrierCode, $request->getStoreId());
         if (!$carrier) {
             return $this;
         }
@@ -122,9 +127,9 @@ class Mage_Shipping_Model_Shipping
         * Result will be false if the admin set not to show the shipping module
         * if the devliery country is not within specific countries
         */
-        if($result){
-            if(!$result instanceof Mage_Shipping_Model_Rate_Result_Error){
-                 $result = $carrier->collectRates($request);
+        if (false !== $result){
+            if (!$result instanceof Mage_Shipping_Model_Rate_Result_Error) {
+                $result = $carrier->collectRates($request);
             }
             $this->getResult()->append($result);
         }
@@ -137,8 +142,9 @@ class Mage_Shipping_Model_Shipping
         $request->setDestCountryId($address->getCountryId());
         $request->setDestRegionId($address->getRegionId());
         $request->setDestPostcode($address->getPostcode());
-        $request->setPackageValue($address->getSubtotal());
+        $request->setPackageValue($address->getBaseSubtotal());
         $request->setPackageWeight($address->getWeight());
+        $request->setFreeMethodWeight($address->getFreeMethodWeight());
         $request->setPackageQty($address->getItemQty());
         $request->setStoreId(Mage::app()->getStore()->getId());
         $request->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
@@ -150,17 +156,20 @@ class Mage_Shipping_Model_Shipping
         return $this->collectRates($request);
     }
 
-    public function getCarrierByCode($carrierCode)
+    public function getCarrierByCode($carrierCode, $storeId = null)
     {
-        if (!Mage::getStoreConfigFlag('carriers/'.$carrierCode.'/active')) {
+        if (!Mage::getStoreConfigFlag('carriers/'.$carrierCode.'/active', $storeId)) {
             return false;
         }
-        $className = Mage::getStoreConfig('carriers/'.$carrierCode.'/model');
+        $className = Mage::getStoreConfig('carriers/'.$carrierCode.'/model', $storeId);
         if (!$className) {
             return false;
             #Mage::throwException('Invalid carrier: '.$carrierCode);
         }
         $obj = Mage::getModel($className);
+        if ($storeId) {
+            $obj->setStore($storeId);
+        }
         return $obj;
     }
 

@@ -27,6 +27,21 @@
 class Mage_Catalog_Model_Url
 {
     /**
+     * Number of characters allowed to be in URL path
+     *
+     * @var int
+     */
+    const MAX_REQUEST_PATH_LENGTH = 240;
+
+    /**
+     * Number of characters allowed to be in URL path
+     * after MAX_REQUEST_PATH_LENGTH number of characters
+     *
+     * @var int
+     */
+    const ALLOWED_REQUEST_PATH_OVERFLOW = 10;
+
+    /**
      * Resource model
      *
      * @var Mage_Catalog_Model_Resource_Eav_Mysql4_Url
@@ -115,6 +130,7 @@ class Mage_Catalog_Model_Url
 
         $this->refreshCategoryRewrite($this->getStores($storeId)->getRootCategoryId(), $storeId, false);
         $this->refreshProductRewrites($storeId);
+        $this->getResource()->clearCategoryProduct($storeId);
     }
 
     /**
@@ -126,7 +142,7 @@ class Mage_Catalog_Model_Url
      */
     protected function _refreshCategoryRewrites(Varien_Object $category, $parentPath = null, $refreshProducts = true)
     {
-        if ($category->getUrlKey == '') {
+        if ($category->getUrlKey() == '') {
             $urlKey = $this->getCategoryModel()->formatUrlKey($category->getName());
         }
 
@@ -339,6 +355,8 @@ class Mage_Catalog_Model_Url
 
             unset($categories);
             unset($product);
+
+            $this->getResource()->clearCategoryProduct($storeId);
         }
 
         return $this;
@@ -360,6 +378,7 @@ class Mage_Catalog_Model_Url
                 break;
             }
 
+            $this->_rewrites = array();
             $this->_rewrites = $this->getResource()->prepareRewrites($storeId, false, array_keys($products));
 
             $loadCategories = array();
@@ -386,6 +405,7 @@ class Mage_Catalog_Model_Url
                 }
             }
             unset($products);
+            $this->_rewrites = array();
         }
 
         $this->_categories = array();
@@ -404,6 +424,14 @@ class Mage_Catalog_Model_Url
      */
     public function getUnusedPath($storeId, $requestPath, $idPath)
     {
+        if (empty($requestPath)) {
+            $requestPath = '-';
+        }
+
+        if (strlen($requestPath) > self::MAX_REQUEST_PATH_LENGTH + self::ALLOWED_REQUEST_PATH_OVERFLOW) {
+            $requestPath = substr($requestPath, 0, self::MAX_REQUEST_PATH_LENGTH);
+        }
+
         if (isset($this->_rewrites[$idPath])) {
             $this->_rewrite = $this->_rewrites[$idPath];
             if ($this->_rewrites[$idPath]->getRequestPath() == $requestPath) {

@@ -144,7 +144,7 @@ class Varien_File_Uploader
         $result = false;
 
         $destFile = $destinationFolder;
-        $fileName = ( isset($newFileName) ) ? $newFileName : $this->_replaceIllegalChars($this->_file['name']);
+        $fileName = ( isset($newFileName) ) ? $newFileName : self::getCorrectFileName($this->_file['name']);
         $fileExtension = substr($fileName, strrpos($fileName, '.')+1);
 
         if( !$this->chechAllowedExtension($fileExtension) ) {
@@ -153,32 +153,23 @@ class Varien_File_Uploader
 
         if( $this->_enableFilesDispersion ) {
             $this->setAllowCreateFolders(true);
-            $char = 0;
-            while( ($char < 2) && ($char < strlen($fileName)) ) {
-                if (empty($this->_dispretionPath)) {
-                    $this->_dispretionPath = DIRECTORY_SEPARATOR.('.' == $fileName[$char] ? '_' : $fileName[$char]);
-                }
-                else {
-                    $this->_dispretionPath = $this->_addDirSeparator($this->_dispretionPath) . ('.' == $fileName[$char] ? '_' : $fileName[$char]);
-                }
-                $char ++;
-            }
+            $this->_dispretionPath = self::getDispretionPath($fileName);
             $destFile.= $this->_dispretionPath;
             $this->_createDestinationFolder($destFile);
         }
 
         if( $this->_allowRenameFiles ) {
-            $fileName = self::getNewFileName($this->_addDirSeparator($destFile).$fileName);
+            $fileName = self::getNewFileName(self::_addDirSeparator($destFile).$fileName);
         }
 
-        $destFile = $this->_addDirSeparator($destFile) . $fileName;
+        $destFile = self::_addDirSeparator($destFile) . $fileName;
 
         $result = move_uploaded_file($this->_file['tmp_name'], $destFile);
 
         if( $result ) {
             chmod($destFile, 0777);
             if ( $this->_enableFilesDispersion ) {
-                $fileName = str_replace(DIRECTORY_SEPARATOR, '/', $this->_addDirSeparator($this->_dispretionPath)) . $fileName;
+                $fileName = str_replace(DIRECTORY_SEPARATOR, '/', self::_addDirSeparator($this->_dispretionPath)) . $fileName;
             }
             $this->_uploadedFileName = $fileName;
             $this->_uploadedFileDir = $destinationFolder;
@@ -191,7 +182,7 @@ class Varien_File_Uploader
         }
     }
 
-    protected function _replaceIllegalChars($fileName)
+    static public function getCorrectFileName($fileName)
     {
         if (preg_match('/[^a-z0-9_\\-\\.]/i', $fileName)) {
             $fileName = 'file' . substr($fileName, strrpos($fileName, '.'));
@@ -200,7 +191,7 @@ class Varien_File_Uploader
         return $fileName;
     }
 
-    protected function _addDirSeparator($dir)
+    static protected function _addDirSeparator($dir)
     {
         if (substr($dir,-1) != DIRECTORY_SEPARATOR) {
             $dir.= DIRECTORY_SEPARATOR;
@@ -393,4 +384,19 @@ class Varien_File_Uploader
         return $destFileName;
     }
 
+    static public function getDispretionPath($fileName)
+    {
+        $char = 0;
+        $dispretionPath = '';
+        while( ($char < 2) && ($char < strlen($fileName)) ) {
+            if (empty($dispretionPath)) {
+                $dispretionPath = DIRECTORY_SEPARATOR.('.' == $fileName[$char] ? '_' : $fileName[$char]);
+            }
+            else {
+                $dispretionPath = self::_addDirSeparator($dispretionPath) . ('.' == $fileName[$char] ? '_' : $fileName[$char]);
+            }
+            $char ++;
+        }
+        return $dispretionPath;
+    }
 }

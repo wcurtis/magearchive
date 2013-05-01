@@ -124,7 +124,7 @@ class Mage_Core_Controller_Varien_Router_Standard extends Mage_Core_Controller_V
         if (!class_exists($controllerClassName, false)) {
             include $controllerFileName;
 
-            if (!class_exists($controllerClassName)) {
+            if (!class_exists($controllerClassName, false)) {
                 throw Mage::exception('Mage_Core', Mage::helper('core')->__('Controller file was loaded but class does not exist'));
             }
         }

@@ -58,7 +58,8 @@ class Mage_Customer_Model_Session extends Mage_Core_Model_Session_Abstract
             return $this->_customer;
         }
 
-        $customer = Mage::getModel('customer/customer');
+        $customer = Mage::getModel('customer/customer')
+            ->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
         if ($this->getId()) {
             $customer->load($this->getId());
         }

@@ -502,4 +502,10 @@ SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS,0);
 ");
         return $this;
     }
+
+    public function getAllAttributeSetIds()
+    {
+        $sql = "SELECT `attribute_set_id` FROM `{$this->getTable('eav/attribute_set')}`";
+        return $this->_conn->fetchCol($sql);
+    }
 }

@@ -33,7 +33,13 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
 
     public function indexAction()
     {
-        $this->_redirect('*/dashboard');
+        $url = Mage::getSingleton('admin/session')->getUser()->findFirstAvailableMenu();
+
+        if (Mage::getSingleton('admin/session')->isAllowed('dashboard') || $url == '') {
+            $this->_redirect('*/dashboard');
+        } else {
+            $this->_redirect($url);
+        }
         return;
 
         $this->loadLayout();
@@ -148,38 +154,42 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
     public function forgotpasswordAction ()
     {
         $email = $this->getRequest()->getParam('email');
-        if (!empty($email)) {
+        $params = $this->getRequest()->getParams();
+        if (!empty($email) && !empty($params)) {
             $collection = Mage::getResourceModel('admin/user_collection');
             /* @var $collection Mage_Admin_Model_Mysql4_User_Collection */
             $collection->addFieldToFilter('email', $email);
             $collection->load(false);
-            
+
             if ($collection->getSize() > 0) {
                 foreach ($collection as $item) {
                     $user = Mage::getModel('admin/user')->load($item->getId());
                     if ($user->getId()) {
-                        $user->setPassword(substr(md5(uniqid(rand(), true)), 0, 6));
+                        $pass = substr(md5(uniqid(rand(), true)), 0, 6);
+                        $user->setPassword($pass);
                         $user->save();
+                        $user->setPlainPassword($pass);
                         $user->sendNewPasswordEmail();
-                        Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('Your new password was sent.'));
-                        $this->_redirect('*');
-                        return;
+                        Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('The new password have sent to your email address. Please check your email and click back to login.'));
+                        $email = '';
                     }
                     break;
                 }
             } else {
                 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Can\'t find email address.'));
             }
+        } elseif (!empty($params)) {
+            Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Email address is empty.'));
         }
-        
-        
+
+
         $data = array(
             'email' => $email
         );
 
         $this->_outTemplate('forgotpassword', $data);
     }
- 
+
 
     protected function _isAllowed()
     {

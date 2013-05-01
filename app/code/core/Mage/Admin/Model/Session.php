@@ -32,6 +32,60 @@ class Mage_Admin_Model_Session extends Mage_Core_Model_Session_Abstract
         $this->init('admin');
     }
 
+    public function login($username, $password, $request=null)
+    {
+        if (empty($username) || empty($password)) {
+            return;
+        }
+
+        $user = Mage::getModel('admin/user')->login($username, $password);
+        if ( $user->getId() && $user->getIsActive() != '1' ) {
+            if ($request && !$request->getParam('messageSent')) {
+                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Your Account has been deactivated.'));
+                $request->setParam('messageSent', true);
+            }
+        } elseif (!Mage::getModel('admin/user')->hasAssigned2Role($user->getId())) {
+            if ($request && !$request->getParam('messageSent')) {
+                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Access Denied.'));
+                $request->setParam('messageSent', true);
+            }
+        } else {
+            if ($user->getId()) {
+                $session = Mage::getSingleton('admin/session');
+                $session->setUser($user);
+                $session->setAcl(Mage::getResourceModel('admin/acl')->loadAcl());
+                if ($request) {
+                    header('Location: '.$request->getRequestUri());
+                    exit;
+                }
+            } else {
+                if ($request && !$request->getParam('messageSent')) {
+                    Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Invalid Username or Password.'));
+                    $request->setParam('messageSent', true);
+                }
+            }
+        }
+        return $user;
+    }
+
+    public function refreshAcl($user=null)
+    {
+        if (is_null($user)) {
+            $user = $this->getUser();
+        }
+        if (!$user) {
+            return $this;
+        }
+        if (!$this->getAcl() || $user->getReloadAclFlag()) {
+            $this->setAcl(Mage::getResourceModel('admin/acl')->loadAcl());
+        }
+        if ($user->getReloadAclFlag()) {
+            $user->unsetData('password');
+            $user->setReloadAclFlag('0')->save();
+        }
+        return $this;
+    }
+
     /**
      * Check current user permission on resource and privilege
      *

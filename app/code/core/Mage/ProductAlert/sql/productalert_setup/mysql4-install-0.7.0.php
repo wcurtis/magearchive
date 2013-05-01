@@ -70,21 +70,21 @@ CREATE TABLE `{$installer->getTable('product_alert_stock')}` (
   `send_count` smallint(5) unsigned NOT NULL default '0',
   `status` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`alert_stock_id`),
-  CONSTRAINT `FK_PRODUCT_ALERT_PRICE_CUSTOMER`
+  CONSTRAINT `FK_PRODUCT_ALERT_STOCK_CUSTOMER`
     FOREIGN KEY (`customer_id`)
     REFERENCES `{$installer->getTable('customer_entity')}` (`entity_id`)
       ON DELETE CASCADE
       ON UPDATE CASCADE,
-  CONSTRAINT `FK_PRODUCT_ALERT_PRICE_PRODUCT`
+  CONSTRAINT `FK_PRODUCT_ALERT_STOCK_PRODUCT`
     FOREIGN KEY (`product_id`)
     REFERENCES `{$installer->getTable('catalog_product_entity')}` (`entity_id`)
       ON DELETE CASCADE
       ON UPDATE CASCADE,
-  CONSTRAINT `FK_PRODUCT_ALERT_PRICE_WEBSITE`
+  CONSTRAINT `FK_PRODUCT_ALERT_STOCK_WEBSITE`
     FOREIGN KEY (`website_id`)
     REFERENCES `{$installer->getTable('core_website')}` (`website_id`)
       ON DELETE CASCADE
       ON UPDATE CASCADE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ");
 $installer->endSetup();

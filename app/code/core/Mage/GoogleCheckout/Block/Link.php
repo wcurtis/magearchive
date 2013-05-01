@@ -24,16 +24,9 @@
  * @category   Mage
  * @package    Mage_GoogleCheckout
  */
-class Mage_GoogleCheckout_Block_Link extends Mage_Core_Block_Text
+class Mage_GoogleCheckout_Block_Link extends Mage_Core_Block_Template
 {
-    protected function _construct()
-    {
-#echo "<pre>".print_r(debug_backtrace(),1)."</pre>";
-        #$this->setIsDisabled(true);
-        $this->addText($this->_getButtonFormHtml());
-    }
-
-    protected function _getImageStyle()
+    public function getImageStyle()
     {
         $s = Mage::getStoreConfig('google/checkout/checkout_image');
         if (!$s) {
@@ -42,31 +35,45 @@ class Mage_GoogleCheckout_Block_Link extends Mage_Core_Block_Text
         return explode('/', $s);
     }
 
-    protected function _getImageUrl()
+    public function getImageUrl()
     {
         $url = 'https://checkout.google.com/buttons/checkout.gif';
         $url .= '?merchant_id='.Mage::getStoreConfig('google/checkout/merchant_id');
-        $v = $this->_getImageStyle();
+        $v = $this->getImageStyle();
         $url .= '&w='.$v[0].'&h='.$v[1].'&style='.$v[2];
         $url .= '&variant='.($this->getIsDisabled() ? 'disabled' : 'text');
         $url .= '&loc='.Mage::getStoreConfig('google/checkout/locale');
         return $url;
     }
 
-    public function _getButtonFormHtml()
+    public function getCheckoutUrl()
     {
-        $html = '<form method="post" action="'.$this->getUrl('googlecheckout/redirect/checkout').'" style="margin:0;padding:0;"';
-        $html .= (Mage::getStoreConfig('google/analytics/active') ? ' onsubmit="setUrchinInputCode(pageTracker)"' : '').'>';
-        $html .= '<input type="hidden" name="analyticsdata" value="" />';
-        $v = $this->_getImageStyle();
-        $html .= '<input type="image" src="'.$this->_getImageUrl().'" width="'.$v[0].'" height="'.$v[1].'"';
-        $html .= ' alt="'.Mage::helper('googlecheckout')->__('Fast checkout through Google').'"/>';
-        $html .= '</form>';
-        return $html;
+        return $this->getUrl('googlecheckout/redirect/checkout');
     }
 
-    public function _beforeToHtml()
+    public function getIsActiveAanalytics()
     {
-        return (bool)Mage::getStoreConfig('google/checkout/active');
+        return Mage::getStoreConfig('google/analytics/active');
+    }
+
+    public function getImageWidth()
+    {
+         $v = $this->getImageStyle();
+         return $v[0];
+    }
+
+    public function getImageHeight()
+    {
+         $v = $this->getImageStyle();
+         return $v[1];
+    }
+
+    public function _toHtml()
+    {
+        if((bool)Mage::getStoreConfig('google/checkout/active')) {
+            return parent::_toHtml();
+        }
+
+        return '';
     }
 }

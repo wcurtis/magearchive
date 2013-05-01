@@ -53,4 +53,9 @@ class Mage_Payment_Block_Info extends Mage_Core_Block_Template
     {
         return $this->getInfo()->getMethodInstance();
     }
+    
+    public function toPdf()
+    {
+        $this->setTemplate('payment/info/pdf/default.phtml');
+    }
 }

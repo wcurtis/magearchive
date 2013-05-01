@@ -138,8 +138,9 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
     {
         if (!$order->getReordered()) {
             $this->getSession()->setOrderId($order->getId());
+        } else {
+            $this->getSession()->setReordered($order->getId());
         }
-
 
         $this->getSession()->setCurrencyId($order->getOrderCurrencyCode());
         $this->getSession()->setCustomerId($order->getCustomerId());
@@ -168,9 +169,18 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
             if ($qty) {
                 $quoteItem = $convertModel->itemToQuoteItem($item)
                     ->setQty($qty);
-                $quote->addItem($quoteItem);
+                $product = $quoteItem->getProduct();
+
+                if ($product->getId()) {
+                    $quote->addItem($quoteItem);
+                }
             }
         }
+
+        if ($quote->getCouponCode()) {
+            $quote->collectTotals();
+        }
+
         $quote->getShippingAddress()->setCollectShippingRates(true);
         $quote->getShippingAddress()->collectShippingRates();
         $quote->collectTotals();
@@ -534,6 +544,7 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
 
     public function collectShippingRates()
     {
+        $this->getQuote()->collectTotals();
         $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
         $this->getQuote()->getShippingAddress()->collectShippingRates();
         return $this;
@@ -659,8 +670,14 @@ class Mage_Adminhtml_Model_Sales_Order_Create extends Varien_Object
             ->save();
 
         if ($this->getSession()->getOrder()->getId()) {
-            $order->setRelationParentId($this->getSession()->getOrder()->getId());
-            $order->setRelationParentRealId($this->getSession()->getOrder()->getIncrementId());
+            $oldOrder = $this->getSession()->getOrder();
+            $originalId = $oldOrder->getOriginalIncrementId() ? $oldOrder->getOriginalIncrementId() : $oldOrder->getIncrementId();
+            $order->setOriginalIncrementId($originalId);
+            $order->setRelationParentId($oldOrder->getId());
+            $order->setRelationParentRealId($oldOrder->getIncrementId());
+            $order->setEditIncrement($oldOrder->getEditIncrement()+1);
+            $order->setIncrementId($originalId.'-'.$order->getEditIncrement());
+
             $this->getSession()->getOrder()->setRelationChildId($order->getId());
             $this->getSession()->getOrder()->setRelationChildRealId($order->getIncrementId());
             $this->getSession()->getOrder()->cancel()

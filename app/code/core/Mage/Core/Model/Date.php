@@ -76,7 +76,7 @@ class Mage_Core_Model_Date
         }
 
         if ($result === true) {
-            $offset = gmmktime(0, 0, 0, 1, 2, 2000) - mktime(0, 0, 0, 1, 2, 2000);
+            $offset = gmmktime(0, 0, 0, 1, 2, 1970) - mktime(0, 0, 0, 1, 2, 1970);
         }
 
         if (!is_null($timezone)){
@@ -128,14 +128,19 @@ class Mage_Core_Model_Date
     public function gmtTimestamp($input = null)
     {
         if (is_null($input)) {
-            $result = time() - $this->_systemOffset;
+            return gmdate('U');
         } else if (is_numeric($input)) {
-            $result = $input - $this->_offset;
+            $result = $input;
         } else {
-            $result = strtotime($input) - $this->_offset;
+            $result = strtotime($input);
         }
 
-        return $result;
+        $date      = Mage::app()->getLocale()->date($result);
+        $timestamp = $date->get(Zend_Date::TIMESTAMP) - $date->get(Zend_Date::TIMEZONE_SECS);
+
+        unset($date);
+        return $timestamp;
+
     }
 
     /**
@@ -147,14 +152,18 @@ class Mage_Core_Model_Date
     public function timestamp($input = null)
     {
         if (is_null($input)) {
-            $result = $this->gmtTimestamp() + $this->_offset;
+            $result = $this->gmtTimestamp();
         } else if (is_numeric($input)) {
-            $result = $input + $this->_offset;
+            $result = $input;
         } else {
-            $result = strtotime($input) - $this->_systemOffset + $this->_offset;
+            $result = strtotime($input);
         }
 
-        return $result;
+        $date      = Mage::app()->getLocale()->date($result);
+        $timestamp = $date->get(Zend_Date::TIMESTAMP) + $date->get(Zend_Date::TIMEZONE_SECS);
+
+        unset($date);
+        return $timestamp;
     }
 
     /**

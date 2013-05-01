@@ -26,20 +26,21 @@
 
 
 
-<p class="content-buttons form-buttons" style="margin-bottom:5px;"><?php echo $this->getBackButtonHtml() ?>
-            <?php echo $this->getCancelButtonHtml() ?>
-            <?php if($this->getProductId()): ?>
-                <?php echo $this->getDeleteButtonHtml() ?>
-                <?php if(!$this->getProduct()->isSuper()): ?>
-                <?php echo $this->getDuplicateButtonHtml() ?>
-                <?php endif; ?>
-            <?php endif; ?>
-            <?php if($this->getProductSetId() && $this->getIsConfigured()): ?>
-                <?php echo $this->getSaveButtonHtml() ?>
-                <?php echo $this->getSaveAndEditButtonHtml() ?>
-            <?php endif; ?></p>
 <div class="content-header">
    <h3 class="icon-head head-products"><?php echo $this->getHeader() ?></h3>
+	<p class="content-buttons form-buttons"><?php echo $this->getBackButtonHtml() ?>
+		<?php echo $this->getCancelButtonHtml() ?>
+		<?php if($this->getProductId()): ?>
+			<?php echo $this->getDeleteButtonHtml() ?>
+			<?php if(!$this->getProduct()->isSuper()): ?>
+			<?php echo $this->getDuplicateButtonHtml() ?>
+			<?php endif; ?>
+		<?php endif; ?>
+		<?php if($this->getProductSetId() && $this->getIsConfigured()): ?>
+			<?php echo $this->getSaveButtonHtml() ?>
+			<?php echo $this->getSaveAndEditButtonHtml() ?>
+		<?php endif; ?>
+	</p>   
 </div>
 <form action="<?php echo $this->getSaveUrl() ?>" method="post" id="product_edit_form" enctype="multipart/form-data">
 <input type="hidden" name="links[related]" id="_related_products" value="">

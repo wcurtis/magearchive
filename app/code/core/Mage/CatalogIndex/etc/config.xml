@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_CatalogIndex>
-            <version>0.7.2</version>
+            <version>0.7.4</version>
             <depends>
                 <Mage_Catalog />
                 <Mage_Eav />
@@ -41,6 +41,7 @@
                 <entities>
                     <eav><table>catalogindex_eav</table></eav>
                     <price><table>catalogindex_price</table></price>
+                    <minimal_price><table>catalogindex_minimal_price</table></minimal_price>
                 </entities>
             </catalogindex_mysql4>
         </models>
@@ -77,6 +78,9 @@
                 <tier_price>
                     <class>catalogindex/indexer_tierprice</class>
                 </tier_price>
+                <minimal_price>
+                    <class>catalogindex/indexer_minimalprice</class>
+                </minimal_price>
             </indexer>
         </catalogindex>
 
@@ -90,16 +94,60 @@
                     </catalogindex>
                 </observers>
             </catalog_product_save_after>
-            <catalogrule_after_apply>
+            <catalog_entity_attribute_save_after>
+                <observers>
+                    <catalogindex>
+                        <type>singleton</type>
+                        <class>catalogindex/indexer</class>
+                        <method>plainReindex</method>
+                    </catalogindex>
+                </observers>
+            </catalog_entity_attribute_save_after>
+            <catalog_product_delete_after_done>
                 <observers>
                     <catalogindex>
                         <type>singleton</type>
                         <class>catalogindex/observer</class>
-                        <method>processPriceRuleApplication</method>
+                        <method>processAfterDeleteEvent</method>
+                    </catalogindex>
+                </observers>
+            </catalog_product_delete_after_done>
+            <catalog_product_delete_before>
+                <observers>
+                    <catalogindex>
+                        <type>singleton</type>
+                        <class>catalogindex/observer</class>
+                        <method>registerParentIds</method>
+                    </catalogindex>
+                </observers>
+            </catalog_product_delete_before>
+            <system_config_price_scope_save_after>
+                <observers>
+                    <catalogindex>
+                        <type>singleton</type>
+                        <class>catalogindex/indexer</class>
+                        <method>plainReindex</method>
+                    </catalogindex>
+                </observers>
+            </system_config_price_scope_save_after>
+            <catalogrule_after_apply>
+                <observers>
+                    <catalogindex>
+                        <type>singleton</type>
+                        <class>catalogindex/indexer</class>
+                        <method>plainReindex</method>
                     </catalogindex>
                 </observers>
             </catalogrule_after_apply>
         </events>
     </global>
 
+    <crontab>
+        <jobs>
+            <catalogindex_reindex_all>
+                <schedule><cron_expr>0 2 * * *</cron_expr></schedule>
+                <run><model>catalogindex/indexer::plainReindex</model></run>
+            </catalogindex_reindex_all>
+        </jobs>
+    </crontab>
 </config>

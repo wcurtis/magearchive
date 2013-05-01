@@ -92,6 +92,7 @@ class Mage_Adminhtml_Block_System_Currency extends Mage_Adminhtml_Block_Template
             ->setOptions(Mage::getModel('adminhtml/system_config_source_currency_service')->toOptionArray(0))
             ->setId('rate_services')
             ->setName('rate_services')
+            ->setValue(Mage::getSingleton('adminhtml/session')->getCurrencyRateService(true))
             ->setTitle(Mage::helper('adminhtml')->__('Import Service'))
             ->toHtml();
 

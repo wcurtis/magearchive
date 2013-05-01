@@ -124,4 +124,9 @@ class Mage_Page_Block_Switch extends Mage_Core_Block_Template
         }
         return $this->getData('stores');
     }
+
+    public function getCurrentStoreCode()
+    {
+        return Mage::app()->getStore()->getCode();
+    }
 }

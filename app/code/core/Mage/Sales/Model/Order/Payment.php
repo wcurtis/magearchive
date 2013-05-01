@@ -134,10 +134,19 @@ class Mage_Sales_Model_Order_Payment extends Mage_Payment_Model_Info
             }
         }
 
-        /**
-         * Change order status if it specified
-         */
-        $orderStatus = $methodInstance->getConfigData('order_status');
+        /*
+        * this flag will set if the order went to as authorization under fraud service for payflowpro
+        */
+        if ($this->getFraudFlag()) {
+            $orderStatus = $methodInstance->getConfigData('fraud_order_status');
+            $orderState = Mage_Sales_Model_Order::STATE_HOLDED;
+        } else {
+            /**
+             * Change order status if it specified
+             */
+            $orderStatus = $methodInstance->getConfigData('order_status');
+        }
+
         if (!$orderStatus) {
             $orderStatus = $this->getOrder()->getConfig()->getStateDefaultStatus($orderState);
         }

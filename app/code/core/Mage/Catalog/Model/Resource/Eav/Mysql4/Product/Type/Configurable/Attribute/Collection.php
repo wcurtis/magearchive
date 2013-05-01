@@ -170,6 +170,8 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Type_Configurable_Attribute
 
             foreach ($this->_items as $item) {
                $productAttribute = $item->getProductAttribute();
+               if (!($productAttribute instanceof Mage_Eav_Model_Entity_Attribute_Abstract))
+                   continue;
                $options = $productAttribute->getFrontend()->getSelectOptions();
                foreach ($options as $option) {
                    foreach ($this->getProduct()->getTypeInstance()->getUsedProducts() as $associatedProduct) {

@@ -31,48 +31,72 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
         $categoryId = (int) $this->getRequest()->getParam('category', false);
         $productId  = (int) $this->getRequest()->getParam('id');
 
-        $product = Mage::getModel('catalog/product')
-            ->load($productId);
+        if (!$productId) {
+            return false;
+        }
 
+        $product = Mage::getModel('catalog/product')
+            ->setStoreId(Mage::app()->getStore()->getId())
+            ->load($productId);
+        if (!$product->getId() || !$product->isVisibleInCatalog()) {
+            return false;
+        }
         if ($categoryId) {
             $category = Mage::getModel('catalog/category')->load($categoryId);
             Mage::register('current_category', $category);
         }
         Mage::register('current_product', $product);
-        Mage::register('product', $product); // this need remove after all replace
+        Mage::register('product', $product);
+        return $product;
     }
 
     public function postAction()
     {
-        $productId = $this->getRequest()->getParam('id', false);
-        if ($data = $this->getRequest()->getPost()) {
-            $review = Mage::getModel('review/review')->setData($data);
-            try {
-                $review->setEntityId(1) // product
-                    ->setEntityPkValue($productId)
-                    ->setStatusId(2) // pending
-                    ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
-                    ->setStoreId(Mage::app()->getStore()->getId())
-                    ->setStores(array(Mage::app()->getStore()->getId()))
-                    ->save();
+        $productId  = $this->getRequest()->getParam('id', false);
+        $data       = $this->getRequest()->getPost();
+        $arrRatingId= $this->getRequest()->getParam('ratings', array());
 
-                $arrRatingId = $this->getRequest()->getParam('ratings', array());
-                foreach ($arrRatingId as $ratingId=>$optionId) {
-                	Mage::getModel('rating/rating')
-                	   ->setRatingId($ratingId)
-                	   ->setReviewId($review->getId())
-                	   ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
-                	   ->addOptionVote($optionId, $productId);
+        if ($productId && !empty($data)) {
+            $session    = Mage::getSingleton('review/session');
+            $review     = Mage::getModel('review/review')->setData($data);
+            $validateRes= $review->validate();
+
+            if (true === $validateRes) {
+                try {
+                    $review->setEntityId(Mage_Review_Model_Review::ENTITY_PRODUCT)
+                        ->setEntityPkValue($productId)
+                        ->setStatusId(Mage_Review_Model_Review::STATUS_PENDING)
+                        ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
+                        ->setStoreId(Mage::app()->getStore()->getId())
+                        ->setStores(array(Mage::app()->getStore()->getId()))
+                        ->save();
+
+                    foreach ($arrRatingId as $ratingId=>$optionId) {
+                    	Mage::getModel('rating/rating')
+                    	   ->setRatingId($ratingId)
+                    	   ->setReviewId($review->getId())
+                    	   ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
+                    	   ->addOptionVote($optionId, $productId);
+                    }
+
+                    $review->aggregate();
+                    $session->addSuccess($this->__('Your review has been accepted for moderation'));
                 }
-
-                $review->aggregate();
-
-                Mage::getSingleton('review/session')
-                    ->addSuccess(Mage::helper('review')->__('Your review has been accepted for moderation'));
+                catch (Exception $e){
+                    $session->setFormData($data);
+                    $session->addError($this->__('Unable to post review. Please, try again later.'));
+                }
             }
-            catch (Exception $e){
-                Mage::getSingleton('review/session')
-                    ->addError(Mage::helper('review')->__('Unable to post review. Please, try again later.'));
+            else {
+                $session->setFormData($data);
+                if (is_array($validateRes)) {
+                    foreach ($validateRes as $errorMessage) {
+                        $session->addError($errorMessage);
+                    }
+                }
+                else {
+                    $session->addError($this->__('Unable to post review. Please, try again later.'));
+                }
             }
         }
 
@@ -81,16 +105,14 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
 
     public function listAction()
     {
-        $this->_initProduct();
-        $productId = $this->getRequest()->getParam('id');
-        if( !$productId ) {
-            $this->_redirectUrl(Mage::getBaseUrl());
+        if ($product = $this->_initProduct()) {
+            Mage::register('productId', $product->getId());
+            $this->loadLayout();
+            $this->_initLayoutMessages('review/session');
+            $this->renderLayout();
+        } else {
+            $this->_forward('noRoute');
         }
-        Mage::register('productId', $productId);
-
-        $this->loadLayout();
-        $this->_initLayoutMessages('review/session');
-        $this->renderLayout();
     }
 
     public function viewAction()

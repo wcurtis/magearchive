@@ -24,7 +24,7 @@ endif; ?>
     <div class="order-choose-address">
         <?php echo Mage::helper('sales')->__('Select from existing customer addresses:') ?><br/>
         <?php $_id = $this->getForm()->getHtmlIdPrefix() . 'customer_address_id' ?>
-        <select id="<?php echo $_id ?>" style="width:95%;" onchange="order.selectAddress(this.value, '<?php echo $_fieldsContainerId ?>')">
+        <select id="<?php echo $_id ?>" style="width:97.5%;" onchange="order.selectAddress(this.value, '<?php echo $_fieldsContainerId ?>')">
             <option value=""><?php echo Mage::helper('sales')->__('Add New Address') ?></option>
             <?php foreach ($this->getAddressCollection() as $_address): ?>
             <?php //if($this->getAddressAsString($_address)!=$this->getAddressAsString($this->getAddress())): ?>

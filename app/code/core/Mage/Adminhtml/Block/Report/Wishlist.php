@@ -46,12 +46,13 @@ class Mage_Adminhtml_Block_Report_Wishlist extends Mage_Adminhtml_Block_Template
 
         $collection = Mage::getResourceModel('reports/wishlist_collection');
 
-        list($this->customer_with_wishlist, $this->wishlists_count) = $collection->getWishlistCustomerCount();
-
-        $this->items_bought = 0;
-        $this->shared_count = $collection->getSharedCount();
-        $this->referrals_count = 0;
-        $this->conversions_count = 0;
+        list($customerWithWishlist, $wishlistsCount) = $collection->getWishlistCustomerCount();
+        $this->setCustomerWithWishlist($customerWithWishlist);
+        $this->setWishlistsCount($wishlistsCount);
+        $this->setItemsBought(0);
+        $this->setSharedCount($collection->getSharedCount());
+        $this->setReferralsCount(0);
+        $this->setConversionsCount(0);
 
         return $this;
     }

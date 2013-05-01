@@ -106,4 +106,9 @@ class Mage_Core_Block_Store_Switcher extends Mage_Core_Block_Template
     {
         return Mage::app()->getStore()->getId();
     }
+
+    public function getCurrentStoreCode()
+    {
+        return Mage::app()->getStore()->getCode();
+    }
 }

@@ -28,48 +28,32 @@ class Mage_Eav_Model_Mysql4_Entity_Attribute_Set extends Mage_Core_Model_Mysql4_
         $this->_init('eav/attribute_set', 'attribute_set_id');
     }
 
-    public function save(Mage_Core_Model_Abstract $object)
+    /**
+     * Perform actions after object save
+     *
+     * @param Mage_Core_Model_Abstract $object
+     */
+    protected function _afterSave(Mage_Core_Model_Abstract $object)
     {
-        $write = $this->_getWriteAdapter();
-        $setId = $object->getId();
-
-        $data = array(
-            'attribute_set_name' => $object->getAttributeSetName(),
-        );
-
-
-        $write->beginTransaction();
-        try {
-            if( intval($setId) > 0 ) {
-                $condition = $write->quoteInto("{$this->getMainTable()}.{$this->getIdFieldName()} = ?", $setId);
-                $write->update($this->getMainTable(), $data, $condition);
-                if( $object->getGroups() ) {
-                    foreach( $object->getGroups() as $group ) {
-                        $group->save();
-                    }
-                }
-
-                if( $object->getRemoveGroups() ) {
-                    foreach( $object->getRemoveGroups() as $group ) {
-                        $group->delete($group->getId());
-                    }
-                }
-
-                if( $object->getRemoveAttributes() ) {
-                    foreach( $object->getRemoveAttributes() as $attribute ) {
-                        $attribute->deleteEntity();
-                    }
-                }
-
-            } else {
-                $data['entity_type_id'] = $object->getEntityTypeId();
-                $write->insert($this->getMainTable(), $data);
-                $object->setId($write->lastInsertId());
+        if ($object->getGroups()) {
+            foreach ($object->getGroups() as $group) {
+                /* @var $group Mage_Eav_Model_Entity_Attribute_Group */
+                $group->setAttributeSetId($object->getId());
+                $group->save();
             }
-            $write->commit();
-        } catch (Exception $e) {
-            $write->rollback();
-            throw new Exception($e->getMessage());
         }
+        if ($object->getRemoveGroups()) {
+            foreach ($object->getRemoveGroups() as $group) {
+                /* @var $group Mage_Eav_Model_Entity_Attribute_Group */
+                $group->delete();
+            }
+        }
+        if ($object->getRemoveAttributes()) {
+            foreach ($object->getRemoveAttributes() as $attribute) {
+                /* @var $attribute Mage_Eav_Model_Entity_Attribute */
+                $attribute->deleteEntity();
+            }
+        }
+        return parent::_afterSave($object);
     }
 }

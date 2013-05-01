@@ -27,6 +27,7 @@
 
 class Mage_Cms_Model_Mysql4_Page_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
+	protected $_previewFlag;
 
     protected function _construct()
     {
@@ -36,6 +37,39 @@ class Mage_Cms_Model_Mysql4_Page_Collection extends Mage_Core_Model_Mysql4_Colle
     public function toOptionArray()
     {
         return $this->_toOptionArray('identifier', 'title');
+    }
+
+    public function setFirstStoreFlag($flag = false)
+    {
+    	$this->_previewFlag = $flag;$this->_afterLoad();
+    	return $this;
+    }
+
+    protected function _afterLoad()
+    {
+    	if ($this->_previewFlag) {
+	    	$items = $this->getColumnValues('page_id');
+	    	if (count($items)) {
+	    		$select = $this->getConnection()->select()
+		    			->from($this->getTable('cms/page_store'))
+		    			->where($this->getTable('cms/page_store').'.page_id IN (?)', $items);
+				if ($result = $this->getConnection()->fetchPairs($select)) {
+					foreach ($this as $item) {
+					    if (!isset($result[$item->getData('page_id')])) {
+					        continue;
+					    }
+			    		if ($result[$item->getData('page_id')] == 0) {
+			    			$storeCode = key(Mage::app()->getStores(false, true));
+			    		} else {
+			    			$storeCode = Mage::app()->getStore($result[$item->getData('page_id')])->getCode();
+			    		}
+			    		$item->setData('store_code', $storeCode);
+			    	}
+				}
+	    	}
+    	}
+
+        parent::_afterLoad();
     }
 
 }

@@ -147,7 +147,6 @@ originModel.prototype = {
             var disabled = this.regionElement.disabled;
             if (data.length) {
                 var html = '<select name="'+this.regionElement.name+'" id="'+this.regionElement.id+'" class="required-entry select" title="'+this.regionElement.title+'"'+(disabled?" disabled":"")+'>';
-                html+= '<option></option>';
                 for (var i in data) {
                     if(data[i].label) {
                         html+= '<option value="'+data[i].value+'"';
@@ -158,15 +157,18 @@ originModel.prototype = {
                     }
                 }
                 html+= '</select>';
+
                 var parentNode = this.regionElement.parentNode;
                 var regionElementId = this.regionElement.id;
-
-                this.regionElement.remove();
-                new Insertion.Bottom(parentNode, html);
+                parentNode.innerHTML = html;
                 this.regionElement = $(regionElementId);
             } else if (this.reload) {
                 var html = '<input type="text" name="'+this.regionElement.name+'" id="'+this.regionElement.id+'" class="input-text" title="'+this.regionElement.title+'"'+(disabled?" disabled":"")+'>';
-                this.regionElement.replace(html);
+                var parentNode = this.regionElement.parentNode;
+                var regionElementId = this.regionElement.id;
+                parentNode.innerHTML = html;
+                this.regionElement = $(regionElementId);
+                //this.regionElement.replace(html);
             }
         }
     }
@@ -183,8 +185,8 @@ perPageModel.prototype = {
         this.listOptions = '<?php echo Mage::getConfig()->getNode('frontend/catalog/per_page_values/list') ?>';
         this.listModeElement = $('catalog_frontend_list_mode');
         if (this.listModeElement) {
-            this.gridPerPageSelect = $('catalog_frontend_grid_per_page').parentNode.parentNode;
-            this.listPerPageSelect = $('catalog_frontend_list_per_page').parentNode.parentNode;
+            this.gridPerPageSelect = $('catalog_frontend_grid_per_page').up(1);
+            this.listPerPageSelect = $('catalog_frontend_list_per_page').up(1);
             this.refreshPerPageSelect();
             this.bindListModeChange();
         }

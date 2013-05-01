@@ -25,7 +25,7 @@
 	text-align:left;
 	}
 #nav li.over { z-index:99; }
-#nav li.active { z-index:999; } /* to prevent the li separator from showing through on mouseover on li */
+#nav li.active { z-index:98; } /* to prevent the li separator from showing through on mouseover on li */
 #nav a { line-height:1.3em; }
 #nav a, #nav a:hover { display:block; text-decoration:none; }
 #nav span { display:block; cursor:pointer; white-space:nowrap; }
@@ -63,7 +63,7 @@
 	width:15em;
 	top:25px;
 	left:-10000px;
-    border:1px solid #899ba5;
+  border:1px solid #899ba5;
 }
 
 /* Show menu */

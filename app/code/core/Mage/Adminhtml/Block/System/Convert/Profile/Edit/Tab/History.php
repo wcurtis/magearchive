@@ -37,12 +37,8 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Edit_Tab_History extends Mage_
     protected function _prepareCollection()
     {
         $collection = Mage::getResourceModel('dataflow/profile_history_collection')
+            ->joinAdminUser()
             ->addFieldToFilter('profile_id', Mage::registry('current_convert_profile')->getId());
-        $collection->getSelect()
-            ->join(array(
-                'u'=>Mage::getSingleton('core/resource')->getTableName('admin/user')),
-                'u.user_id=main_table.user_id',
-                array('user_name'=>"concat(u.firstname, ' ', u.lastname)"));
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -62,10 +58,14 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Edit_Tab_History extends Mage_
             'width' => '150px',
         ));
 
-        $this->addColumn('user_name', array(
-            'header' => Mage::helper('adminhtml')->__('User Name'),
-            'index' => 'user_name',
-            'width' => '200px',
+        $this->addColumn('firstname', array(
+            'header' => Mage::helper('adminhtml')->__('Firstname'),
+            'index' => 'firstname',
+        ));
+
+        $this->addColumn('lastname', array(
+            'header' => Mage::helper('adminhtml')->__('Lastname'),
+            'index' => 'lastname',
         ));
 
         return parent::_prepareColumns();

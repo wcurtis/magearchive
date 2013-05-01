@@ -46,7 +46,7 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
     public function editAction()
     {
         $id = $this->getRequest()->getParam('user_id');
-        $model = Mage::getModel('admin/permissions_user');
+        $model = Mage::getModel('admin/user');
 
         if ($id) {
             $model->load($id);
@@ -76,10 +76,10 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
     public function saveAction()
     {
         if ($data = $this->getRequest()->getPost()) {
-            $model = Mage::getModel('admin/permissions_user');
+            $model = Mage::getModel('admin/user');
             $model->setData($data);
             try {
-            	$model->save();
+                $model->save();
                 if ( $uRoles = $this->getRequest()->getParam('roles', false) ) {
                     /*parse_str($uRoles, $uRoles);
                     $uRoles = array_keys($uRoles);*/
@@ -120,7 +120,7 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
                 return;
             }
             try {
-                $model = Mage::getModel('admin/permissions_user');
+                $model = Mage::getModel('admin/user');
                 $model->setId($id);
                 $model->delete();
                 Mage::getSingleton('adminhtml/session')->addSuccess($this->__('User was successfully deleted'));
@@ -140,7 +140,7 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
     public function rolesGridAction()
     {
         $id = $this->getRequest()->getParam('user_id');
-        $model = Mage::getModel('admin/permissions_user');
+        $model = Mage::getModel('admin/user');
 
         if ($id) {
             $model->load($id);
@@ -153,9 +153,9 @@ class Mage_Adminhtml_Permissions_UserController extends Mage_Adminhtml_Controlle
     public function roleGridAction()
     {
         $this->getResponse()
-        	->setBody($this->getLayout()
-        	->createBlock('adminhtml/permissions_user_grid')
-        	->toHtml()
+            ->setBody($this->getLayout()
+            ->createBlock('adminhtml/permissions_user_grid')
+            ->toHtml()
         );
     }
 

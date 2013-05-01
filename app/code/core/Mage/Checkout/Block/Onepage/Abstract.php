@@ -119,6 +119,7 @@ abstract class Mage_Checkout_Block_Onepage_Abstract extends Mage_Core_Block_Temp
             $select = $this->getLayout()->createBlock('core/html_select')
                 ->setName($type.'_address_id')
                 ->setId($type.'-address-select')
+                ->setClass('address-select')
                 ->setExtraParams('onchange="'.$type.'.newAddress(!this.value)"')
                 ->setValue($addressId)
                 ->setOptions($options);

@@ -27,6 +27,18 @@
 
 class Mage_Tag_CustomerController extends Mage_Core_Controller_Front_Action
 {
+    protected function _getTagId()
+    {
+        $tagId = (int) $this->getRequest()->getParam('tagId');
+        if ($tagId) {
+            $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+            $model = Mage::getModel('tag/tag_relation');
+            $model->loadByTagCustomer(null, $tagId, $customerId);
+            Mage::register('tagModel', $model);
+            return $model->getTagId();
+        }
+        return false;
+    }
 
     public function indexAction()
     {
@@ -37,6 +49,11 @@ class Mage_Tag_CustomerController extends Mage_Core_Controller_Front_Action
 
         $this->loadLayout();
         $this->_initLayoutMessages('tag/session');
+
+        if ($navigationBlock = $this->getLayout()->getBlock('customer_account_navigation')) {
+            $navigationBlock->setActive('tag/customer');
+        }
+
         $this->renderLayout();
     }
 
@@ -46,11 +63,20 @@ class Mage_Tag_CustomerController extends Mage_Core_Controller_Front_Action
             Mage::getSingleton('customer/session')->authenticate($this);
             return;
         }
-        Mage::register('tagId', $this->getRequest()->getParam('tagId'));
+        if ($tagId = $this->_getTagId()) {
+            Mage::register('tagId', $tagId);
+            $this->loadLayout();
+            $this->_initLayoutMessages('tag/session');
 
-        $this->loadLayout();
-        $this->_initLayoutMessages('tag/session');
-        $this->renderLayout();
+            if ($navigationBlock = $this->getLayout()->getBlock('customer_account_navigation')) {
+                $navigationBlock->setActive('tag/customer');
+            }
+
+            $this->renderLayout();
+        }
+        else {
+            $this->_forward('noRoute');
+        }
     }
 
     public function editAction()
@@ -60,30 +86,18 @@ class Mage_Tag_CustomerController extends Mage_Core_Controller_Front_Action
             return;
         }
 
-        $this->loadLayout();
-        $this->_initLayoutMessages('tag/session');
-
-        $tagId = $this->getRequest()->getParam('tagId');
-        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-
-        $model = Mage::getModel('tag/tag_relation');
-        $model->loadByTagCustomer(null, $tagId, $customerId);
-
-        Mage::register('tagModel', $model);
-
-        if( intval($tagId) <= 0 ) {
-            $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
-            return;
+        if ($tagId = $this->_getTagId()) {
+            $this->loadLayout();
+            $this->_initLayoutMessages('tag/session');
+            $this->_initLayoutMessages('customer/session');
+            if ($navigationBlock = $this->getLayout()->getBlock('customer_account_navigation')) {
+                $navigationBlock->setActive('tag/customer');
+            }
+            $this->renderLayout();
         }
-
-        if( $model->getCustomerId() != $customerId ) {
-            $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
-            return;
+        else {
+            $this->_forward('noRoute');
         }
-
-        $this->_initLayoutMessages('customer/session');
-
-        $this->renderLayout();
     }
 
     public function removeAction()
@@ -93,29 +107,20 @@ class Mage_Tag_CustomerController extends Mage_Core_Controller_Front_Action
             return;
         }
 
-        $tagId = $this->getRequest()->getParam('tagId');
-        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-
-        if( intval($tagId) <= 0 ) {
-            $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
-            return;
-        }
-
-        $model = Mage::getModel('tag/tag_relation');
-        $model->loadByTagCustomer(null, $tagId, $customerId);
-        if( $model->getCustomerId() == $customerId ) {
+        if ($tagId = $this->_getTagId()) {
             try {
+                $model = Mage::registry('tagModel');
                 $model->deactivate();
                 $tag = Mage::getModel('tag/tag')->load($tagId)->aggregate();
-                Mage::getSingleton('tag/session')->addSuccess(Mage::helper('tag')->__('You tag was successfully deleted'));
+                Mage::getSingleton('tag/session')->addSuccess($this->__('You tag was successfully deleted'));
                 $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
                 return;
             } catch (Exception $e) {
-                Mage::getSingleton('tag/session')->addError(Mage::helper('tag')->__('Unable to remove tag. Please, try again later.'));
+                Mage::getSingleton('tag/session')->addError($this->__('Unable to remove tag. Please, try again later.'));
             }
-        } else {
-            $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
-            return;
+        }
+        else {
+            $this->_forward('noRoute');
         }
     }
 
@@ -126,68 +131,80 @@ class Mage_Tag_CustomerController extends Mage_Core_Controller_Front_Action
             return;
         }
 
-        $this->_redirectReferer();
+        $tagId      = (int) $this->getRequest()->getParam('tagId');
+        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+        $tagName    = (string) $this->getRequest()->getPost('tagName');
 
-        if( $post = $this->getRequest()->getPost() ) {
+        if (strlen($tagName) === 0) {
+            Mage::getSingleton('tag/session')->addError($this->__('Tag can\'t be empty.'));
+            $this->_redirect('*/*/edit', array('tagId'=>$tagId));
+            return;
+        }
+
+        if($tagId) {
             try {
-                $tagId = $this->getRequest()->getParam('tagId');
-                $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-                $tagName = $this->getRequest()->getParam('tagName');
-                $productId = 0;
-                $isNew = false;
-                $message = false;
+                $productId  = 0;
+                $isNew      = false;
+                $message    = false;
+                $storeId    = Mage::app()->getStore()->getId();
 
                 $tagModel = Mage::getModel('tag/tag');
                 $tagModel->load($tagId);
-                $storeId = Mage::app()->getStore()->getId();
+
                 if( $tagModel->getName() != $tagName ) {
                     $tagModel->loadByName($tagName);
 
-                    if( !$tagModel->getName() ) {
-                        $isNew = true;
-                        $message = Mage::helper('tag')->__('Thank you. Your tag has been accepted for moderation.');
+                    if($tagModel->getId()) {
+                        $status = $tagModel->getStatus();
+                    }
+                    else {
+                        $isNew  = true;
+                        $message= $this->__('Thank you. Your tag has been accepted for moderation.');
+                        $status = $tagModel->getPendingStatus();
                     }
 
                     $tagModel->setName($tagName)
-                            ->setStatus( ( $tagModel->getId() && $tagModel->getStatus() != $tagModel->getPendingStatus() ) ? $tagModel->getStatus() : $tagModel->getPendingStatus() )
-                            ->setStoreId($storeId)
-                            ->save();
+                        ->setStatus($status)
+                        ->setStoreId($storeId)
+                        ->save();
                 }
 
                 $tagRalationModel = Mage::getModel('tag/tag_relation');
                 $tagRalationModel->loadByTagCustomer(null, $tagId, $customerId, $storeId);
 
                 if ($tagRalationModel->getCustomerId() == $customerId ) {
-                    $productId = $tagRalationModel->getProductId();
+                    $productIds = $tagRalationModel->getProductIds();
                     if ($tagRalationModel->getTagId()!=$tagModel->getId()) {
-                        $tagRalationModel->setActive(0)->save();
+                        $tagRalationModel->deactivate();
                     } else {
                         $tagRalationModel->delete();
                     }
 
-                    $newTagRalationModel = Mage::getModel('tag/tag_relation')
-                        ->setTagId($tagModel->getId())
-                        ->setCustomerId(Mage::getSingleton('customer/session')->getCustomerId())
-                        ->setStoreId($storeId)
-                        ->setActive(1)
-                        ->setProductId($productId)
-                        ->save();
+                    foreach ($productIds as $productId) {
+                        $newTagRalationModel = Mage::getModel('tag/tag_relation')
+                            ->setTagId($tagModel->getId())
+                            ->setCustomerId($customerId)
+                            ->setStoreId($storeId)
+                            ->setActive(true)
+                            ->setProductId($productId)
+                            ->save();
+                    }
                 }
-
 
                 if( $tagModel->getId() ) {
                     $tagModel->aggregate();
-                    $this->getResponse()->setRedirect(Mage::getUrl('*/*/view', array('tagId' => $tagModel->getId())));
+                    $this->getResponse()->setRedirect(Mage::getUrl('*/*/'));
                 }
-
-                Mage::getSingleton('tag/session')
-                    ->addSuccess( ($message) ? $message : Mage::helper('tag')->__('You tag was successfully saved') );
+                $message = ($message) ? $message : $this->__('You tag was successfully saved');
+                Mage::getSingleton('tag/session')->addSuccess($message);
+                $this->_redirect('*/*/');
                 return;
             } catch (Exception $e) {
-                Mage::getSingleton('tag/session')
-                    ->addError(Mage::helper('tag')->__('Unable to save your tag. Please, try again later.') );
-                return;
+                Mage::getSingleton('tag/session')->addError(
+                    $this->__('Unable to save your tag. Please, try again later.')
+                );
             }
         }
+        $this->_redirectReferer();
     }
 }

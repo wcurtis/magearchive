@@ -141,5 +141,9 @@ class Mage_Adminhtml_Catalog_Product_Action_AttributeController extends Mage_Adm
     {
         return Mage::helper('adminhtml/catalog_product_edit_action_attribute');
     }
-
+    
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('catalog/attributes/attributes');
+    }
 }

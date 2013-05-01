@@ -25,7 +25,14 @@
  */
 class Mage_CatalogIndex_Model_Indexer extends Mage_Core_Model_Abstract
 {
+    const REINDEX_TYPE_ALL = 0;
+    const REINDEX_TYPE_PRICE = 1;
+    const REINDEX_TYPE_ATTRIBUTE = 2;
+
     protected $_indexers = array();
+
+    protected $_priceIndexers = array('price', 'tier_price', 'minimal_price');
+    protected $_attributeIndexers = array('eav');
 
     protected function _construct()
     {
@@ -115,7 +122,9 @@ class Mage_CatalogIndex_Model_Indexer extends Mage_Core_Model_Abstract
                                 $filter[$table] = $this->_getSelect();
                                 $filter[$table]->from($table, array('entity_id'));
                             }
-                            $filter[$table]->where('(attribute_id = ?', $attribute->getId());
+                            if ($indexer->isAttributeIdUsed()) {
+                                $filter[$table]->where('(attribute_id = ?', $attribute->getId());
+                            }
                             if (is_array($values[$code])) {
                                 if (isset($values[$code]['from']) && isset($values[$code]['to'])) {
 
@@ -155,27 +164,61 @@ class Mage_CatalogIndex_Model_Indexer extends Mage_Core_Model_Abstract
         return $this->_getResource()->getReadConnection()->select();
     }
 
-    public function index($product)
+    public function index($product, $reindexType = self::REINDEX_TYPE_ALL)
     {
+        Mage::getSingleton('catalogrule/observer')->flushPriceCache();
+        if ($product instanceof Mage_Catalog_Model_Product) {
+        	$productId = $product->getId();
+        } elseif (is_numeric($product)) {
+            $productId = $product;
+        } else {
+            Mage::throwException('Invalid product supplied');
+        }
+
         $stores = $this->_getStores();
         foreach ($stores as $store) {
             $product = Mage::getModel('catalog/product')
                 ->setStoreId($store->getId())
                 ->setWebsiteId($store->getWebsiteId())
-                ->load($product->getId());
+                ->load($productId);
 
-            $this->_runIndexingProcess($product);
+            $this->_runIndexingProcess($product, $reindexType);
         }
     }
 
 
-    protected function _runIndexingProcess(Mage_Catalog_Model_Product $product)
+    protected function _runIndexingProcess(Mage_Catalog_Model_Product $product, $reindexType = self::REINDEX_TYPE_ALL)
     {
-        foreach ($this->_indexers as $indexer) {
-            $indexer->cleanup($product->getId(), $product->getStoreId());
+        $indexableNames = array();
+        switch ($reindexType) {
+        	case self::REINDEX_TYPE_ATTRIBUTE:
+        		$indexableNames = $this->_attributeIndexers;
+        		break;
+        	case self::REINDEX_TYPE_PRICE:
+        		$indexableNames = $this->_priceIndexers;
+        		break;
+        	case self::REINDEX_TYPE_ALL:
+        		$indexableNames = array_merge($this->_attributeIndexers, $this->_priceIndexers);
+        		break;
+        	default:
+        		break;
         }
-        foreach ($this->_indexers as $indexer) {
-            $indexer->processAfterSave($product);
+
+        foreach ($this->_indexers as $name=>$indexer) {
+            if (in_array($name, $indexableNames)) {
+                $indexer->cleanup($product->getId(), $product->getStoreId());
+            }
+        }
+        foreach ($this->_indexers as $name=>$indexer) {
+            if (in_array($name, $indexableNames)){
+                $indexer->processAfterSave($product);
+            }
+        }
+    }
+
+    public function cleanup($product) {
+        foreach ($this->_indexers as $name=>$indexer) {
+            $indexer->cleanup($product->getId());
         }
     }
 
@@ -189,9 +232,10 @@ class Mage_CatalogIndex_Model_Indexer extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    public function reindex()
+    public function reindex($reindexType = self::REINDEX_TYPE_ALL)
     {
-        return;
+        Mage::getSingleton('catalogrule/observer')->flushPriceCache();
+
         $status = Mage_Catalog_Model_Product_Status::STATUS_ENABLED;
         $visibility = array(
             Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
@@ -205,25 +249,12 @@ class Mage_CatalogIndex_Model_Indexer extends Mage_Core_Model_Abstract
             ->addAttributeToFilter('visibility', $visibility);
         /* @var $collection Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection */
 
-        //$this->_addFilterableAttributesToCollection($emptyCollection);
-
-        $products = $this->_getResource()->getProductIds($collection->getAllIdsSql());
+        $products = $collection->getAllIds();
         foreach ($this->_getStores() as $store) {
             foreach ($products as $id) {
-                $product = Mage::getModel('catalog/product')->setData(array())->setStoreId($store->getId())->setWebsiteId($store->getWebsiteId())->load($id);
-                $this->_runIndexingProcess($product);
-                echo "<br />Store: {$store->getId()}";
-                echo "<br />Product: {$id}";
-                echo "<br /><br /><br />";
+                $product = Mage::getModel('catalog/product')->setStoreId($store->getId())->setWebsiteId($store->getWebsiteId())->load($id);
+                $this->_runIndexingProcess($product, $reindexType);
             }
-
-            /*
-            $collection = clone $emptyCollection;
-            $collection->setStore($store)->load();
-            foreach ($collection as $product) {
-                $this->_runIndexingProcess($product->setStoreId($store->getId()));
-            }
-            */
         }
     }
 
@@ -249,6 +280,53 @@ class Mage_CatalogIndex_Model_Indexer extends Mage_Core_Model_Abstract
                     $priceIndexer->getResource()->saveIndices(array($row), $storeId, $row['entity_id']);
                 }
             }
+        }
+    }
+
+    public function reindexPrices($product = null)
+    {
+        if (is_null($product))
+            $this->reindex(self::REINDEX_TYPE_PRICE);
+        else
+            $this->index($product, self::REINDEX_TYPE_PRICE);
+    }
+
+    public function reindexAttributes($attribute = null)
+    {
+        if (is_null($attribute))
+            $this->reindex(self::REINDEX_TYPE_ATTRIBUTE);
+    }
+
+
+    public function plainReindex()
+    {
+        $status = Mage_Catalog_Model_Product_Status::STATUS_ENABLED;
+        $visibility = array(
+            Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
+            Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG,
+            Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_SEARCH,
+        );
+
+        $priceAttributeCodes = $this->_indexers['price']->getIndexableAttributeCodes();
+        $attributeCodes = $this->_indexers['eav']->getIndexableAttributeCodes();
+
+        $this->_getResource()->clear();
+        foreach ($this->_getStores() as $store) {
+            $collection = Mage::getModel('catalog/product')
+                ->getCollection()
+                ->addAttributeToFilter('status', $status)
+                ->addAttributeToFilter('visibility', $visibility)
+                ->addStoreFilter($store);
+            /* @var $collection Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection */
+
+            $products = $collection->getAllIds();
+            if (!$products)
+                continue;
+
+            $this->_getResource()->reindexAttributes($products, $attributeCodes, $store);
+            $this->_getResource()->reindexPrices($products, $priceAttributeCodes, $store);
+            $this->_getResource()->reindexTiers($products, $store);
+            $this->_getResource()->reindexFinalPrices($products, $store);
         }
     }
 }

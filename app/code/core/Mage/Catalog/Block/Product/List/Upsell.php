@@ -36,11 +36,16 @@ class Mage_Catalog_Block_Product_List_Upsell extends Mage_Catalog_Block_Product_
 		$collection = Mage::registry('product')->getUpSellProductCollection()
 			->addAttributeToSelect('name')
             ->addAttributeToSelect('price')
+            ->addAttributeToSelect('special_price')
+            ->addAttributeToSelect('special_from_date')
+            ->addAttributeToSelect('special_to_date')
             ->addAttributeToSelect('image')
             ->addAttributeToSelect('small_image')
             ->addAttributeToSelect('thumbnail')
             ->addAttributeToSelect('tax_class_id')
 			->addAttributeToSort('position', 'asc')
+			->addStoreFilter()
+            ->addMinimalPrice()
 			->addExcludeProductFilter(Mage::getSingleton('checkout/cart')->getProductIds());
 
         Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);

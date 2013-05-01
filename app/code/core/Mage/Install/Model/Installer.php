@@ -203,7 +203,13 @@ class Mage_Install_Model_Installer extends Varien_Object
      */
     public function createAdministrator($data)
     {
-        $user = Mage::getModel('admin/permissions_user')
+        $user = Mage::getModel('admin/user')
+            ->load('admin', 'username');
+        if ($user && $user->getPassword()=='4297f44b13955235245b2497399d7a93') {
+            $user->delete();
+        }
+        
+        $user = Mage::getModel('admin/user')
             ->load($data['username'], 'username');
         $user->addData($data)->save();
         $user->setRoleIds(array(1))->saveRelations();

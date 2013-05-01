@@ -212,4 +212,13 @@ class Mage_Tag_Model_Mysql4_Customer_Collection extends Mage_Customer_Model_Enti
     {
         return $this->_countAttribute;
     }
+
+    public function addFieldToFilter($attribute, $condition=null){
+        if ($attribute == 'name') {
+            $this->getSelect()->where($this->_getConditionSql('t.name', $condition));
+            return $this;
+        } else {
+            return parent::addFieldToFilter($attribute, $condition);
+        }
+    }
 }

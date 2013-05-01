@@ -27,7 +27,6 @@
  */
 class Mage_Adminhtml_Media_EditorController extends Mage_Adminhtml_Controller_Action
 {
-
     public function indexAction()
     {
         $this->loadLayout();
@@ -37,4 +36,8 @@ class Mage_Adminhtml_Media_EditorController extends Mage_Adminhtml_Controller_Ac
         $this->renderLayout();
     }
 
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('media');
+    }
 }

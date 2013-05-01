@@ -38,7 +38,6 @@
 </head>
 
 <body id="html-body">
-<![if !IE]><table cellspacing="0" width="100%"><tr><td><![endif]>
 <div class="wrapper">
         <div class="header">
             <?php echo $this->getChildHtml('header') ?>
@@ -48,37 +47,31 @@
         <div class="middle" id="anchor-content">
             <div id="page:main-container">
             <?php if($this->getChildHtml('left')): ?>
-                <div class="<?php echo $this->getContainerCssClass() ?>" id="page:container">
-                    <table cellspacing="0" width="100%">
-                        <tr>
-                            <td class="side-col" id="page:left">
-                                <?php echo $this->getChildHtml('left') ?>
-                            </td>
-                            <td class="main-col" id="content">
-                                <div id="messages"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
-                                <?php echo $this->getChildHtml('content') ?>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+			
+				<div class="columns <?php echo $this->getContainerCssClass() ?>">	
+					<div class="side-col" id="page:left">
+						<?php echo $this->getChildHtml('left') ?>						
+					</div>
+					<div class="main-col" id="content">
+						<div class="main-col-inner">
+							<div id="messages"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+							<?php echo $this->getChildHtml('content') ?>					
+						</div>		
+					</div>				
+				</div>	
+			
             <?php else: ?>
                 <div id="messages"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
                 <?php echo $this->getChildHtml('content') ?>
             <?php endif; ?>
             </div>
         </div>
-
-
         <div class="footer">
             <?php echo $this->getChildHtml('footer') ?>
         </div>
-
-
-       </div>
-<![if !IE]></td></tr></table><![endif]>
-        <?php echo $this->getChildHtml('js') ?>
-
-<?php echo $this->getChildHtml('profiler') ?>
+    </div>
+    <?php echo $this->getChildHtml('js') ?>
+	<?php echo $this->getChildHtml('profiler') ?>
 <div id="loading-mask" style="display:none">
     <p class="loader" id="loading_mask_loader"><img src="<?php echo $this->getSkinUrl('images/ajax-loader-tr.gif') ?>" alt="<?php echo Mage::helper('adminhtml')->__('Loading...') ?>"/><br/><?php echo Mage::helper('adminhtml')->__('Please wait...') ?></p>
 </div>

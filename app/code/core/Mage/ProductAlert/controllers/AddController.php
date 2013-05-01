@@ -18,7 +18,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
 /**
  * ProductAlert controller
  *
@@ -42,63 +41,65 @@ class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
     public function priceAction()
     {
         $session = Mage::getSingleton('catalog/session');
-        /* @var $session Mage_Catalog_Model_Session */
-        if (!($backUrl = base64_decode($this->getRequest()->getParam(Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL)))) {
+        $backUrl    = $this->getRequest()->getParam(Mage_Core_Controller_Front_Action::PARAM_NAME_URL_ENCODED);
+        $productId  = (int) $this->getRequest()->getParam('product_id');
+        if (!$backUrl || !$productId) {
             $this->_redirect('/');
             return ;
         }
-        if (!$product = Mage::getModel('catalog/product')->load($this->getRequest()->getParam('product_id'))) {
+
+        $product = Mage::getModel('catalog/product')->load($productId);
+        if (!$product->getId()) {
             /* @var $product Mage_Catalog_Model_Product */
-            $session->addError(Mage::helper('productalert')->__('Not enough parameters'));
+            $session->addError($this->__('Not enough parameters'));
             $this->_redirectUrl($backUrl);
             return ;
         }
 
         try {
-            $helper = Mage::helper('productalert');
             $model  = Mage::getModel('productalert/price')
                 ->setCustomerId(Mage::getSingleton('customer/session')->getId())
                 ->setProductId($product->getId())
                 ->setPrice($product->getFinalPrice())
                 ->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
             $model->save();
-
-            $session->addSuccess(Mage::helper('productalert')->__('Alert subscription was saved successfully'));
+            $session->addSuccess($this->__('Alert subscription was saved successfully'));
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('productalert')->__('Please try again later'));
+            $session->addException($e, $this->__('Please try again later'));
         }
-        $this->_redirectUrl($backUrl);
+        $this->_redirectReferer();
     }
 
     public function stockAction()
     {
         $session = Mage::getSingleton('catalog/session');
         /* @var $session Mage_Catalog_Model_Session */
-        if (!($backUrl = base64_decode($this->getRequest()->getParam(Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL)))) {
+        $backUrl    = $this->getRequest()->getParam(Mage_Core_Controller_Front_Action::PARAM_NAME_URL_ENCODED);
+        $productId  = (int) $this->getRequest()->getParam('product_id');
+        if (!$backUrl || !$productId) {
             $this->_redirect('/');
             return ;
         }
-        if (!$product = Mage::getModel('catalog/product')->load($this->getRequest()->getParam('product_id'))) {
+
+        if (!$product = Mage::getModel('catalog/product')->load($productId)) {
             /* @var $product Mage_Catalog_Model_Product */
-            $session->addError(Mage::helper('productalert')->__('Not enough parameters'));
+            $session->addError($this->__('Not enough parameters'));
             $this->_redirectUrl($backUrl);
             return ;
         }
 
         try {
-            $helper = Mage::helper('productalert');
-            $model  = Mage::getModel('productalert/stock')
+            $model = Mage::getModel('productalert/stock')
                 ->setCustomerId(Mage::getSingleton('customer/session')->getId())
                 ->setProductId($product->getId())
                 ->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
             $model->save();
-
-            $session->addSuccess(Mage::helper('productalert')->__('Alert subscription was saved successfully'));
+            $session->addSuccess($this->__('Alert subscription was saved successfully'));
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('productalert')->__('Please try again later'));
+            $session->addException($e, $this->__('Please try again later'));
         }
-        $this->_redirectUrl($backUrl);
+        $this->_redirectReferer();
     }
 }

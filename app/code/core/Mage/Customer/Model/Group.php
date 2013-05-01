@@ -28,6 +28,8 @@ class Mage_Customer_Model_Group extends Mage_Core_Model_Abstract
     const NOT_LOGGED_IN_ID  = 0;
     const CUST_GROUP_ALL    = 32000;
 
+    protected static $_taxClassIds = array();
+
     protected function _construct()
     {
         $this->_init('customer/group');
@@ -51,6 +53,18 @@ class Mage_Customer_Model_Group extends Mage_Core_Model_Abstract
     public function getCode()
     {
         return $this->getCustomerGroupCode();
+    }
+
+    public function getTaxClassId($groupId=null)
+    {
+        if (!is_null($groupId)) {
+            if (empty(self::$_taxClassIds[$groupId])) {
+                $this->load($groupId);
+                self::$_taxClassIds[$groupId] = $this->getData('tax_class_id');
+            }
+            $this->setData('tax_class_id', self::$_taxClassIds[$groupId]);
+        }
+        return $this->getData('tax_class_id');
     }
 
 

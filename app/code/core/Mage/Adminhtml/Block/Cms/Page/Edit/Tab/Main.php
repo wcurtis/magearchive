@@ -56,6 +56,7 @@ class Mage_Adminhtml_Block_Cms_Page_Edit_Tab_Main extends Mage_Adminhtml_Block_W
             'label'     => Mage::helper('cms')->__('SEF URL Identifier'),
             'title'     => Mage::helper('cms')->__('SEF URL Identifier'),
             'required'  => true,
+            'class'     => 'validate-identifier',
             'after_element_html' => '<span class="hint">' . Mage::helper('cms')->__('(eg: domain.com/identifier)') . '</span>',
         ));
 

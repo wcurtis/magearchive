@@ -30,10 +30,11 @@ class Mage_Wishlist_Block_Customer_Sharing extends Mage_Core_Block_Template
 
     protected  $_enteredData = null;
 
-    public function __construct()
+    protected function _prepareLayout()
     {
-        $this->setTemplate('wishlist/sharing.phtml');
-        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('wishlist')->__('Wishlist Sharing'));
+        if ($headBlock = $this->getLayout()->getBlock('head')) {
+            $headBlock->setTitle($this->__('Wishlist Sharing'));
+        }
     }
 
     public function getSendUrl()
@@ -50,7 +51,7 @@ class Mage_Wishlist_Block_Customer_Sharing extends Mage_Core_Block_Template
         if(!$this->_enteredData || !isset($this->_enteredData[$key])) {
             return null;
         } else {
-            return htmlspecialchars($this->_enteredData[$key]);
+            return $this->htmlEscape($this->_enteredData[$key]);
         }
     }
 

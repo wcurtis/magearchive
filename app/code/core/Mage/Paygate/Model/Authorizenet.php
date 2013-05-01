@@ -58,7 +58,7 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canCapturePartial       = false;
-    protected $_canRefund               = true;
+    protected $_canRefund               = false;
     protected $_canVoid                 = true;
     protected $_canUseInternal          = true;
     protected $_canUseCheckout          = true;
@@ -128,8 +128,8 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
 
         if ($result->getResponseCode() == self::RESPONSE_CODE_APPROVED) {
             $payment->setStatus(self::STATUS_APPROVED);
-            $payment->setCcTransId($result->getTransactionId())
-                ->setLastTransId($result->getTransactionId());
+            //$payment->setCcTransId($result->getTransactionId());
+            $payment->setLastTransId($result->getTransactionId());
         }
         else {
             if ($result->getResponseReasonText()) {
@@ -241,6 +241,7 @@ class Mage_Paygate_Model_Authorizenet extends Mage_Payment_Model_Method_Cc
 
         if($payment->getAmount()){
             $request->setXAmount($payment->getAmount(),2);
+            $request->setXCurrencyCode($order->getBaseCurrencyCode());
         }
         switch ($payment->getAnetTransType()) {
             case self::REQUEST_TYPE_CREDIT:

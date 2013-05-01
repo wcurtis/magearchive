@@ -403,6 +403,27 @@ class Mage_Sales_Model_Order_Invoice extends Mage_Core_Model_Abstract
             $this->getOrder()->getBaseTotalInvoiced()+$this->getBaseGrandTotal()
         );
 
+        $this->getOrder()->setSubtotalInvoiced(
+            $this->getOrder()->getSubtotalInvoiced()+$this->getSubtotal()
+        );
+        $this->getOrder()->setBaseSubtotalInvoiced(
+            $this->getOrder()->getBaseSubtotalInvoiced()+$this->getBaseSubtotal()
+        );
+
+        $this->getOrder()->setTaxInvoiced(
+            $this->getOrder()->getTaxInvoiced()+$this->getTaxAmount()
+        );
+        $this->getOrder()->setBaseTaxInvoiced(
+            $this->getOrder()->getBaseTaxInvoiced()+$this->getBaseTaxAmount()
+        );
+
+        $this->getOrder()->setShippingInvoiced(
+            $this->getOrder()->getShippingInvoiced()+$this->getShippingAmount()
+        );
+        $this->getOrder()->setBaseShippingInvoiced(
+            $this->getOrder()->getBaseShippingInvoiced()+$this->getBaseShippingAmount()
+        );
+
         $state = $this->getState();
         if (is_null($state)) {
             $this->setState(self::STATE_OPEN);

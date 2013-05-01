@@ -44,7 +44,8 @@ class Mage_Adminhtml_Block_Report_Sales_Invoiced_Grid extends Mage_Adminhtml_Blo
         $this->addColumn('orders', array(
             'header'    =>Mage::helper('reports')->__('Number of Orders'),
             'index'     =>'orders',
-            'total'     =>'sum'
+            'total'     =>'sum',
+            'type'      =>'number'
         ));
 
         $currency_code = (string) Mage::app()->getStore((int)$this->getParam('store'))->getBaseCurrencyCode();

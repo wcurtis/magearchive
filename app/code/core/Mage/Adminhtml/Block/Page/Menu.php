@@ -27,12 +27,14 @@
 class Mage_Adminhtml_Block_Page_Menu extends Mage_Adminhtml_Block_Template
 {
     protected $_url;
+    const CACHE_TAGS = 'BACKEND_MAINMENU';
 
     protected function _construct()
     {
         parent::_construct();
         $this->setTemplate('page/menu.phtml');
         $this->_url = Mage::getModel('adminhtml/url');
+        $this->setCacheTags(array(self::CACHE_TAGS));
     }
 
     public function getCacheLifetime()
@@ -42,8 +44,10 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Adminhtml_Block_Template
 
     public function getCacheKey()
     {
+        // getting roles for current user, for now one role per user
+        $roles = implode('', Mage::getSingleton('admin/session')->getUser()->getRoles());
         $a = explode('/', $this->getActive());
-        return 'admin_top_nav_'.$a[0].'__'.Mage::app()->getLocale()->getLocaleCode();
+        return 'admin_top_nav_'.$a[0].'_'.$roles.'_'.Mage::app()->getLocale()->getLocaleCode();
     }
 
     public function getMenuArray()
@@ -78,8 +82,8 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Adminhtml_Block_Template
         $sortOrder = 0;
         foreach ($parent->children() as $childName=>$child) {
 
-			$aclResource = 'admin/'.$path.$childName;
-        	if (!$this->_checkAcl($aclResource)) {
+            $aclResource = 'admin/'.$path.$childName;
+            if (!$this->_checkAcl($aclResource)) {
                 continue;
             }
 
@@ -99,7 +103,7 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Adminhtml_Block_Template
                 $menuArr['url'] = '#';
                 $menuArr['click'] = 'return false';
             }
-			#print_r($this->getActive().','.$path.$childName."<hr>");
+            #print_r($this->getActive().','.$path.$childName."<hr>");
             $menuArr['active'] = ($this->getActive()==$path.$childName)
                 || (strpos($this->getActive(), $path.$childName.'/')===0);
 

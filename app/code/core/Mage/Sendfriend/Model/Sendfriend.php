@@ -40,7 +40,6 @@ class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
         $this->_init('sendfriend/sendfriend');
     }
 
-
     public function toOptionArray()
     {
         if(!$collection = Mage::registry('config_system_email_template')) {
@@ -83,13 +82,32 @@ class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
 
     }
 
-    public function canSend()
+    public function validate()
     {
+        $errors = array();
+        $helper = Mage::helper('sendfriend');
+
+        if (empty($this->_sender['name'])) {
+            $errors[] = $helper->__('Sender name can\'t be empty');
+        }
+
+        if (!isset($this->_sender['email']) || !Zend_Validate::is($this->_sender['email'], 'EmailAddress')) {
+            $errors[] = $helper->__('Invalid sender email');
+        }
+
+        if (empty($this->_sender['message'])) {
+            $errors[] = $helper->__('Message can\'t be empty');
+        }
+
+        foreach ($this->_emails as $email) {
+            if (!Zend_Validate::is($email, 'EmailAddress')) {
+                $errors[] = $helper->__('You input invalid email address for recipient');
+                break;
+            }
+        }
+
         if (!$this->canEmailToFriend()) {
-            Mage::throwException(
-                Mage::helper('sendfriend')
-                    ->__('You cannot email this product to a friend')
-            );
+            $errors[] = $helper->__('You cannot email this product to a friend');
         }
 
         if ($this->_getSendToFriendCheckType()) {
@@ -99,35 +117,27 @@ class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
         }
 
         if ($amount >= $this->getMaxSendsToFriend()){
-            Mage::throwException(
-                Mage::helper('sendfriend')
-                    ->__('You have exceeded limit of %d sends in an hour', $this->getMaxSendsToFriend())
-            );
+            $errors[] = $helper->__('You have exceeded limit of %d sends in an hour', $this->getMaxSendsToFriend());
         }
 
         $maxRecipients = $this->getMaxRecipients();
         if (count($this->_emails) > $maxRecipients) {
-            Mage::throwException(
-                Mage::helper('sendfriend')
-                    ->__('You cannot send more than %d emails at a time', $this->getMaxRecipients())
-            );
+            $errors[] = $helper->__('You cannot send more than %d emails at a time', $this->getMaxRecipients());
         }
 
         if (count($this->_emails) < 1) {
-            Mage::throwException(
-                Mage::helper('sendfriend')
-                    ->__('You have to specify at least one recipient')
-            );
+            $errors[] = $helper->__('You have to specify at least one recipient');
         }
 
         if (!$this->getTemplate()){
-            Mage::throwException(
-                Mage::helper('sendfriend')
-                    ->__('Email template is not specified by administrator')
-            );
+            $errors[] = $helper->__('Email template is not specified by administrator');
         }
 
-        return true;
+
+        if (empty($errors)) {
+            return true;
+        }
+        return $errors;
     }
 
     public function setIp($ip)
@@ -202,25 +212,6 @@ class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
         return true;
     }
 
-    private function _sendOne($email, $name){
-        $email = trim($email);
-
-        $vars = array(
-           'senderName' => strip_tags($this->_sender['name']),
-           'senderEmail' => strip_tags($this->_sender['email']),
-           'receiverName' => strip_tags($name),
-           'receiverEmail' => strip_tags($email),
-           'product' => $this->_product,
-           'message' => strip_tags($this->_sender['message'])
-           );
-
-        if (!$this->_emailModel->send(strip_tags($email), strip_tags($name), $vars)){
-            return false;
-        }
-
-        return true;
-    }
-
     /**
      * Get check type for "Send to Friend" function
      *
@@ -267,6 +258,14 @@ class Mage_Sendfriend_Model_Sendfriend extends Mage_Core_Model_Abstract
     private function _deleteLogsBefore($time)
     {
         $this->_getResource()->deleteLogsBefore($time);
+        return $this;
+    }
+
+    public function register()
+    {
+        if (!Mage::registry('send_to_friend_model')) {
+            Mage::register('send_to_friend_model', $this);
+        }
         return $this;
     }
 }

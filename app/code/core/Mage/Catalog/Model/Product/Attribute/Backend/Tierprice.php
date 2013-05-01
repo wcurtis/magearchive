@@ -82,7 +82,15 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Tierprice extends Mage_Catalo
             }
             if ($data[$i]['website_id'] == 0) {
                 $rate = Mage::app()->getStore()->getBaseCurrency()->getRate(Mage::app()->getBaseCurrencyCode());
-                $data[$i]['website_price'] = $data[$i]['price']/$rate;
+                if ($rate) {
+                    $data[$i]['website_price'] = $data[$i]['price']/$rate;
+                }
+                else {
+                    /**
+                     * Remove tier price if rate not available
+                     */
+                    unset($data[$i]);
+                }
             }
             else {
                 $data[$i]['website_price'] = $data[$i]['price'];

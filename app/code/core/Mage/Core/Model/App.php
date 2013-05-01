@@ -507,7 +507,7 @@ class Mage_Core_Model_App
             return $this->_store;
         }
 
-        if (is_null($id) || ''===$id) {
+        if (is_null($id) || ''===$id || $id === true) {
             $id = $this->_currentStore ? $this->_currentStore : 'default';
         }
         if ($id instanceof Mage_Core_Model_Store) {
@@ -747,6 +747,7 @@ class Mage_Core_Model_App
     {
         if ($id) {
             $id = strtoupper($id);
+            $id = preg_replace('/([^a-zA-Z0-9_]{1,1})/', '_', $id);
         }
         return $id;
     }
@@ -758,23 +759,12 @@ class Mage_Core_Model_App
      * @param   array $tags
      * @return  array
      */
-    protected function _getCacheIdTags($id, $tags=array())
+    protected function _getCacheTags($tags=array())
     {
-        return $tags;
-/*
-        $idTags = explode('_', $id);
-
-        $first = true;
-        foreach ($idTags as $tag) {
-            $newTag = $first ? $tag : $newTag . '_' . $tag;
-            if (!in_array($newTag, $tags)) {
-                $tags[] = $newTag;
-            }
-            $first = false;
+        foreach ($tags as $index=>$value) {
+        	$tags[$index] = $this->_getCacheId($value);
         }
-
         return $tags;
-*/
     }
 
     /**
@@ -785,23 +775,27 @@ class Mage_Core_Model_App
     public function getCache()
     {
         if (!$this->_cache) {
-            $this->_cache = Zend_Cache::factory('Core', 'File',
+            $backend = strtolower((string)Mage::getConfig()->getNode('global/cache/backend'));
+            if (extension_loaded('apc') && ini_get('apc.enabled') && $backend=='apc') {
+                $backend = 'Apc';
+                $backendAttributes = array();
+            } else {
+                $backend = 'File';
+                $backendAttributes = array(
+                    'cache_dir'=>Mage::getBaseDir('cache'),
+                    'hashed_directory_level'=>1,
+                    'hashed_directory_umask'=>0777,
+                    'file_name_prefix'=>'mage',
+                );
+            }
+            $this->_cache = Zend_Cache::factory('Core', $backend,
                 array(
                     'caching'=>true,
                     'lifetime'=>7200,
                     'automatic_cleaning_factor'=>0,
                 ),
-                array(
-                    'cache_dir'=>Mage::getBaseDir('cache'),
-                    'hashed_directory_level'=>1,
-                    'hashed_directory_umask'=>0777,
-                    'file_name_prefix'=>'mage',
-                )
+                $backendAttributes
             );
-//            $this->_cache = Zend_Cache::factory('Core', 'Apc',
-//                array('caching'=>true, 'lifetime'=>7200),
-//                array()
-//            );
         }
         return $this->_cache;
     }
@@ -827,7 +821,9 @@ class Mage_Core_Model_App
      */
     public function saveCache($data, $id, $tags=array(), $lifeTime=false)
     {
-        $this->getCache()->save((string)$data, $this->_getCacheId($id), $this->_getCacheIdTags($id, $tags), $lifeTime);
+        $tags = $this->_getCacheTags($tags);
+#echo "TEST:"; print_r($tags);
+        $this->getCache()->save((string)$data, $this->_getCacheId($id), $tags, $lifeTime);
         return $this;
     }
 
@@ -855,6 +851,9 @@ class Mage_Core_Model_App
             if (!is_array($tags)) {
                 $tags = array($tags);
             }
+            $tags = $this->_getCacheTags($tags);
+
+#echo "TEST:"; print_r($tags);
             $this->getCache()->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, $tags);
         } else {
             $useCache = $this->useCache();
@@ -899,6 +898,19 @@ class Mage_Core_Model_App
         } else {
             return isset($this->_useCache[$type]) ? (bool)$this->_useCache[$type] : false;
         }
+    }
+
+    /**
+     * Deletes all session files
+     *
+     */
+    public function cleanAllSessions()
+    {
+        if (session_module_name()=='files') {
+            $dir = session_save_path();
+            mageDelTree($dir);
+        }
+        return $this;
     }
 
     /**

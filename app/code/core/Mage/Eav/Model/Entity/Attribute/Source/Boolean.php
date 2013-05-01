@@ -23,7 +23,7 @@ class Mage_Eav_Model_Entity_Attribute_Source_Boolean extends Mage_Eav_Model_Enti
 {
     public function getAllOptions()
     {
-        if (!$this->_options) {
+        if (is_null($this->_options)) {
             $this->_options = array(
                 array(
                     'label' => Mage::helper('eav')->__('Yes'),
@@ -36,5 +36,22 @@ class Mage_Eav_Model_Entity_Attribute_Source_Boolean extends Mage_Eav_Model_Enti
             );
         }
         return $this->_options;
+    }
+
+    /**
+     * Get a text for option value
+     *
+     * @param string|integer $value
+     * @return string
+     */
+    public function getOptionText($value)
+    {
+        $options = $this->getAllOptions();
+        foreach ($options as $option) {
+            if ($option['value'] == $value) {
+                return $option['label'];
+            }
+        }
+        return false;
     }
 }

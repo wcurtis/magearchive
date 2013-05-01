@@ -41,4 +41,8 @@ class Mage_Adminhtml_Media_UploaderController extends Mage_Adminhtml_Controller_
         $this->renderLayout();
     }
 
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('media');
+    }
 }

@@ -36,6 +36,7 @@ class Mage_Adminhtml_Helper_Media_Js extends Mage_Core_Helper_Js
             'Upload Security Error' => $this->__('Upload Security Error'),
             'Upload HTTP Error'     => $this->__('Upload HTTP Error'),
             'Upload I/O Error'     => $this->__('Upload I/O Error'),
+            'SSL Error: Invalid or self-signed sertificate'     => $this->__('SSL Error: Invalid or self-signed sertificate'),
             'Tb' => $this->__('Tb'),
             'Gb' => $this->__('Gb'),
             'Mb' => $this->__('Mb'),

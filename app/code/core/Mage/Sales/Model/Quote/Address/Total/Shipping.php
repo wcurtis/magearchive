@@ -82,7 +82,7 @@ class Mage_Sales_Model_Quote_Address_Total_Shipping extends Mage_Sales_Model_Quo
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
         $amount = $address->getShippingAmount();
-        if ($amount!=0) {
+        if ($amount!=0 || $address->getShippingDescription()) {
             $address->addTotal(array(
                 'code'=>$this->getCode(),
                 'title'=>Mage::helper('sales')->__('Shipping & Handling').' ('.$address->getShippingDescription().')',

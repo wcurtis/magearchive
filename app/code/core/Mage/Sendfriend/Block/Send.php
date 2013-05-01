@@ -21,26 +21,37 @@
 
 class Mage_Sendfriend_Block_Send extends Mage_Core_Block_Template
 {
-	public function __construct(){
-		parent::__construct();
-	}
-
 	/**
      * Retrieve username for form field
      *
      * @return string
      */
-
     public function getUserName()
     {
-    	$firstName =(string)Mage::getSingleton('customer/session')->getCustomer()->getfirstname();
-    	$lastName = (string)Mage::getSingleton('customer/session')->getCustomer()->getlastname();
+        if ($name = $this->getFormData()->getData('sender/name')) {
+            return $name;
+        }
+    	$firstName =(string)Mage::getSingleton('customer/session')->getCustomer()->getFirstname();
+    	$lastName = (string)Mage::getSingleton('customer/session')->getCustomer()->getLastname();
         return $firstName.' '.$lastName;
     }
 
     public function getEmail()
     {
-    	return (string)Mage::getSingleton('customer/session')->getCustomer()->getEmail();
+        if ($email = $this->getFormData()->getData('sender/email')) {
+            return $email;
+        }
+    	return (string) Mage::getSingleton('customer/session')->getCustomer()->getEmail();
+    }
+
+    public function getFormData()
+    {
+        $data = $this->getData('form_data');
+        if (is_null($data)) {
+            $data = new Varien_Object(Mage::getSingleton('catalog/session')->getFormData(true));
+            $this->setFormData($data);
+        }
+        return $data;
     }
 
     public function getProductId()

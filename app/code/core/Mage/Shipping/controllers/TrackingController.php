@@ -67,7 +67,7 @@ class Mage_Shipping_TrackingController extends Mage_Core_Controller_Front_Action
 
         $order = Mage::getModel('sales/order')->load($id);
 
-        if (!$order->getId()) {
+        if (!$order->getId() || !$order->belongsToCurrentCustomer()) {
             return false;
         }
         return $order;

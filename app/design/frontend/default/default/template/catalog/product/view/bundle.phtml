@@ -36,7 +36,7 @@
     <div class="product-essential">
         <div class="product-img-box">
             <p class="main-product-img">
-                <img id="image" src="<?php echo $this->helper('catalog/image')->init($_product, 'image'); ?>" alt="<?php echo $_product->getName() ?>"/>
+                <img id="image" src="<?php echo $this->helper('catalog/image')->init($_product, 'image'); ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>"/>
             </p>
             <div class="image-zoom" id="track_outer">
                 <img id="zoom_out" src="<?php echo $this->getSkinUrl('images/slider_btn_zoom_out.gif') ?>" alt="<?php echo $this->__('Zoom Out') ?>" class="btn-zoom-out"/>
@@ -66,7 +66,7 @@
        <?php endif; ?>
        </div>
        <div class="product-shop">
-       <h3 class="product-name"><?php echo $_product->getName() ?></h3>
+       <h3 class="product-name"><?php echo $this->htmlEscape($_product->getName()) ?></h3>
             <?php echo $this->getHelper('review/helper')->getSummaryHtml($_product, null, 1) ?>
             <form action="<?php echo $this->getUrl('checkout/cart/add') ?>" method="post" id="product_addtocart_form">
             <fieldset>

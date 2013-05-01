@@ -35,11 +35,13 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
      * @param   Mage_Catalog_Model_Product $product
      * @return  double
      */
-    public function getPricingValue($value, $product)
+    public function getPricingValue($value, $product, $qty = null)
     {
         if($value['is_percent']) {
             $ratio = $value['pricing_value']/100;
-            $price = $product->getPrice() * $ratio;
+            $price = $this->_applyTierPrice($product, $qty, $product->getPrice());
+            $price = $this->_applySpecialPrice($product, $price);
+            $price = $price * $ratio;
         } else {
             $price = $value['pricing_value'];
         }
@@ -75,9 +77,10 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
                 return $product->getPrice();
             }
             return array(array(
-                'price'      => $product->getPrice(),
-                'price_qty'  => 1,
-                'cust_group' => $allGroups,
+                'price'         => $product->getPrice(),
+                'website_price' => $product->getPrice(),
+                'price_qty'     => 1,
+                'cust_group'    => $allGroups,
             ));
         }
 
@@ -182,7 +185,6 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
             $finalPrice = $product->getSuperProduct()->getFinalPrice($qty);
             $product->getSuperProduct()->getTypeInstance()->setStoreFilter($product->getStore());
             $attributes = $product->getSuperProduct()->getTypeInstance()->getConfigurableAttributes();
-
             foreach ($attributes as $attribute) {
                 $value = $this->getValueByIndex(
                     $attribute->getPrices() ? $attribute->getPrices() : array(),
@@ -190,7 +192,7 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
                 );
                 if($value) {
                     if($value['pricing_value'] != 0) {
-                        $finalPrice += $product->getSuperProduct()->getPricingValue($value);
+                        $finalPrice += $product->getSuperProduct()->getPricingValue($value, $qty);
                     }
                 }
             }
@@ -201,23 +203,9 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
         else {
             $finalPrice = $product->getPrice();
 
-            $tierPrice  = $product->getTierPrice($qty);
-            if (is_numeric($tierPrice)) {
-                $finalPrice = min($finalPrice, $tierPrice);
-            }
+            $finalPrice = $this->_applyTierPrice($product, $qty, $finalPrice);
 
-            $specialPrice = $product->getSpecialPrice();
-            if (is_numeric($specialPrice)) {
-                $today = floor(time()/86400)*86400;
-#echo " TEST:"; echo date('Y-m-d H:i:s', $today).' , '.$product->getSpecialToDate();
-                if ($product->getSpecialFromDate() && $today < strtotime($product->getSpecialFromDate())) {
-#echo ' test1: '.$product->getSpecialFromDate();
-                } elseif ($product->getSpecialToDate() && $today > strtotime($product->getSpecialToDate())) {
-#echo ' test2: '.$product->getSpecialToDate();
-                } else {
-                   $finalPrice = min($finalPrice, $specialPrice);
-                }
-            }
+            $finalPrice = $this->_applySpecialPrice($product, $finalPrice);
         }
 
         $product->setFinalPrice($finalPrice);
@@ -259,5 +247,41 @@ class Mage_Catalog_Model_Product_Price extends Varien_Object
             }
         }
         return false;
+    }
+
+    /**
+     * apply special price for product if not return
+     * price that was before
+     *
+     */
+    protected function _applySpecialPrice($product, $finalPrice)
+    {
+        $specialPrice = $product->getSpecialPrice();
+        if (is_numeric($specialPrice)) {
+            $today = floor(time()/86400)*86400;
+            $from = floor(strtotime($product->getSpecialFromDate())/86400)*86400;
+            $to = floor(strtotime($product->getSpecialToDate())/86400)*86400;
+
+            if ($product->getSpecialFromDate() && $today < $from) {
+            } elseif ($product->getSpecialToDate() && $today > $to) {
+            } else {
+               $finalPrice = min($finalPrice, $specialPrice);
+            }
+        }
+        return $finalPrice;
+    }
+
+    /**
+     * apply tier price for product if not return
+     * price that was before
+     *
+     */
+    protected function _applyTierPrice($product, $qty, $finalPrice)
+    {
+        $tierPrice  = $product->getTierPrice($qty);
+        if (is_numeric($tierPrice)) {
+            $finalPrice = min($finalPrice, $tierPrice);
+        }
+        return $finalPrice;
     }
 }

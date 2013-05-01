@@ -80,6 +80,17 @@
    </global>
 
    <frontend>
+      <events>
+          <catalog_controller_product_view>
+              <observers>
+                  <reports>
+                      <type>singleton</type>
+                      <class>sendfriend/sendfriend</class>
+                      <method>register</method>
+                  </reports>
+              </observers>
+          </catalog_controller_product_view>
+      </events>
       <routers>
          <sendfriend>
             <use>standard</use>

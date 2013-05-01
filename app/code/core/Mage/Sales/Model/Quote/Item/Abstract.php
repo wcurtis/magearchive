@@ -120,7 +120,12 @@ abstract class Mage_Sales_Model_Quote_Item_Abstract extends Mage_Core_Model_Abst
      */
     public function calcTaxAmount()
     {
-        if (Mage::getStoreConfig('sales/tax/apply_after_discount', $this->getQuote()->getStoreId())) {
+        $store = $this->getStore();
+
+        //$priceIncludesTax = Mage::getStoreConfig('sales/tax/price_includes_tax', $store);
+        $taxAfterDiscount = Mage::getStoreConfig('sales/tax/apply_after_discount', $store);
+
+        if (/*!$priceIncludesTax && */$taxAfterDiscount) {
             $rowTotal       = $this->getRowTotalWithDiscount();
             $rowBaseTotal   = $this->getBaseRowTotalWithDiscount();
         }
@@ -129,10 +134,18 @@ abstract class Mage_Sales_Model_Quote_Item_Abstract extends Mage_Core_Model_Abst
             $rowBaseTotal   = $this->getBaseRowTotal();
         }
 
-        $tax    = $rowTotal * $this->getTaxPercent()/100;
-        $baseTax= $rowBaseTotal * $this->getTaxPercent()/100;
-        $this->setTaxAmount($this->getStore()->roundPrice($tax));
-        $this->setBaseTaxAmount($this->getStore()->roundPrice($baseTax));
+        $taxPercent = $this->getTaxPercent()/100;
+        $this->setTaxAmount($store->roundPrice($rowTotal * $taxPercent));
+        $this->setBaseTaxAmount($store->roundPrice($rowBaseTotal * $taxPercent));
+/*
+        if ($priceIncludesTax) {
+            $this->setRowTotal($rowTotal-$this->getTaxAmount());
+            $this->setBaseRowTotal($rowBaseTotal-$this->getBaseTaxAmount());
+
+            $this->setPrice($store->roundPrice($this->getPrice()*(1-$taxPercent)));
+            $this->setBasePrice($store->roundPrice($this->getBasePrice()*(1-$taxPercent)));
+        }
+*/
         return $this;
     }
 

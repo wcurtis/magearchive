@@ -38,6 +38,7 @@ class Mage_Catalog_Block_Product_List_Related extends Mage_Catalog_Block_Product
             ->addAttributeToSelect('thumbnail')
             ->addAttributeToSelect('tax_class_id')
             ->addAttributeToSort('position', 'asc')
+            ->addStoreFilter()
             ->addExcludeProductFilter(Mage::getSingleton('checkout/cart')->getProductIds());
 
         Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);

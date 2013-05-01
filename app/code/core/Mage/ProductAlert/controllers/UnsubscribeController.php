@@ -41,13 +41,19 @@ class Mage_ProductAlert_UnsubscribeController extends Mage_Core_Controller_Front
 
     public function priceAction()
     {
-        $session = Mage::getSingleton('catalog/session');
-        /* @var $session Mage_Catalog_Model_Session */
+        $productId  = (int) $this->getRequest()->getParam('product');
 
-        if (!$product = Mage::getModel('catalog/product')->load($this->getRequest()->getParam('product'))) {
+        if (!$productId) {
+            $this->_redirect('');
+            return;
+        }
+        $session    = Mage::getSingleton('catalog/session');
+
+        /* @var $session Mage_Catalog_Model_Session */
+        $product = Mage::getModel('catalog/product')->load($productId);
+        if (!$product->getId() || !$product->isVisibleInCatalog()) {
             /* @var $product Mage_Catalog_Model_Product */
-            $session = Mage::getSingleton('customer/session');
-            $session->addError(Mage::helper('productalert')->__('Product not found'));
+            Mage::getSingleton('customer/session')->addError($this->__('Product not found'));
             $this->_redirect('customer/account/');
             return ;
         }
@@ -62,10 +68,10 @@ class Mage_ProductAlert_UnsubscribeController extends Mage_Core_Controller_Front
                 $model->delete();
             }
 
-            $session->addSuccess(Mage::helper('productalert')->__('Alert subscription was deleted successfully'));
+            $session->addSuccess($this->__('Alert subscription was deleted successfully'));
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('productalert')->__('Please try again later'));
+            $session->addException($e, $this->__('Please try again later'));
         }
         $this->_redirectUrl($product->getProductUrl());
     }
@@ -76,25 +82,33 @@ class Mage_ProductAlert_UnsubscribeController extends Mage_Core_Controller_Front
         /* @var $session Mage_Customer_Model_Session */
 
         try {
-            Mage::getModel('productalert/price')
-                ->deleteCustomer($session->getCustomerId(), Mage::app()->getStore()->getWebsiteId());
-            $session->addSuccess(Mage::helper('productalert')->__('You will no longer receive price alerts for this product'));
+            Mage::getModel('productalert/price')->deleteCustomer(
+                $session->getCustomerId(),
+                Mage::app()->getStore()->getWebsiteId()
+            );
+            $session->addSuccess($this->__('You will no longer receive price alerts for this product'));
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('productalert')->__('Please try again later'));
+            $session->addException($e, $this->__('Please try again later'));
         }
         $this->_redirect('customer/account/');
     }
 
     public function stockAction()
     {
+        $productId  = (int) $this->getRequest()->getParam('product');
+
+        if (!$productId) {
+            $this->_redirect('');
+            return;
+        }
+
         $session = Mage::getSingleton('catalog/session');
         /* @var $session Mage_Catalog_Model_Session */
-
-        if (!$product = Mage::getModel('catalog/product')->load($this->getRequest()->getParam('product'))) {
-            /* @var $product Mage_Catalog_Model_Product */
-            $session = Mage::getSingleton('customer/session');
-            $session->addError(Mage::helper('productalert')->__('Product not found'));
+        $product = Mage::getModel('catalog/product')->load($productId);
+        /* @var $product Mage_Catalog_Model_Product */
+        if (!$product->getId() || !$product->isVisibleInCatalog()) {
+            Mage::getSingleton('customer/session')->addError($this->__('Product not found'));
             $this->_redirect('customer/account/');
             return ;
         }
@@ -108,11 +122,10 @@ class Mage_ProductAlert_UnsubscribeController extends Mage_Core_Controller_Front
             if ($model->getId()) {
                 $model->delete();
             }
-
-            $session->addSuccess(Mage::helper('productalert')->__('You will no longer receive stock alerts for this product'));
+            $session->addSuccess($this->__('You will no longer receive stock alerts for this product'));
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('productalert')->__('Please try again later'));
+            $session->addException($e, $this->__('Please try again later'));
         }
         $this->_redirectUrl($product->getProductUrl());
     }
@@ -123,12 +136,14 @@ class Mage_ProductAlert_UnsubscribeController extends Mage_Core_Controller_Front
         /* @var $session Mage_Customer_Model_Session */
 
         try {
-            Mage::getModel('productalert/stock')
-                ->deleteCustomer($session->getCustomerId(), Mage::app()->getStore()->getWebsiteId());
-            $session->addSuccess(Mage::helper('productalert')->__('You will no longer receive stock alerts'));
+            Mage::getModel('productalert/stock')->deleteCustomer(
+                $session->getCustomerId(),
+                Mage::app()->getStore()->getWebsiteId()
+            );
+            $session->addSuccess($this->__('You will no longer receive stock alerts'));
         }
         catch (Exception $e) {
-            $session->addException($e, Mage::helper('productalert')->__('Please try again later'));
+            $session->addException($e, $this->__('Please try again later'));
         }
         $this->_redirect('customer/account/');
     }

@@ -15,7 +15,9 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /* Clearing */
-
+.columns,
+.main-col,
+.field-row,
 .nav-bar,
 ul.tabs-horiz,
 dl.accordion dt,
@@ -40,7 +42,7 @@ ul.tabs li,
 .clear                          { clear:both; height:0; font-size:0; line-height:0; overflow:hidden; }
 
 /* Scalable Button Override */
-button                          { width:auto; margin-left:5px; overflow:visible; }
+button, .form-button            { width:auto; margin-left:5px; overflow:visible; }
 .massaction button              { width:auto; height: 20px; margin-left:0px; overflow:hidden; }
 
 /* Grid Filter Override */
@@ -54,7 +56,9 @@ div.collapseable a               { width:100%; }
 .product-image-gallery .grid tbody td { padding: 4px !important; }
 .massaction .entry-edit fieldset{ float: right;}
 .massaction .entry-edit fieldset  button.scalable {text-align:center!important; padding-left:0;padding-right:0; margin-top:1px;}
-.content-header {height:1%;}
+.content-header {zoom:1;}
+
+#tree-div {overflow-x:auto!important; height:auto!important; overflow-y:hidden!important; padding-bottom:30px;}
 
 #nav ul li, #nav ul li.active {
 	float:left;
@@ -62,3 +66,6 @@ div.collapseable a               { width:100%; }
 	width:185px;
     }
 
+.hor-scroll {overflow-x:auto; overflow-y:hidden; padding-bottom:20px;}
+
+	

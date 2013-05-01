@@ -134,4 +134,9 @@ class Mage_Rule_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Coll
         }
         return $this;
     }
+
+    protected function _afterLoad()
+    {
+        $this->walk('afterLoad');
+    }
 }

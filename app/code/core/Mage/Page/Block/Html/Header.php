@@ -26,51 +26,45 @@
  */
 class Mage_Page_Block_Html_Header extends Mage_Core_Block_Template
 {
-    public function __construct() 
+    public function _construct()
     {
-        parent::__construct();
         $this->setTemplate('page/html/header.phtml');
     }
 
     public function setLogo($logo_src, $logo_alt)
     {
-        $this->_logo_src = $logo_src;
-        $this->_logo_alt = $logo_alt;
+        $this->setLogoSrc($logo_src);
+        $this->setLogoAlt($logo_alt);
         return $this;
     }
-    
+
     public function getLogoSrc()
     {
-        if (!$this->_logo_src) {
-            $this->_logo_src = Mage::getStoreConfig('design/header/logo_src');
+        if (empty($this->_data['logo_src'])) {
+            $this->_data['logo_src'] = Mage::getStoreConfig('design/header/logo_src');
         }
-        return $this->getSkinUrl($this->_logo_src);
+        return $this->getSkinUrl($this->_data['logo_src']);
     }
 
     public function getLogoAlt()
     {
-        if (!$this->_logo_alt) {
-            $this->_logo_alt = Mage::getStoreConfig('design/header/logo_alt');
+        if (empty($this->_data['logo_alt'])) {
+            $this->_data['logo_alt'] = Mage::getStoreConfig('design/header/logo_alt');
         }
-        return $this->_logo_alt;
+        return $this->_data['logo_alt'];
     }
-    
-    public function setWelcome($welcome)
-    {
-        $this->_welcome = $welcome;
-        return $this;
-    }
-    
+
     public function getWelcome()
     {
-        if (Mage::app()->isInstalled() && !$this->_welcome && Mage::getSingleton('customer/session')->isLoggedIn()) {
-            $this->_welcome = $this->__('Welcome, %s!', Mage::getSingleton('customer/session')->getCustomer()->getName());
+        if (empty($this->_data['welcome'])) {
+            if (Mage::app()->isInstalled() && Mage::getSingleton('customer/session')->isLoggedIn()) {
+                $this->_data['welcome'] = $this->__('Welcome, %s!', Mage::getSingleton('customer/session')->getCustomer()->getName());
+            } else {
+                $this->_data['welcome'] = Mage::getStoreConfig('design/header/welcome');
+            }
         }
-        elseif (!$this->_welcome) {
-            $this->_welcome = Mage::getStoreConfig('design/header/welcome');
-        }
-            
-        return $this->_welcome;
+
+        return $this->_data['welcome'];
     }
 
 }

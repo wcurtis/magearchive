@@ -21,8 +21,8 @@
 /**
  * Customer reviews controller
  *
- * @category   Mage
- * @package    Mage_Review
+ * @category    Mage
+ * @package     Mage_Review
  */
 
 class Mage_Review_CustomerController extends Mage_Core_Controller_Front_Action

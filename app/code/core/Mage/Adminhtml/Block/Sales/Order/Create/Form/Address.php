@@ -118,6 +118,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
 
     public function getAddressAsString($address)
     {
-        return $address->toString('{{firstname}} {{lastname}}, {{street}}, {{city}}, {{region}} {{postcode}}');
+        return $address->format('oneline');
     }
 }

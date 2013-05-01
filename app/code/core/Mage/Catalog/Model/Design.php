@@ -21,24 +21,30 @@
 
 class Mage_Catalog_Model_Design extends Mage_Core_Model_Abstract
 {
+    const APPLY_FOR_PRODUCT     = 1;
+    const APPLY_FOR_CATEGORY    = 2;
+
     public function applyDesign($object, $calledFrom = 0)
     {
-        $error = 0;
-        $package = $theme = "";
-        $design = $object->getCustomDesign();
-        $date = $object->getCustomDesignDate();
-        $application = $object->getCustomDesignApply();
+        $error      = 0;
+        $package    = '';
+        $theme      = '';
+        $design     = $object->getCustomDesign();
+        $date       = $object->getCustomDesignDate();
+        $application= $object->getCustomDesignApply();
 
-        if ($design){
-            @list($package, $theme) = explode("/", $design);
+        $designInfo = explode("/", $design);
+        if (count($designInfo) > 1){
+            $package= $designInfo[0];
+            $theme  = $designInfo[1];
         }
 
         switch ($calledFrom) {
-            case 1:
+            case self::APPLY_FOR_PRODUCT:
                 $calledFrom = 3;
                 break;
 
-            case 2:
+            case self::APPLY_FOR_CATEGORY:
                 $calledFrom = 4;
                 break;
 
@@ -64,8 +70,8 @@ class Mage_Catalog_Model_Design extends Mage_Core_Model_Abstract
         }
 
         if ($package && $theme) {
-            $date['from'] = strtotime($date['from']);
-            $date['to'] = strtotime($date['to']);
+            $date['from']   = strtotime($date['from']);
+            $date['to']     = strtotime($date['to']);
 
             if ($date['from'] && $date['from'] > strtotime("today")) {
                 $error = 1;

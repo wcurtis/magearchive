@@ -28,7 +28,7 @@ require_once 'Zend/Validate/Interface.php';
  * @package    Zend_Form
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Form.php 8633 2008-03-07 17:54:43Z matthew $
+ * @version    $Id: Form.php 8980 2008-03-21 21:04:51Z matthew $
  */
 class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
 {
@@ -206,7 +206,19 @@ class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
             $this->setConfig($options);
         }
 
+        // Extensions...
+        $this->init();
+
         $this->loadDefaultDecorators();
+    }
+
+    /**
+     * Initialize form (used by extending classes)
+     * 
+     * @return void
+     */
+    public function init()
+    {
     }
 
     /**

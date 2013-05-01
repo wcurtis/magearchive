@@ -42,6 +42,8 @@ AdminOrder.prototype = {
     setCustomerId : function(id){
         this.customerId = id;
         this.loadArea('header', true);
+        $('back_order_top_button').hide();
+        $('reset_order_top_button').show();
         this.customerSelectorHide();
         this.storeSelectorShow();
     },
@@ -112,14 +114,14 @@ AdminOrder.prototype = {
             data = this.serializeData(this.shippingAddressContainer)
         }
 
-        if(name == 'postcode' || name == 'country_id'){
+        if(name == 'postcode' || name == 'country_id' || name == 'region_id'){
             if( (type == 'billing' && this.shippingAsBilling)
                 || (type == 'shipping' && !this.shippingAsBilling) ) {
                 data['reset_shipping'] = true;
             }
         }
 
-        if(data['reset_shipping'] && !this.isShippingMethodReseted){
+        if (data['reset_shipping']) {
             this.resetShippingMethod(data);
         }
         else {
@@ -253,7 +255,7 @@ AdminOrder.prototype = {
     },
 
     applyCoupon : function(code){
-        this.loadArea(['items', 'shipping_method', 'totals', 'billing_method'], true, {'order[coupon][code]':code});
+        this.loadArea(['items', 'shipping_method', 'totals', 'billing_method'], true, {'order[coupon][code]':code, reset_shipping: true});
     },
 
     addProduct : function(id){
@@ -385,6 +387,9 @@ AdminOrder.prototype = {
     },
 
     dataShow : function(){
+        if ($('submit_order_top_button')) {
+            $('submit_order_top_button').show();
+        }
         this.showArea('data');
     },
 

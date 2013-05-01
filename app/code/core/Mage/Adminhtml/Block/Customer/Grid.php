@@ -40,6 +40,9 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
         $collection = Mage::getResourceModel('customer/customer_collection')
             ->addAttributeToSelect('firstname')
             ->addAttributeToSelect('lastname')
+            ->addExpressionAttributeToSelect('name',
+                'CONCAT({{firstname}}, " ", {{lastname}})',
+                array('firstname', 'lastname'))
             ->addAttributeToSelect('email')
             ->addAttributeToSelect('created_at')
             ->addAttributeToSelect('group_id')
@@ -61,13 +64,17 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
             'width'     => '50px',
             'index'     => 'entity_id'
         ));
-        $this->addColumn('firstname', array(
+        /*$this->addColumn('firstname', array(
             'header'    => Mage::helper('customer')->__('First Name'),
             'index'     => 'firstname'
         ));
         $this->addColumn('lastname', array(
             'header'    => Mage::helper('customer')->__('Last Name'),
             'index'     => 'lastname'
+        ));*/
+        $this->addColumn('name', array(
+            'header'    => Mage::helper('customer')->__('Name'),
+            'index'     => 'name'
         ));
         $this->addColumn('email', array(
             'header'    => Mage::helper('customer')->__('Email'),
@@ -95,7 +102,7 @@ class Mage_Adminhtml_Block_Customer_Grid extends Mage_Adminhtml_Block_Widget_Gri
         ));
 
         $this->addColumn('billing_postcode', array(
-            'header'    => Mage::helper('customer')->__('ZIP/Postal Code'),
+            'header'    => Mage::helper('customer')->__('ZIP'),
             'width'     => '90',
             'index'     => 'billing_postcode',
         ));

@@ -17,12 +17,23 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Sales module base helper
  *
  */
 class Mage_Sales_Helper_Data extends Mage_Core_Helper_Data
 {
-    
+    const MAXIMUM_AVAILABLE_NUMBER = 99999999;
+
+    public function checkQuoteAmount(Mage_Sales_Model_Quote $quote, $amount)
+    {
+        if (!$quote->getHasError() && ($amount>=self::MAXIMUM_AVAILABLE_NUMBER)) {
+            $quote->setHasError(true);
+            $quote->addMessage(
+                $this->__('Some items have quantities exceeding allowed quantities. Please select a lower quantity to checkout.')
+            );
+        }
+        return $this;
+    }
 }

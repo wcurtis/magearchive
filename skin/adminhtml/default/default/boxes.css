@@ -107,9 +107,9 @@
 .grid tr.even, .grid tr.even tr { background:#f6f6f6; } /* Zebra even-row */
 .grid tr.on-mouse               { background:#fcf5dd; } /* Rows mouse-over */
 .grid tr.invalid                { background-color: #d3a5ba !important; }
-.grid th, .grid td              { padding:2px 5px; }
+.grid th, .grid td              { padding:2px 4px 2px 4px; }
 .grid th                        { white-space:nowrap; }
-.grid td input.input-text       { width:95% !important; }
+.grid td input.input-text       { width:86%!important; }
 .grid table td                  { border-width:0 1px 1px 0; border-color:#dadfe0; border-style:solid; }
 .grid table td.last             { border-right:0; }
 .grid table td.product          { text-align:right; }
@@ -182,8 +182,8 @@ table.actions td                { vertical-align:top; }
 .massaction .entry-edit fieldset .select    { width:120px; display:inline;}
 .massaction .entry-edit fieldset            { margin:0; padding:0; background:none; border:none; }
 .massaction .entry-edit fieldset .field-row { display:inline; }
-.massaction .entry-edit .field-row label    { float:none; width:auto; margin-left:13px;}
-.massaction .entry-edit                     { margin:0 !important; padding:0;}
+.massaction .entry-edit .field-row label    { float:none; width:auto; margin-left:13px; }
+.massaction .entry-edit                     { margin:0 !important; padding:0; }
 .massaction a { text-decoration:none; }
 .massaction .entry-edit fieldset span.form_row,
 .massaction .entry-edit fieldset span.field-row {
@@ -204,13 +204,13 @@ table.actions td                { vertical-align:top; }
     border-width:0 1px 1px 0;
     border-style:solid;
     border-color:#bdbdbd;
-	white-space:normal;
+    white-space:normal;
     }
 .grid tr.filter th.last         { border-right:0; }
-.grid tr.filter input           { width: 95% !important; }
+.grid tr.filter input           { width:86% !important; }
 .grid tr.filter select          { width:100% /*!important why?*/; }
 .grid tr.filter .range div.range-line { margin-bottom:4px; width:100px;}
-.grid tr.filter .range div.date { width: 140px; }
+.grid tr.filter .range div.date { min-width:115px; }
 .grid tr.filter .range input    { width: 4em !important; margin-bottom:-1px; margin-top:0; }
 .grid tr.filter .range select   { width: 5em !important; width:4.88em; margin-bottom:-1px; margin-top:0; }
 .grid tr.filter .range .label   { display: block; width: 3em; float: left; padding-left: 2px; }
@@ -330,10 +330,15 @@ a.error span,
     background:#fffbf0 url(images/note_msg_icon.gif) no-repeat 10px 10px !important;
     color:#3d6611 !important;
     }
+.warning-msg {
+    border:1px solid #666e73 !important;
+    background:#e6e6e6 url(images/warning_msg_icon.gif) no-repeat 10px 10px !important;
+    color:#000000 !important;
+    }
 .validation-advice {
     clear:both;
     min-height:15px;
-    margin-top:3px;
+    margin:3px 0 0 9px;
     background:url(images/validation_advice_bg.gif) no-repeat 2px 1px;
     padding-left:16px;
     font-size:.95em;
@@ -369,7 +374,7 @@ table.form-edit                         { width:100%; }
 .entry-edit fieldset span.form_row,
 .entry-edit fieldset .field-row .hint   { float: left; color: #999; padding-left:12em;}
 .entry-edit .form-buttons               { float:right; margin:2px -3px 2px 0pt; }
-label.inline                            { float:none !important; width:auto !important; }
+label.inline                            { float:none!important; width:auto!important; }
 .nested-content .entry-edit             { margin-left:2em; }
 .nested-content .entry-edit .entry-edit { margin-left:0; }
 
@@ -381,7 +386,7 @@ input.input-text, textarea, select   {
     background:#fff;
     font:12px arial, helvetica, sans-serif;
     }
-select  {min-height:19px;/* to set the height for empty selects */}	
+select  {min-height:19px;/* to set the height for empty selects */}
 input.input-text, textarea      { padding:2px; }
 input.qty                       { width:40px !important; }
 input.item-qty                  { width:22px !important; }
@@ -395,8 +400,19 @@ select optgroup option          { padding-left:10px; }
 .main-col .form-list            { width:auto; }
 .form-list td                   { border:none !important; padding-top:5px !important; padding-bottom:5px !important; background:none !important;  }
 .form-list td.hidden            { border:none !important; padding:0px !important;background:none !important;}
-.form-list td.label             { width:150px; padding-right:15px; }
-.form-list td.value             { padding-right:5px; }
+.form-list td.label             { width:150px; }
+.form-list td.label label       { display:block; width:150px; padding-right:15px; }
+
+.columns .form-list td.value             { width:auto; padding-right:5px; }
+.columns .form-list td.value input.input-text { width:260px; }
+.columns .form-list td.value textarea    { width:90%; }
+.columns .form-list td.value select      { width:267px; }
+
+.columns .form-list td.value             { width:270px; padding-right:5px; }
+.columns .form-list td.value input.input-text,
+.columns .form-list td.value textarea    { width:260px; }
+.columns .form-list td.value select      { width:267px; }
+
 .form-list td.note              { background:url(images/note_cell_bg.gif) no-repeat 6px 10px !important; padding-left:18px;}
 .form-list td.scope-label       { padding-left:5px; color:#6f8992; font-size:.9em; }
 .multi-input                    { margin-bottom:8px; } /* Example: Address fields with 2 input lines */
@@ -412,7 +428,9 @@ select optgroup option          { padding-left:10px; }
 
 /* Form Button */
 .content-buttons.form-buttons,
-.content-header .form-buttons   { text-align:right; }
+.content-header .form-buttons   { text-align:right; white-space:nowrap; margin-bottom:0px; }
+.content-header .form-buttons   { float:right; }
+.content-header td.form-buttons   { float:none; }
 .content-header .form-buttons button { margin-bottom:3px; }
 .sub-btn-set {
     border-width:0 1px;
@@ -431,7 +449,7 @@ button, .form-button {
     color:#fff;
     font:bold 12px arial, helvetica, sans-serif;
     cursor:pointer;
-    text-align:right !important;
+    text-align:center !important;
     white-space:nowrap;
     }
 button:hover                    { background: url(images/btn_over_bg.gif) repeat-x 0 0 #f77c16; }
@@ -463,6 +481,10 @@ button.cancel span, button.delete span {
     }
 button.add span     { background-image:url(images/add_btn_icon.gif); }
 button.save span    { background-image:url(images/save_btn_icon.gif); }
+
+button.disabled,
+button.disabled:hover,
+button.disabled:active          { border-width:1px; border-style:solid; border-color:#4b6e7c #344d56 #344d56 #4b6e7c; background:#6f8992; color:#ededed; cursor:default; }
 
 
 /* SWITCHER
@@ -521,7 +543,8 @@ td.divider              { font-size:1px; line-height:0; }
     }
 .scrollContent              { position: absolute; left: 0px; top: 0px;}
 
-
+/* Horizontal scroll */
+.hor-scroll {width:100%;overflow:auto; margin-bottom:-10px; padding-bottom:10px; }
 
 /**/
 .note-list li {
@@ -531,6 +554,9 @@ td.divider              { font-size:1px; line-height:0; }
     padding-bottom:9px;
     padding-left:18px;
     }
+
+
+
 
 /******************************************************************************/
 /********************************** STRUCTURE *********************************/
@@ -555,16 +581,23 @@ td.divider              { font-size:1px; line-height:0; }
     padding:1.8em 2.2em 1.8em 2em;
     padding-top:0;
     }
-.side-col {
-    width:200px;
-    background:url(images/side_col_bg.gif) repeat-y 100% 0;
+.columns {background:url(images/side_col_bg.gif) repeat-y 217px 0;}
+div.side-col {
+    float:left;
+    width:220px;
     padding-bottom:25px;
     }
-.main-col {
-    height:450px;
+div.main-col {
+    margin-left:220px;
+    min-height:450px;
     padding:0 0 25px 25px;
     }
+div.main-col-inner {
+    float:left; /* Fixes some inner clears in the liquid main-col */
+    width:100%;
+}
 .footer {
+    clear:both;
     background:url(images/footer_bg.gif) repeat-x #e6e6e6;
     padding:105px 2.8em 2.8em 2.8em;
     font-size:.95em;
@@ -586,7 +619,7 @@ body.html-body-popup    { min-width:300px !important; }
 /* HEADER & FOOTER
 *******************************************************************************/
 
-.logo                                   { float:left; margin:5px 20px 5px 20px; height:43px; }
+.logo                                   { float:left; margin:5px 20px 5px 27px; height:43px; }
 .header-top                             { border-bottom:1px solid #5F767F; }
 
 /* Header right */
@@ -632,7 +665,7 @@ div.autocomplete ul li {
 ********************************************************************************************/
 
 .catalog-categories .side-col   { width:25em; padding-right:25px;}  /* Catalog/Categories */
-.catalog-categories .main-col   { padding-left:25px; }              /* Catalog/Categories */
+.catalog-categories .main-col   { padding-left:25px; margin-left:25em; }              /* Catalog/Categories */
 .order-summary .side-col        { padding-right:25px; }             /* Order/Create */
 .order-summary .main-col        { padding-left:25px; }              /* Order/Create */
 
@@ -647,14 +680,18 @@ div.autocomplete ul li {
     padding-bottom:.25em;
     }
 .content-header table           { width:100%; }
-.content-header h3              { float:left; margin:.3em 0 0 0; color:#eb5e00; font-size:1.25em; line-height:1.2em; }
+.content-header h3              { float:left; margin:.3em .5em 0 0; color:#eb5e00; font-size:1.25em; line-height:1.2em; }
 .content-header .head h3        { float:none; }
 .content-header .button-set     { white-space:nowrap; text-align:right; }
+.content-header .content-buttons  {white-space:nowrap!important; margin:0;}
+.content-header td.content-buttons  {width:13%;white-space:nowrap!important; margin:0;}
 .content-buttons button,
 .content-header button,
 .filter-actions button          { margin:0 0 0 5px; }
 .side-col .content-header       { border-bottom:0; margin-right:12px; margin-bottom:.6em; }
 .catalog-categories .side-col .content-header { margin-right:0; }  /* Catalog/Categories */
+
+.left-col-block {width:200px;}
 
 /* Floating Content Header */ /* Used to make action buttons always within reach */
 .content-header-floating {
@@ -664,15 +701,27 @@ div.autocomplete ul li {
     display:none;
     border:0;
     border-bottom:solid 1px #988753;
+
     background:#fdfaa4;
-    padding:6px 8px 4px 8px;
     opacity:.85;
     -moz-opacity:.85;
     filter:alpha(opacity=85);
     width:100%;
     }
-.content-header-floating td     { padding-left:20px; padding-right:35px; }
+
+.content-header-floating .content-header {
+padding:6px 8px 4px 8px;
+    margin-bottom:0px;
+    border:0;
+}
+.content-header-floating td     { padding-right:20px; }
 .content-header-floating button { margin-top:3px; }
+.content-header-floating .content-buttons { float:right; /* margin:12px 25px 0 0;*/ }
+.content-buttons { margin-bottom: 5px; float:right; display:inline; white-space:nowrap; }
+.content-header-floating .form-buttons {padding-right:20px;}
+.content-header-floating h3 {margin-left:20px; display:inline;}
+
+
 
 /* Box Head */
 .box-head       { margin-bottom:.6em; text-align:right; }
@@ -680,7 +729,7 @@ div.autocomplete ul li {
 
 
 /* Icon Head */ /* Headings with icon preceding text*/
-.icon-head                      { min-height:18px; background-repeat:no-repeat; background-position:0 50%; padding-left:22px; }
+.icon-head                      { min-height:18px; background-repeat:no-repeat; background-position:0 0; padding-left:22px; }
 .head-customer-address-list     { background-image:url(images/fam_house.gif); }
 .head-edit-form                 { background-image:url(images/fam_page_white.gif); }
 .head-customer-view             { background-image:url(images/fam_status_online.gif); padding-left:18px; }
@@ -726,22 +775,17 @@ div.autocomplete ul li {
 /* LOGIN
 *******************************************************************************/
 #page-login                             { background:#f8f8f8; text-align:center; }
-.login-container {
-    width:581px;
-    padding-left:32px;
-    background:url(images/login_logo.gif) no-repeat;
-    margin:170px auto;
-    text-align:center;
-    }
+.login-container                        { width:581px; padding-left:32px; background:url(images/login_logo.gif) no-repeat; margin:170px auto; text-align:center; }
 .login-box                              { position:relative; }
 .login-form                             { padding:27px 57px 35px 57px; background:url(images/login_box_bg.jpg) no-repeat; text-align:left; }
-.login-form .input-box                  { float:left; width:50%; }
-.login-form .input-box.forgot-password  { width:100%; }
-.login-form .input-box input.input-text { width:90%; }
-.login-form .input-box input.input-text.forgot-password { width:50%; }
+.login-form #messages                   { margin:0 17px 0 0; }
+.login-form .input-left                 { float:left; width:50%; }
+.login-form .input-right                { float:right; width:50%; }
+.login-form .input-box input.input-text { width:94%; }
+.login-form .input-box input.input-text.forgot-password { width:100%; }
 .login-form h2                          { font-size:1.7em; font-weight:normal; }
 .login-form label                       { font-weight:bold; }
-.login-form .form-buttons               { margin-top:12px; margin-right:17px; text-align:right;}
+.login-form .form-buttons               { margin:12px 0 0 0; clear:both; text-align:right; }
 .login-box .bottom  {
     width:581px;
     height:5px;
@@ -754,7 +798,8 @@ div.autocomplete ul li {
     padding:8px 8px 5px 8px;
     font-size:.95em;
     }
-.login-form .validation-advice          { margin-left:0; }
+.login-form .validation-advice          { margin:0 17px 0 0; }
+.login-form .forgot-link                { margin:0 17px 0 0; text-align:right; }
 
 
 
@@ -769,7 +814,7 @@ div.autocomplete ul li {
 *******************************************************************************/
 
 /* Create Order */
-.page-create-order .side-col            { width:250px; background:none; padding:0; }
+.page-create-order .side-col            { width:260px; background:none; padding:0; }
 .page-create-order .main-col            { padding-left:28px; }
 .page-create-order .switcher            { margin-bottom:25px; }
 .create-order-sidebar-container         { border:1px solid #d6d6d6; background:#fafafa; }
@@ -781,9 +826,12 @@ div.autocomplete ul li {
 .create-order-sidebar-block select      { width:170px; }
 .create-order-sidebar-block ul          { margin-left:20px; }
 .order-choose-address                   { margin:0px 0px 10px 0px;padding:8px 15px;background:#e7efef; } /*Address Selector */
+.entry-edit .content .form-list         { width:100%; }
+
+.entry-edit .order-address td.label label { width:100px; }
 .entry-edit .order-address .input-text,
-.entry-edit .order-address .textarea    { width:220px; }
-.entry-edit .order-address .select      { width:225px; }
+.entry-edit .order-address .textarea    { width:95%; }
+.entry-edit .order-address .select      { width:97.5%; }
 .order-search-items .entry-edit .grid   { height:610px;overflow: auto;}
 .order-search-items .entry-edit .grid table {width:99.9%; }
 /* .create-order-totals                    { background:url(images/bg_create_order_totals.gif) repeat-y 50% 0 !important; } */
@@ -887,7 +935,7 @@ td.giftmessage-single-item                          { padding: 0 0 0 0; }
 /* Category */
 .no-active-category a span                  { color:#aaa !important; }
 
-#tree-div {overflow:auto!important; width:196px!important;}
+#tree-div {overflow:auto!important; padding-bottom:15px; width:200px!important; }
 
 .x-tree-node .leaf .x-tree-node-icon        { background-image:url(images/fam_leaf.png); }
 .x-tree-node .system-leaf .x-tree-node-icon { background-image:url(images/fam_application_form_delete.png); }
@@ -910,7 +958,7 @@ td.giftmessage-single-item                          { padding: 0 0 0 0; }
 .tier-price-input .tier-container       { position:relative; clear:both; }
 .tier-price-input .tier-container div   { float:left; }
 .tier-price-input .tier-container label { width:30px; margin:0; padding:0; }
-.tier-price-input .validation-advice    { margin:0 0 0 0px; height:25px;}
+.tier-price-input .validation-advice    { margin:0; height:25px;}
 .tier-price-input .custgroup-div select { width:auto; padding:0; }
 .tier-price-input .qty-div              { padding-left:20px;}
 .tier-price-input .price-div            { padding-left:20px; }
@@ -920,6 +968,10 @@ td.giftmessage-single-item                          { padding: 0 0 0 0; }
 /* Product - Gallery */
 .image-preview                          { position:absolute; cursor:pointer; }
 
+/* Attributes */
+.edit-attribute-set .form-list td.label { width:105px; }
+.edit-attribute-set  .form-list td.label label { width:105px; }
+.edit-attribute-set .entry-edit fieldset input.input-text { width:200px; }
 /* Review & Ratings */
 .ratings                        { margin:0px 0; }
 .rating-box {
@@ -1019,7 +1071,7 @@ img.attribute-global        { width:16px; height:16px; vertical-align:middle; }
 ul.config-tabs              { border-top:none; }
 ul.config-tabs dt {
     border-top:1px solid #849ba3;
-    background:url(images/config_tab_dt_bg.gif) no-repeat 0 50%;
+    background:#d1dedf url(images/config_tab_dt_bg.gif) no-repeat 0 50%;
     padding:2px 0 2px 1.5em;
     font-weight:bold;
     text-transform:uppercase;
@@ -1031,9 +1083,16 @@ ul.config-tabs a.last span  { background-image:none; }
 .inline-table {border:0px !important}
 .inline-table td {border:0px !important;padding:0px 5px 5px 5px !important;}
 
+/* Import/export */
 
+#profile-generator select { width:207px; }
+#profile-generator input.input-text { width:200px; }
+.field-row .with-tip {display:block; margin-left:150px;}
+.field-row .with-tip input {float:none;}
+.field-row .with-tip small {display:block;padding-top:2px;}
 
-
+#profile-generator .field-row  button.delete {vertical-align:middle;}
+#profile-generator fieldset button.add {display:inline; margin:0;}
 
 /** Product mass attribute update **/
 
@@ -1095,6 +1154,10 @@ ul.super-product-attributes {
     background-color: #ffe6de;
 }
 
+.uploader .error .progress-text {
+    padding-right: 10px;
+}
+
 .uploader .complete {
     border: 1px solid #90c898;
     background-color: #e5ffed;
@@ -1108,7 +1171,7 @@ ul.super-product-attributes {
 .super-attributes li.attribute ul.attribute-values { list-style-type:none; margin:0; padding:0; }
 .super-attributes li.attribute div.values-container { width: 80%; margin-top:2px; margin-bottom:2px; }
 .super-attributes li.attribute-value  { display:block; margin:1px 0;}
-.super-attributes li.attribute-value .validation-advice { margin: 0px 0px 0px 0px; white-space: wrap; }
+.super-attributes li.attribute-value .validation-advice { margin:0; white-space: wrap; }
 .super-attributes li.attribute-value .attribute-value-label-container { width: 200px; }
 
 .super-attributes div.attribute-name-container,
@@ -1124,7 +1187,7 @@ ul.super-product-attributes {
 .configurable-simple-product .attribute-price { width: 70px !important; }
 
 .super-attributes li.attribute-value .attribute-price-type,
-.configurable-simple-product .attribute-price-type {  width: 70px; }
+.configurable-simple-product .attribute-price-type {  width: 70px !important; }
 
 .super-attributes  div.attribute-name-container {
     cursor:move;
@@ -1150,13 +1213,22 @@ ul.super-product-attributes {
 .preview .cell-image .place-holder span { margin-top:30px;display:block; }
 .preview .cell-position .input-text     { width: 90% !important; }
 
-.tier .data             {width: 450px}
+.tier .data             {width: 480px}
 .tier .data select      {width: 130px}
-.tier .data input.qty   {width: 40px !important}
+.tier .data input.qty   {width: 20px !important}
 
 
 /* Links */
 .link-feed { background:url(images/icon_feed.gif) no-repeat left 2px; padding-left:18px; }
+
+#page-help-link {
+    line-height:26px;
+    padding-left:20px;
+    color:#ebebff;
+    background: url(images/fam_help.gif) no-repeat 0 50%;
+    }
+#page-help-link:link, #page-help-link:visited { text-decoration:none; }
+#page-help-link:hover { color:white; }
 
 
 
@@ -1177,7 +1249,7 @@ ul.super-product-attributes {
 .np                 { padding:0 !important; }
 .no-display         { display:none; }
 .no-show            { display:none; }
-.nowrap, .nobr{ white-space:nowrap; }
+.nowrap, .nobr      { white-space:nowrap; }
 .no-float           { float:none !important; }
 .pointer            { cursor:pointer; }
 
@@ -1190,6 +1262,9 @@ ul.super-product-attributes {
 .bold               { font-weight:bold !important; }
 
 /* Clear */ /* This keeps our HTML free of buncha clearing elements */
+.columns:after,
+.main-col:after,
+.content-header-floating:after,
 .entry-edit .entry-edit-head:after,
 .content-header:after,
 .login-box .button-set:after,

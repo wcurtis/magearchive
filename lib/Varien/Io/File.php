@@ -65,6 +65,130 @@ class Varien_Io_File extends Varien_Io_Abstract
     protected $_allowCreateFolders = false;
 
     /**
+     * Stream open file pointer
+     *
+     * @var resource
+     */
+    protected $_streamHandler;
+
+    /**
+     * Stream mode filename
+     *
+     * @var string
+     */
+    protected $_streamFileName;
+
+    /**
+     * Stream mode chmod
+     *
+     * @var string
+     */
+    protected $_streamChmod;
+
+    /**
+     * Destruct
+     */
+    public function __destruct()
+    {
+        if ($this->_streamHandler) {
+            $this->streamClose();
+        }
+    }
+
+    /**
+     * Open file in stream mode
+     * For set folder for file use open method
+     *
+     * @param string $fileName
+     * @param string $mode
+     * @return bool
+     */
+    public function streamOpen($fileName, $mode = 'w+', $chmod = 0666)
+    {
+        if (!is_writeable($this->_cwd)) {
+            throw new Exception('Permission denied for write to ' . $this->_cwd);
+        }
+        @chdir($this->_cwd);
+        $this->_streamHandler = @fopen($fileName, $mode);
+        @chdir($this->_iwd);
+        if ($this->_streamHandler === false) {
+            throw new Exception('Error write to file ' . $fileName);
+        }
+
+        $this->_streamFileName = $fileName;
+        $this->_streamChmod = $chmod;
+        return true;
+    }
+
+    /**
+     * Binary-safe file read
+     *
+     * @param int $length
+     * @return string
+     */
+    public function streamRead($length = 1024)
+    {
+        if (!$this->_streamHandler) {
+            return false;
+        }
+        return @fgets($this->_streamHandler, $length);
+    }
+
+    /**
+     * Gets line from file pointer and parse for CSV fields
+     *
+     * @return string
+     */
+    public function streamReadCsv($delimiter = ',', $enclosure = '"')
+    {
+        if (!$this->_streamHandler) {
+            return false;
+        }
+        return @fgetcsv($this->_streamHandler, 0, $delimiter, $enclosure);
+    }
+
+    /**
+     * Binary-safe file write
+     *
+     * @param string $str
+     * @return bool
+     */
+    public function streamWrite($str)
+    {
+        if (!$this->_streamHandler) {
+            return false;
+        }
+        return @fwrite($this->_streamHandler, $str);
+    }
+
+    /**
+     * Close an open file pointer
+     * Set chmod on a file
+     *
+     * @return bool
+     */
+    public function streamClose()
+    {
+        if (!$this->_streamHandler) {
+            return false;
+        }
+
+        @fclose($this->_streamHandler);
+        @chmod($this->_streamFileName, $this->_streamChmod);
+        return true;
+    }
+
+    /**
+     * Retrieve stream methods exception
+     *
+     * @return Exception
+     */
+    public function getStreamException()
+    {
+        return $this->_streamException;
+    }
+
+    /**
      * Open a connection
      *
      * Possible arguments:
@@ -124,7 +248,11 @@ class Varien_Io_File extends Varien_Io_Abstract
         if ($this->_cwd) {
             chdir($this->_cwd);
         }
+
         $result = @mkdir($dir, $mode, $recursive);
+        if ($result) {
+            @chmod($dir, $mode);
+        }
         if ($this->_iwd) {
             chdir($this->_iwd);
         }
@@ -202,17 +330,18 @@ class Varien_Io_File extends Varien_Io_Abstract
      */
     public function read($filename, $dest=null)
     {
+        if (!is_null($dest)) {
+            chdir($this->_cwd);
+            $result = @copy($filename, $dest);
+            chdir($this->_iwd);
+            return $result;
+        }
+
         chdir($this->_cwd);
         $result = @file_get_contents($filename);
         chdir($this->_iwd);
 
-        if (is_string($dest) || is_resource($dest)) {
-            return @file_put_contents($dest, $result);
-        } elseif (is_null($dest)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     /**
@@ -232,14 +361,16 @@ class Varien_Io_File extends Varien_Io_Abstract
         } else {
             return false;
         }
-        chdir($this->_cwd);
+        @chdir($this->_cwd);
 
         if (file_exists($filename)) {
             if (!is_writeable($filename)) {
+                printf('File %s don\'t writeable', $filename);
                 return false;
             }
         } else {
             if (!is_writable(dirname($filename))) {
+                printf('Folder %s don\'t writeable', dirname($filename));
                 return false;
             }
         }
@@ -255,6 +386,14 @@ class Varien_Io_File extends Varien_Io_Abstract
         return $result;
     }
 
+    public function fileExists($file)
+    {
+        @chdir($this->_cwd);
+        $result = file_exists($file) && is_file($file);
+        @chdir($this->_iwd);
+        return $result;
+    }
+
     public function getDestinationFolder($filepath)
     {
         preg_match('/^(.*[!\/])/', $filepath, $mathces);
@@ -264,15 +403,29 @@ class Varien_Io_File extends Varien_Io_Abstract
         return false;
     }
 
+    /**
+     * Create destination folder
+     *
+     * @param string $path
+     * @return Varien_Io_File
+     */
+    public function createDestinationDir($path)
+    {
+        if (!$this->_allowCreateFolders) {
+            return false;
+        }
+        return $this->_createDestinationFolder($this->getCleanPath($path));
+    }
+
     private function _createDestinationFolder($destinationFolder)
     {
         if( !$destinationFolder ) {
             return $this;
         }
-        if (!(@is_dir($destinationFolder) || @mkdir($destinationFolder, 0777, true))) {
+        if (!(@is_dir($destinationFolder) || $this->mkdir($destinationFolder, 0777, true))) {
             throw new Exception("Unable to create directory '{$destinationFolder}'.");
         }
-        return $this;
+//        return $this;
 
         $destinationFolder = str_replace('/', DIRECTORY_SEPARATOR, $destinationFolder);
         $path = explode(DIRECTORY_SEPARATOR, $destinationFolder);
@@ -292,7 +445,7 @@ class Varien_Io_File extends Varien_Io_Abstract
                 continue;
             } else {
                 if( is_writable($oldPath) ) {
-                    mkdir($newPath, 0777);
+                    $this->mkdir($newPath, 0777);
                 } else {
                     throw new Exception("Unable to create directory '{$newPath}'. Access forbidden.");
                 }
@@ -339,9 +492,9 @@ class Varien_Io_File extends Varien_Io_Abstract
      */
     public function cp($src, $dest)
     {
-        chdir($this->_cwd);
+        @chdir($this->_cwd);
         $result = @copy($src, $dest);
-        chdir($this->_iwd);
+        @chdir($this->_iwd);
         return $result;
     }
 
@@ -508,27 +661,14 @@ class Varien_Io_File extends Varien_Io_Abstract
             return 'n/a';
         }
 
-        $owner = posix_getpwuid(fileowner($filename));
+        $owner     = posix_getpwuid(fileowner($filename));
+        $groupinfo = posix_getgrnam(filegroup($filename));
 
-        $groupid   = posix_getegid();
-        $groupinfo = posix_getgrgid($groupid);
-        return $owner['name'] . ' / ' . $groupinfo['name'];
+        return $owner['name'] . ' / ' . $groupinfo;
     }
 
     public function dirsep()
     {
         return DIRECTORY_SEPARATOR;
-    }
-
-    public function getTmpDir($path=null)
-    {
-        $dir = Mage::getBaseDir('base').($path!==null ? DS.$path : '');
-        if (!file_exists($dir)) {
-            if (!@mkdir($dir, 0777, true)) {
-                return false;
-            }
-        }
-        $this->_cwd = $dir;
-        return $dir;
     }
 }

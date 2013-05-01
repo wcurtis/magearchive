@@ -23,11 +23,35 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
 {
     protected $_generalGroupName = 'General';
 
+    public $defaultGroupIdAssociations = array('General'=>1);
+
     public function cleanCache()
     {
         Mage::app()->cleanCache(array('eav'));
         return $this;
     }
+
+    public function installDefaultGroupIds()
+    {
+        $setIds = $this->getAllAttributeSetIds();
+        foreach ($this->defaultGroupIdAssociations as $defaultGroupName=>$defaultGroupId) {
+            foreach ($setIds as $set) {
+                $groupId = $this->getTableRow('eav/attribute_group',
+                    'attribute_group_name', $defaultGroupName, 'attribute_group_id', 'attribute_set_id', $set
+                );
+                if (!$groupId) {
+                    $groupId = $this->getTableRow('eav/attribute_group',
+                        'attribute_set_id', $set, 'attribute_group_id'
+                    );
+                }
+                $this->updateTableRow('eav/attribute_group',
+                    'attribute_group_id', $groupId,
+                    'default_id', $defaultGroupId
+                );
+            }
+        }
+    }
+
 
 /******************* ENTITY TYPES *****************/
 
@@ -214,6 +238,9 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
             'attribute_set_id'=>$setId,
             'attribute_group_name'=>$name,
         );
+        if (isset($this->defaultGroupIdAssociations[$name])) {
+            $data['default_id'] = $this->defaultGroupIdAssociations[$name];
+        }
         if (!is_null($sortOrder)) {
             $data['sort_order'] = $sortOrder;
         }
@@ -242,9 +269,20 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
 
     public function getAttributeGroup($entityTypeId, $setId, $id, $field=null)
     {
+        $searchId = $id;
+        if (is_numeric($id)) {
+            $searchField = 'attribute_group_id';
+        } else {
+            if (isset($this->defaultGroupIdAssociations[$id])) {
+                $searchField = 'default_id';
+                $searchId = $this->defaultGroupIdAssociations[$id];
+            } else {
+                $searchField = 'attribute_group_name';
+            }
+        }
+
         return $this->getTableRow('eav/attribute_group',
-            is_numeric($id) ? 'attribute_group_id' : 'attribute_group_name', $id,
-            $field,
+            $searchField, $searchId, $field,
             'attribute_set_id', $this->getAttributeSetId($entityTypeId, $setId)
         );
     }
@@ -290,6 +328,7 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
             'backend_type'          => isset($attr['type']) ? $attr['type'] : 'varchar',
             'backend_table'         => isset($attr['table']) ? $attr['table'] : '',
             'frontend_model'        => isset($attr['frontend']) ? $attr['frontend'] : '',
+//            'frontend_block'        => isset($attr['frontend_block']) ? $attr['frontend_block'] : '',
             'frontend_input'        => isset($attr['input']) ? $attr['input'] : 'text',
             'frontend_label'        => isset($attr['label']) ? $attr['label'] : '',
             'source_model'          => isset($attr['source']) ? $attr['source'] : '',
@@ -302,10 +341,12 @@ class Mage_Eav_Model_Entity_Setup extends Mage_Core_Model_Resource_Setup
             'is_filterable'         => isset($attr['filterable']) ? $attr['filterable'] : 0,
             'is_comparable'         => isset($attr['comparable']) ? $attr['comparable'] : 0,
             'is_visible_on_front'   => isset($attr['visible_on_front']) ? $attr['visible_on_front'] : 0,
+            'is_visible_in_advanced_search' => isset($attr['visible_in_advanced_search']) ? $attr['visible_in_advanced_search'] : 0,
             'is_unique'             => isset($attr['unique']) ? $attr['unique'] : 0,
             'apply_to'              => isset($attr['apply_to']) ? $attr['apply_to'] : '',
             'is_configurable'       => isset($attr['is_configurable']) ? $attr['is_configurable'] : 1,
             'note'                  => isset($attr['note']) ? $attr['note'] : '',
+            'position'              => isset($attr['position']) ? $attr['position'] : 0,
         );
 
         $sortOrder = isset($attr['sort_order']) ? $attr['sort_order'] : null;

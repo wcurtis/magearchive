@@ -17,29 +17,29 @@
  * @copyright  Copyright (c) 2004-2007 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
- 
+
 /**
  * Json controller
  *
  */
-class Mage_Adminhtml_JsonController extends Mage_Adminhtml_Controller_Action 
+class Mage_Adminhtml_JsonController extends Mage_Adminhtml_Controller_Action
 {
     public function countryRegionAction()
     {
         $arrRes = array();
-            
+
         $countryId = $this->getRequest()->getParam('parent');
         $arrRegions = Mage::getResourceModel('directory/region_collection')
             ->addCountryFilter($countryId)
             ->load()
             ->toOptionArray();
-        
+
         if (!empty($arrRegions)) {
             foreach ($arrRegions as $region) {
                 $arrRes[] = $region;
             }
         }
-        
+
         $this->getResponse()->setBody(Zend_Json::encode($arrRes));
     }
 }

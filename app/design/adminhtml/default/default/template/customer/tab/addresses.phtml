@@ -38,7 +38,7 @@
                 <img src="<?php echo $this->getSkinUrl('images/edit_icon.gif') ?>" alt="Edit address"/>
             </a>
             <address>
-                <?php echo $_address->explodeStreetAddress()->toString("{{firstname}} {{lastname}}<br/>{{company}}<br/>{{street1}}<br />{{street2}}<br/>{{city}}, {{region}} {{postcode}}<br/>T: {{telephone}}") ?>
+                <?php echo $_address->format('html') ?>
             </address>
             <div class="address-type">
                 <span class="address-type-line">
@@ -124,7 +124,7 @@ addressesModel.prototype = {
         this.itemContainer= $('address_list');
         this.formContainer= $('address_form_container');
         this.baseItemId   = 'new_item';
-        this.itemContentTemplate = new Template('#{firstname} #{lastname}<br/>#{company}<br/>#{street0}<br/>#{street1}<br/>#{city}, #{region} #{postcode}<br/>T: #{telephone}');
+        this.itemContentTemplate = new Template('#{firstname} #{lastname}<br/>#{company}<br/>#{street0}<br/>#{street1}<br/>#{city}, #{region}, #{postcode}<br/>#{country_id}<br/>T: #{telephone}<br/>F: #{fax}');
 
         this.onNewAddressClick  = this.addNewAddress.bindAsEventListener(this);
         this.onItemMouseOver    = this.itemMouseOver.bindAsEventListener(this);
@@ -349,16 +349,22 @@ addressesModel.prototype = {
                     var id = fields[i].id.replace(/^(_item)?[0-9]+/, '');
                     var value = fields[i].getValue();
                     if(fields[i].tagName.toLowerCase()=='select'){
-                        data[id] = fields[i].options[fields[i].selectedIndex].text;
+                        data[id] = fields[i].options[fields[i].selectedIndex].text.escapeHTML();
                     }
                     else{
-                        data[id] = value;
+                        data[id] = value.escapeHTML();
                     }
                 }
             }
             var itemContainer = container.addressItem.getElementsBySelector('address');
             if(itemContainer[0]){
-                itemContainer[0].innerHTML = this.itemContentTemplate.evaluate(data);
+
+                var html = this.itemContentTemplate.evaluate(data);
+                html = html.replace(new RegExp('(<br\\s*/?>\\s*){2,}','img'),'<br/>');
+                html = html.replace(new RegExp('<br\\s*/?>(\\s*,){1,}\\s*<br\\s*/?>','ig'),'<br/>');
+                html = html.replace(new RegExp('t:\\s*<br\\s*/?>','ig'),'');
+                html = html.replace(new RegExp('f:\\s*$','ig'),'');
+                itemContainer[0].innerHTML = html;
             }
         }
     },
@@ -371,7 +377,7 @@ addressesModel.prototype = {
                 if($('deleted_'+item.id)){
                     $('deleted_'+item.id).value = 1;
                     if(item.formBlock){
-                        item.formBlock.addClassName('no-display template');
+                        item.formBlock.addClassName('ignore-validation');
                     }
                 }
             }
@@ -402,14 +408,17 @@ addressesModel.prototype = {
         }
     },
 
-    bindCountryRegionRelation : function(paerntId){
+    bindCountryRegionRelation : function(parentId){
+        //alert('OK');
         var countryElements = document.getElementsByClassName('countries');
         for(var i=0;i<=countryElements.length;i++){
             if(countryElements[i]){
-                if(!countryElements[i].bindRegions || !countryElements[i].parentBindId || countryElements[i].parentBindId!=paerntId){
+                if(!countryElements[i].bindRegions || !countryElements[i].parentBindId || countryElements[i].parentBindId!=parentId){
+                //if(!countryElements[i].bindRegions || !countryElements[i].parentBindId){
                     Event.observe(countryElements[i], 'change', this.reloadRegionField.bind(this));
+
                     countryElements[i].bindRegions = true;
-                    countryElements[i].parentBindId = paerntId;
+                    countryElements[i].parentBindId = parentId;
                 }
             }
         }
@@ -450,8 +459,14 @@ addressesModel.prototype = {
                 if(reqLabel){
                     reqLabel.each(function(item){Element.show(item)});
                 }
-                new Insertion.Before(this.regionElement, html);
-                Element.remove(this.regionElement);
+
+                var parentNode = this.regionElement.parentNode;
+                var regionElementId = this.regionElement.id;
+                parentNode.innerHTML = html;
+                this.regionElement = $(regionElementId);
+
+                //new Insertion.Before(this.regionElement, html);
+                //Element.remove(this.regionElement);
             }
             else{
                 var html = '<input type="text" name="'+this.regionElement.name+'" id="'+this.regionElement.id+'" class="input-text" title="'+this.regionElement.title+'">';

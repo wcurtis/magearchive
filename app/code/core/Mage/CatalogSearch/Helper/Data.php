@@ -64,13 +64,13 @@ class Mage_CatalogSearch_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if (is_null($this->_queryText)) {
             $this->_queryText = $this->_getRequest()->getParam($this->getQueryParamName());
-            $this->_queryText = iconv_substr(trim(strip_tags($this->_queryText)), 0, self::MAX_QUERY_LEN);
+            $this->_queryText = iconv_substr(trim($this->_queryText), 0, self::MAX_QUERY_LEN);
 
             /**
              * Fix problem with
              * SQLSTATE[HY093]: Invalid parameter number: no parameters were bound
              */
-            $this->_queryText = str_replace('?', '', $this->_queryText);
+            //$this->_queryText = str_replace('?', '', $this->_queryText);
         }
         return $this->_queryText;
     }

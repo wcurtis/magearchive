@@ -17,7 +17,7 @@
  * @package    Zend_Validate
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Hostname.php 8715 2008-03-09 20:30:39Z thomas $
+ * @version    $Id: Hostname.php 8985 2008-03-21 21:37:24Z matthew $
  */
 
 
@@ -281,7 +281,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
         $this->_setValue($valueString);
 
         // Check input against IP address schema
-        if ($this->_ipValidator->isValid($valueString)) {
+        if ($this->_ipValidator->setTranslator($this->getTranslator())->isValid($valueString)) {
             if (!($this->_allow & self::ALLOW_IP)) {
                 $this->_error(self::IP_ADDRESS_NOT_ALLOWED);
                 return false;

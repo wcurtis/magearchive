@@ -65,8 +65,9 @@ class Mage_Cron_Model_Schedule extends Mage_Core_Model_Abstract
         if (!is_numeric($time)) {
             $time = strtotime($time);
         }
-//var_dump();
-        $d = getdate($time + Mage::getSingleton('core/date')->getGmtOffset() + (!empty($e[5]) ? $e[5] * 3600 : 0));
+
+        $d = getdate(Mage::getSingleton('core/date')->timestamp($time));
+
         $match = $this->matchCronExpression($e[0], $d['minutes'])
             && $this->matchCronExpression($e[1], $d['hours'])
             && $this->matchCronExpression($e[2], $d['mday'])

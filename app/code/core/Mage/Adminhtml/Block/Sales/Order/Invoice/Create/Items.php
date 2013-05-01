@@ -149,4 +149,12 @@ class Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items extends Mage_Adminht
         }
         return false;
     }
+
+    public function canCapture()
+    {
+        if (Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/capture')) {
+            return $this->getInvoice()->canCapture();
+        }
+        return false;
+    }
 }

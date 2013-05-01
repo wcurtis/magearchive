@@ -31,4 +31,10 @@ class Mage_Catalog_Block_Layer_Filter_Price extends Mage_Catalog_Block_Layer_Fil
         parent::__construct();
         $this->_filterModelName = 'catalog/layer_filter_price';
     }
+
+    protected function _prepareFilter()
+    {
+        $this->_filter->setAttributeModel($this->getAttributeModel());
+        return $this;
+    }
 }

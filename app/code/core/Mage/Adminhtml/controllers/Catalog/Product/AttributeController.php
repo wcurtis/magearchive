@@ -65,7 +65,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
     public function editAction()
     {
         $id = $this->getRequest()->getParam('attribute_id');
-        $model = Mage::getModel('eav/entity_attribute');
+        $model = Mage::getModel('catalog/entity_attribute');
 
         if ($id) {
             $model->load($id);
@@ -96,7 +96,11 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
             ->_addBreadcrumb($id ? Mage::helper('catalog')->__('Edit Product Attribute') : Mage::helper('catalog')->__('New Product Attribute'), $id ? Mage::helper('catalog')->__('Edit Product Attribute') : Mage::helper('catalog')->__('New Product Attribute'))
             ->_addContent($this->getLayout()->createBlock('adminhtml/catalog_product_attribute_edit')->setData('action', $this->getUrl('*/catalog_product_attribute/save')))
             ->_addLeft($this->getLayout()->createBlock('adminhtml/catalog_product_attribute_edit_tabs'))
-            ->_addJs($this->getLayout()->createBlock('adminhtml/template')->setTemplate('catalog/product/attribute/js.phtml'))
+            ->_addJs(
+                $this->getLayout()->createBlock('adminhtml/template')
+                    ->setIsPopup((bool)$this->getRequest()->getParam('popup'))
+                    ->setTemplate('catalog/product/attribute/js.phtml')
+            )
             ->renderLayout();
     }
 
@@ -107,7 +111,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
 
         $attributeCode  = $this->getRequest()->getParam('attribute_code');
         $attributeId    = $this->getRequest()->getParam('attribute_id');
-        $attribute = Mage::getModel('eav/entity_attribute')
+        $attribute = Mage::getModel('catalog/entity_attribute')
             ->loadByCode($this->_entityTypeId, $attributeCode);
 
         if ($attribute->getId() && !$attributeId) {
@@ -123,7 +127,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
     public function saveAction()
     {
         if ($data = $this->getRequest()->getPost()) {
-            $model = Mage::getModel('eav/entity_attribute');
+            $model = Mage::getModel('catalog/entity_attribute');
 
             if ($id = $this->getRequest()->getParam('attribute_id')) {
 
@@ -202,7 +206,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
     public function deleteAction()
     {
         if ($id = $this->getRequest()->getParam('attribute_id')) {
-            $model = Mage::getModel('eav/entity_attribute');
+            $model = Mage::getModel('catalog/entity_attribute');
 
             // entity type check
             $model->load($id);
@@ -228,10 +232,8 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Adminhtml_
         $this->_redirect('*/*/');
     }
 
-
     protected function _isAllowed()
     {
 	    return Mage::getSingleton('admin/session')->isAllowed('catalog/attributes/attributes');
     }
-
 }

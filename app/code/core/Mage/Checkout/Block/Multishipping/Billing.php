@@ -45,27 +45,12 @@ class Mage_Checkout_Block_Multishipping_Billing extends Mage_Payment_Block_Form_
      *
      * @return bool
      */
-    protected function _assignMethod($method)
+    protected function _canUseMethod($method)
     {
         if (!$method->canUseForMultishipping()) {
             return false;
         }
-        if (!$method->canUseForCountry($this->getQuote()->getBillingAddress()->getCountry())) {
-            return false;
-        }
-        $method->setInfoInstance($this->getQuote()->getPayment());
-
-        // Checking for min/max order total for assigned payment method
-        $gt = $this->getQuote()->getGrandTotal();
-        $payment = $this->getQuote()->getStore()->getConfig('payment/'.$method->getCode());
-        if( !$payment ) {
-            return false;
-        } elseif( isset($payment['min_order_total']) && !empty($payment['min_order_total']) && $gt < $payment['min_order_total'] ) {
-            return false;
-        } elseif( isset($payment['max_order_total']) && !empty($payment['max_order_total']) && $gt > $payment['max_order_total'] ) {
-            return false;
-        }
-        return true;
+        return parent::_canUseMethod($method);
     }
 
     /**

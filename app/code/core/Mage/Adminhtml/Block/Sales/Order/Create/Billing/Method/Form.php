@@ -34,17 +34,16 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Billing_Method_Form extends Mage_P
     }
 
     /**
-     * Check and prepare payment method model
+     * Check payment method model
      *
      * @return bool
      */
-    protected function _assignMethod($method)
+    protected function _canUseMethod($method)
     {
         if (!$method->canUseInternal()) {
             return false;
         }
-        $method->setInfoInstance($this->getQuote()->getPayment());
-        return true;
+        return parent::_canUseMethod($method);
     }
 
     /**

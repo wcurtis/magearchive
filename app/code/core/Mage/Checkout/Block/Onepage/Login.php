@@ -64,4 +64,14 @@ class Mage_Checkout_Block_Onepage_Login extends Mage_Checkout_Block_Onepage_Abst
     {
     	return $this->getUrl('*/*');
     }
+
+    /**
+     * Retrieve username for form field
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return Mage::getSingleton('customer/session')->getUsername(true);
+    }
 }

@@ -18,7 +18,7 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 ?>
-<?php 
+<?php
 /**
  * Attribute otions control
  *
@@ -41,21 +41,23 @@
         <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Manage Titles (Size, Color, etc.)') ?></h4>
     </div>
     <div class="box">
-        <table class="dynamic-grid" cellspacing="0" id="attribute-labels-table">
-            <tr>
-            <?php foreach ($this->getStores() as $_store): ?>
-                <th><?php echo $_store->getName() ?></th>
-            <?php endforeach; ?>
-            </tr>
-            <tr>
-                <?php $_labels = $this->getLabelValues() ?>
-                <?php foreach ($this->getStores() as $_store): ?>
-                <td>
-                    <input class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" name="frontend_label[<?php echo $_store->getId() ?>]" value="<?php echo $_labels[$_store->getId()] ?>"/>
-                </td>
-                <?php endforeach; ?>
-            </tr>
-        </table>
+		<div class="hor-scroll">
+	        <table class="dynamic-grid" cellspacing="0" id="attribute-labels-table">
+	            <tr>
+	            <?php foreach ($this->getStores() as $_store): ?>
+	                <th><?php echo $_store->getName() ?></th>
+	            <?php endforeach; ?>
+	            </tr>
+	            <tr>
+	                <?php $_labels = $this->getLabelValues() ?>
+	                <?php foreach ($this->getStores() as $_store): ?>
+	                <td>
+	                    <input class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" name="frontend_label[<?php echo $_store->getId() ?>]" value="<?php echo $_labels[$_store->getId()] ?>"/>
+	                </td>
+	                <?php endforeach; ?>
+	            </tr>
+	        </table>
+		</div>
     </div>
     </div>
 </div>
@@ -65,32 +67,35 @@
     <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Manage Options (values of your attribute)') ?></h4>
     </div>
     <div class="box">
-        <table class="dynamic-grid" cellspacing="0" id="attribute-options-table"  cellpadding="0" style="width:">
-            <tr>
-            <?php foreach ($this->getStores() as $_store): ?>
-                <th><?php echo $_store->getName() ?></th>
-            <?php endforeach; ?>
-                <th><?php echo Mage::helper('catalog')->__('Position') ?></th>
-                <th><?php echo Mage::helper('catalog')->__('Is Default') ?></th>
-                <th><?php echo $this->getAddNewButtonHtml() ?></th>
-            </tr>
-        </table>
+		<div class="hor-scroll">
+	        <table class="dynamic-grid" cellspacing="0" id="attribute-options-table"  cellpadding="0" style="width:">
+	            <tr>
+	            <?php foreach ($this->getStores() as $_store): ?>
+	                <th><?php echo $_store->getName() ?></th>
+	            <?php endforeach; ?>
+	                <th><?php echo Mage::helper('catalog')->__('Position') ?></th>
+	                <th class="nobr"><?php echo Mage::helper('catalog')->__('Is Default') ?></th>
+	                <th><?php echo $this->getAddNewButtonHtml() ?></th>
+	            </tr>
+	        </table>
 
-        <div class="no-display template" id="row-template">
-        <table class="dynamic-grid" cellspacing="0">
-    	    <tr>
-                <?php foreach ($this->getStores() as $_store): ?>
-                <td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text"/></td>
-                <?php endforeach; ?>
-                <td><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}"></td>
-                <td><input class="input-radio" type="radio" name="default[]" value="{{id}}"></td>
-                <td class="a-left">
-                    <input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="">
-                    <?php echo $this->getDeleteButtonHtml() ?>
-                </td>
-            </tr>
-        </table>
-        </div>
+	        <div class="no-display template" id="row-template">
+		        <table class="dynamic-grid" cellspacing="0">
+		    	    <tr>
+		                <?php foreach ($this->getStores() as $_store): ?>
+		                <td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text"/></td>
+		                <?php endforeach; ?>
+		                <td><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}"></td>
+		                <td><input class="input-radio" type="radio" name="default[]" value="{{id}}"></td>
+		                <td class="a-left">
+		                    <input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="">
+		                    <?php echo $this->getDeleteButtonHtml() ?>
+		                </td>
+		            </tr>
+		        </table>
+	        </div>
+		</div>
+		<input type="hidden" id="option-count-check" value=""/>
     </div>
 </div>
 <script type="text/javascript">
@@ -118,6 +123,7 @@ var attributeOption = {
     templateSyntax : /(^|.|\r|\n)({{(\w+)}})/,
     templateText : templateText,
     itemCount : 0,
+    totalItems : 0,
     add : function(data) {
         this.template = new Template(this.templateText, this.templateSyntax);
         if(!data.id){
@@ -133,6 +139,8 @@ var attributeOption = {
 			);
         this.bindRemoveButtons();
         this.itemCount++;
+        this.totalItems++;
+        this.updateItemsCountField();
     },
     remove : function(event){
         var element = $(Event.findElement(event, 'table')); // !!! Button already
@@ -157,6 +165,15 @@ var attributeOption = {
             element.addClassName('no-display');
             element.addClassName('template');
             element.hide();
+            this.totalItems--;
+            this.updateItemsCountField();
+        }
+    },
+    updateItemsCountField: function() {
+        if (this.totalItems > 0) {
+            $('option-count-check').value = '1';
+        } else {
+            $('option-count-check').value = '';
         }
     },
     bindRemoveButtons : function(){
@@ -220,6 +237,10 @@ if($('add_new_option_button')){
 }
 Validation.addAllThese([
     ['required-option', '<?php echo Mage::helper('catalog')->__('Failed') ?>', function(v) {
+        return !Validation.get('IsEmpty').test(v);
+}]]);
+Validation.addAllThese([
+    ['required-options-count', '<?php echo Mage::helper('catalog')->__('Options is required') ?>', function(v) {
         return !Validation.get('IsEmpty').test(v);
 }]]);
 <?php foreach ($this->getOptionValues() as $_value): ?>

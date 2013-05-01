@@ -64,6 +64,13 @@ abstract class Mage_Core_Model_Abstract extends Varien_Object
      */
     protected $_resourceCollectionName;
 
+    /**
+     * Model cache tag for clear cache in after save and after delete
+     *
+     * When you use true - all cache will be clean
+     *
+     * @var string || true
+     */
     protected $_cacheTag    = false;
 
     /**
@@ -255,11 +262,17 @@ abstract class Mage_Core_Model_Abstract extends Varien_Object
      */
     protected function _afterSave()
     {
+        if ($this->_cacheTag) {
+            if ($this->_cacheTag === true) {
+                $tags = array();
+            }
+            else {
+                $tags = array($this->_cacheTag);
+            }
+            Mage::app()->cleanCache($tags);
+        }
         Mage::dispatchEvent('model_save_after', array('object'=>$this));
         Mage::dispatchEvent($this->_eventPrefix.'_save_after', array($this->_eventObject=>$this));
-        if ($this->_cacheTag) {
-            Mage::app()->getCache()->clean('matchingTag', array($this->_cacheTag));
-        }
         return $this;
     }
 
@@ -306,11 +319,17 @@ abstract class Mage_Core_Model_Abstract extends Varien_Object
      */
     protected function _afterDelete()
     {
+        if ($this->_cacheTag) {
+            if ($this->_cacheTag === true) {
+                $tags = array();
+            }
+            else {
+                $tags = array($this->_cacheTag);
+            }
+            Mage::app()->cleanCache($tags);
+        }
         Mage::dispatchEvent('model_delete_after', array('object'=>$this));
         Mage::dispatchEvent($this->_eventPrefix.'_delete_after', array($this->_eventObject=>$this));
-        if ($this->_cacheTag) {
-            Mage::app()->getCache()->clean('matchingTag', array($this->_cacheTag));
-        }
         return $this;
     }
 

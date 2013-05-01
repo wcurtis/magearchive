@@ -31,11 +31,6 @@ class Mage_Tag_Block_Customer_Tags extends Mage_Core_Block_Template
     protected $_minPopularity;
     protected $_maxPopularity;
 
-    public function __construct()
-    {
-        $this->setTemplate('tag/customer/tags.phtml');
-    }
-
     protected function _loadTags()
     {
         if (empty($this->_tags)) {
@@ -84,4 +79,10 @@ class Mage_Tag_Block_Customer_Tags extends Mage_Core_Block_Template
     {
         return $this->_minPopularity;
     }
+    
+    public function getBackUrl()
+    {
+        return $this->getUrl('customer/account/');
+    }
+
 }

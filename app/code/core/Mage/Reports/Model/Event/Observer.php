@@ -52,7 +52,7 @@ class Mage_Reports_Model_Event_Observer
 
         return $this;
     }
-    
+
     public function customerLogin(Varien_Event_Observer $observer) {
         $customer = Mage::getSingleton('customer/session')->getCustomer();
         if (!$customer->getId()) {
@@ -66,31 +66,49 @@ class Mage_Reports_Model_Event_Observer
 
     public function catalogProductView(Varien_Event_Observer $observer)
     {
-        return $this->_event(1, $observer->getEvent()->getProduct()->getId());
+        return $this->_event(
+            Mage_Reports_Model_Event::EVENT_PRODUCT_VIEW,
+            $observer->getEvent()->getProduct()->getId()
+        );
     }
 
     public function sendfriendProduct(Varien_Event_Observer $observer)
     {
-        return $this->_event(2, $observer->getEvent()->getProduct()->getId());
+        return $this->_event(
+            Mage_Reports_Model_Event::EVENT_PRODUCT_SEND,
+            $observer->getEvent()->getProduct()->getId()
+        );
     }
 
     public function catalogProductCompareAddProduct(Varien_Event_Observer $observer)
     {
-        return $this->_event(3, $observer->getEvent()->getProduct()->getId());
+        return $this->_event(
+            Mage_Reports_Model_Event::EVENT_PRODUCT_COMPARE,
+            $observer->getEvent()->getProduct()->getId()
+        );
     }
 
     public function checkoutCartAddProduct(Varien_Event_Observer $observer)
     {
-        return $this->_event(4, $observer->getEvent()->getProduct()->getId());
+        return $this->_event(
+            Mage_Reports_Model_Event::EVENT_PRODUCT_TO_CART,
+            $observer->getEvent()->getProduct()->getId()
+        );
     }
 
     public function wishlistAddProduct(Varien_Event_Observer $observer)
     {
-        return $this->_event(5, $observer->getEvent()->getProduct()->getId());
+        return $this->_event(
+            Mage_Reports_Model_Event::EVENT_PRODUCT_TO_WISHLIST,
+            $observer->getEvent()->getProduct()->getId()
+        );
     }
 
     public function wishlistShare(Varien_Event_Observer $observer)
     {
-        return $this->_event(6, $observer->getEvent()->getWishlist()->getId());
+        return $this->_event(
+            Mage_Reports_Model_Event::EVENT_WISHLIST_SHARE,
+            $observer->getEvent()->getWishlist()->getId()
+        );
     }
 }

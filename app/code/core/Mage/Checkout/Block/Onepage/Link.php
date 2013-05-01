@@ -24,17 +24,10 @@
  * @category   Mage
  * @package    Mage_Checkout
  */
-class Mage_Checkout_Block_Onepage_Link extends Mage_Core_Block_Text_List_Link
+class Mage_Checkout_Block_Onepage_Link extends Mage_Core_Block_Template
 {
-    public function getAParams()
+    public function getCheckoutUrl()
     {
-        return array(
-            'href'=>$this->getUrl('checkout/onepage', array('_secure'=>true))
-        );
-    }
-
-    public function getInnerText()
-    {
-        return '<img src="'.$this->getSkinUrl('images/btn_proceed_to_checkout.gif').'" alt="'.Mage::helper('checkout')->__('Proceed to Checkout').'"/>';
+        return $this->getUrl('checkout/onepage', array('_secure'=>true));
     }
 }

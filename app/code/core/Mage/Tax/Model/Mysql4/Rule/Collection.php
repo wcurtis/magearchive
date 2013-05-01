@@ -77,4 +77,22 @@ class Mage_Tax_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Colle
 
         return $this;
     }
+
+    protected function _getConditionFieldName($fieldName)
+    {
+        switch ($fieldName) {
+            case 'class_customer_name':
+                $fieldName = 'class_customer_table.class_name';
+                break;
+            case 'class_product_name':
+                $fieldName = 'class_product_table.class_name';
+                break;
+            case 'rate_type_name':
+                $fieldName = 'rate_type_table.type_name';
+                break;
+            default:
+                break;
+        }
+        return $fieldName;
+    }
 }

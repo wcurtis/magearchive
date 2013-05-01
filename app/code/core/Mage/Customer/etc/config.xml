@@ -39,7 +39,7 @@
 {{depend company}}{{var company}}{{/depend}}
 {{var street1}}
 {{depend street2}}{{var street2}}{{/depend}}
-{{var city}},  {{var postcode}}, {{var region}}
+{{depend city}}{{var city}},  {{/depend}}{{depend postcode}}{{var postcode}}, {{/depend}}{{var region}}
 {{var country}}
 T: {{var telephone}}
 {{depend fax}}F: {{var fax}}{{/depend}}
@@ -47,18 +47,20 @@ T: {{var telephone}}
                     </text>
                     <oneline translate="title" module="customer">
                         <title>Text One Line</title>
+                        <htmlEscape>true</htmlEscape>
                         <defaultFormat>
 <![CDATA[{{var firstname}} {{var lastname}}, {{var street}}, {{var city}}, {{var region}} {{var postcode}}, {{var country}}]]>
                         </defaultFormat>
                     </oneline>
                     <html translate="title" module="customer">
                         <title>HTML</title>
+                        <htmlEscape>true</htmlEscape>
                         <defaultFormat><![CDATA[
 {{var firstname}} {{var lastname}}<br/>
 {{depend company}}{{var company}}<br />{{/depend}}
 {{var street1}}<br />
 {{depend street2}}{{var street2}}<br />{{/depend}}
-{{var city}}, {{var postcode}}, {{var region}}<br/>
+{{depend city}}{{var city}},  {{/depend}}{{depend postcode}}{{var postcode}}, {{/depend}}{{var region}}<br/>
 {{var country}}<br/>
 {{depend telephone}}T: {{var telephone}}{{/depend}}
 {{depend fax}}<br/>F: {{var fax}}{{/depend}}
@@ -71,7 +73,7 @@ T: {{var telephone}}
 {{depend company}}{{var company}}|{{/depend}}
 {{var street1}}|
 {{depend street2}}{{var street2}}|{{/depend}}
-{{var city}}, {{var postcode}}, {{var region}}|
+{{depend city}}{{var city}},  {{/depend}}{{depend postcode}}{{var postcode}}, {{/depend}}{{var region}}|
 {{var country}}|
 {{depend telephone}}T: {{var telephone}}{{/depend}}|
 {{depend fax}}<br/>F: {{var fax}}{{/depend}}|

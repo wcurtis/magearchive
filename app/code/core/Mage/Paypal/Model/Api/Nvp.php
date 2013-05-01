@@ -45,7 +45,7 @@ class Mage_Paypal_Model_Api_Nvp extends Mage_Paypal_Model_Api_Abstract
             } else {
                 $default = 'https://www.paypal.com/cgi-bin/';
             }
-            $default .= 'webscr&cmd=_express-checkout&useraction='.$this->getUserAction().'&token=';
+            $default .= 'webscr?cmd=_express-checkout&useraction='.$this->getUserAction().'&token=';
 
             $url = $this->getConfigData('paypal_url', $default);
         } else {
@@ -171,8 +171,11 @@ class Mage_Paypal_Model_Api_Nvp extends Mage_Paypal_Model_Api_Abstract
         $a->setEmail($resArr['EMAIL']);
         $a->setFirstname($resArr['FIRSTNAME']);
         $a->setLastname($resArr['LASTNAME']);
-        $a->setStreet($resArr['SHIPTOSTREET']);
-        $a->setStreet2(isset($resArr['SHIPTOSTREET2']) ? $resArr['SHIPTOSTREET2'] : '');
+        $street = array($resArr['SHIPTOSTREET']);
+        if (isset($resArr['SHIPTOSTREET2'])) {
+            $street[] = $resArr['SHIPTOSTREET2'];
+        }
+        $a->setStreet($street);
         $a->setCity($resArr['SHIPTOCITY']);
         $a->setRegion(isset($resArr['SHIPTOSTATE']) ? $resArr['SHIPTOSTATE'] : '');
         $a->setPostcode($resArr['SHIPTOZIP']);
@@ -226,6 +229,7 @@ class Mage_Paypal_Model_Api_Nvp extends Mage_Paypal_Model_Api_Abstract
     {
         $p = $this->getPayment();
         $a = $this->getBillingAddress();
+        $s = $this->getShippingAddress();
 
         $nvpArr = array(
             'PAYMENTACTION'  => $this->getPaymentType(),
@@ -245,6 +249,15 @@ class Mage_Paypal_Model_Api_Nvp extends Mage_Paypal_Model_Api_Abstract
             'STATE'          => $a->getRegionCode(),
             'ZIP'            => $a->getPostcode(),
             'COUNTRYCODE'    => 'US', // only US supported for direct payment
+            'EMAIL'          => $this->getEmail(),
+
+            'SHIPTONAME'     => $s->getName(),
+            'SHIPTOSTREET'   => $s->getStreet(1),
+            'SHIPTOSTREET2'   => $s->getStreet(2),
+            'SHIPTOCITY'     => $s->getCity(),
+            'SHIPTOSTATE'    => ($s->getRegionCode() ? $s->getRegionCode() : $s->getRegion()),
+            'SHIPTOZIP'      => $s->getPostcode(),
+            'SHIPTOCOUNTRYCODE' => $s->getCountry(),
         );
 
 #echo "<pre>".print_r($nvpArr,1)."</pre>"; die;
@@ -403,7 +416,7 @@ class Mage_Paypal_Model_Api_Nvp extends Mage_Paypal_Model_Api_Abstract
         }
 
         $http = new Varien_Http_Adapter_Curl();
-        $config = array();
+        $config = array('timeout' => 30);
         if ($this->getUseProxy()) {
             $config['proxy'] = $this->getProxyHost(). ':' . $this->getProxyPort();
         }
@@ -440,10 +453,11 @@ class Mage_Paypal_Model_Api_Nvp extends Mage_Paypal_Model_Api_Abstract
 
         $ack = strtoupper($nvpResArray['ACK']);
 
-        if ($ack == 'SUCCESS' ) {
+        if ($ack == 'SUCCESS' || $ack=='SUCCESSWITHWARNING') {
             $this->unsError();
             return $nvpResArray;
         }
+
 
         $errorArr = array(
             'type' => 'API',

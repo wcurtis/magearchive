@@ -170,17 +170,39 @@ if (!navigator.appVersion.match('MSIE 6.')) {
     var header, header_offset, header_copy;
 
     Event.observe(window, 'load', function() {
-        header = $$('.content-header')[1] || $$('.content-header')[0];
+        var headers = $$('.content-header');
+        for(var i=0; i<headers.length;i++) {
+            if(!headers[i].hasClassName('skip-header')) {
+                header = headers[i];
+            }
+        }
+
         if (!header) {
-           return;
+            return;
         }
         header_offset = Position.cumulativeOffset(header)[1];
-        header_copy = header.cloneNode(true);
+        var buttons = $$('.content-buttons')[0];
+        if (buttons) {
+            new Insertion.Before(buttons, '<div class="content-buttons-placeholder"></div>');
+            buttons.placeholder = buttons.previous('.content-buttons-placeholder');
+            buttons.remove();
+            buttons.placeholder.appendChild(buttons);
+
+            header_offset = Position.cumulativeOffset(buttons)[1];
+
+        }
+
+        header_copy = document.createElement('div');
+        header_copy.appendChild(header.cloneNode(true));
         document.body.appendChild(header_copy);
         $(header_copy).addClassName('content-header-floating');
+        if ($(header_copy).down('.content-buttons-placeholder')) {
+            $(header_copy).down('.content-buttons-placeholder').remove();
+        }
     });
 
-    Event.observe(window, 'scroll', function () {
+    function floatingTopButtonToolbarToggle() {
+
         if (!header || !header_copy.parentNode) {
             return;
         }
@@ -193,14 +215,45 @@ if (!navigator.appVersion.match('MSIE 6.')) {
         }else if (document.body) {
             s = document.body.scrollTop;
         }
+
+
+        var buttons = $$('.content-buttons')[0];
+
         if (s > header_offset) {
-            header.style.visibility = 'hidden';
+            if (buttons) {
+                if (!buttons.oldParent) {
+                    buttons.oldParent = buttons.parentNode;
+                    buttons.oldBefore = buttons.previous();
+                }
+                if (buttons.oldParent==buttons.parentNode) {
+                    var dimensions = buttons.placeholder.getDimensions() // Make static dimens.
+                    buttons.placeholder.style.width = dimensions.width + 'px';
+                    buttons.placeholder.style.height = dimensions.height + 'px';
+
+                    buttons.hide();
+                    buttons.remove();
+                    $(header_copy).down('div').appendChild(buttons);
+                    buttons.show();
+                }
+            }
+
+            //header.style.visibility = 'hidden';
             header_copy.style.display = 'block';
         } else {
+            if (buttons && buttons.oldParent && buttons.oldParent != buttons.parentNode) {
+                buttons.remove();
+                buttons.oldParent.insertBefore(buttons, buttons.oldBefore);
+                //buttons.placeholder.style.width = undefined;
+                //buttons.placeholder.style.height = undefined;
+            }
             header.style.visibility = 'visible';
             header_copy.style.display = 'none';
+
         }
-    });
+    }
+
+    Event.observe(window, 'scroll', floatingTopButtonToolbarToggle);
+    Event.observe(window, 'resize', floatingTopButtonToolbarToggle);
 }
 
 /** Cookie Reading And Writing **/
@@ -258,7 +311,7 @@ var Fieldset = {
            $(containerId).show();
         }
     },
-    toggleCollapse: function(containerId) {
+    toggleCollapse: function(containerId, saveThroughAjax) {
         if ($(containerId + '-state')) {
             collapsed = $(containerId + '-state').value == 1 ? 0 : 1;
         } else {
@@ -280,8 +333,18 @@ var Fieldset = {
         }
 
         this.applyCollapse(containerId);
+        if (typeof saveThroughAjax != "undefined") {
+            this.saveState(saveThroughAjax, {container: containerId, value: $(containerId + '-state').value});
+        }
     },
     addToPrefix: function (value) {
         this.cookiePrefix += value + '-';
+    },
+    saveState: function(url, parameters) {
+        new Ajax.Request(url, {
+            method: 'get',
+            parameters: Hash.toQueryString(parameters),
+            loaderArea: false
+        });
     }
 };

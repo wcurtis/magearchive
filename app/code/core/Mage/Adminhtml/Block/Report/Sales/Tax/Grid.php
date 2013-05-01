@@ -43,13 +43,15 @@ class Mage_Adminhtml_Block_Report_Sales_Tax_Grid extends Mage_Adminhtml_Block_Re
     {
         $this->addColumn('tax_rate', array(
             'header'    =>Mage::helper('reports')->__('Tax Rate'),
-            'index'     =>'tax_rate'
+            'index'     =>'tax_rate',
+            'type'      =>'number'
         ));
 
         $this->addColumn('orders', array(
             'header'    =>Mage::helper('reports')->__('Number of Orders'),
             'index'     =>'orders',
-            'total'     =>'sum'
+            'total'     =>'sum',
+            'type'      =>'number'
         ));
 
         $this->addColumn('tax', array(

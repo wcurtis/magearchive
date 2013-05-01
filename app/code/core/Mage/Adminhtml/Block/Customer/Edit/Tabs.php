@@ -62,9 +62,27 @@ class Mage_Adminhtml_Block_Customer_Edit_Tabs extends Mage_Adminhtml_Block_Widge
                  'content'   => $this->getLayout()->createBlock('adminhtml/customer_edit_tab_orders')->toHtml(),
              ));
 
+            $carts = '';
+            if (Mage::registry('current_customer')->getSharingConfig()->isWebsiteScope()) {
+                $website = Mage::app()->getWebsite(Mage::registry('current_customer')->getWebsiteId());
+                $blockName = 'customer_cart_'.$website->getId();
+                $carts .= $this->getLayout()->createBlock('adminhtml/customer_edit_tab_cart', $blockName, array('website_id' => $website->getId()))
+                        ->toHtml();
+            } else {
+                foreach (Mage::app()->getWebsites() as $website) {
+                    if (count($website->getStoreIds()) > 0) {
+                        $blockName = 'customer_cart_'.$website->getId();
+                        $carts .= $this->getLayout()->createBlock('adminhtml/customer_edit_tab_cart', $blockName, array('website_id' => $website->getId()))
+                            ->setWebsiteId($website->getId())
+                            ->setCartHeader($this->__('Shopping Cart from %s', $website->getName()))
+                            ->toHtml();
+                    }
+                }
+            }
+
             $this->addTab('cart', array(
                 'label'     => Mage::helper('customer')->__('Shopping Cart'),
-                'content'   => $this->getLayout()->createBlock('adminhtml/customer_edit_tab_cart')->toHtml(),
+                'content'   => $carts,
             ));
 
             $this->addTab('wishlist', array(

@@ -36,26 +36,29 @@ class Mage_Wishlist_Block_Customer_Sidebar extends Mage_Core_Block_Template
 
 	public function getWishlist()
 	{
-		if(is_null($this->_wishlist)) {
-			$this->_wishlist = Mage::getModel('wishlist/wishlist')
-				->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer());
+        if(is_null($this->_wishlist)) {
+            $this->_wishlist = Mage::getModel('wishlist/wishlist')
+                ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomer());
 
-			$collection = $this->_wishlist->getProductCollection()
-				->addAttributeToSelect('name')
-				->addAttributeToSelect('price')
+            $collection = $this->_wishlist->getProductCollection()
+                ->addAttributeToSelect('name')
+                ->addAttributeToSelect('price')
+                ->addAttributeToSelect('special_price')
+                ->addAttributeToSelect('special_from_date')
+                ->addAttributeToSelect('special_to_date')
                 ->addAttributeToSelect('small_image')
                 ->addAttributeToSelect('thumbnail')
                 ->addAttributeToSelect('status')
                 ->addAttributeToSelect('tax_class_id')
-				->addAttributeToFilter('store_id', array('in'=>$this->_wishlist->getSharedStoreIds()))
-				->addAttributeToSort('added_at', 'desc')
+                ->addAttributeToFilter('store_id', array('in'=>$this->_wishlist->getSharedStoreIds()))
+                ->addAttributeToSort('added_at', 'desc')
                 ->setCurPage(1)
-				->setPageSize(3)
-				->addUrlRewrite();
-		}
+                ->setPageSize(3)
+                ->addUrlRewrite();
+        }
 
-		return $this->_wishlist;
-	}
+        return $this->_wishlist;
+    }
 
 	protected function _toHtml()
 	{
@@ -78,6 +81,6 @@ class Mage_Wishlist_Block_Customer_Sidebar extends Mage_Core_Block_Template
 
 	public function getAddToCartItemUrl($item)
 	{
-	    return $this->getUrl('wishlist/index/cart',array('item'=>$item->getWishlistItemId()));
+	    return Mage::helper('wishlist')->getAddToCartUrlBase64($item);
 	}
 }

@@ -25,9 +25,9 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
 
         $rid = Mage::app()->getRequest()->getParam('rid', false);
 
-        $resources = Mage::getModel('admin/permissions_roles')->getResourcesList();
+        $resources = Mage::getModel('admin/roles')->getResourcesList();
 
-        $rules_set = Mage::getResourceModel('admin/permissions_rules_collection')->getByRoles($rid)->load();
+        $rules_set = Mage::getResourceModel('admin/rules_collection')->getByRoles($rid)->load();
 
         $selrids = array();
 
@@ -53,7 +53,7 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
     public function getResTreeJson()
     {
         $rid = Mage::app()->getRequest()->getParam('rid', false);
-        $resources = Mage::getModel('admin/permissions_roles')->getResourcesTree();
+        $resources = Mage::getModel('admin/roles')->getResourcesTree();
 
         $rootArray = $this->_getNodeJson($resources);
 
@@ -103,7 +103,7 @@ class Mage_Adminhtml_Block_Permissions_Tab_Rolesedit extends Mage_Adminhtml_Bloc
                 }
             }
             if (!empty($item['children'])) {
-                usort(&$item['children'], array($this, '_sortTree'));
+                usort($item['children'], array($this, '_sortTree'));
             }
         }
         return $item;

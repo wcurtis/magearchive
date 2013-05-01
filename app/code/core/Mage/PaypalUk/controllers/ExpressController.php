@@ -95,9 +95,14 @@ class Mage_PaypalUk_ExpressController extends Mage_Core_Controller_Front_Action
      */
     public function reviewAction()
     {
-        $this->loadLayout();
-        $this->_initLayoutMessages('paypaluk/session');
-        $this->renderLayout();
+        $payment = Mage::getSingleton('checkout/session')->getQuote()->getPayment();
+        if ($payment && $payment->getPaypalPayerId()) {
+            $this->loadLayout();
+            $this->_initLayoutMessages('paypaluk/session');
+            $this->renderLayout();
+        } else {
+            $this->_redirect('checkout/cart');
+        }
     }
 
     /**

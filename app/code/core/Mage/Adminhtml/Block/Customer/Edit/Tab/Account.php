@@ -53,6 +53,8 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Account extends Mage_Adminhtml_Bloc
             $fieldset->removeField('created_in');
         }
 
+        $form->getElement('email')->addClass('validate-email');
+
 //        if (Mage::app()->isSingleStoreMode()) {
 //            $fieldset->removeField('website_id');
 //            $fieldset->addField('website_id', 'hidden', array(
@@ -97,8 +99,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Account extends Mage_Adminhtml_Bloc
                 'id'    => 'sendemail',
             ));
         }
-
-
         $form->setValues($customer->getData());
         $this->setForm($form);
         return $this;

@@ -32,11 +32,6 @@
                 <controller>wizard</controller>
                 <action>locale</action>
             </locale>
-            <download>
-                <code>Download Updates</code>
-                <controller>wizard</controller>
-                <action>download</action>
-            </download>
             <config>
                 <code>Configuration</code>
                 <controller>wizard</controller>

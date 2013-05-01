@@ -31,9 +31,9 @@ class Mage_Tag_Block_Customer_View extends Mage_Core_Block_Template
 
     protected $_tagInfo;
 
-    public function __construct()
+    protected function _construct()
     {
-        $this->setTemplate('tag/customer/view.phtml');
+        parent::_construct();
         $this->setTagId(Mage::registry('tagId'));
     }
 
@@ -82,8 +82,7 @@ class Mage_Tag_Block_Customer_View extends Mage_Core_Block_Template
     protected function _getCollection()
     {
         if( !$this->_collection ) {
-            $tagModel = Mage::getModel('tag/tag');
-            $this->_collection = $tagModel->getEntityCollection();
+            $this->_collection = Mage::getModel('tag/tag')->getEntityCollection();
 
             $this->_collection
                 ->addTagFilter($this->getTagId())

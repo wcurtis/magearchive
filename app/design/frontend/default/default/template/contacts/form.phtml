@@ -29,12 +29,12 @@
         <li>
                 <div class="input-box">
                     <label for="name"><?php echo $this->__('Name') ?> <span class="required">*</span></label><br />
-                    <input name="name" id="name" title="<?php echo $this->__('Name') ?>" value="<?php echo $this->helper('contacts')->getUserName() ?>" class="required-entry input-text" type="text"/>
+                    <input name="name" id="name" title="<?php echo $this->__('Name') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserName()) ?>" class="required-entry input-text" type="text"/>
                 </div>
 
                 <div class="input-box">
                     <label for="email"><?php echo $this->__('Email') ?> <span class="required">*</span></label><br />
-                    <input name="email" id="email" title="<?php echo $this->__('Email') ?>" value="<?php echo $this->helper('contacts')->getUserEmail() ?>" class="required-entry input-text validate-email" type="text"/>
+                    <input name="email" id="email" title="<?php echo $this->__('Email') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserEmail()) ?>" class="required-entry input-text validate-email" type="text"/>
                 </div>
 
                 <div class="clear"></div>

@@ -24,11 +24,11 @@
 
     <checkout_cart_index>
         <reference name="checkout.cart.top_methods">
-            <block type="googlecheckout/link" name="checkout.cart.methods.googlecheckout" before="-"/>
+            <block type="googlecheckout/link" name="checkout.cart.methods.googlecheckout" template="googlecheckout/link.phtml" before="-"/>
         </reference>
 
         <reference name="checkout.cart.methods">
-            <block type="googlecheckout/link" name="checkout.cart.methods.googlecheckout"/>
+            <block type="googlecheckout/link" name="checkout.cart.methods.googlecheckout" template="googlecheckout/link.phtml"/>
         </reference>
 
         <reference name="google_analytics">

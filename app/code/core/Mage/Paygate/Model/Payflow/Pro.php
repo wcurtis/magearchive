@@ -47,6 +47,7 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
     protected $_clientTimeout = 45;
 
     const RESPONSE_CODE_APPROVED = 0;
+    const RESPONSE_CODE_FRAUDSERVICE_FILTER = 126;
     const RESPONSE_CODE_DECLINED = 12;
     const RESPONSE_CODE_CAPTURE_ERROR = 111;
 
@@ -59,7 +60,7 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canCapturePartial       = false;
-    protected $_canRefund               = true;
+    protected $_canRefund               = false;
     protected $_canVoid                 = true;
     protected $_canUseInternal          = true;
     protected $_canUseCheckout          = true;
@@ -88,6 +89,11 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
                 case self::RESPONSE_CODE_APPROVED:
                      $payment->setStatus(self::STATUS_APPROVED);
                      break;
+
+                case self::RESPONSE_CODE_FRAUDSERVICE_FILTER:
+                    $payment->setFraudFlag(true);
+                    break;
+
                 default:
                     if ($result->getRespmsg()) {
                         $error = $result->getRespmsg();
@@ -123,34 +129,34 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
             $request = $this->_buildBasicRequest($payment);
         } else {
             $payment->setTrxtype(self::TRXTYPE_SALE);
+            $payment->setAmount($amount);
             $request = $this->_buildRequest($payment);
         }
 
-        if ($amount>0) {
-            $request->setAmt($amount);
-        }
-
         $result = $this->_postRequest($request);
-        if ($result->getResultCode()!=self::RESPONSE_CODE_APPROVED) {
-            /**
-             * payflow: only one delayed capture transaction is allower per authorization.
-             * so need to use sale transaction
-             */
-            if ($result->getRespmsg()) {
-                $error = $result->getRespmsg();
-            } else {
-                $error = Mage::helper('paygate')->__('Error in capturing the payment');
-            }
-        } else {
-            $payment->setStatus(self::STATUS_APPROVED);
-            //$payment->setCcTransId($result->getPnref());
-            $payment->setLastTransId($result->getPnref());
-        }
+        switch ($result->getResultCode()){
+            case self::RESPONSE_CODE_APPROVED:
+                 $payment->setStatus(self::STATUS_APPROVED);
+                 //$payment->setCcTransId($result->getPnref());
+                 $payment->setLastTransId($result->getPnref());
+                 break;
 
+            case self::RESPONSE_CODE_FRAUDSERVICE_FILTER:
+                $payment->setFraudFlag(true);
+                break;
+
+            default:
+                if ($result->getRespmsg()) {
+                    $error = $result->getRespmsg();
+                }
+                else {
+                    $error = Mage::helper('paygate')->__('Error in capturing the payment');
+                }
+            break;
+        }
         if ($error !== false) {
             Mage::throwException($error);
         }
-
         return $this;
     }
 
@@ -208,7 +214,6 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
             $payment->setTrxtype(self::TRXTYPE_DELAYED_VOID);
             $payment->setTransactionId($payment->getCcTransId());
             $request=$this->_buildBasicRequest($payment);
-
             $result = $this->_postRequest($request);
 
             if ($this->getConfigData('debug')) {
@@ -362,12 +367,14 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
 
         if($payment->getAmount()){
             $request->setAmt(round($payment->getAmount(),2));
+            $request->setCurrency($payment->getOrder()->getBaseCurrencyCode());
         }
 
         switch ($request->getTender()) {
             case self::TENDER_CC:
                     if($payment->getCcNumber()){
-                        $request->setComment1($payment->getCcOwner())
+                        $request
+                            //->setComment1($payment->getCcOwner())
                             ->setAcct($payment->getCcNumber())
                             ->setExpdate(sprintf('%02d',$payment->getCcExpMonth()).substr($payment->getCcExpYear(),-2,2))
                             ->setCvv2($payment->getCcCid());
@@ -379,14 +386,24 @@ class Mage_Paygate_Model_Payflow_Pro extends  Mage_Payment_Model_Method_Cc
         if(!empty($order)){
             $billing = $order->getBillingAddress();
             if (!empty($billing)) {
-                $request->setFirstName($billing->getFirstname())
-                    ->setLastName($billing->getLastname())
+                $request->setFirstname($billing->getFirstname())
+                    ->setLastname($billing->getLastname())
                     ->setStreet($billing->getStreet(1))
                     ->setCity($billing->getCity())
                     ->setState($billing->getRegion())
                     ->setZip($billing->getPostcode())
                     ->setCountry($billing->getCountry())
                     ->setEmail($payment->getOrder()->getCustomerEmail());
+            }
+            $shipping = $order->getShippingAddress();
+            if (!empty($shipping)) {
+                $request->setShiptofirstname($shipping->getFirstname())
+                    ->setShiptolastname($shipping->getLastname())
+                    ->setShiptostreet($shipping->getStreet(1))
+                    ->setShiptocity($shipping->getCity())
+                    ->setShiptostate($shipping->getRegion())
+                    ->setShiptozip($shipping->getPostcode())
+                    ->setShiptocountry($shipping->getCountry());
             }
         }
         return $request;

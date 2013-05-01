@@ -109,8 +109,9 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
 
         }
 
-        $r->setWeight($request->getPackageWeight());
-        if ($request->getFreeMethodWeight()!=$request->getPackageWeight()) {
+        $weight = $this->getTotalNumOfBoxes($request->getPackageWeight());
+        $r->setWeight($weight);
+        if ($request->getFreeMethodWeight()!= $request->getPackageWeight()) {
             $r->setFreeMethodWeight($request->getFreeMethodWeight());
         }
 
@@ -134,8 +135,8 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
     protected function _setFreeMethodRequest($freeMethod)
     {
         $r = $this->_rawRequest;
-
-        $r->setWeight($r->getFreeMethodWeight());
+        $weight = $this->getTotalNumOfBoxes($r->getFreeMethodWeight());
+        $r->setWeight($weight);
         $r->setService($freeMethod);
     }
 
@@ -280,6 +281,11 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
             $declaredValue->addChild('Value', $r->getValue());
             $declaredValue->addChild('CurrencyCode', 'USD');
 
+        if ($this->getConfigData('residence_delivery')) {
+            $specialServices = $xml->addChild('SpecialServices');
+                 $specialServices->addChild('ResidentialDelivery', 'true');
+        }
+
 //      $specialServices = $xml->addChild('SpecialServices');
 //          $specialServices->addChild('Alcohol', 'true');
 //          $specialServices->addChild('DangerousGoods', 'true')->addChild('Accessibility', 'ACCESSIBLE');
@@ -379,7 +385,6 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
         $xml->addChild('PackageCount', '1');
 
         $request = $xml->asXML();
-
 /*
         $client = new Zend_Http_Client();
         $client->setUri($this->getConfigData('gateway_url'));
@@ -406,13 +411,12 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
             $responseBody = '';
         }
 
-
         return $this->_parseXmlResponse($responseBody);
     }
 
     protected function _parseXmlResponse($response)
     {
-    	$costArr = array();
+        $costArr = array();
         $priceArr = array();
         $errorTitle = 'Unable to retrieve quotes';
         if (strlen(trim($response))>0) {
@@ -422,7 +426,7 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
                     if (is_object($xml->Error) && is_object($xml->Error->Message)) {
                         $errorTitle = (string)$xml->Error->Message;
                     } elseif (is_object($xml->SoftError) && is_object($xml->SoftError->Message)) {
-                    	$errorTitle = (string)$xml->SoftError->Message;
+                        $errorTitle = (string)$xml->SoftError->Message;
                     } else {
                         $errorTitle = 'Unknown error';
                     }
@@ -446,7 +450,8 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
             $error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('fedex');
             $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($errorTitle);
+            //$error->setErrorMessage($errorTitle);
+            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
         } else {
             foreach ($priceArr as $method=>$price) {
@@ -463,23 +468,10 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
         return $result;
     }
 
-    public function getMethodPrice($cost, $method='')
-    {
-        $r = $this->_rawRequest;
-        if ($this->getConfigData('cutoff_cost') != ''
-         && $method == $this->getConfigData('free_method')
-         && $this->getConfigData('cutoff_cost') <= $r->getValue()) {
-             $price = '0.00';
-        } else {
-            $price = $cost + $this->getConfigData('handling');
-        }
-        return $price;
-    }
-
 /*
     public function isEligibleForFree($method)
     {
-    	return $method=='FEDEXGROUND';
+        return $method=='FEDEXGROUND';
     }
 */
 
@@ -610,7 +602,7 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
         }
 
         #echo "<xmp>".$responseBody."</xmp>";
-		$this->_parseXmlTrackingResponse($tracking, $responseBody);
+        $this->_parseXmlTrackingResponse($tracking, $responseBody);
     }
 
     protected function _parseXmlTrackingResponse($trackingvalue,$response)
@@ -623,7 +615,7 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
                     if (is_object($xml->Error) && is_object($xml->Error->Message)) {
                         $errorTitle = (string)$xml->Error->Message;
                     } elseif (is_object($xml->SoftError) && is_object($xml->SoftError->Message)) {
-                    	$errorTitle = (string)$xml->SoftError->Message;
+                        $errorTitle = (string)$xml->SoftError->Message;
                     }
                   }else{
                       $errorTitle = 'Error in loading response';

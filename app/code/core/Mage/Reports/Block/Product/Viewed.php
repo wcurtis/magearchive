@@ -47,7 +47,7 @@ class Mage_Reports_Block_Product_Viewed extends Mage_Catalog_Block_Product_Abstr
         }
         $collection = Mage::getModel('reports/event')
             ->getCollection()
-            ->addRecentlyFiler(1, $subjectId, $subtype, $ignore);
+            ->addRecentlyFiler(Mage_Reports_Model_Event::EVENT_PRODUCT_VIEW, $subjectId, $subtype, $ignore);
         $productIds = array();
         foreach ($collection as $event) {
             $productIds[] = $event->getObjectId();

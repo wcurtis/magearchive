@@ -59,13 +59,13 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset
     {
         $default = !$this->getRequest()->getParam('website') && !$this->getRequest()->getParam('store');
 
-        $html = '<div  class="entry-edit-head collapseable" ><a id="'.$element->getHtmlId().'-head" href="#" onclick="Fieldset.toggleCollapse(\''.$element->getHtmlId().'\'); return false;">'.$element->getLegend().'</a></div>';
+        $html = '<div  class="entry-edit-head collapseable" ><a id="'.$element->getHtmlId().'-head" href="#" onclick="Fieldset.toggleCollapse(\''.$element->getHtmlId().'\', \''.$this->getUrl('*/*/state').'\'); return false;">'.$element->getLegend().'</a></div>';
         $html.= '<input id="'.$element->getHtmlId().'-state" name="config_state['.$element->getId().']" type="hidden" value="'.(int)$this->_getCollapseState($element).'">';
         $html.= '<fieldset class="config collapseable" id="'.$element->getHtmlId().'">';
         $html.= '<legend>'.$element->getLegend().'</legend>';
 
         if ($element->getComment()) {
-            $html .= $element->getComment();
+            $html .= '<div class="comment">'.$element->getComment().'</div>';
         }
         // field label column
         $html.= '<table cellspacing="0" class="form-list"><colgroup class="label"/><colgroup class="value"/>';

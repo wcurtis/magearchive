@@ -55,6 +55,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Grid extends Mage_Adminhtml_Block_Widget_G
                 'width'     => '200px',
                 'index'     => 'store_id',
                 'type'      => 'store',
+                'store_view' => true,
             ));
         }
 

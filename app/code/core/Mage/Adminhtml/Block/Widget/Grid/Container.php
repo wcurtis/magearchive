@@ -30,6 +30,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Container extends Mage_Adminhtml_Block_Wi
 
     protected $_addButtonLabel = 'Add New';
     protected $_backButtonLabel = 'Back';
+    protected $_blockGroup = 'adminhtml';
 
     public function __construct()
     {
@@ -47,7 +48,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Container extends Mage_Adminhtml_Block_Wi
     protected function _prepareLayout()
     {
         $this->setChild( 'grid',
-            $this->getLayout()->createBlock( 'adminhtml/' . $this->_controller . '_grid',
+            $this->getLayout()->createBlock( $this->_blockGroup.'/' . $this->_controller . '_grid',
             $this->_controller . '.grid')->setSaveParametersInSession(true) );
         return parent::_prepareLayout();
     }

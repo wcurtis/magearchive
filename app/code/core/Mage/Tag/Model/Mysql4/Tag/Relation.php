@@ -59,6 +59,19 @@ class Mage_Tag_Model_Mysql4_Tag_Relation extends Mage_Core_Model_Mysql4_Abstract
         }
     }
 
+    public function getProductIds($model)
+    {
+        $select = $this->_getReadAdapter()->select()
+            ->from($this->getMainTable(), 'product_id')
+            ->where("tag_id = ?", $model->getTagId())
+            ->where('customer_id=?', $model->getCustomerId())
+            ->where('active=1');
+        if( $model->hasStoreId() ) {
+            $select->where('store_id = ?', $model->getStoreId());
+        }
+        return $this->_getReadAdapter()->fetchCol($select);
+    }
+
     public function deactivate($tagId, $customerId)
     {
         $condition = $this->_getWriteAdapter()->quoteInto('tag_id = ?', $tagId) . ' AND ';

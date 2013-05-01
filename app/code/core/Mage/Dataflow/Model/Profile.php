@@ -49,7 +49,7 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
         parent::_beforeSave();
 
         $actionsXML = $this->getData('actions_xml');
-        if (0 < strlen($actionsXML) || false === simplexml_load_string('<data>'.$actionsXML.'</data>', null, LIBXML_NOERROR)) {
+        if (0 < strlen($actionsXML) && false === simplexml_load_string('<data>'.$actionsXML.'</data>', null, LIBXML_NOERROR)) {
             Mage::throwException(Mage::helper("dataflow")->__("Actions XML is not valid."));
         }
 
@@ -103,21 +103,52 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
         parent::_afterSave();
     }
 
+    /**
+     * Run profile
+     *
+     * @return Mage_Dataflow_Model_Profile
+     */
     public function run()
     {
+        /**
+         * Save history
+         */
         Mage::getModel('dataflow/profile_history')
             ->setProfileId($this->getId())
             ->setActionCode('run')
             ->save();
 
+        /**
+         * Prepare xml convert profile actions data
+         */
         $xml = '<convert version="1.0"><profile name="default">'.$this->getActionsXml().'</profile></convert>';
-        $profile = Mage::getModel('core/convert')->importXml($xml)->getProfile('default');
+        $profile = Mage::getModel('core/convert')
+            ->importXml($xml)
+            ->getProfile('default');
+        /* @var $profile Mage_Dataflow_Model_Convert_Profile */
+
         try {
+            $batch = Mage::getSingleton('dataflow/batch')
+                ->setProfileId($this->getId())
+                ->setStoreId($this->getStoreId())
+                ->save();
+            $this->setBatchId($batch->getId());
+
+//            print '<pre>';
+//            print_r($this->getData());
+//            print '</pre>';
+
             $profile->setDataflowProfile($this->getData());
             $profile->run();
-        } catch (Exception $e) {
-
         }
+        catch (Exception $e) {
+            echo $e;
+        }
+
+//        if ($batch) {
+//            $batch->delete();
+//        }
+
         $this->setExceptions($profile->getExceptions());
         return $this;
     }
@@ -161,13 +192,16 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
                     $fileXml .= '    <var name="password"><![CDATA['.$p['file']['password'].']]></var>'.$nl;
                 }
             }
+            if ($import) {
+                $fileXml .= '    <var name="format"><![CDATA['.$p['parse']['type'].']]></var>'.$nl;
+            }
             $fileXml .= '</action>'.$nl.$nl;
         }
 
         switch ($p['parse']['type']) {
             case 'excel_xml':
                 $parseFileXml = '<action type="dataflow/convert_parser_xml_excel" method="'.($import?'parse':'unparse').'">'.$nl;
-                $parseFileXml .= '    <var name="single_sheet"><![CDATA['.($p['parse']['single_sheet']!==''?$p['parse']['single_sheet']:'_').']]></var>'.$nl;
+                $parseFileXml .= '    <var name="single_sheet"><![CDATA['.($p['parse']['single_sheet']!==''?$p['parse']['single_sheet']:'').']]></var>'.$nl;
                 break;
 
             case 'csv':
@@ -181,6 +215,7 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
         $parseFileXml .= '</action>'.$nl.$nl;
 
         $mapXml = '';
+
         if (isset($p['map']) && is_array($p['map'])) {
             foreach ($p['map'] as $side=>$fields) {
                 if (!is_array($fields)) {
@@ -199,13 +234,18 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
         if (sizeof($map['db'])>0) {
             $from = $map[$import?'file':'db'];
             $to = $map[$import?'db':'file'];
+            $mapXml .= '    <var name="map">'.$nl;
+            $parseFileXmlInter .= '    <var name="map">'.$nl;
             foreach ($from as $i=>$f) {
-                $mapXml .= '    <var name="'.$f.'"><![CDATA['.$to[$i].']]></var>'.$nl;
-                $parseFileXmlInter .= '    <var name="'.$f.'"><![CDATA['.$to[$i].']]></var>'.$nl;
+                $mapXml .= '        <map name="'.$f.'"><![CDATA['.$to[$i].']]></map>'.$nl;
+                $parseFileXmlInter .= '        <map name="'.$f.'"><![CDATA['.$to[$i].']]></map>'.$nl;
             }
+            $mapXml .= '    </var>'.$nl;
+            $parseFileXmlInter .= '    </var>'.$nl;
         }
         if ($p['map']['only_specified']) {
             $mapXml .= '    <var name="_only_specified">'.$p['map']['only_specified'].'</var>'.$nl;
+            //$mapXml .= '    <var name="map">'.$nl;
             $parseFileXmlInter .= '    <var name="_only_specified">'.$p['map']['only_specified'].'</var>'.$nl;
         }
         $mapXml .= '</action>'.$nl.$nl;
@@ -271,13 +311,13 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
         	if ($this->getDataTransfer()==='interactive') {
         		$xml = $parseFileXmlInter;
                 $xml .= '    <var name="adapter">'.$adapters[$this->getEntityType()].'</var>'.$nl;
-                $xml .= '    <var name="method">saveRow</var>'.$nl;
+                $xml .= '    <var name="method">parse</var>'.$nl;
                 $xml .= '</action>';
         	} else {
         		$xml = $fileXml;
         		$xml .= $parseFileXmlInter;
                 $xml .= '    <var name="adapter">'.$adapters[$this->getEntityType()].'</var>'.$nl;
-                $xml .= '    <var name="method">saveRow</var>'.$nl;
+                $xml .= '    <var name="method">parse</var>'.$nl;
                 $xml .= '</action>';
         	}
         	//$xml = $interactiveXml.$fileXml.$parseFileXml.$mapXml.$parseDataXml.$entityXml;

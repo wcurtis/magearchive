@@ -143,6 +143,21 @@ class Mage_Core_Model_Url_Rewrite extends Mage_Core_Model_Abstract
         #$requestPath = $request->getPathInfo();
         $this->setId(null)->loadByRequestPath($requestPath);
 
+        if (!$this->getId() && isset($_GET['from_store'])) {
+            try {
+                $fromStoreId = Mage::app()->getStore($_GET['from_store']);
+            }
+            catch (Exception $e) {
+                return false;
+            }
+
+            $this->setId(null)->setStoreId($fromStoreId)->loadByRequestPath($requestPath);
+            if (!$this->getId()) {
+                return false;
+            }
+            $this->setId(null)->setStoreId(Mage::app()->getStore()->getId())->loadByIdPath($this->getIdPath());
+        }
+
         if (!$this->getId()) {
             return false;
         }

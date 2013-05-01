@@ -34,6 +34,7 @@ class Mage_Adminhtml_Model_Extension extends Varien_Object
         Mage::getSingleton('adminhtml/session')
             ->setLocalExtensionPackageFormData($this->getData());
 
+        Varien_Pear::$reloadOnRegistryUpdate = false;
         $pkg = new Varien_Pear_Package;
         #$pkg->getPear()->runHtmlConsole(array('command'=>'list-channels'));
         $pfm = $pkg->getPfm();
@@ -262,12 +263,16 @@ class Mage_Adminhtml_Model_Extension extends Varien_Object
 
         $pear = Varien_Pear::getInstance();
         $dir = Mage::getBaseDir('var').DS.'pear';
-        file_put_contents($dir.'/package.xml', $this->getPackageXml());
+        if (!@file_put_contents($dir.'/package.xml', $this->getPackageXml())) {
+            return false;
+        }
 
         $pkgver = $this->getName().'-'.$this->getReleaseVersion();
         $this->unsPackageXml();
         $this->unsRoles();
-        file_put_contents($dir.DS.$this->getName().'.ser', serialize($this->getData()));
+        if (!@file_put_contents($dir.DS.$this->getName().'.ser', serialize($this->getData()))) {
+            return false;
+        }
 
         return true;
     }
@@ -276,7 +281,10 @@ class Mage_Adminhtml_Model_Extension extends Varien_Object
     {
         $pear = Varien_Pear::getInstance();
         $dir = Mage::getBaseDir('var').DS.'pear';
-        $result = $pear->run('mage-package', array('targetdir'=>$dir), array($dir.'/package.xml'));
+    	$curDir = getcwd();
+    	chdir($dir);
+        $result = $pear->run('mage-package', array(), array('package.xml'));
+    	chdir($curDir);
         if ($result instanceof PEAR_Error) {
             return $result;
         }

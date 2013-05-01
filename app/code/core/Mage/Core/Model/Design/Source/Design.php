@@ -21,9 +21,9 @@
 
 class Mage_Core_Model_Design_Source_Design extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
-    public function getAllOptions()
+    public function getAllOptions($withEmpty = true)
     {
-        if (!$this->_options) {
+        if (is_null($this->_options)) {
             $design = Mage::getModel('core/design_package')->getThemeList();
             $options = array();
             foreach ($design as $package=>$themes){
@@ -37,9 +37,26 @@ class Mage_Core_Model_Design_Source_Design extends Mage_Eav_Model_Entity_Attribu
 
                 $options[] = $packageOption;
             }
-            array_unshift($options, array('value'=>'', 'label'=>''));
             $this->_options = $options;
         }
-        return $this->_options;
+
+        $options = $this->_options;
+        if ($withEmpty) {
+            array_unshift($options, array('value'=>'', 'label'=>Mage::helper('core')->__('-- Please Select --')));
+        }
+        return $options;
+    }
+
+    /**
+     * Get a text for option value
+     *
+     * @param string|integer $value
+     * @return string
+     */
+    public function getOptionText($value)
+    {
+        $options = $this->getAllOptions(false);
+
+        return $value;
     }
 }

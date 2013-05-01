@@ -24,45 +24,17 @@
  * @category   Mage
  * @package    Mage_Review
  */
-class Mage_Review_Model_Review extends Varien_Object
+class Mage_Review_Model_Review extends Mage_Core_Model_Abstract
 {
-    public function getResource()
-    {
-        return Mage::getResourceSingleton('review/review');
-    }
+    const ENTITY_PRODUCT = 1;
 
-    public function getId()
-    {
-        return $this->getReviewId();
-    }
+    const STATUS_APPROVED       = 1;
+    const STATUS_PENDING        = 2;
+    const STATUS_NOT_APPROVED   = 3;
 
-    public function setId($reviewId)
+    protected function _construct()
     {
-        $this->setReviewId($reviewId);
-        return $this;
-    }
-
-    public function load($reviewId)
-    {
-        $this->setData($this->getResource()->load($reviewId));
-        return $this;
-    }
-
-    public function save()
-    {
-        $this->getResource()->save($this);
-        return $this;
-    }
-
-    public function delete()
-    {
-        $this->getResource()->delete($this);
-        return $this;
-    }
-
-    public function getCollection()
-    {
-        return Mage::getResourceModel('review/review_collection');
+        $this->_init('review/review');
     }
 
     public function getProductCollection()
@@ -96,6 +68,40 @@ class Mage_Review_Model_Review extends Varien_Object
         $product->setRatingSummary($summary);
     }
 
+    public function getPendingStatus()
+    {
+        return self::STATUS_PENDING;
+    }
+
+    public function getReviewUrl()
+    {
+        return Mage::getUrl('review/product/view', array('id' => $this->getReviewId()));
+    }
+
+    public function validate()
+    {
+        $errors = array();
+
+        $helper = Mage::helper('customer');
+
+        if (!Zend_Validate::is($this->getTitle(), 'NotEmpty')) {
+            $errors[] = $helper->__('Review summary can\'t be empty');
+        }
+
+        if (!Zend_Validate::is($this->getNickname(), 'NotEmpty')) {
+            $errors[] = $helper->__('Nickname can\'t be empty');
+        }
+
+        if (!Zend_Validate::is($this->getDetail(), 'NotEmpty')) {
+            $errors[] = $helper->__('Review can\'t be empty');
+        }
+
+        if (empty($errors)) {
+            return true;
+        }
+        return $errors;
+    }
+
     public function appendSummary($collection)
     {
         $entityIds = array();
@@ -119,15 +125,5 @@ class Mage_Review_Model_Review extends Varien_Object
                 }
             }
         }
-    }
-
-    public function getPendingStatus()
-    {
-        return 2;
-    }
-
-    public function getReviewUrl()
-    {
-        return Mage::getUrl('review/product/view', array('id' => $this->getReviewId()));
     }
 }

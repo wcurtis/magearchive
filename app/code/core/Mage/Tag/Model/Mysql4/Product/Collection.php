@@ -225,7 +225,7 @@ class Mage_Tag_Model_Mysql4_Product_Collection extends Mage_Catalog_Model_Resour
             ->join(array('relation' => $tagRelationTable), 'relation.product_id = e.entity_id')
             ->join(array('t' => $tagTable),
                 't.tag_id = relation.tag_id',
-                array('tag_id', 'name', 'status', 'tag_name' => 'name')
+                array('tag_id', 'name', 'tag_status' => 'status', 'tag_name' => 'name')
             );
         return $this;
     }

@@ -123,6 +123,8 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
 
         $this->addColumn('last_url', array(
             'header'=> Mage::helper('customer')->__('Last Url'),
+            'type' => 'wrapline',
+            'lineLength' => '60',
             'default' => Mage::helper('customer')->__('n/a'),
             'index'=>'url')
         );

@@ -33,9 +33,9 @@
                 <p class="success"><?php echo $message ?></p>
             <?php endif; ?>
             -->
-            <label for="newsletter">Sign up for our newsletter:</label>
+            <label for="newsletter"><?php echo $this->__('Sign up for our newsletter:') ?></label>
             <input name="email" type="text" id="newsletter" class="required-entry validate-email input-text" />
-            <button type="submit" class="form-button-alt"><span>Subscribe</span></button>
+            <button type="submit" class="form-button-alt"><span><?php echo $this->__('Subscribe') ?></span></button>
     </fieldset>
 </form>
 <script type="text/javascript">

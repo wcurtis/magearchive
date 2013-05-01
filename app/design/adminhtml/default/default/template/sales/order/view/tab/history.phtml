@@ -23,32 +23,21 @@
         <ul class="note-list">
         <?php foreach ($this->getFullHistory() as $_history): ?>
             <li>
-                <strong><?php echo $this->helper('core')->formatDate($_history->getCreatedAt(), 'medium') ?></strong>
-                <?php echo $this->helper('core')->formatTime($_history->getCreatedAt(), 'medium') ?><span class="separator">|</span>
-<strong><?php if($_history instanceof Mage_Sales_Model_Order_Status_History): ?>
-    <?php echo $_history->getStatusLabel() ?>
-<?php elseif ($_history instanceof Mage_Sales_Model_Order_Creditmemo): ?>
-    <?php echo $this->__('Creditmemo #%s created', $_history->getIncrementId()) ?>
-<?php elseif ($_history instanceof Mage_Sales_Model_Order_Shipment): ?>
-    <?php echo $this->__('Shipment #%s created', $_history->getIncrementId()) ?>
-<?php elseif ($_history instanceof Mage_Sales_Model_Order_Invoice): ?>
-    <?php echo $this->__('Invoice #%s created', $_history->getIncrementId()) ?>
-<?php elseif ($_history instanceof Mage_Sales_Model_Order_Shipment_Track ): ?>
-    <?php echo $this->__('Tracking number %s for %s assigned', $_history->getNumber(), $_history->getTitle()) ?>
-<?php else: ?>
-                    <?php echo print_r($_history->getData(), true) ?>
-                    <?php echo get_class($_history) ?>
-                <?php endif; ?></strong>
+                <strong><?php echo $this->helper('core')->formatDate($_history['created_at'], 'medium') ?></strong>
+                <?php echo $this->helper('core')->formatTime($_history['created_at'], 'medium') ?><span class="separator">|</span>
+                <strong><?php echo $_history['title']?></strong>
+                <?php if ($_history['notified'] !== false): ?>
                 <span class="separator">|</span><small><?php echo $this->helper('sales')->__('Customer') ?>
-                <strong class="subdue"><?php if ($_history->getIsCustomerNotified()): ?>
+                <strong class="subdue"><?php if ($_history['notified']): ?>
                 <?php echo $this->helper('sales')->__('Notified') ?>
                 <img src="<?php echo $this->getSkinUrl('images/ico_success.gif') ?>" width="16" height="16"/>
                 <?php else: ?>
                 <?php echo $this->helper('sales')->__('Not Notified') ?>
                 <?php endif; ?>
+                <?php endif; ?>
                 </strong></small>
-                    <?php if($_history->getComment()): ?>
-                        <br/><?php echo $_history->getComment() ?>
+                    <?php if($_history['comment']): ?>
+                        <br/><?php echo $_history['comment'] ?>
                     <?php endif; ?>
             </li>
         <?php endforeach; ?>

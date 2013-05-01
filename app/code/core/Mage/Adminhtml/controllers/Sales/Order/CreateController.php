@@ -346,8 +346,16 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
      */
     public function cancelAction()
     {
-        $this->_getSession()->clear();
-        $this->_redirect('*/*');
+        if ($orderId = $this->_getSession()->getReordered()) {
+            $this->_getSession()->clear();
+            $this->_redirect('*/sales_order/view', array(
+                'order_id'=>$orderId
+            ));
+        } else {
+            $this->_getSession()->clear();
+            $this->_redirect('*/*');
+        }
+
     }
 
     /**
@@ -377,8 +385,31 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
             $url = $this->_redirect('*/*/');
         }
         catch (Exception $e){
+            echo $e;
             $this->_getSession()->addException($e, $this->__('Order saving error: %s', $e->getMessage()));
             $url = $this->_redirect('*/*/');
         }
+    }
+
+    protected function _isAllowed()
+    {
+        switch ($this->getRequest()->getActionName()) {
+            case 'index':
+                $aclResource = 'sales/order/actions/create';
+                break;
+            case 'reorder':
+                $aclResource = 'sales/order/actions/reorder';
+                break;
+            case 'cancel':
+                $aclResource = 'sales/order/actions/cancel';
+                break;
+            case 'save':
+                $aclResource = 'sales/order/actions/edit';
+                break;
+            default:
+                $aclResource = 'sales/order/actions';
+                break;
+        }
+        return Mage::getSingleton('admin/session')->isAllowed('sales/order');
     }
 }

@@ -83,7 +83,7 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
 
         if (strpos($this->_config['host'], '/')!==false) {
             $this->_config['unix_socket'] = $this->_config['host'];
-            $this->_config['host'] = null;
+            unset($this->_config['host']);
         } elseif (strpos($this->_config['host'], ':')!==false) {
             list($this->_config['host'], $this->_config['port']) = explode(':', $this->_config['host']);
         }
@@ -246,6 +246,8 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
             $fkName = 'FK_' . $fkName;
         }
 
+        $this->dropForeignKey($tableName, $fkName);
+
         $sql = 'ALTER TABLE `'.$tableName.'` ADD CONSTRAINT `'.$fkName.'`'
             . 'FOREIGN KEY (`'.$keyName.'`) REFERENCES `'.$refTableName.'` (`'.$refKeyName.'`)';
         if (!is_null($onDelete)) {
@@ -286,7 +288,6 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
         $create = $this->raw_fetchRow('SHOW CREATE TABLE `'.$tableName.'`', 'Create Table');
 
         $alterDrop = array();
-        $alterDrop[] = 'DROP COLUMN `'.$columnName.'`';
 
         /**
          * find foreign keys for column
@@ -298,6 +299,8 @@ class Varien_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql
                 $alterDrop[] = 'DROP FOREIGN KEY `'.$match[1].'`';
             }
         }
+
+        $alterDrop[] = 'DROP COLUMN `'.$columnName.'`';
 
         return $this->raw_query('ALTER TABLE `'.$tableName.'` ' . join(', ', $alterDrop));
     }

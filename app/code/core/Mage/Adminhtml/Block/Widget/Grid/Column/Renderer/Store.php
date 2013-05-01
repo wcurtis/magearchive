@@ -27,6 +27,7 @@
  */
 class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Store extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
+    protected $_skipAllStoresLabel = false;
 
     /**
      * Retrieve System Store model
@@ -37,15 +38,23 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Store extends Mage_Adminh
     {
         return Mage::getSingleton('adminhtml/system_store');
     }
+    
+    protected function _getShowAllStoresLabelFlag()
+    {
+        return $this->getColumn()->getData('skipAllStoresLabel')?$this->getColumn()->getData('skipAllStoresLabel'):$this->_skipAllStoresLabel;
+    }
 
     public function render(Varien_Object $row)
     {
+        $skipAllStoresLabel = $this->_getShowAllStoresLabelFlag();
         $origStores = $row->getData($this->getColumn()->getIndex());
         $stores = array();
         if (is_array($origStores)) {
             foreach ($origStores as $origStore) {
                 if (is_numeric($origStore) && $origStore == 0) {
-                    $stores[] = Mage::helper('adminhtml')->__('All Store Views');
+                    if (!$skipAllStoresLabel) {
+                        $stores[] = Mage::helper('adminhtml')->__('All Store Views');
+                    }
                 }
                 elseif (is_numeric($origStore) && $storeName = $this->_getStoreModel()->getStoreName($origStore)) {
                     if ($this->getColumn()->getStoreView()) {
@@ -78,7 +87,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Store extends Mage_Adminh
                 $stores[] = implode('<br/>', $layers);
             }
             elseif (is_numeric($origStores) && $origStores == 0) {
-                $stores[] = Mage::helper('adminhtml')->__('All Store Views');
+                if (!$skipAllStoresLabel) {
+                    $stores[] = Mage::helper('adminhtml')->__('All Store Views');
+                }
             }
             elseif (is_null($origStores) && $row->getStoreName()) {
                 return $row->getStoreName() . ' ' . $this->__('[deleted]');
@@ -87,6 +98,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Store extends Mage_Adminh
                 $stores[] = $origStores;
             }
         }
+
         return $stores ? join('<br/> ', $stores) : '&nbsp;';
     }
 

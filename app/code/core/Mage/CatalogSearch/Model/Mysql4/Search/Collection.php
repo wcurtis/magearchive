@@ -33,6 +33,7 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
     public function addSearchFilter($query)
     {
         $query = '%'.$query.'%';
+        $this->addBindParam('search_query', $query);
         $this->addFieldToFilter('entity_id', array('in'=>new Zend_Db_Expr($this->_getSearchEntityIdsSql($query))));
         return $this;
     }
@@ -81,8 +82,10 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
         /**
          * Collect tables and attribute ids of attributes with string values
          */
+        //echo "<pre>";
         foreach ($this->_getAttributesCollection() as $attribute) {
             if ($this->_isAttributeTextAndSearchable($attribute)) {
+                //echo $attribute->getAttributeCode()."\n";
                 $table = $attribute->getBackend()->getTable();
                 if (!isset($tables[$table]) && $attribute->getBackendType() != 'static') {
                     $tables[$table] = array();
@@ -91,7 +94,7 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
                 if ($attribute->getBackendType() == 'static') {
                    $selects[] = $this->getConnection()->select()
                    ->from($table, 'entity_id')
-                   ->where($attribute->getAttributeCode().' LIKE ?', $query);
+                   ->where($attribute->getAttributeCode().' LIKE :search_query');
                 } else {
                    $tables[$table][] = $attribute->getId();
                 }
@@ -108,13 +111,13 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
                 )
                 ->where('t1.attribute_id IN (?)', $attributeIds)
                 ->where('t1.store_id = ?', 0)
-                ->where('IFNULL(t2.value, t1.value) LIKE ?', $query);
+                ->where('IFNULL(t2.value, t1.value) LIKE :search_query');
         }
 
         if ($sql = $this->_getSearchInOptionSql($query)) {
             $selects[] = $sql;
         }
-
+        //die(print_r($selects));
         $sql = implode(' UNION ', $selects);
         return $sql;
     }
@@ -139,7 +142,6 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
                 $attributeIds[] = $attribute->getId();
             }
         }
-
         if (empty($attributeIds)) {
             return false;
         }
@@ -151,7 +153,7 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
          * Select option Ids
          */
         $select = $this->getConnection()->select()
-            ->from(array('default'=>$optionValueTable), 'option_id')
+            ->from(array('default'=>$optionValueTable), array('option_id','option.attribute_id', 'store_id'=>'IFNULL(store.store_id, default.store_id)'))
             ->joinLeft(array('store'=>$optionValueTable),
                 $this->getConnection()->quoteInto('store.option_id=default.option_id AND store.store_id=?', $this->getStoreId()),
                 array())
@@ -161,20 +163,23 @@ class Mage_CatalogSearch_Model_Mysql4_Search_Collection
             ->where('default.store_id=0')
             ->where('option.attribute_id IN (?)', $attributeIds);
 
-        $searchCondition = $this->getConnection()->quoteInto('(store.value IS NULL AND default.value LIKE ?)', $query) .
-            $this->getConnection()->quoteInto(' OR (store.value LIKE ?)', $query);
+        $searchCondition = '(store.value IS NULL AND default.value LIKE :search_query) OR (store.value LIKE :search_query)';
         $select->where($searchCondition);
 
-        $optionsIds = $this->getConnection()->fetchCol($select);
+        $options = $this->getConnection()->fetchAll($select, $this->_bindParams);
 
-        if (empty($optionsIds)) {
+        if (empty($options)) {
             return false;
+        }
+
+        $cond = array();
+        foreach ($options as $option) {
+            $cond[] = "attribute_id = '{$option['attribute_id']}' AND value = '{$option['option_id']}' AND store_id = '{$option['store_id']}'";
         }
 
         return $this->getConnection()->select()
             ->from($table, 'entity_id')
-            ->where('store_id=?', $this->getStoreId())
-            ->where('attribute_id IN (?)', $attributeIds)
-            ->where('value IN (?)', $optionsIds);
+//            ->where('store_id=?', $this->getStoreId())
+            ->where(implode(' OR ', $cond));
     }
 }

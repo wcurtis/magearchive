@@ -28,7 +28,8 @@ class Mage_Directory_Block_Adminhtml_Frontend_Currency_Base extends Mage_Adminht
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
         if ($this->getRequest()->getParam('website') != '') {
-            if (Mage::app()->getStore()->getConfig('general/price/scope') == Mage_Core_Model_Store::PRICE_SCOPE_GLOBAL) {
+            $priceScope = Mage::app()->getStore()->getConfig(Mage_Core_Model_Store::XML_PATH_PRICE_SCOPE);
+            if ($priceScope == Mage_Core_Model_Store::PRICE_SCOPE_GLOBAL) {
                 return '';
             }
         }

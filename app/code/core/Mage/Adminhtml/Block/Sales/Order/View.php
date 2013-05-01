@@ -40,7 +40,7 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
         $this->_removeButton('save');
         $this->setId('sales_order_view');
 
-        if ($this->getOrder()->canEdit()) {
+        if ($this->_isAllowedAction('edit') && $this->getOrder()->canEdit()) {
             $message = Mage::helper('sales')->__('Are you sure? This order will be cancelled and a new one will be created instead');
             $this->_addButton('order_edit', array(
                  'label'    => Mage::helper('sales')->__('Edit'),
@@ -48,7 +48,7 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
             ));
         }
 
-        if ($this->getOrder()->canCancel()) {
+        if ($this->_isAllowedAction('cancel') && $this->getOrder()->canCancel()) {
             $message = Mage::helper('sales')->__('Are you sure you want to cancel this order?');
             $this->_addButton('order_cancel', array(
                 'label'     => Mage::helper('sales')->__('Cancel'),
@@ -56,42 +56,42 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
             ));
         }
 
-        if ($this->getOrder()->canCreditmemo()) {
+        if ($this->_isAllowedAction('creditmemo') && $this->getOrder()->canCreditmemo()) {
             $this->_addButton('order_creditmemo', array(
                 'label'     => Mage::helper('sales')->__('Credit Memo'),
                 'onclick'   => 'setLocation(\'' . $this->getCreditmemoUrl() . '\')',
             ));
         }
 
-        if ($this->getOrder()->canHold()) {
+        if ($this->_isAllowedAction('hold') && $this->getOrder()->canHold()) {
             $this->_addButton('order_hold', array(
                 'label'     => Mage::helper('sales')->__('Hold'),
                 'onclick'   => 'setLocation(\'' . $this->getHoldUrl() . '\')',
             ));
         }
 
-        if ($this->getOrder()->canUnhold()) {
+        if ($this->_isAllowedAction('unhold') && $this->getOrder()->canUnhold()) {
             $this->_addButton('order_unhold', array(
                 'label'     => Mage::helper('sales')->__('Unhold'),
                 'onclick'   => 'setLocation(\'' . $this->getUnholdUrl() . '\')',
             ));
         }
 
-        if ($this->getOrder()->canInvoice()) {
+        if ($this->_isAllowedAction('invoice') && $this->getOrder()->canInvoice()) {
             $this->_addButton('order_invoice', array(
                 'label'     => Mage::helper('sales')->__('Invoice'),
                 'onclick'   => 'setLocation(\'' . $this->getInvoiceUrl() . '\')',
             ));
         }
 
-        if ($this->getOrder()->canShip()) {
+        if ($this->_isAllowedAction('ship') && $this->getOrder()->canShip()) {
             $this->_addButton('order_ship', array(
                 'label'     => Mage::helper('sales')->__('Ship'),
                 'onclick'   => 'setLocation(\'' . $this->getShipUrl() . '\')',
             ));
         }
 
-        if ($this->getOrder()->canReorder()) {
+        if ($this->_isAllowedAction('reorder') && $this->getOrder()->canReorder()) {
             $this->_addButton('order_reorder', array(
                 'label'     => Mage::helper('sales')->__('Reorder'),
                 'onclick'   => 'setLocation(\'' . $this->getReorderUrl() . '\')',
@@ -121,10 +121,13 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
 
     public function getHeaderText()
     {
-        if ($this->getOrder()->getRelationParentRealId()) {
-            $text = Mage::helper('sales')->__('Order # %s / %s | Order Date %s',
+        $text = Mage::helper('sales')->__('Order # %s | Order Date %s',
+            $this->getOrder()->getRealOrderId(),
+            $this->formatDate($this->getOrder()->getCreatedAt(), 'medium', true)
+        );
+        /*if ($this->getOrder()->getRelationParentRealId()) {
+            $text = Mage::helper('sales')->__('Order # %s | Order Date %s',
                 $this->getOrder()->getRealOrderId(),
-                $this->getOrder()->getRelationParentRealId(),
                 $this->formatDate($this->getOrder()->getCreatedAt(), 'medium', true)
             );
         }
@@ -133,7 +136,7 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
                 $this->getOrder()->getRealOrderId(),
                 $this->formatDate($this->getOrder()->getCreatedAt(), 'medium', true)
             );
-        }
+        }*/
         return $text;
     }
 
@@ -188,4 +191,8 @@ class Mage_Adminhtml_Block_Sales_Order_View extends Mage_Adminhtml_Block_Widget_
         return $this->getUrl('*/sales_order_create/reorder');
     }
 
+    protected function _isAllowedAction($action)
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('sales/order/actions/' . $action);
+    }
 }

@@ -19,6 +19,7 @@
  */
 ?>
 <fieldset id="order_history_block">
+    <?php if ($this->canAddComment()):?>
     <div id="history_form" class="order-history-form">
         <span class="field-row">
             <div><?php echo Mage::helper('sales')->__('Add Order Comments') ?></div>
@@ -43,6 +44,7 @@
         <div class="clear"></div>
     </div>
     <div class="divider"></div>
+    <?php endif;?>
     <ul class="note-list">
     <?php foreach ($this->getOrder()->getStatusHistoryCollection(true) as $_history): ?>
         <li>

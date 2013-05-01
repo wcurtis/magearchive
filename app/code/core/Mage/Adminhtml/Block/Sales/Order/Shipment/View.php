@@ -95,4 +95,9 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_View extends Mage_Adminhtml_Bloc
             'invoice_id' => $this->getShipment()->getId()
         ));
     }
+    
+    public function updateBackButtonUrl()
+    {
+        return $this->_updateButton('back', 'onclick', 'setLocation(\'' . $this->getUrl('*/sales_shipment/') . '\')');
+    }
 }

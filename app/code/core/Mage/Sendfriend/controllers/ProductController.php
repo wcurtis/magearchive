@@ -20,107 +20,114 @@
 
 class Mage_Sendfriend_ProductController extends Mage_Core_Controller_Front_Action
 {
+    /**
+     * Initialize product instance
+     *
+     * @return Mage_Catalog_Model_Product
+     */
     protected function _initProduct()
     {
         $productId  = (int) $this->getRequest()->getParam('id');
-
+        if (!$productId) {
+            return false;
+        }
         $product = Mage::getModel('catalog/product')
             ->load($productId);
-
+        if (!$product->getId()) {
+            return false;
+        }
         Mage::register('product', $product);
+        return $product;
     }
 
+    /**
+     * Initialize send friend model
+     *
+     * @return Mage_Sendfriend_Model_Sendfriend
+     */
     protected function _initSendToFriendModel(){
         $sendToFriendModel = Mage::getModel('sendfriend/sendfriend');
         Mage::register('send_to_friend_model', $sendToFriendModel);
+        return $sendToFriendModel;
     }
 
     public function sendAction(){
-        $this->_initProduct();
+        $product = $this->_initProduct();
         $this->_initSendToFriendModel();
 
-        $product = Mage::registry('product');
-        if (!$product->getId() || !$product->isVisibleInCatalog()) {
+        if (!$product || !$product->isVisibleInCatalog()) {
             $this->_forward('noRoute');
             return;
         }
 
         $productHelper = Mage::helper('catalog/product');
         $sendToFriendModel = Mage::registry('send_to_friend_model');
-        // check if user is allowed to send product to a friend
-        if (! $sendToFriendModel->canEmailToFriend()) {
-            Mage::getSingleton('catalog/session')->addError($this->__('You cannot email this product to a friend'));
-            $this->_redirectReferer($productHelper->getProductUrl($product->getId()));
+
+        /**
+         * check if user is allowed to send product to a friend
+         */
+        if (!$sendToFriendModel->canEmailToFriend()) {
+            Mage::getSingleton('catalog/session')->addError(
+                $this->__('You cannot email this product to a friend')
+            );
+            $this->_redirectReferer($product->getProductUrl());
             return;
         }
 
         $maxSendsToFriend = $sendToFriendModel->getMaxSendsToFriend();
         if ($maxSendsToFriend){
-            Mage::getSingleton('catalog/session')->addNotice($this->__('You cannot send more than %d times in an hour', $maxSendsToFriend));
+            Mage::getSingleton('catalog/session')->addNotice(
+                $this->__('You cannot send more than %d times in an hour', $maxSendsToFriend)
+            );
         }
 
-        $update = $this->getLayout()->getUpdate();
-        $update->addHandle('default');
-        $this->addActionLayoutHandles();
-
-        $update->addHandle('PRODUCT_'.$product->getId());
-
-        $this->loadLayoutUpdates();
-
-        $update->addUpdate($product->getCustomLayoutUpdate());
-
-        $this->generateLayoutXml()->generateLayoutBlocks();
-
+        $this->loadLayout();
         $this->_initLayoutMessages('catalog/session');
         $this->renderLayout();
-
         Mage::dispatchEvent('sendfriend_product', array('product'=>$product));
     }
 
     public function sendmailAction()
     {
-        $this->_initProduct();
-        $this->_initSendToFriendModel();
+        $product = $this->_initProduct();
+        $sendToFriendModel = $this->_initSendToFriendModel();
+        $data = $this->getRequest()->getPost();
 
-        $product = Mage::registry('product');
-        if (!$product->getId() || !$product->isVisibleInCatalog()) {
+        if (!$product || !$product->isVisibleInCatalog() || !$data) {
             $this->_forward('noRoute');
             return;
         }
 
-        $sendToFriendModel = Mage::registry('send_to_friend_model');
+        $sendToFriendModel->setSender($this->getRequest()->getPost('sender'));
+        $sendToFriendModel->setRecipients($this->getRequest()->getPost('recipients'));
+        $sendToFriendModel->setIp(Mage::getSingleton('log/visitor')->getRemoteAddr());
+        $sendToFriendModel->setProduct($product);
 
-        if($this->getRequest()->getPost()) {
-            $sendToFriendModel->setSender($this->getRequest()->getParam('sender'));
-            $sendToFriendModel->setRecipients($this->getRequest()->getParam('recipients'));
-            $sendToFriendModel->setIp(Mage::getSingleton('log/visitor')->getRemoteAddr());
-            $sendToFriendModel->setProduct($product);
-
-            try {
-                if ($sendToFriendModel->canSend()) {
-                    $sendToFriendModel->send();
-
-                    Mage::getSingleton('catalog/session')->addSuccess(
-                        $this->__('Link to a friend was sent.')
-                    );
-
-                    $this->_redirectSuccess($product->getProductUrl());
-                    return;
-                }
-            } catch (Mage_Core_Exception $e) {
-                Mage::getSingleton('catalog/session')->addError($e->getMessage());
-            } catch (Exception $e) {
-                //echo $e;
-                Mage::getSingleton('catalog/session')
-                    ->addException($e, Mage::helper('sendfriend')
-                    ->__('Some emails was not sent')
-                );
+        try {
+            $validateRes = $sendToFriendModel->validate();
+            if (true === $validateRes) {
+                $sendToFriendModel->send();
+                Mage::getSingleton('catalog/session')->addSuccess($this->__('Link to a friend was sent.'));
+                $this->_redirectSuccess($product->getProductUrl());
+                return;
             }
-
-            $this->_redirectError(Mage::getURL('*/*/send',array('id'=>$product->getId())));
-        } else {
-            $this->_forward('noRoute');
+            else {
+                Mage::getSingleton('catalog/session')->setFormData($data);
+                if (is_array($validateRes)) {
+                    foreach ($validateRes as $errorMessage) {
+                    	Mage::getSingleton('catalog/session')->addError($errorMessage);
+                    }
+                } else {
+                    Mage::getSingleton('catalog/session')->addError($this->__('Some problems with data.'));
+                }
+            }
+        } catch (Mage_Core_Exception $e) {
+            Mage::getSingleton('catalog/session')->addError($e->getMessage());
+        } catch (Exception $e) {
+            Mage::getSingleton('catalog/session')
+                ->addException($e, $this->__('Some emails was not sent'));
         }
-    }
 
+        $this->_redirectError(Mage::getURL('*/*/send',array('id'=>$product->getId())));
+    }
 }

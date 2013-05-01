@@ -42,7 +42,7 @@ class Mage_Sales_Block_Order_History extends Mage_Core_Block_Template
         ;
 
         $this->setOrders($orders);
-
+        
         Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('sales')->__('My Orders'));
     }
 
@@ -75,5 +75,10 @@ class Mage_Sales_Block_Order_History extends Mage_Core_Block_Template
     public function getReorderUrl($order)
     {
         return $this->getUrl('*/*/reorder', array('order_id' => $order->getId()));
+    }
+    
+    public function getBackUrl()
+    {
+        return $this->getUrl('customer/account/');
     }
 }

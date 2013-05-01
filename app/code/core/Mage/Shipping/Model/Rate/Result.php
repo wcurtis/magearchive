@@ -50,16 +50,17 @@ class Mage_Shipping_Model_Rate_Result
 	 */
 	public function append($result)
 	{
-		if ($result instanceof Mage_Shipping_Model_Rate_Result_Abstract) {
-			$this->_rates[] = $result;
-		} elseif ($result instanceof Mage_Shipping_Model_Rate_Result) {
-		    $rates = $result->getAllRates();
-			foreach ($rates as $rate) {
-			    $this->append($rate);
-			}
-		}
-		return $this;
-	}
+        if ($result instanceof Mage_Shipping_Model_Rate_Result_Abstract) {
+            $this->_rates[] = $result;
+        }
+        elseif ($result instanceof Mage_Shipping_Model_Rate_Result) {
+            $rates = $result->getAllRates();
+            foreach ($rates as $rate) {
+                $this->append($rate);
+            }
+        }
+        return $this;
+    }
 
 	/**
 	 * Return all quotes in the result

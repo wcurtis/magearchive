@@ -47,4 +47,25 @@ class Mage_Checkout_Model_Mysql4_Cart extends Mage_Core_Model_Mysql4_Abstract
         $qty = $read->fetchOne($select);
         return $qty;
     }
+
+    public function fetchItemsSummary($quoteId)
+    {
+        $read = $this->_getReadAdapter();
+        $select = $read->select()
+            ->from(array('q'=>$this->getTable('sales/quote')), array('items_qty', 'items_count'))
+            ->where('q.entity_id=?', $quoteId);
+
+        $result = $read->fetchRow($select);
+        return $result ? $result : array('items_qty'=>0, 'items_count'=>0);
+    }
+
+    public function fetchItems($quoteId)
+    {
+        $read = $this->_getReadAdapter();
+        $select = $read->select()
+            ->from(array('qi'=>$this->getTable('sales/quote_item')), array('id'=>'entity_id', 'product_id', 'super_product_id', 'qty', 'created_at'))
+            ->where('qi.parent_id=?', $quoteId);
+
+        return $read->fetchAll($select);
+    }
 }

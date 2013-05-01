@@ -19,17 +19,33 @@
  */
 ?>
 <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
-<?php $product=$this->getProduct() ?>
+<?php $product=$_product=$this->getProduct() ?>
 <div class="product-info-box">
     <div class="product-essential">
         <div class="product-img-box">
+            <?php if ($_product->getImage() != 'no_selection' && $_product->getImage()): ?>
             <p class="main-product-img">
-                <img src="<?php echo $this->helper('catalog/image')->init($product, 'image')->resize(265); ?>" alt="<?php echo $product->getName() ?>" width="265">
+                <img id="image" src="<?php echo $this->helper('catalog/image')->init($_product, 'image'); ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>"/>
             </p>
+            <div class="image-zoom" id="track_outer">
+                <img id="zoom_out" src="<?php echo $this->getSkinUrl('images/slider_btn_zoom_out.gif') ?>" alt="<?php echo $this->__('Zoom Out') ?>" class="btn-zoom-out"/>
+                <div id="track">
+                    <div id="handle"></div>
+                </div>
+                <img id="zoom_in" src="<?php echo $this->getSkinUrl('images/slider_btn_zoom_in.gif') ?>" alt="<?php echo $this->__('Zoom In') ?>" class="btn-zoom-in"/>
+            </div>
+            <script type="text/javascript">
+                Event.observe(window, 'load', function() {
+                    product_zoom = new Product.Zoom('image', 'track', 'handle', 'zoom_in', 'zoom_out');
+                });
+            </script>
+            <?php else: ?>
+            <img id="image" src="<?php echo $this->helper('catalog/image')->init($_product, 'image')->resize(265); ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>"/>
+            <?php endif; ?>
         </div>
 
         <div class="product-shop">
-            <h3 class="product-name"><?php echo $product->getName() ?></h3>
+            <h3 class="product-name"><?php echo $this->htmlEscape($product->getName()) ?></h3>
         <?php echo $this->getChildHtml('rating') ?>
         <?php if( $reviewCount ): ?>
             <a href="#customer-reviews" class="no-wrap"><small><?php echo $this->__('%s Review(s)', $reviewCount) ?></small></a>
@@ -132,7 +148,7 @@
             <ol style="margin-top:15px;">
         <?php foreach( $this->getCollection()->getItems() as $_review ): ?>
                 <li>
-                    <a href="<?php echo $this->getReviewUrl($_review->getId()) ?>"><strong><?php echo $_review->getTitle() ?></strong></a> <?php echo $this->__('Review by %s', $_review->getNickname()) ?>
+                    <a href="<?php echo $this->getReviewUrl($_review->getId()) ?>"><strong><?php echo $this->htmlEscape($_review->getTitle()) ?></strong></a> <?php echo $this->__('Review by %s', $this->htmlEscape($_review->getNickname())) ?>
                     <table class="ratings-list" cellspacing="0">
                         <tbody>
                         <?php foreach( $_review->getRatingVotes() as $_vote ): ?>
@@ -147,7 +163,7 @@
                         <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <p><?php echo nl2br($_review->getDetail()) ?> <?php echo $this->__('(Posted on %s)', $this->formatDate($_review->getCreatedAt()), 'long') ?></p>
+                    <p><?php echo nl2br($this->htmlEscape($_review->getDetail())) ?> <?php echo $this->__('(Posted on %s)', $this->formatDate($_review->getCreatedAt()), 'long') ?></p>
                 </li>
         <?php endforeach; ?>
             </ol>

@@ -30,7 +30,7 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
     protected function _prepareForm()
     {
         $userId = Mage::getSingleton('admin/session')->getUser()->getId();
-        $user = Mage::getModel('admin/permissions_user')
+        $user = Mage::getModel('admin/user')
             ->load($userId);
         $user->unsetData('password');
 

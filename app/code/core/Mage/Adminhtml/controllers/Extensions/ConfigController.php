@@ -59,4 +59,9 @@ class Mage_Adminhtml_Extensions_ConfigController extends Mage_Adminhtml_Controll
         }
         $this->_redirect('*/*');
     }
+    
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('system/extensions/config');
+    }
 }

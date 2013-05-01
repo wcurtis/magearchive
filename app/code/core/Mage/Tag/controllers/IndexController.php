@@ -29,94 +29,76 @@ class Mage_Tag_IndexController extends Mage_Core_Controller_Front_Action
 {
     public function saveAction()
     {
-        if( $tagName = $this->getRequest()->getQuery('tagName') ) {
-            $productId = (int)$this->getRequest()->getParam('product');
+        if(!Mage::getSingleton('customer/session')->authenticate($this)) {
+            return;
+        }
+        $tagName    = (string) $this->getRequest()->getQuery('tagName');
+        $productId  = (int)$this->getRequest()->getParam('product');
 
-            if( !$productId ){
-                Mage::getSingleton('catalog/session')
-                    ->addError(Mage::helper('tag')->__('Unable to save tag(s)'));
-                return;
+        if(strlen($tagName) && $productId) {
+            $session = Mage::getSingleton('catalog/session');
+            $product = Mage::getModel('catalog/product')
+                ->load($productId);
+            if(!$product->getId()){
+                $session->addError($this->__('Unable to save tag(s)'));
             } else {
-                $product = Mage::getModel('catalog/product')
-                    ->load($productId)->setCategoryId();
+                try {
+                    $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+                    $tagName = urldecode($tagName);
+                    $tagNamesArr = explode("\n", preg_replace("/(\'(.*?)\')|(\s+)/i", "$1\n", $tagName));
 
-                if(!$product->getId()){
-                    Mage::getSingleton('catalog/session')
-                        ->addError(Mage::helper('tag')->__('Unable to save tag(s)'));
-                    return;
-                }else{
-                    $categoryId = (int)$this->getRequest()->getParam('category');
-                    if ($categoryId) {
-                        $category = Mage::getModel('catalog/category')->load($categoryId);
-                        Mage::register('current_category', $category);
+                    foreach( $tagNamesArr as $key => $tagName ) {
+                        $tagNamesArr[$key] = trim($tagNamesArr[$key], '\'');
+                        $tagNamesArr[$key] = trim($tagNamesArr[$key]);
+                        if( $tagNamesArr[$key] == '' ) {
+                            unset($tagNamesArr[$key]);
+                        }
                     }
 
-                    $productUrl = $product->getProductUrl();
-                    $this->getResponse()->setRedirect($productUrl);
-
-                    try {
-                        if( !Mage::getSingleton('customer/session')->authenticate($this) ) {
-                            return;
-                        }
-
-                        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-
-                        $tagName = urldecode($tagName);
-                        $tagNamesArr = explode("\n", preg_replace("/(\'(.*?)\')|(\s+)/i", "$1\n", $tagName));
-
-                        foreach( $tagNamesArr as $key => $tagName ) {
-                            $tagNamesArr[$key] = trim($tagNamesArr[$key], '\'');
-                            $tagNamesArr[$key] = trim($tagNamesArr[$key]);
-                            if( $tagNamesArr[$key] == '' ) {
-                                unset($tagNamesArr[$key]);
+                    foreach( $tagNamesArr as $tagName ) {
+                        if( $tagName ) {
+                            $tagModel = Mage::getModel('tag/tag');
+                            $tagModel->loadByName($tagName);
+                            if ($tagModel->getId()) {
+                                $status = $tagModel->getStatus();
                             }
-                        }
+                            else {
+                                $status = $tagModel->getPendingStatus();
+                            }
 
-                        foreach( $tagNamesArr as $tagName ) {
-                            if( $tagName ) {
-                                $tagModel = Mage::getModel('tag/tag');
-                                $tagModel->loadByName($tagName);
-
-                                $tagModel->setName($tagName)
-                                        ->setStoreId(Mage::app()->getStore()->getId())
-                                        ->setStatus( ( $tagModel->getId() && $tagModel->getStatus() != $tagModel->getPendingStatus() ) ? $tagModel->getStatus() : $tagModel->getPendingStatus() )
-                                        ->save();
-
-                                $tagRelationModel = Mage::getModel('tag/tag_relation');
-
-                                $tagRelationModel->loadByTagCustomer($productId, $tagModel->getId(), Mage::getSingleton('customer/session')->getCustomerId(), Mage::app()->getStore()->getId());
-
-                                if( $tagRelationModel->getCustomerId() == $customerId && $tagRelationModel->getActive()) {
-                                    return;
-                                }
-
-                                $tagRelationModel->setTagId($tagModel->getId())
-                                    ->setCustomerId($customerId)
-                                    ->setProductId($productId)
+                            $tagModel->setName($tagName)
                                     ->setStoreId(Mage::app()->getStore()->getId())
-                                    ->setCreatedAt( now() )
-                                    ->setActive(1)
+                                    ->setStatus($status)
                                     ->save();
-                                $tagModel->aggregate();
-                            } else {
+
+                            $tagRelationModel = Mage::getModel('tag/tag_relation');
+                            $tagRelationModel->loadByTagCustomer($productId,
+                                $tagModel->getId(),
+                                $session->getCustomerId(),
+                                Mage::app()->getStore()->getId()
+                            );
+
+                            if( $tagRelationModel->getCustomerId() == $customerId && $tagRelationModel->getActive()) {
                                 continue;
                             }
+                            $tagRelationModel->setTagId($tagModel->getId())
+                                ->setCustomerId($customerId)
+                                ->setProductId($productId)
+                                ->setStoreId(Mage::app()->getStore()->getId())
+                                ->setCreatedAt( now() )
+                                ->setActive(1)
+                                ->save();
+                            $tagModel->aggregate();
+                        } else {
+                            continue;
                         }
-
-                        Mage::getSingleton('catalog/session')
-                                ->addSuccess(Mage::helper('tag')->__('Your tag(s) have been accepted for moderation'));
-
-                        return;
-                    } catch (Exception $e) {
-                        Mage::getSingleton('catalog/session')
-                            ->addError(Mage::helper('tag')->__('Unable to save tag(s)'));
-
-                        return;
                     }
+                    $session->addSuccess($this->__('Your tag(s) have been accepted for moderation'));
+                } catch (Exception $e) {
+                    $session->addError($this->__('Unable to save tag(s)'));
                 }
             }
         }
-
-        return;
+        $this->_redirectReferer();
     }
 }

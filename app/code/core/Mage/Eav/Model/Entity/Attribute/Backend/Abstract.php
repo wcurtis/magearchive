@@ -172,9 +172,11 @@ abstract class Mage_Eav_Model_Entity_Attribute_Backend_Abstract implements Mage_
         if ($this->getAttribute()->getIsRequired() && !$object->getData($attrCode)) {
             return false;
         }
-        if ($this->getAttribute()->getIsUnique() && !$this->getAttribute()->getIsRequired() && $this->getAttribute()->isValueEmpty($object->getData($this->getAttribute()->getAttributeCode()))) {
+        $value = $object->getData($this->getAttribute()->getAttributeCode());
+        if ($this->getAttribute()->getIsUnique() && !$this->getAttribute()->getIsRequired() && ($value == '' || $this->getAttribute()->isValueEmpty($value))) {
             return true;
         }
+        
         if ($this->getAttribute()->getIsUnique()) {
             if (!$this->getAttribute()->getEntity()->checkAttributeUniqueValue($this->getAttribute(), $object)) {
                 $label = $this->getAttribute()->getFrontend()->getLabel();

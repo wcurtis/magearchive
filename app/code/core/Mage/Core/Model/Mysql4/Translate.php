@@ -71,6 +71,38 @@ class Mage_Core_Model_Mysql4_Translate extends Mage_Core_Model_Mysql4_Abstract
         return $result;
     }
 
+    public function getTranslationArrayByStrings(array $strings, $storeId=null)
+    {
+        if(!Mage::app()->isInstalled()) {
+            return array();
+        }
+
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $read = $this->_getReadAdapter();
+        if (!$read) {
+            return array();
+        }
+
+        if (empty($strings)) {
+            return array();
+        }
+
+        $select = $read->select()
+            ->from($this->getMainTable())
+            ->where('string in (?)', $strings)
+            ->where('store_id = ?', $storeId);
+
+        $result = array();
+        foreach ($read->fetchAll($select) as $row) {
+            $result[$row['string']] = $row['translate'];
+        }
+
+        return $result;
+    }
+
     public function getMainChecksum()
     {
         return parent::getChecksum($this->getMainTable());

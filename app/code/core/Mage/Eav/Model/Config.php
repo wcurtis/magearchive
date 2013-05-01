@@ -231,4 +231,12 @@ class Mage_Eav_Model_Config
         $this->_initAttributes($entityType);
         return $this->getEntityType($entityType)->getAttributeCodes();
     }
+
+    public function clear()
+    {
+        $this->_data    = null;
+        $this->_objects = null;
+        $this->_references = null;
+        return $this;
+    }
 }

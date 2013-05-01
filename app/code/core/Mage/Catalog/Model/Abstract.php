@@ -53,6 +53,18 @@ abstract class Mage_Catalog_Model_Abstract extends Mage_Core_Model_Abstract
             ->setStoreId($this->getStoreId());
         return $collection;
     }
+    
+    public function loadByAttribute($attribute, $value)
+    {
+        $collection = $this->getResourceCollection()
+            ->addAttributeToFilter($attribute, $value)
+            ->setPage(1,1);   
+
+        foreach ($collection as $object) {
+            return $object;
+        }
+        return false;
+    }
 
     /**
      * Retrieve sore object

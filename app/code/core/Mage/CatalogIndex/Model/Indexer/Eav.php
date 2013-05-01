@@ -23,9 +23,7 @@
  * Catalog indexer eav processor
  *
  */
-class Mage_CatalogIndex_Model_Indexer_Eav
-    extends Mage_CatalogIndex_Model_Indexer_Abstract
-    implements Mage_CatalogIndex_Model_Indexer_Interface
+class Mage_CatalogIndex_Model_Indexer_Eav extends Mage_CatalogIndex_Model_Indexer_Abstract
 {
     protected function _construct()
     {
@@ -72,10 +70,12 @@ class Mage_CatalogIndex_Model_Indexer_Eav
 
     protected function _getIndexableAttributeConditions()
     {
+        $conditions = "frontend_input IN ('select', 'multiselect') AND (is_filterable IN (1, 2) OR is_visible_in_advanced_search = 1)";
+        return $conditions;
+
         $conditions = array();
         $conditions['frontend_input'] = array('select', 'multiselect');
         $conditions['or']['is_filterable'] = array(1, 2);
         $conditions['or']['is_visible_in_advanced_search'] = 1;
-        return $conditions;
     }
 }

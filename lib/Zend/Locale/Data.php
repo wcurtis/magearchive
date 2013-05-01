@@ -56,7 +56,7 @@ class Zend_Locale_Data
 
     /**
      * internal cache for ldml values
-     * 
+     *
      * @var Zend_Cache_Core
      * @access private
      */
@@ -513,7 +513,7 @@ class Zend_Locale_Data
                 }
                 $temp = self::_getFile($locale, '/ldml/dates/calendars/calendar[@type=\'' . $value . '\']/dateTimeFormats/availableFormats/dateFormatItem', 'id');
                 break;
-                
+
             case 'field':
                 if (empty($value)) {
                     $value = "gregorian";
@@ -557,7 +557,9 @@ class Zend_Locale_Data
                 $_temp = self::_getFile($locale, '/ldml/numbers/currencies/currency', 'type');
                 foreach ($_temp as $key => $keyvalue) {
                     $val = self::_getFile($locale, '/ldml/numbers/currencies/currency[@type=\'' . $key . '\']/displayName', '', $key);
-                    if (!array_key_exists($val[$key], $temp)) {
+                    if (!isset($val[$key])) {
+                        $temp[$key] = " " . $key;
+                    } elseif (!array_key_exists($val[$key], $temp)) {
                         $temp[$val[$key]] = $key;
                     } else {
                         $temp[$val[$key]] .= " " . $key;
@@ -602,7 +604,9 @@ class Zend_Locale_Data
                 $_temp = self::_getFile('supplementalData', '/supplementalData/currencyData/region', 'iso3166');
                 foreach ($_temp as $key => $keyvalue) {
                     $val = self::_getFile('supplementalData', '/supplementalData/currencyData/region[@iso3166=\'' . $key . '\']/currency', 'iso4217', $key);
-                    if (!array_key_exists($val[$key], $temp)) {
+                    if (!isset($val[$key])) {
+                        $temp[$key] = " " . $key;
+                    } elseif (!array_key_exists($val[$key], $temp)) {
                         $temp[$val[$key]] = $key;
                     } else {
                         $temp[$val[$key]] .= " " . $key;
@@ -928,7 +932,7 @@ class Zend_Locale_Data
                 }
                 $temp = self::_getFile($locale, '/ldml/dates/calendars/calendar[@type=\'' . $value . '\']/dateTimeFormats/dateTimeFormatLength/dateTimeFormat/pattern', '', 'pattern');
                 break;
-                
+
             case 'field':
                 if (!is_array($value)) {
                     $temp = $value;
@@ -971,7 +975,7 @@ class Zend_Locale_Data
                 $temp = array();
                 foreach ($_temp as $key => $keyvalue) {
                     $val = self::_getFile($locale, '/ldml/numbers/currencies/currency[@type=\'' . $key . '\']/displayName', '', $key);
-                    if ($val[$key] != $value) {
+                    if (!isset($val[$key]) || ($val[$key] != $value)) {
                         continue;
                     }
                     if (!array_key_exists($val[$key], $temp)) {
@@ -1013,7 +1017,7 @@ class Zend_Locale_Data
                 $temp = array();
                 foreach ($_temp as $key => $keyvalue) {
                     $val = self::_getFile('supplementalData', '/supplementalData/currencyData/region[@iso3166=\'' . $key . '\']/currency', 'iso4217', $key);
-                    if ($val[$key] != $value) {
+                    if (!isset($val[$key]) || ($val[$key] != $value)) {
                         continue;
                     }
                     if (!array_key_exists($val[$key], $temp)) {
@@ -1155,7 +1159,7 @@ class Zend_Locale_Data
 
     /**
      * Set a cache for Zend_Locale_Data
-     * 
+     *
      * @param Zend_Cache_Core $cache a cache frontend
      */
     public static function setCache(Zend_Cache_Core $cache)

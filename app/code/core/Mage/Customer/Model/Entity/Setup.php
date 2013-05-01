@@ -47,7 +47,7 @@ class Mage_Customer_Model_Entity_Setup extends Mage_Eav_Model_Entity_Setup
 
                     'website_id' => array(
                         'type'          => 'static',
-                        'label'         => 'Create In',
+                        'label'         => 'Associate to Website',
                         'input'         => 'select',
                         'source'        => 'customer/customer_attribute_source_website',
                         'backend'       => 'customer/customer_attribute_backend_website',

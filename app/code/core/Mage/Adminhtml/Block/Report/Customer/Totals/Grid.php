@@ -52,7 +52,8 @@ class Mage_Adminhtml_Block_Report_Customer_Totals_Grid extends Mage_Adminhtml_Bl
             'width'     => '100px',
             'sortable'  => false,
             'index'     => 'orders_count',
-            'total'     => 'sum'
+            'total'     => 'sum',
+            'type'      => 'number'
         ));
 
         $baseCurrencyCode = (string) Mage::app()->getStore((int)$this->getParam('store'))->getBaseCurrencyCode();

@@ -34,7 +34,7 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canCapturePartial       = false;
-    protected $_canRefund               = true;
+    protected $_canRefund               = false;
     protected $_canVoid                 = true;
     protected $_canUseInternal          = true;
     protected $_canUseCheckout          = true;
@@ -107,6 +107,8 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
             ->setPaymentType($this->getPaymentAction())
             ->setAmount($amount)
             ->setBillingAddress($payment->getOrder()->getBillingAddress())
+            ->setShippingAddress($payment->getOrder()->getShippingAddress())
+            ->setEmail($payment->getOrder()->getCustomerEmail())
             ->setPayment($payment);
         ;
 
@@ -123,7 +125,7 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
             if (isset($e['short_message'])) {
                 $message = $e['short_message'];
             } else {
-                $message = Mage::helper('paypal')->__("Unknown PayPal API error: %s", $e['code']);
+                $message = Mage::helper('paypal')->__('There has been an error processing your payment. Please try later or contact us for help.');
             }
             if (isset($e['long_message'])) {
                 $message .= ': '.$e['long_message'];
@@ -139,6 +141,8 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
             ->setPaymentType(Mage_Paypal_Model_Api_Nvp::PAYMENT_TYPE_SALE)
             ->setAmount($amount)
             ->setBillingAddress($payment->getOrder()->getBillingAddress())
+            ->setShippingAddress($payment->getOrder()->getShippingAddress())
+            ->setEmail($payment->getOrder()->getCustomerEmail())
             ->setPayment($payment);
         ;
         if ($payment->getCcTransId()) {
@@ -151,7 +155,8 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
         if ($result) {
             $payment
                 ->setStatus('APPROVED')
-                ->setCcTransId($api->getTransactionId())
+                //->setCcTransId($api->getTransactionId())
+                ->setLastTransId($api->getTransactionId())
                 ->setCcAvsStatus($api->getAvsCode())
                 ->setCcCidStatus($api->getCvv2Match());
 
@@ -161,7 +166,7 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
             if (isset($e['short_message'])) {
                 $message = $e['short_message'];
             } else {
-                $message = Mage::helper('paypal')->__("Unknown PayPal API error: %s", $e['code']);
+                $message = Mage::helper('paypal')->__('There has been an error processing your payment. Please try later or contact us for help.');
             }
             if (isset($e['long_message'])) {
                 $message .= ': '.$e['long_message'];
@@ -193,7 +198,7 @@ class Mage_Paypal_Model_Direct extends Mage_Payment_Model_Method_Cc
             if (isset($e['short_message'])) {
                 $message = $e['short_message'];
             } else {
-                $message = Mage::helper('paypal')->__("Unknown PayPal API error: %s", $e['code']);
+                $message = Mage::helper('paypal')->__('There has been an error processing your payment. Please try later or contact us for help.');
             }
             if (isset($e['long_message'])) {
                 $message .= ': '.$e['long_message'];

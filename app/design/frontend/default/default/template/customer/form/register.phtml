@@ -134,7 +134,6 @@
 <script type="text/javascript">
     var dataForm = new VarienForm('form-validate', true);
     <?php if($this->getShowAddressFields()): ?>
-    //dataForm.setElementsRelation('country', 'state', '<?php echo $this->getLoadrRegionUrl() ?>');
     new RegionUpdater('country', 'region', 'region_id', <?php echo $this->helper('directory')->getRegionJson() ?>);
     <?php endif ?>
 </script>

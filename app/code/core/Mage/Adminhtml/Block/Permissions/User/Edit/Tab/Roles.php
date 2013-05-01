@@ -27,7 +27,7 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Roles extends Mage_Adminhtm
         $this->setId('permissionsUserRolesGrid');
         $this->setDefaultSort('sort_order');
         $this->setDefaultDir('asc');
-        $this->setDefaultFilter(array('assigned_user_role'=>1));
+        //$this->setDefaultFilter(array('assigned_user_role'=>1));
         $this->setTitle(Mage::helper('adminhtml')->__('User Roles Information'));
         $this->setUseAjax(true);
     }
@@ -40,12 +40,12 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Roles extends Mage_Adminhtm
                 $userRoles = 0;
             }
             if ($column->getFilter()->getValue()) {
-            	$this->getCollection()->addFieldToFilter('role_id', array('in'=>$userRoles));
+                $this->getCollection()->addFieldToFilter('role_id', array('in'=>$userRoles));
             }
             else {
                 if($userRoles) {
-                	$this->getCollection()->addFieldToFilter('role_id', array('nin'=>$userRoles));
-            	}
+                    $this->getCollection()->addFieldToFilter('role_id', array('nin'=>$userRoles));
+                }
             }
         }
         else {
@@ -56,7 +56,7 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Roles extends Mage_Adminhtm
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('admin/permissions_role_collection');
+        $collection = Mage::getResourceModel('admin/role_collection');
         $collection->setRolesFilter();
         $this->setCollection($collection);
         return parent::_prepareCollection();
@@ -65,7 +65,7 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Roles extends Mage_Adminhtm
     protected function _prepareColumns()
     {
 
-    	$this->addColumn('assigned_user_role', array(
+        $this->addColumn('assigned_user_role', array(
             'header_css_class' => 'a-center',
             'header'    => Mage::helper('adminhtml')->__('Assigned'),
             'type'      => 'radio',
@@ -101,13 +101,13 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Roles extends Mage_Adminhtm
             return $this->getRequest()->getParam('user_roles');
         }
         $uRoles = Mage::registry('permissions_user')->getRoles();
-    	if ($json) {
+        if ($json) {
             $jsonRoles = Array();
             foreach($uRoles as $urid) $jsonRoles[$urid] = 0;
             return Zend_Json::encode((object)$jsonRoles);
-    	} else {
+        } else {
             return $uRoles;
-    	}
-	}
+        }
+    }
 
 }

@@ -55,6 +55,11 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
         return $this->currency($value, true);
     }
 
+    public function formatPrice($price)
+    {
+        return Mage::app()->getStore()->formatPrice($price);
+    }
+
     /**
      * Format date using current locale options
      *
@@ -71,7 +76,9 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
             Mage_Core_Model_Locale::FORMAT_TYPE_SHORT   !==$format) {
             return $date;
         }
-
+        if ($date && !strtotime($date)) {
+            return '';
+        }
         if (is_null($date)) {
             $date = Mage::app()->getLocale()->date(time(), null, null, $showTime);
         }
@@ -254,16 +261,6 @@ class Mage_Core_Helper_Data extends Mage_Core_Helper_Abstract
         $string = strtr($string, $replacements[$german]);
 
         return $string;
-    }
-
-    public function urlEncode($url)
-    {
-        return str_replace('/', '_', base64_encode($url));
-    }
-
-    public function urlDecode($url)
-    {
-        return base64_decode(str_replace('_', '/', $url));
     }
 
     public function isDevAllowed($storeId=null)

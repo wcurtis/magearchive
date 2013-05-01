@@ -9,7 +9,7 @@ if (!defined('DS')) {
 
 // add PEAR lib in include_path if needed
 $_includePath = get_include_path();
-$_pearPhpDir = dirname(dirname(__FILE__)) . DS . 'pear' . DS . 'php';
+$_pearPhpDir = dirname(dirname(dirname(__FILE__))) . DS . 'downloader' . DS . 'pearlib' . DS . 'php';
 if (strpos($_includePath, $_pearPhpDir) === false) {
     if (substr($_includePath, 0, 2) === '.' . PATH_SEPARATOR) {
         $_includePath = '.' . PATH_SEPARATOR . $_pearPhpDir . PATH_SEPARATOR . substr($_includePath, 2);
@@ -20,12 +20,12 @@ if (strpos($_includePath, $_pearPhpDir) === false) {
 }
 
 // include necessary PEAR libs
-require_once "PEAR.php";
-require_once "PEAR/Frontend.php";
-require_once "PEAR/Registry.php";
-require_once "PEAR/Config.php";
-require_once "PEAR/Command.php";
-require_once "PEAR/Exception.php";
+require_once $_pearPhpDir."/PEAR.php";
+require_once $_pearPhpDir."/PEAR/Frontend.php";
+require_once $_pearPhpDir."/PEAR/Registry.php";
+require_once $_pearPhpDir."/PEAR/Config.php";
+require_once $_pearPhpDir."/PEAR/Command.php";
+require_once $_pearPhpDir."/PEAR/Exception.php";
 
 require_once dirname(__FILE__)."/Pear/Frontend.php";
 require_once dirname(__FILE__)."/Pear/Package.php";
@@ -41,6 +41,8 @@ class Varien_Pear
     protected $_cmdCache = array();
 
     static protected $_instance;
+
+    static public $reloadOnRegistryUpdate = true;
 
     public function __construct()
     {
@@ -67,7 +69,7 @@ class Varien_Pear
 
     public function getPearDir()
     {
-        return dirname(dirname(__FILE__)).DS.'pear';
+        return $this->getBaseDir().DS.'downloader'.DS.'pearlib';
     }
 
     public function getConfig()
@@ -90,11 +92,13 @@ class Varien_Pear
             $config->set('test_dir', $pear_dir.DS.'tests');
             $config->set('doc_dir', $pear_dir.DS.'docs');
 
+            $mageDir = $config->get('mage_dir');
+
             foreach ($config->getKeys() as $key) {
                 if (!(substr($key, 0, 5)==='mage_' && substr($key, -4)==='_dir')) {
                     continue;
                 }
-                $config->set($key, preg_replace('#^\.#', $this->getBaseDir(), $config->get($key)));
+                $config->set($key, preg_replace('#^'.preg_quote($mageDir).'#', $this->getBaseDir(), $config->get($key)));
                 #echo $key.' : '.$config->get($key).'<br>';
             }
 
@@ -105,17 +109,41 @@ class Varien_Pear
 
             PEAR_Frontend::setFrontendObject($this->getFrontend());
 
-            #PEAR_Command::registerCommands(false, $pear_dir.DS.'php'.DS.'PEAR'.DS.'Command'.DS);
+            PEAR_Command::registerCommands(false, $pear_dir.DS.'php'.DS.'PEAR'.DS.'Command'.DS);
 
             $this->_config = $config;
         }
         return $this->_config;
     }
 
-    public function getRegistry()
+    public function getMagentoChannels()
+    {
+        return array('connect.magentocommerce.com/core', 'connect.magentocommerce.com/community');
+    }
+
+    public function getRegistry($redirectOnChange=true)
     {
         if (!$this->_registry) {
             $this->_registry = new PEAR_Registry($this->getPearDir().DS.'php');
+
+            $changed = false;
+            foreach ($this->getMagentoChannels() as $channel) {
+                if (!$this->getRegistry()->channelExists($channel)) {
+                    $this->run('channel-discover', array(), array($channel));
+                    $changed = true;
+                }
+            }
+
+            if ($changed) {
+                $this->_registry = new PEAR_Registry($this->getPearDir().DS.'php');
+            }
+//            if ($changed && self::$reloadOnRegistryUpdate && empty($_GET['pear_registry'])) {
+//                echo "TEST:";
+//                echo self::$reloadOnRegistryUpdate;
+//                //TODO:refresh registry in memory to reflect discovered channels without redirect
+//                #header("Location: ".$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'].'&pear_registry=1');
+//                exit;
+//            }
         }
         return $this->_registry;
     }

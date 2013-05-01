@@ -102,17 +102,37 @@ class Mage_Customer_Model_Entity_Customer extends Mage_Eav_Model_Entity_Abstract
         return $this;
     }
 
+    /**
+     * Retrieve select object for loading base entity row
+     *
+     * @param   Varien_Object $object
+     * @param   mixed $rowId
+     * @return  Zend_Db_Select
+     */
+    protected function _getLoadRowSelect($object, $rowId)
+    {
+        $select = parent::_getLoadRowSelect($object, $rowId);
+        if ($object->getWebsiteId() && $object->getSharingConfig()->isWebsiteScope()) {
+            $select->where('website_id=?', (int) $object->getWebsiteId());
+        }
+        return $select;
+    }
+
     public function loadByEmail(Mage_Customer_Model_Customer $customer, $email, $testOnly=false)
     {
         $select = $this->_getReadAdapter()->select()
             ->from($this->getEntityTable(), array($this->getEntityIdField()))
-            ->where('email=?', $email);
+            //->where('email=?', $email);
+            ->where('email=:customer_email');
         if ($customer->getSharingConfig()->isWebsiteScope()) {
             $select->where('website_id=?', (int) $customer->getWebsiteId());
         }
 
-        if ($id = $this->_getReadAdapter()->fetchOne($select)) {
+        if ($id = $this->_getReadAdapter()->fetchOne($select, array('customer_email' => $email))) {
             $this->load($customer, $id);
+        }
+        else {
+            $customer->setData(array());
         }
         return $this;
     }

@@ -293,7 +293,16 @@ Billing.prototype = {
             }
         }
         if (response.error){
-            alert(response.message);
+            if ((typeof response.message) == 'string') {
+                alert(response.message);
+            } else {
+                if (window.billingRegionUpdater) {
+                    billingRegionUpdater.update();
+                }
+
+                alert(response.message.join("\n"));
+            }
+
             return false;
         }
         if (response.redirect) {
@@ -444,6 +453,19 @@ Shipping.prototype = {
                 response = {};
             }
         }
+        if (response.error){
+            if ((typeof response.message) == 'string') {
+                alert(response.message);
+            } else {
+                if (window.shippingRegionUpdater) {
+                    shippingRegionUpdater.update();
+                }
+                alert(response.message.join("\n"));
+            }
+
+            return false;
+        }
+
         if (response.redirect) {
             location.href = response.redirect;
             return;
@@ -525,7 +547,10 @@ ShippingMethod.prototype = {
                 response = {};
             }
         }
-
+        if (response.error) {
+            alert(response.message);
+            return false;
+        }
         if (response.payment_methods_html) {
         	$('checkout-payment-method-load').update(response.payment_methods_html);
         }

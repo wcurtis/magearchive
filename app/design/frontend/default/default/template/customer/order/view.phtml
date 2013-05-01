@@ -70,7 +70,7 @@
         <tbody>
             <?php foreach($_items as $_item): ?>
             <tr>
-                <td><?php echo $_item->getName() ?></td>
+                <td><?php echo $this->htmlEscape($_item->getName()) ?></td>
                 <td class="a-center"><?php echo $_item->getQty() ?></td>
                 <td class="a-right"><?php echo $_item->getPrice() ?></td>
                 <td class="a-right"><?php echo $_item->getRowTotal() ?></td>

@@ -185,7 +185,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Te
     protected function _getNodeJson($node, $level=0)
     {
         $item = array();
-        $item['text']= $node->getName();
+        $item['text']= $this->htmlEscape($node->getName());
         if ($this->_withProductCount) {
              $item['text'].= ' ('.$node->getProductCount().')';
         }

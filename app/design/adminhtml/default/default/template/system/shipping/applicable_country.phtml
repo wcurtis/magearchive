@@ -46,17 +46,17 @@ CountryModel.prototype = {
         if (applyCountryElement && applyCountryElement.id) {
             var specifCountryElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificcountry'));
             var showMethodElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'showmethod'));
-            var specifErrMsgElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificerrmsg'));
+            //var specifErrMsgElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificerrmsg'));
             if (specifCountryElement) {
                 if (applyCountryElement.value == 1) {
                    //if specific country element selected
                    specifCountryElement.enable();
                    showMethodElement.up(1).show();
-                   specifErrMsgElement.up(1).show();
+                   //specifErrMsgElement.up(1).show();
                  } else {
                    specifCountryElement.disable();
                    showMethodElement.up(1).hide();
-                   specifErrMsgElement.up(1).hide();
+                   //specifErrMsgElement.up(1).hide();
                 }
             }
         }
@@ -68,18 +68,18 @@ CountryModel.prototype = {
         if (applyCountryElement && applyCountryElement.id) {
             var specifCountryElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificcountry'));
             var showMethodElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'showmethod'));
-            var specifErrMsgElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificerrmsg'));
+            //var specifErrMsgElement  = $(applyCountryElement.id.replace(/sallowspecific/, 'specificerrmsg'));
             if (specifCountryElement) {
                 if (applyCountryElement.value == 1) {
                    //if specific country element selected
                    specifCountryElement.enable();
                    showMethodElement.up(1).show();
-                   specifErrMsgElement.up(1).show();
+                   //specifErrMsgElement.up(1).show();
                  } else {
                     this.unselectSpecificCountry(specifCountryElement);
                     specifCountryElement.disable();
                     showMethodElement.up(1).hide();
-                    specifErrMsgElement.up(1).hide();
+                    //specifErrMsgElement.up(1).hide();
                 }
             }
         }

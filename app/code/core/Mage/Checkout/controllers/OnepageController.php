@@ -21,17 +21,27 @@
 
 class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
 {
-    protected $_data = array();
-    protected $_checkout = null;
-    protected $_quote = null;
+    protected function _ajaxRedirectResponse()
+    {
+        $this->getResponse()
+            ->setHeader('HTTP/1.1', '403 Session Expired')
+            ->setHeader('Login-Required', 'true')
+            ->sendResponse();
+        return $this;
+    }
 
     protected function _expireAjax()
     {
-        if (!$this->getOnepage()->getQuote()->hasItems() || $this->getOnepage()->getQuote()->getHasError()) {
-            $this->getResponse()
-                ->setHeader('HTTP/1.1', '403 Session Expired')
-                ->setHeader('Login-Required', 'true')
-                ->sendResponse();
+        if (!$this->getOnepage()->getQuote()->hasItems()
+            || $this->getOnepage()->getQuote()->getHasError()
+            || $this->getOnepage()->getQuote()->getIsMultiShipping()) {
+            $this->_ajaxRedirectResponse();
+            exit;
+        }
+        $action = $this->getRequest()->getActionName();
+        if (Mage::getSingleton('checkout/session')->getCartWasUpdated(true)
+            && !in_array($action, array('index', 'progress'))) {
+            $this->_ajaxRedirectResponse();
             exit;
         }
     }
@@ -213,10 +223,15 @@ class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost('shipping_method', '');
             $result = $this->getOnepage()->saveShippingMethod($data);
-            Mage::dispatchEvent('checkout_controller_onepage_save_shipping_method', array('request'=>$this->getRequest()));
-            $this->getResponse()->setBody(Zend_Json::encode($result));
+            /*
+            $result will have erro data if shipping method is empty
+            */
+            if(!$result) {
+                Mage::dispatchEvent('checkout_controller_onepage_save_shipping_method', array('request'=>$this->getRequest()));
+                $this->getResponse()->setBody(Zend_Json::encode($result));
 
-            $result['payment_methods_html'] = $this->_getPaymentMethodsHtml();
+                $result['payment_methods_html'] = $this->_getPaymentMethodsHtml();
+            }
             $this->getResponse()->setBody(Zend_Json::encode($result));
         }
 
@@ -280,7 +295,7 @@ class Mage_Checkout_OnepageController extends Mage_Core_Controller_Front_Action
             Mage::logException($e);
             $result['success']  = false;
             $result['error']    = true;
-            $result['error_messages'] = $this->__('There is an error in placing an order. Please try again later or contact the store owner.');
+            $result['error_messages'] = $this->__('There was an error processing your order. Please contact us or try agian later.');
         }
 
         /**

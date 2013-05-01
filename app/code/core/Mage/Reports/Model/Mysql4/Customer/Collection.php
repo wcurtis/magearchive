@@ -129,14 +129,14 @@ class Mage_Reports_Model_Mysql4_Customer_Collection extends Mage_Customer_Model_
             /**
              * calculate average and total amount
              */
-            $expr = "({$this->_customerIdTableName}.base_subtotal-{$this->_customerIdTableName}.base_discount_amount-{$this->_customerIdTableName}.base_total_canceled-{$this->_customerIdTableName}.base_total_refunded)/_s2br_{$storeToBaseRateTableName}.{$storeToBaseRateFieldName}";
+            $expr = "({$this->_customerIdTableName}.base_subtotal-IFNULL({$this->_customerIdTableName}.base_subtotal_canceled,0)-IFNULL({$this->_customerIdTableName}.base_subtotal_refunded,0))/_s2br_{$storeToBaseRateTableName}.{$storeToBaseRateFieldName}";
 
         } else {
 
             /**
              * calculate average and total amount
              */
-            $expr = "{$this->_customerIdTableName}.base_subtotal-{$this->_customerIdTableName}.base_discount_amount-{$this->_customerIdTableName}.base_total_canceled-{$this->_customerIdTableName}.base_total_refunded";
+            $expr = "{$this->_customerIdTableName}.base_subtotal-IFNULL({$this->_customerIdTableName}.base_subtotal_canceled,0)-IFNULL({$this->_customerIdTableName}.base_subtotal_refunded,0)";
         }
 
         $this->getSelect()

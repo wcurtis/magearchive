@@ -47,7 +47,7 @@
         <template>
             <email>
                 <system_emails_forgot_email_template translate="label" module="adminhtml">
-                    <label>New password</label>
+                    <label>New admin password</label>
                     <file>admin_password_new.html</file>
                     <type>html</type>
                 </system_emails_forgot_email_template>
@@ -106,11 +106,11 @@
         </global_search>
         <translate>
             <modules>
-                <mage_adminhtml>
+                <Mage_Adminhtml>
                     <files>
                         <default>Mage_Adminhtml.csv</default>
                     </files>
-                </mage_adminhtml>
+                </Mage_Adminhtml>
             </modules>
         </translate>
         <menu>
@@ -170,24 +170,16 @@
                         </children>
                     </acl>
                     <extensions translate="title" module="adminhtml">
-                        <title>Extensions</title>
+                        <title>Magento Extensions</title>
                         <children>
                             <local translate="title" module="adminhtml">
-                                <title>Locally Installed</title>
+                                <title>Manage Extensions</title>
                                 <action>adminhtml/extensions_local</action>
                             </local>
-                            <remote translate="title" module="adminhtml">
-                                <title>Available Remote</title>
-                                <action>adminhtml/extensions_remote</action>
-                            </remote>
                             <custom translate="title" module="adminhtml">
-                                <title>Custom Local</title>
+                                <title>Package Extensions</title>
                                 <action>adminhtml/extensions_custom</action>
                             </custom>
-                            <config translate="title" module="adminhtml">
-                                <title>PEAR Configuration</title>
-                                <action>adminhtml/extensions_config</action>
-                            </config>
                         </children>
                     </extensions>
                     <cache translate="title" module="adminhtml">
@@ -398,6 +390,14 @@
             </updates>
         </layout>
     </adminhtml>
+    <default>
+        <system>
+            <emails>
+                <forgot_email_template>system_emails_forgot_email_template</forgot_email_template>
+                <forgot_email_identity>general</forgot_email_identity>
+            </emails>
+        </system>
+    </default>
     <stores>
         <admin>
             <!-- default admin design package and theme -->

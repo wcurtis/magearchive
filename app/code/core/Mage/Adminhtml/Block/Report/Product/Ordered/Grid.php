@@ -59,7 +59,8 @@ class Mage_Adminhtml_Block_Report_Product_Ordered_Grid extends Mage_Adminhtml_Bl
             'width'     =>'120px',
             'align'     =>'right',
             'index'     =>'ordered_qty',
-            'total'     =>'sum'
+            'total'     =>'sum',
+            'type'      =>'number'
         ));
 
         $this->addExportType('*/*/exportOrderedCsv', Mage::helper('reports')->__('CSV'));

@@ -25,6 +25,10 @@
             <label>General</label>
             <sort_order>100</sort_order>
         </general>
+        <service translate="label" module="core">
+            <label>Services</label>
+            <sort_order>99999</sort_order>
+        </service>
         <advanced translate="label" module="core">
             <label>Advanced</label>
             <sort_order>999999</sort_order>
@@ -461,15 +465,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </allow>
-                        <allow translate="label">
-                            <label>Allow countries</label>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>adminhtml/system_config_source_country</source_model>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </allow>
                         <default translate="label">
                             <label>Default country</label>
                             <frontend_type>select</frontend_type>
@@ -518,25 +513,6 @@
                         </timezone>
                     </fields>
                 </locale>
-                <price translate="label">
-                    <label>Price</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>15</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
-                    <show_in_store>0</show_in_store>
-                    <fields>
-                        <scope translate="label">
-                            <label>Scope</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_price_scope</source_model>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </scope>
-                    </fields>
-                </price>
             </groups>
         </general>
         <system translate="label" module="core">
@@ -738,24 +714,25 @@
                         <base_url translate="label">
                             <label>Base URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>Please make sure that Base URL ends with '/' (slash), e.g. http://yourdomain/magento/</comment>
                         </base_url>
                         <base_link_url translate="label">
                             <label>Base Link URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>Please make sure that Base URL ends with '/' (slash), e.g. http://yourdomain/magento/</comment>
                         </base_link_url>
                         <base_skin_url translate="label">
                             <label>Base Skin URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -764,6 +741,7 @@
                         <base_media_url translate="label">
                             <label>Base Media URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -772,6 +750,7 @@
                         <base_js_url translate="label">
                             <label>Base JavaScript URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -790,6 +769,7 @@
                         <base_url translate="label">
                             <label>Base URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -799,6 +779,7 @@
                         <base_link_url translate="label">
                             <label>Base Link URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -808,6 +789,7 @@
                         <base_skin_url translate="label">
                             <label>Base Skin URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -816,6 +798,7 @@
                         <base_media_url translate="label">
                             <label>Base Media URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -824,6 +807,7 @@
                         <base_js_url translate="label">
                             <label>Base JavaScript URL</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_baseurl</backend_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -850,7 +834,7 @@
                     </fields>
                 </secure>
                 <default translate="label">
-                    <label>Default URLs</label>
+                    <label>Default Pages</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>30</sort_order>
                     <show_in_default>1</show_in_default>
@@ -891,6 +875,22 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cookie_lifetime>
+                        <cookie_domain translate="label">
+                            <label>Cookie Domain</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cookie_domain>
+                        <cookie_path translate="label">
+                            <label>Cookie Path</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cookie_path>
                     </fields>
                 </cookie>
             </groups>

@@ -34,13 +34,6 @@ class Mage_Catalog_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_Fil
         $this->_requestVar = 'price';
     }
 
-
-    public function getName()
-    {
-        return Mage::helper('catalog')->__('Price');
-    }
-
-
     /**
      * Retrieve price range for build filter
      *
@@ -68,7 +61,7 @@ class Mage_Catalog_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_Fil
     {
         $maxPrice = $this->getData('max_price_int');
         if (is_null($maxPrice)) {
-            $maxPrice = Mage::getSingleton('catalogindex/price')->getMaxValue($this->_getFilterEntityIds());
+            $maxPrice = Mage::getSingleton('catalogindex/price')->getMaxValue($this->getAttributeModel(), $this->_getFilterEntityIds());
             $maxPrice = floor($maxPrice);
             $this->setData('max_price_int', $maxPrice);
         }
@@ -79,7 +72,7 @@ class Mage_Catalog_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_Fil
     {
         $items = $this->getData('range_item_counts_'.$range);
         if (is_null($items)) {
-            $items = Mage::getSingleton('catalogindex/price')->getCount($range, $this->_getFilterEntityIds());
+            $items = Mage::getSingleton('catalogindex/price')->getCount($this->getAttributeModel(), $range, $this->_getFilterEntityIds());
             $this->setData('range_item_counts_'.$range, $items);
         }
         return $items;
@@ -137,7 +130,7 @@ class Mage_Catalog_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_Fil
         if ((int)$index && (int)$range) {
             $this->setPriceRange((int)$range);
             //$range = $this->getPriceRange();
-            $entityIds = Mage::getSingleton('catalogindex/price')->getFilteredEntities($range, $index, $this->_getFilterEntityIds());
+            $entityIds = Mage::getSingleton('catalogindex/price')->getFilteredEntities($this->getAttributeModel(), $range, $index, $this->_getFilterEntityIds());
             if ($entityIds) {
                 $this->getLayer()->getProductCollection()
                     ->addFieldToFilter('entity_id', $entityIds);

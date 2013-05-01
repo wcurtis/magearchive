@@ -93,6 +93,7 @@ Product.Gallery.prototype = {
            this.images.push(newImage);
            this.uploader.removeFile(item.id);
         }.bind(this));
+        this.container.setHasChanges();
         this.updateImages();
     },
     updateImages: function() {
@@ -106,7 +107,7 @@ Product.Gallery.prototype = {
             }
             this.updateVisualisation(row.file);
         }.bind(this));
-        this.updateUseDefault();
+        this.updateUseDefault(false);
     },
     createImageRow: function(image) {
         var vars = Object.clone(image);
@@ -137,6 +138,7 @@ Product.Gallery.prototype = {
       this.images[index].disabled = (this.getFileElement(file, 'cell-disable input').checked ? 1 : 0);
       this.getElement('save').value = this.images.toJSON();
       this.updateState(file);
+      this.container.setHasChanges();
     },
     loadImage: function(file) {
       var image = this.getImageByFile(file);
@@ -208,6 +210,10 @@ Product.Gallery.prototype = {
                  radio.disabled = input.checked;
              });
          }.bind(this));
+      }
+
+      if (arguments.length == 0) {
+          this.container.setHasChanges();
       }
     },
     handleUploadProgress: function (file) {
@@ -352,7 +358,7 @@ Product.Configurable.prototype = {
 	},
 	addNewProduct: function(productId, attributes) {
 	    if (this.checkAttributes(attributes)) {
-	        this.links[productId] = attributes;
+	        this.links[productId] = this.cloneAttributes(attributes);
 	    } else {
 	        this.newProducts.push(productId);
 	    }
@@ -362,12 +368,18 @@ Product.Configurable.prototype = {
 	    this.grid.reload(null);
 	},
 	createEmptyProduct: function() {
-	    var win = window.open(this.createEmptyUrl, 'new_product', 'width=900,height=600,resizable=1,scrollbars=1');
-	    win.focus();
+	    this.createPopup(this.createEmptyUrl)
 	},
 	createNewProduct: function() {
-	    var win = window.open(this.createNormalUrl, 'new_product', 'width=900,height=600,resizable=1,scrollbars=1');
-	    win.focus();
+	    this.createPopup(this.createNormalUrl);
+	},
+	createPopup: function(url) {
+	    if (this.win && !this.win.closed) {
+	        this.win.close();
+	    }
+
+	    this.win = window.open(url, '','width=1000,height=700,resizable=1,scrollbars=1');
+	    this.win.focus();
 	},
 	registerProduct: function(grid, element, checked) {
 		if(checked){
@@ -393,7 +405,7 @@ Product.Configurable.prototype = {
 	    }
 
 	    if (isAssociated && this.checkAttributes(attributes)) {
-	        this.links[productId] = attributes;
+	        this.links[productId] = this.cloneAttributes(attributes);
 	    } else if (isAssociated) {
 	        this.newProducts.push(productId);
 	    }
@@ -401,6 +413,13 @@ Product.Configurable.prototype = {
 	    this.updateGrid();
 	    this.updateValues();
 	    this.grid.reload(null);
+	},
+	cloneAttributes: function (attributes) {
+	    var newObj = [];
+	    for (var i=0, length=attributes.length; i<length; i++) {
+	        newObj[i] = Object.clone(attributes[i]);
+	    }
+	    return newObj;
 	},
 	rowClick: function(grid, event) {
 		var trElement = Event.findElement(event, 'tr');

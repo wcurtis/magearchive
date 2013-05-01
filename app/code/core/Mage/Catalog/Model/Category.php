@@ -388,4 +388,14 @@ class Mage_Catalog_Model_Category extends Mage_Catalog_Model_Abstract
         }
         return $this->getData('level');
     }
+
+    public function verifyIds(array $ids)
+    {
+        return $this->getResource()->verifyIds($ids);
+    }
+
+    public function hasChildren()
+    {
+        return $this->_getResource()->getChildrenAmount($this) > 0;
+    }
 }

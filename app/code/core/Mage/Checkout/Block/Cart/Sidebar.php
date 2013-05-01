@@ -28,26 +28,30 @@
 class Mage_Checkout_Block_Cart_Sidebar extends Mage_Checkout_Block_Cart_Abstract
 {
     protected $_items;
+    protected $_subtotal;
+
+    protected function _getCartInfo()
+    {
+        if (!is_null($this->_items)) {
+            return;
+        }
+        $cart = Mage::getSingleton('checkout/cart')->getCartInfo();
+
+        $this->_items = $cart->getItems();
+        $this->_subtotal = $cart->getSubtotal();
+
+        usort($this->_items, array($this, 'sortByCreatedAt'));
+    }
 
     public function getRecentItems()
     {
-        $items = array();
-        if ($this->getQuote()->getItemsCount()==0) {
-            return $items;
+        $this->_getCartInfo();
+        if (!$this->_items) {
+            return array();
         }
-        $quoteItems = $this->getQuote()->getAllItems();
-        usort($quoteItems, array($this, 'sortByCreatedAt'));
         $i = 0;
-        foreach ($quoteItems as $quoteItem) {
-            $item = clone $quoteItem;
-            $item->setItemProduct($this->helper('checkout')->getQuoteItemProduct($item));
-            $item->setProductUrl($this->helper('checkout')->getQuoteItemProductUrl($item));
-            $item->setProductName($this->helper('checkout')->getQuoteItemProductName($item));
-            $item->setProductDescription($this->helper('catalog/product')->getProductDescription($item));
-            if (Mage::helper('tax')->updateProductTax($item)) {
-                $item->setPrice($item->getPriceAfterTax());
-            }
-            $items[] = $item;
+        foreach ($this->_items as $quoteItem) {
+            $items[] = $quoteItem;
             if (++$i==3) break;
         }
         return $items;
@@ -62,7 +66,13 @@ class Mage_Checkout_Block_Cart_Sidebar extends Mage_Checkout_Block_Cart_Abstract
 
     public function getSubtotal()
     {
-        return $this->getQuote()->getShippingAddress()->getSubtotal();
+        $this->_getCartInfo();
+        return $this->_subtotal;
+    }
+
+    public function getSummaryCount()
+    {
+        return Mage::getSingleton('checkout/cart')->getSummaryQty();
     }
 
     public function getCanDisplayCart()
@@ -78,5 +88,11 @@ class Mage_Checkout_Block_Cart_Sidebar extends Mage_Checkout_Block_Cart_Abstract
     public function getMoveToWishlistItemUrl($item)
     {
         return $this->getUrl('checkout/cart/moveToWishlist',array('id'=>$item->getId()));
+    }
+
+    public function getIncExcTax($flag)
+    {
+        $text = Mage::helper('tax')->getIncExcText($flag);
+        return $text ? ' ('.$text.')' : '';
     }
 }

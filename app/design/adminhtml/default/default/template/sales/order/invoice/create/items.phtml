@@ -108,7 +108,7 @@
         <?php echo $this->getChildHtml('totals') ?>
         <div class="divider"></div>
 
-        <?php if ($this->getInvoice()->canCapture()): ?>
+        <?php if ($this->canCapture()): ?>
         <p>
             <label for="invoice_do_capture" class="normal"><?php echo Mage::helper('sales')->__('Capture Amount') ?></label>
             <input type="checkbox" name="invoice[do_capture]" id="invoice_do_capture" value="1" checked/>

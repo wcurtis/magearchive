@@ -36,7 +36,7 @@
         <span class="field-row" id="resources_container">
             <label><?php echo $this->__('Resources') ?></label>
             <div class="f-left">
-                <div class="tree x-tree" id="tree-div"></div>
+                <div class="tree x-tree" id="resource-tree"></div>
             </div>
         </span>
 
@@ -48,7 +48,7 @@
     $('resources_container').hide();
 <?php endif; ?>
 Ext.EventManager.onDocumentReady(function() {
-    var tree = new Ext.tree.TreePanel('tree-div', {
+    var tree = new Ext.tree.TreePanel('resource-tree', {
         animate:false,
         loader: false,
         enableDD:false,

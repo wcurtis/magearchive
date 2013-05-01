@@ -66,6 +66,15 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
                 'name'
             );
         }
+        else {
+            if ($this->getCategory()->getLevel() == 1) {
+                $fieldset->removeField('url_key');
+                $fieldset->addField('url_key', 'hidden', array(
+                    'name'  => 'url_key',
+                    'value' => $this->getCategory()->getUrlKey()
+                ));
+            }
+        }
 
         $form->addValues($this->getCategory()->getData());
 
@@ -89,7 +98,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tab_General extends Mage_Adminhtml_B
         if ($node) {
             $options[] = array(
                'value' => $node->getPathId(),
-               'label' => str_repeat('&nbsp;', max(0, 3*($node->getLevel()))) . $node->getName(),
+               'label' => str_repeat('&nbsp;', max(0, 3*($node->getLevel()))) . $this->htmlEscape($node->getName()),
             );
 
             foreach ($node->getChildren() as $child) {

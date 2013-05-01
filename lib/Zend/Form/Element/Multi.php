@@ -30,7 +30,7 @@ require_once 'Zend/Form/Element/Xhtml.php';
  * @subpackage Element
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Multi.php 8628 2008-03-07 15:04:13Z matthew $
+ * @version    $Id: Multi.php 8970 2008-03-21 18:29:29Z matthew $
  */
 abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
 {
@@ -115,7 +115,14 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
     public function addMultiOptions(array $options)
     {
         foreach ($options as $option => $value) {
-            $this->addMultiOption($option, $value);
+            if (is_array($value) 
+                && array_key_exists('key', $value)
+                && array_key_exists('value', $value)
+            ) {
+                $this->addMultiOption($value['key'], $value['value']);
+            } else {
+                $this->addMultiOption($option, $value);
+            }
         }
         return $this;
     }

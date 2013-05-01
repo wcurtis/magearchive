@@ -29,20 +29,18 @@
         <?php if ($_multiWebsite): ?>
         <col width="120">
         <?php endif; ?>
+        <col width="100">
         <col width="120">
-        <col width="40">
         <col>
         <col width="50">
         <thead>
             <tr class="headings">
                 <th <?php if (!$_multiWebsite): ?>style="display:none"<?php endif; ?>><?php echo Mage::helper('sales')->__('Website') ?></th>
-                <th><?php echo Mage::helper('sales')->__('Customer Group') ?></th>
-                <th><?php echo Mage::helper('sales')->__('Qty') ?></th>
-                <th><?php echo Mage::helper('sales')->__('Price') ?></th>
-                <th class="last"><?php echo Mage::helper('sales')->__('Action') ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Customer Group') ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Qty') ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Price') ?></th>
+                <th class="last"><?php echo Mage::helper('catalog')->__('Action') ?></th>
             </tr>
-        </thead>
-        <tbody id="<?php echo $_htmlId ?>_container">
             <tr id="<?php echo $_htmlId ?>_add_template" class="template no-display">
                 <td <?php if (!$_multiWebsite): ?>style="display:none"<?php endif; ?>>
                 <select disabled="no-template" class="<?php echo $_htmlClass ?> required-entry" name="<?php echo $_htmlName ?>[__index__][website_id]" id="tier_price_row___index___website">
@@ -58,17 +56,19 @@
                     <?php endforeach ?>
                 </select>
                 </td>
-                <td>
-                    <input disabled="no-template" class="<?php echo $_htmlClass ?> qty required-entry validate-number validate-greater-than-zero" type="text" name="<?php echo $_htmlName ?>[__index__][price_qty]" value="'#{qty}'"/>
+                <td class="no-br">
+                    <input disabled="no-template" class="<?php echo $_htmlClass ?> qty required-entry validate-greater-than-zero" type="text" name="<?php echo $_htmlName ?>[__index__][price_qty]" value="'#{qty}'"/> <?php echo Mage::helper('catalog')->__('and above')?>
                 </td>
                 <td>
-                    <input disabled="no-template" class="<?php echo $_htmlClass ?> required-entry validate-number validate-greater-than-zero" type="text" name="<?php echo $_htmlName ?>[__index__][price]" value="'#{price}'"/>
+                    <input disabled="no-template" class="<?php echo $_htmlClass ?> required-entry validate-greater-than-zero" type="text" name="<?php echo $_htmlName ?>[__index__][price]" value="'#{price}'"/>
                 </td>
                 <td class="last">
                     <input type="hidden" name="<?php echo $_htmlName ?>[__index__][delete]" class="delete" disabled="no-template" value="">
                     <a href="#" onclick="tierPriceControl.deleteItem(event);return false"><?php echo $this->__('Delete') ?></a>
                 </td>
             </tr>
+        </thead>
+        <tbody id="<?php echo $_htmlId ?>_container">
         </tbody>
         <tfoot>
             <tr>
@@ -111,7 +111,7 @@
         }
     }
     <?php foreach ($this->getValues() as $_item): ?>
-    tierPriceControl.addItem('<?php echo $_item['website_id'] ?>', '<?php echo $_item['cust_group'] ?>', '<?php echo $_item['price_qty']*1 ?>','<?php echo $_item['price']*1 ?>');
+    tierPriceControl.addItem('<?php echo $_item['website_id'] ?>', '<?php echo $_item['cust_group'] ?>', '<?php echo $_item['price_qty']*1 ?>','<?php echo sprintf('%.2f', $_item['price']) ?>');
     <?php endforeach; ?>
 </script>
 </td>

@@ -42,7 +42,7 @@ Default layout, loads most of the pages
         <reference name="top.menu">
             <block type="catalog/navigation" name="catalog.topnav" template="catalog/navigation/top.phtml"/>
         </reference>
-        <reference name="right">
+        <reference name="left">
             <block type="core/template" name="left.permanent.callout" template="callouts/left_col.phtml">
                 <action method="setImgSrc"><src>images/media/col_left_callout.jpg</src></action>
                 <action method="setImgAlt" translate="alt" module="catalog"><alt>Our customer service is available 24/7. Call us at (800) DEMO-NUMBER.</alt></action>
@@ -89,6 +89,13 @@ Category layered navigation layout
             </block>
         </reference>
     </catalog_category_layered>
+
+    <catalog_category_layered_nochildren>
+        <remove name="right.reports.product.viewed" />
+        <reference name="right">
+            <block type="reports/product_viewed" before="right.permanent.callout" name="left.reports.product.viewed" template="reports/product_viewed.phtml" />
+        </reference>
+    </catalog_category_layered_nochildren>
 
 <!--
 Compare products page

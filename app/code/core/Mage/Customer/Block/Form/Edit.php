@@ -30,5 +30,10 @@ class Mage_Customer_Block_Form_Edit extends Mage_Core_Block_Template
     {
         return Mage::getSingleton('customer/session')->getCustomer();
     }
+    
+    public function getBackUrl()
+    {
+        return $this->getUrl('customer/account/');
+    }
 
 }

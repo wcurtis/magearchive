@@ -70,6 +70,16 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
             }
         }
 
+        if (Mage::getSingleton('checkout/session')->getCartWasUpdated(true)
+            && !in_array($action, array('index', 'login', 'register', 'addresses', 'success'))) {
+            $this->_redirectUrl($this->_getHelper()->getCartUrl());
+            $this->setFlag('', self::FLAG_NO_DISPATCH, true);
+        }
+
+        if ($action == 'success' && $this->_getCheckout()->getCheckoutSession()->getDisplaySuccess(true)) {
+            return $this;
+        }
+
         if (!$this->_getCheckout()->getQuote()->hasItems()
             || $this->_getCheckout()->getQuote()->getHasError())
         {
@@ -159,24 +169,28 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
     public function addressesPostAction()
     {
         try {
-            if ($shipToInfo = $this->getRequest()->getPost('ship')) {
-                $this->_getCheckout()->setShippingItemsInformation($shipToInfo);
-            }
             if ($this->getRequest()->getParam('continue', false)) {
+                $this->_getCheckout()->setCollectRatesFlag(true);
                 $this->_getState()->setActiveStep(
                     Mage_Checkout_Model_Type_Multishipping_State::STEP_SHIPPING
                 );
                 $this->_redirect('*/*/shipping');
             }
+            elseif ($this->getRequest()->getParam('new_address')) {
+                $this->_redirect('*/multishipping_address/newShipping');
+            }
             else {
                 $this->_redirect('*/*/addresses');
             }
+            if ($shipToInfo = $this->getRequest()->getPost('ship')) {
+                $this->_getCheckout()->setShippingItemsInformation($shipToInfo);
+            }
         }
-        catch (Mage_Core_Exception $e){
+        catch (Mage_Core_Exception $e) {
             Mage::getSingleton('checkout/session')->addError($e->getMessage());
             $this->_redirect('*/*/addresses');
         }
-        catch (Exception $e){
+        catch (Exception $e) {
             Mage::getSingleton('checkout/session')->addException(
                 $e,
                 Mage::helper('checkout')->__('Data saving problem')
@@ -326,7 +340,12 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
             $this->_initLayoutMessages('customer/session');
             $this->renderLayout();
         }
+        catch (Mage_Core_Exception $e) {
+            Mage::getSingleton('checkout/session')->addError($e->getMessage());
+            $this->_redirect('*/*/billing');
+        }
         catch (Exception $e) {
+            Mage::logException($e);
             $this->_redirect('*/*/billing');
         }
     }
@@ -346,10 +365,16 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
             $this->_getState()->setActiveStep(
                 Mage_Checkout_Model_Type_Multishipping_State::STEP_SUCCESS
             );
+            $this->_getCheckout()->getCheckoutSession()->clear();
+            $this->_getCheckout()->getCheckoutSession()->setDisplaySuccess(true);
             $this->_redirect('*/*/success');
         }
-        catch (Exception $e){
+        catch (Mage_Core_Exception $e){
             Mage::getSingleton('checkout/session')->addError($e->getMessage());
+            $this->_redirect('*/*/billing');
+        }
+        catch (Exception $e){
+            Mage::getSingleton('checkout/session')->addError('Order place error.');
             $this->_redirect('*/*/billing');
         }
     }
@@ -359,7 +384,6 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
      */
     public function successAction()
     {
-        $this->_getCheckout()->getCheckoutSession()->clear();
         $this->loadLayout();
         $this->_initLayoutMessages('checkout/session');
         $this->renderLayout();

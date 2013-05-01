@@ -27,10 +27,10 @@
 
 class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Currency extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
 {
-	/**
-	 * Currency objects cache
-	 */
-	protected static $_currencies = array();
+    /**
+     * Currency objects cache
+     */
+    protected static $_currencies = array();
 
     /**
      * Renders grid column
@@ -41,15 +41,16 @@ class Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Currency extends Mage_Adm
     public function render(Varien_Object $row)
     {
         if ($data = $row->getData($this->getColumn()->getIndex())) {
-        	$currency_code = $this->_getCurrencyCode($row);
+            $currency_code = $this->_getCurrencyCode($row);
 
-        	if (!$currency_code) {
-        	    return $data;
-        	}
+            if (!$currency_code) {
+                return $data;
+            }
 
-        	$data = floatval($data) * $this->_getRate($row);
-        	$data =Mage::app()->getLocale()->currency($currency_code)->toCurrency($data);
-        	return $data;
+            $data = floatval($data) * $this->_getRate($row);
+            $data = sprintf("%f", $data);
+            $data =Mage::app()->getLocale()->currency($currency_code)->toCurrency($data);
+            return $data;
         }
         return $this->getColumn()->getDefault();
     }

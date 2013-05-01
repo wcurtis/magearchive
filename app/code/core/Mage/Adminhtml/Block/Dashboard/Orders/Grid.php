@@ -76,14 +76,12 @@ class Mage_Adminhtml_Block_Dashboard_Orders_Grid extends Mage_Adminhtml_Block_Da
     {
         $this->addColumn('customer', array(
             'header'    => $this->__('Customer'),
-            'width'     => '110px',
             'sortable'  => false,
             'index'     => 'customer'
         ));
 
         $this->addColumn('items', array(
             'header'    => $this->__('Items'),
-            'width'     => '35px',
             'align'     => 'right',
             'sortable'  => false,
             'index'     => 'items_count'
@@ -93,7 +91,6 @@ class Mage_Adminhtml_Block_Dashboard_Orders_Grid extends Mage_Adminhtml_Block_Da
 
         $this->addColumn('total', array(
             'header'    => $this->__('Grand Total'),
-            'width'     => '70px',
             'align'     => 'right',
             'sortable'  => false,
             'type'      => 'currency',
@@ -109,6 +106,6 @@ class Mage_Adminhtml_Block_Dashboard_Orders_Grid extends Mage_Adminhtml_Block_Da
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/sales_order/view', array('order_id'=>$row->entity_id));
+        return $this->getUrl('*/sales_order/view', array('order_id'=>$row->getId()));
     }
 }

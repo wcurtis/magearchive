@@ -43,4 +43,10 @@ class Mage_Paypal_Block_Express_Info extends Mage_Payment_Block_Info
         }
         return $email;
     }
+    
+    public function toPdf()
+    {
+        $this->setTemplate('paypal/express/pdf/info.phtml');
+        return $this->toHtml();
+    }
 }

@@ -30,11 +30,11 @@ class Mage_Wishlist_Block_Customer_Wishlist extends Mage_Core_Block_Template
 
     protected $_wishlistLoaded = false;
 
-    public function __construct()
+    protected function _prepareLayout()
     {
-        parent::__construct();
-        $this->setTemplate('wishlist/view.phtml');
-        Mage::app()->getFrontController()->getAction()->getLayout()->getBlock('root')->setHeaderTitle(Mage::helper('wishlist')->__('My Wishlist'));
+        if ($headBlock = $this->getLayout()->getBlock('head')) {
+            $headBlock->setTitle($this->__('My Wishlist'));
+        }
     }
 
     public function getWishlist()
@@ -45,12 +45,21 @@ class Mage_Wishlist_Block_Customer_Wishlist extends Mage_Core_Block_Template
             $collection = Mage::registry('wishlist')->getProductCollection()
                 ->addAttributeToSelect('name')
                 ->addAttributeToSelect('price')
+                ->addAttributeToSelect('special_price')
+                ->addAttributeToSelect('special_from_date')
+                ->addAttributeToSelect('special_to_date')
                 ->addAttributeToSelect('image')
                 ->addAttributeToSelect('thumbnail')
                 ->addAttributeToSelect('small_image')
-                ->addAttributeToSelect('status')
                 ->addAttributeToSelect('tax_class_id')
-                ->addAttributeToFilter('store_id', array('in'=>Mage::registry('wishlist')->getSharedStoreIds()));
+                ->addAttributeToFilter('store_id', array('in'=>Mage::registry('wishlist')->getSharedStoreIds()))
+                ->addStoreFilter();
+
+
+
+
+            Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);
+            Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
 
             $this->_wishlistLoaded = true;
         }
@@ -78,4 +87,19 @@ class Mage_Wishlist_Block_Customer_Wishlist extends Mage_Core_Block_Template
         return $this->getUrl('*/*/remove',array('item'=>$item->getWishlistItemId()));
     }
 
+    public function getBackUrl()
+    {
+        return $this->getUrl('customer/account/');
+    }
+
+    public function isSaleable()
+    {
+        foreach ($this->getWishlist() as $item) {
+            if ($item->isSaleable()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

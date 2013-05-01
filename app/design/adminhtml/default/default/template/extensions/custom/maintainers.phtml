@@ -39,7 +39,7 @@
                 <tr id="maintainers_template" style="display:none">
 <?php function showMaintainersTemplate($self, $_i=0) { ?>
                     <td style="margin-bottom:5px;">
-                        <select name="maintainers[role][]"/>
+                        <select name="maintainers[role][]" style="width:70px">
                         <?php foreach ($self->getMaintainerRoles() as $_value=>$_label): ?>
                             <option value="<?php echo $_value ?>" <?php echo $self->getSelected('maintainers/role/'.$_i, $_value) ?>><?php echo $_label ?></option>
                         <?php endforeach ?>
@@ -51,7 +51,7 @@
                     </td><td style="margin-bottom:5px;">
                         <input class="input-text" style="width:160px;" name="maintainers[email][]" value="<?php echo $self->getValue('maintainers/email/'.$_i) ?>"/>
                     </td><td style="margin-bottom:5px;">
-                        <select name="maintainers[active][]"/>
+                        <select name="maintainers[active][]" style="width:70px">
                             <option value="1" <?php echo $self->getSelected('maintainers/active/'.$_i, 1) ?>><?php echo $self->__("Active") ?></option>
                             <option value="0" <?php echo $self->getSelected('maintainers/active/'.$_i, 0) ?>><?php echo $self->__("Inactive") ?></option>
                         </select>

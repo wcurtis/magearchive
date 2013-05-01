@@ -109,11 +109,10 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
             }
         }
         catch (Exception $e) {
+            $this->_getSession()->addError($e->getMessage());
             if( $this->getRequest()->getParam('gotoEdit') == 1 ) {
-                $this->_getSession()->addError($this->__('Attribute set with the same name already exists.'));
                 $this->_redirectReferer();
             } else {
-                $this->_getSession()->addError($this->__('Attribute set with the same name already exists.'));
                 $this->_initLayoutMessages('adminhtml/session');
                 $response->setMessage($this->getLayout()->getMessagesBlock()->getGroupedHtml());
                 $response->setError(1);
@@ -160,7 +159,6 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Adminhtml_Contro
 
     protected function _isAllowed()
     {
-	    return Mage::getSingleton('admin/session')->isAllowed('catalog/attributes/sets');
+        return Mage::getSingleton('admin/session')->isAllowed('catalog/attributes/sets');
     }
-
 }

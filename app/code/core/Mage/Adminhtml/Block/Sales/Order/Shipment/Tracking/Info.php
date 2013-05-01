@@ -31,16 +31,4 @@ class Mage_Adminhtml_Block_Sales_Order_Shipment_Tracking_Info extends Mage_Admin
         parent::_construct();
         $this->setTemplate('sales/order/shipment/tracking/info.phtml');
     }
-
-    /**
-     * Prepares layout of block
-     *
-     * @return Mage_Adminhtml_Block_Sales_Order_Shipment_Tracking_Info
-     */
-    public function setTrackingInfo($trackingInfo)
-    {
-        $this->trackingInfo = $trackingInfo;
-
-        return $this;
-    }
 }

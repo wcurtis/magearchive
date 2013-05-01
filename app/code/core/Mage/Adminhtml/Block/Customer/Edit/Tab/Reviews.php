@@ -102,13 +102,23 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Reviews extends Mage_Adminhtml_Bloc
             'index'     => 'created_at',
         ));
 
-        $this->addColumn('action', array(
-            'header'    => Mage::helper('customer')->__('Action'),
-            'align'     => 'center',
-            'format'    => '<a href="'.$this->getUrl('*/catalog_product_review/edit/id/$entity_id').'">'.Mage::helper('customer')->__('Edit').'</a>',
-            'filter'    => false,
-            'sortable'  => false,
-            'is_system' => true
+        $this->addColumn('action',
+            array(
+                'header'    => Mage::helper('customer')->__('Action'),
+                'width'     => '50px',
+                'type'      => 'action',
+                'getter'     => 'getId',
+                'actions'   => array(
+                    array(
+                        'caption' => Mage::helper('customer')->__('Edit'),
+                        'url'     => array(
+                            'base'=>'*/catalog_product_review/edit'
+                        ),
+                        'field'   => 'id'
+                    )
+                ),
+                'filter'    => false,
+                'sortable'  => false,
         ));
 
         $this->setColumnFilter('id')
@@ -125,5 +135,11 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Reviews extends Mage_Adminhtml_Bloc
     {
         return $this->getUrl('*/*/index', array('_current'=> true));
     }
+
+    public function getRowUrl($row)
+    {
+        return $this->getUrl('*/catalog_product_review/edit', array('id'=>$row->getId()));
+    }
+
 
 }

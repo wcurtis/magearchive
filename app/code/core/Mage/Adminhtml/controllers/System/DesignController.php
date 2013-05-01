@@ -87,7 +87,6 @@ class Mage_Adminhtml_System_DesignController extends Mage_Adminhtml_Controller_A
         $this->_redirect('*/*/');
     }
 
-
     public function deleteAction()
     {
         if ($id = $this->getRequest()->getParam('id')) {
@@ -108,5 +107,10 @@ class Mage_Adminhtml_System_DesignController extends Mage_Adminhtml_Controller_A
             }
         }
         $this->getResponse()->setRedirect($this->getUrl('*/*/'));
+    }
+
+    protected function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('system/design');
     }
 }

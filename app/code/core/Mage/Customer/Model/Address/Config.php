@@ -45,10 +45,11 @@ class Mage_Customer_Model_Address_Config extends Mage_Core_Model_Config_Base
             foreach($this->getNode('formats')->children() as $typeCode=>$typeConfig) {
                 $type = new Varien_Object();
                 $type->setCode($typeCode)
-                    ->setTitle($typeConfig->title)
-                    ->setDefaultFormat($typeConfig->defaultFormat);
+                    ->setTitle((string)$typeConfig->title)
+                    ->setDefaultFormat((string)$typeConfig->defaultFormat)
+                    ->setHtmlEscape((bool)$typeConfig->htmlEscape);
 
-                $renderer = $typeConfig->renderer;
+                $renderer = (string)$typeConfig->renderer;
                 if (!$renderer) {
                     $renderer = self::DEFAULT_ADDRESS_RENDERER;
                 }

@@ -29,7 +29,6 @@
     </table>
 </div>
 <form action="<?php echo $this->getData('action') ?>" method="post" id="delete_form">
-    <p>Deleting a store view will not delete the information associated with the store view (e.g. categories, products, etc.), but the store view will not be able to be restored. It is suggested that you create a database backup before deleting the store view.</p>
     <p><input type="checkbox" name="create_backup" checked="checked" id="input_create_backup" />&nbsp;<label for="input_create_backup"><?php echo $this->helper('adminhtml')->__('Create DB Backup'); ?></label></p>
     <p><?php echo $this->getChildHtml('confirm_deletion_button') ?> <?php echo $this->getChildHtml('cancel_button') ?></p>
 </form>

@@ -127,12 +127,12 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
             $r->setDestPostal($request->getDestPostcode());
         }
 
-        $r->setWeightPounds(floor($request->getPackageWeight()));
-        $r->setWeightOunces(floor(($request->getPackageWeight()-floor($request->getPackageWeight()))*16));
+        $weight = $this->getTotalNumOfBoxes($request->getPackageWeight());
+        $r->setWeightPounds(floor($weight));
+        $r->setWeightOunces(floor(($weight-floor($weight))*16));
 
         if ($request->getFreeMethodWeight()!=$request->getPackageWeight()) {
-            $r->settFreeMethodWeightPounds(floor($request->getFreeMethodWeight()));
-            $r->settFreeMethodWeightOunces(($request->getFreeMethodWeight()-floor($request->getFreeMethodWeight()))*16);
+            $r->setFreeMethodWeight($request->getFreeMethodWeight());
         }
 
         $r->setValue($request->getPackageValue());
@@ -156,7 +156,9 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
     {
         $r = $this->_rawRequest;
 
-        $r->setWeight($r->getFreeMethodWeight());
+        $weight = $this->getTotalNumOfBoxes($r->getFreeMethodWeight());
+        $r->setWeightPounds(floor($weight));
+        $r->setWeightOunces(floor(($weight-floor($weight))*16));
         $r->setService($freeMethod);
     }
 
@@ -241,7 +243,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                         $allowedMethods = explode(",", $this->getConfigData('allowed_methods'));
                         $allMethods = $this->getCode('method');
                         $newMethod = false;
-                        if ($r->getDestCountryId() == self::USA_COUNTRY_ID) {
+                        if ($r->getDestCountryId() == self::USA_COUNTRY_ID || $r->getDestCountryId() == self::PUERTORICO_COUNTRY_ID) {
                             if (is_object($xml->Package) && is_object($xml->Package->Postage)) {
                                 foreach ($xml->Package->Postage as $postage) {
 //                                    if (in_array($this->getCode('service_to_code', (string)$postage->MailService), $allowedMethods) && $this->getCode('service', $this->getCode('service_to_code', (string)$postage->MailService))) {
@@ -293,7 +295,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
             $error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('usps');
             $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($errorTitle);
+            //$error->setErrorMessage($errorTitle);
+            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
         } else {
             foreach ($priceArr as $method=>$price) {
@@ -308,19 +311,6 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
             }
         }
         return $result;
-    }
-
-    public function getMethodPrice($cost, $method='')
-    {
-        $r = $this->_rawRequest;
-        if ($this->getConfigData('cutoff_cost') != ''
-         && $method == $this->getConfigData('free_method')
-         && $this->getConfigData('cutoff_cost') <= $r->getValue()) {
-             $price = '0.00';
-        } else {
-            $price = $cost + $this->getConfigData('handling');
-        }
-        return $price;
     }
 
     public function getCode($type, $code='')

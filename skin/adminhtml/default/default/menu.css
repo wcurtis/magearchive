@@ -39,7 +39,7 @@
     display:block;
     text-decoration:none;
     }
-#nav span { display:block; cursor:pointer; }
+#nav span { display:block; /*cursor:pointer;*/ }
 #nav a {line-height:1.3em; }
 
 
@@ -100,11 +100,11 @@
     margin-top:-7px;
     padding-bottom:3px;
     padding-top:1px;
-	border-top:1px solid #2d444f;	
+    border-top:1px solid #2d444f;	
 }
 
 #nav ul ul  {
-border-top:none;
+    border-top:none;
 }
 
 /* Show menu */
@@ -142,6 +142,15 @@ border-top:none;
     }
 
 /************ 3RD+ LEVEL ************/
+
+/* Cursors */
+#nav li.parent a,
+#nav li.parent li.parent a,
+#nav li.parent li.parent li.parent a { cursor:default; }
+
+#nav li.parent li a,
+#nav li.parent li.parent li a,
+#nav li.parent li.parent li.parent li a { cursor:pointer; }
 
 /* Show menu */
 #nav ul ul ul { left:-10000px; }

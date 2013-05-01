@@ -44,7 +44,8 @@ class Mage_Adminhtml_Helper_Data extends Mage_Core_Helper_Abstract
 
             $frontName = $request->getModuleName();
             $router = Mage::app()->getFrontController()->getRouterByFrontName($frontName);
-            $url = 'http://www.magentocommerce.com/wiki/modules_reference/';
+            $url = 'http://www.magentocommerce.com/gethelp/';
+            $url.= Mage::app()->getLocale()->getLocaleCode().'/';
             $url.= $router->getModuleByFrontName($frontName).'/';
             $url.= $request->getControllerName().'/';
             $url.= $request->getActionName().'/';

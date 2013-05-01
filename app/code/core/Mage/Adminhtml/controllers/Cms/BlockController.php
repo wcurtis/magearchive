@@ -27,7 +27,6 @@
  */
 class Mage_Adminhtml_Cms_BlockController extends Mage_Adminhtml_Controller_Action
 {
-
     /**
      * Init actions
      *
@@ -181,5 +180,4 @@ class Mage_Adminhtml_Cms_BlockController extends Mage_Adminhtml_Controller_Actio
     {
         return Mage::getSingleton('admin/session')->isAllowed('cms/block');
     }
-
 }

@@ -160,7 +160,7 @@ class Mage_Tag_Model_Mysql4_Tag_Collection extends Mage_Core_Model_Mysql4_Collec
     {
         if ($this->getJoinFlag('relation') && 'popularity' == $field) {
             // TOFIX
-            $this->getSelect()->where($this->_getConditionSql('count(relation.tag_relation_id)', $condition));
+            $this->getSelect()->having($this->_getConditionSql('count(relation.tag_relation_id)', $condition));
         } elseif ($this->getJoinFlag('summary') && in_array($field, array('customers', 'products', 'uses', 'historical_uses', 'popularity'))) {
             $this->getSelect()->where($this->_getConditionSql('summary.'.$field, $condition));
         } else {

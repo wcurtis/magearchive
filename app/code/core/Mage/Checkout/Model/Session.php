@@ -50,7 +50,8 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
              */
             $quote = Mage::getModel('sales/quote')
                 ->setStoreId(Mage::app()->getStore()->getId())
-                ->setCacheKey(true);
+                ->setCacheKey(true)
+                ;
 
             /* @var $quote Mage_Sales_Model_Quote */
             if ($this->getQuoteId()) {
@@ -65,12 +66,14 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                 Mage::dispatchEvent('checkout_quote_init', array('quote'=>$quote));
                 //$this->setQuoteId($quote->getId());
             }
-            if ($this->getQuoteId() && !$quote->getCustomerId()) {
+
+            if ($this->getQuoteId()) {
                 $customerSession = Mage::getSingleton('customer/session');
                 if ($customerSession->isLoggedIn()) {
-                    $quote->setCustomer($customerSession->getCustomer())->save();
+                    $quote->setCustomer($customerSession->getCustomer());
                 }
             }
+
             $this->_quote = $quote;
             /**
              * Declare current store for quote data
@@ -112,6 +115,10 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                         $customerQuote->addItem($quoteItem);
                     }
                 }
+                if ($this->getQuote()->getCouponCode()) {
+                    $customerQuote->setCouponCode($this->getQuote()->getCouponCode());
+                }
+                $customerQuote->collectTotals();
                 $customerQuote->save();
             }
             $this->setQuoteId($customerQuote->getId());

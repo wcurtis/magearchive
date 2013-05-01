@@ -44,13 +44,15 @@ class Mage_Adminhtml_Block_Report_Sales_Sales_Grid extends Mage_Adminhtml_Block_
         $this->addColumn('orders', array(
             'header'    =>Mage::helper('reports')->__('Number of Orders'),
             'index'     =>'orders',
-            'total'     =>'sum'
+            'total'     =>'sum',
+            'type'      =>'number'
         ));
 
         $this->addColumn('items', array(
             'header'    =>Mage::helper('reports')->__('Items Ordered'),
             'index'     =>'items',
-            'total'     =>'sum'
+            'total'     =>'sum',
+            'type'      =>'number'
         ));
 
         $currency_code = (string) Mage::app()->getStore((int)$this->getParam('store'))->getBaseCurrencyCode();

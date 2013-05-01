@@ -26,6 +26,6 @@ class Mage_Adminhtml_Block_Review_Grid_Renderer_Detail extends Mage_Adminhtml_Bl
 	    $maxLen = 50;
 	    $origDetail = $row->getDetail();
 	    $result = (strlen($origDetail) > $maxLen ? substr($origDetail, 0, 50) . '...' : $origDetail) ;
-		return nl2br($result);
+		return nl2br(htmlspecialchars($result));
 	}
 }

@@ -66,6 +66,8 @@ class Mage_Rss_Block_Catalog_Category extends Mage_Rss_Block_Abstract
                     ->load()
                 ;
                 $productCollection = Mage::getModel('catalog/product')->getCollection();
+
+                $currentyCateogry = $layer->setCurrentCategory($category);
                 $layer->prepareProductCollection($productCollection);
                 $productCollection->addCountToCategories($_collection);
 
@@ -85,7 +87,7 @@ class Mage_Rss_Block_Catalog_Category extends Mage_Rss_Block_Abstract
                 /*
                 only load latest 50 products
                 */
-                $_productCollection = $layer->setCurrentCategory($category)
+                $_productCollection = $currentyCateogry
                     ->getProductCollection()
                     ->addAttributeToSort('updated_at','desc')
                     ->setCurPage(1)

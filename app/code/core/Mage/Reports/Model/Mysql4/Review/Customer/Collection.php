@@ -43,7 +43,7 @@ class Mage_Reports_Model_Mysql4_Review_Customer_Collection extends Mage_Review_M
             $attrCondition = ' AND _table_customer_firstname.attribute_id = '.$firstnameAttrId;
         }
 
-        $this->getSelect()->joinLeft(array('_table_customer_firstname' => $firstnameTable),
+        $this->getSelect()->joinInner(array('_table_customer_firstname' => $firstnameTable),
             '_table_customer_firstname.entity_id=detail.customer_id'.$attrCondition, array());
 
         $lastnameAttr = $customer->getAttribute('lastname');
@@ -58,7 +58,7 @@ class Mage_Reports_Model_Mysql4_Review_Customer_Collection extends Mage_Review_M
             $attrCondition = ' AND _table_customer_lastname.attribute_id = '.$lastnameAttrId;
         }
 
-        $this->getSelect()->joinLeft(array('_table_customer_lastname' => $lastnameTable),
+        $this->getSelect()->joinInner(array('_table_customer_lastname' => $lastnameTable),
             '_table_customer_lastname.entity_id=detail.customer_id'.$attrCondition, array())
             ->from("", array(
                         'customer_name' => "CONCAT(_table_customer_firstname.{$firstnameField}, ' ', _table_customer_lastname.{$lastnameField})",
@@ -67,5 +67,20 @@ class Mage_Reports_Model_Mysql4_Review_Customer_Collection extends Mage_Review_M
             ->order('review_cnt desc');
 
         return $this;
+    }
+
+    public function getSelectCountSql()
+    {
+        $countSelect = clone $this->_select;
+        $countSelect->reset(Zend_Db_Select::ORDER);
+        $countSelect->reset(Zend_Db_Select::GROUP);
+        $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
+        $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
+
+        $sql = $countSelect->__toString();
+
+        $sql = preg_replace('/^select\s+.+?\s+from\s+/is', 'select count(DISTINCT `detail`.`customer_id`) from ', $sql);
+
+        return $sql;
     }
 }

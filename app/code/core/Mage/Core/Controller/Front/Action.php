@@ -37,9 +37,6 @@ class Mage_Core_Controller_Front_Action extends Mage_Core_Controller_Varien_Acti
     {
         $this->getLayout()->setArea('frontend');
         parent::preDispatch();
-        $this->getResponse()
-            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
-            ->setHeader('Pragma', 'no-cache');
         return $this;
     }
 

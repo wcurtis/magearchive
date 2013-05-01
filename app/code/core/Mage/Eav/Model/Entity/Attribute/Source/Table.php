@@ -21,20 +21,21 @@
 
 class Mage_Eav_Model_Entity_Attribute_Source_Table extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
-    public function getAllOptions($withEmpty=true)
+    public function getAllOptions($withEmpty = true)
     {
-        if (!$this->_options) {
+        if (is_null($this->_options)) {
             $this->_options = Mage::getResourceModel('eav/entity_attribute_option_collection')
                 ->setAttributeFilter($this->getAttribute()->getId())
                 ->setStoreFilter($this->getAttribute()->getStoreId())
-                ->setOrder('value', 'asc')
+                ->setPositionOrder('asc')
                 ->load()
                 ->toOptionArray();
-            if ($withEmpty) {
-                array_unshift($this->_options, array('label'=>'', 'value'=>''));
-            }
         }
-        return $this->_options;
+        $options = $this->_options;
+        if ($withEmpty) {
+            array_unshift($options, array('label'=>'', 'value'=>''));
+        }
+        return $options;
     }
 
     /**
@@ -51,21 +52,22 @@ class Mage_Eav_Model_Entity_Attribute_Source_Table extends Mage_Eav_Model_Entity
             $value = explode(',', $value);
         }
 
-        $collection = Mage::getResourceModel('eav/entity_attribute_option_collection')
-            ->setAttributeFilter($this->getAttribute()->getId())
-            ->setStoreFilter($this->getAttribute()->getStoreId())
-            ->setIdFilter($value)
-            ->load();
+        $options = $this->getAllOptions(false);
+
         if ($isMultiple) {
             $values = array();
-            foreach ($collection as $item) {
-                $values[] = $item->getValue();
+            foreach ($options as $item) {
+                if (in_array($item['value'], $value)) {
+                    $values[] = $item['label'];
+                }
             }
             return $values;
         }
         else {
-            if ($item = $collection->getFirstItem()) {
-                return $item->getValue();
+            foreach ($options as $item) {
+                if ($item['value'] == $value) {
+                    return $item['label'];
+                }
             }
             return false;
         }

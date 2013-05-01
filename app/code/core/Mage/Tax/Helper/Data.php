@@ -24,7 +24,7 @@
 class Mage_Tax_Helper_Data extends Mage_Core_Helper_Abstract
 {
     protected $_taxData;
-    protected $_showInCatalog;
+    protected $_priceIncludesTax;
 
     public function getProductPrice($product, $format=null)
     {
@@ -38,43 +38,70 @@ class Mage_Tax_Helper_Data extends Mage_Core_Helper_Abstract
     	return $value;
     }
 
-    public function showInCatalog($store=null)
+    public function priceIncludesTax($store=null)
     {
         $storeId = Mage::app()->getStore($store)->getId();
-        if (!isset($this->_showInCatalog[$storeId])) {
-            $this->_showInCatalog[$storeId] =
-                (int)Mage::getStoreConfig('sales/tax/show_in_catalog', $store)
+        if (!isset($this->_priceIncludesTax[$storeId])) {
+            $this->_priceIncludesTax[$storeId] =
+                (int)Mage::getStoreConfig('sales/tax/price_includes_tax', $store)
                 && Mage::getStoreConfig('sales/tax/based_on', $store)==='origin';
         }
-        return $this->_showInCatalog[$storeId];
+        return $this->_priceIncludesTax[$storeId];
     }
 
-    public function getTaxData($store=null)
+    /**
+     * Output
+     *
+     * @param boolean $includes
+     */
+    public function getIncExcText($flag, $store=null)
     {
-        $storeId = Mage::app()->getStore($store)->getId();
-        if (!isset($this->_taxData[$storeId])) {
-            $this->_taxData[$storeId] = Mage::getModel('tax/rate_data')
-                ->setCustomerClassId(Mage::getSingleton('customer/session')->getCustomer()->getTaxClassId())
-                ->setCountryId(Mage::getStoreConfig('shipping/origin/country_id', $store))
-                ->setRegionId(Mage::getStoreConfig('shipping/origin/region_id', $store))
-                ->setPostcode(Mage::getStoreConfig('shipping/origin/postcode', $store));
+        if (!$this->priceIncludesTax($store)) {
+            return null;
         }
-        return $this->_taxData[$storeId];
+        if ($flag) {
+            $s = $this->__('Incl. Tax');
+        } else {
+            $s = $this->__('Excl. Tax');
+        }
+        return $s;
     }
 
+    public function getCatalogTaxRate($productClassId, $customerClassId=null, $store=null)
+    {
+        if (!$this->priceIncludesTax($store)) {
+            return false;
+        }
+        if (is_null($customerClassId)) {
+            $customerClassId = Mage::getSingleton('customer/session')->getCustomer()->getTaxClassId();
+        }
+        $key = $productClassId.'|'.$customerClassId.'|'.Mage::app()->getStore($store)->getId();
+        if (!isset($this->_taxData[$key])) {
+            $origin = Mage::getStoreConfig('shipping/origin', $store);
+            $taxModel = Mage::getModel('tax/rate_data')
+                ->setProductClassId($productClassId)
+                ->setCustomerClassId($customerClassId)
+                ->setCountryId($origin['country_id'])
+                ->setRegionId($origin['region_id'])
+                ->setPostcode($origin['postcode']);
+            $this->_taxData[$key] = $taxModel->getRate();
+        }
+        return $this->_taxData[$key];
+    }
+/*
     public function updateProductTax($product)
     {
         $store = Mage::app()->getStore($product->getStoreId());
-        if (!$this->showInCatalog($store)) {
+        $taxRatio = $this->getCatalogTaxRate($product->getTaxClassId(), null, $store);
+        if (false===$taxRatio) {
             return false;
         }
-        $this->getTaxData()->setProductClassId($product->getTaxClassId());
-        $taxRatio = $this->getTaxData($store)->getRate()/100;
-
+        $taxRatio /= 100;
         $product->setPriceAfterTax($store->roundPrice($product->getPrice()*(1+$taxRatio)));
         $product->setFinalPriceAfterTax($store->roundPrice($product->getFinalPrice()*(1+$taxRatio)));
         $product->setShowTaxInCatalog(Mage::getStoreConfig('sales/tax/show_in_catalog', $store));
 
         return $taxRatio;
     }
+*/
 }

@@ -31,8 +31,8 @@ class Mage_Rss_Block_Catalog_New extends Mage_Rss_Block_Abstract
         /*
         * setting cache to save the rss for 10 minutes
         */
-        $this->setCacheKey('rss_catalog_new_'.$this->_getStoreId());
-        $this->setCacheLifetime(600);
+        //$this->setCacheKey('rss_catalog_new_'.$this->_getStoreId());
+        //$this->setCacheLifetime(600);
     }
 
     protected function _toHtml()
@@ -40,7 +40,7 @@ class Mage_Rss_Block_Catalog_New extends Mage_Rss_Block_Abstract
         $storeId = $this->_getStoreId();
 
         $newurl = Mage::getUrl('rss/catalog/new');
-        $title = Mage::helper('rss')->__('%s - New Products',Mage::app()->getStore()->getName());
+        $title = Mage::helper('rss')->__('New Products from %s',Mage::app()->getStore()->getGroup()->getName());
         $lang = Mage::getStoreConfig('general/locale/code');
 
         $rssObj = Mage::getModel('rss/rss');
@@ -60,7 +60,9 @@ getFinalPrice() - used in shopping cart calculations
         $product = Mage::getModel('catalog/product');
         $todayDate = $product->getResource()->formatDate(time());
 
-        $products = $product->setStoreId($storeId)->getCollection()
+        $products = $product->getCollection()
+            ->setStoreId($storeId)
+            ->addStoreFilter()
             ->addAttributeToFilter('news_from_date', array('date'=>true, 'to'=> $todayDate))
             ->addAttributeToFilter(array(array('attribute'=>'news_to_date', 'date'=>true, 'from'=>$todayDate), array('attribute'=>'news_to_date', 'is' => new Zend_Db_Expr('null'))),'','left')
             ->addAttributeToSort('news_from_date','desc')

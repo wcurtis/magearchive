@@ -48,56 +48,56 @@ if(!$storeCode && $websiteCode){
 ?>
 <script type="text/javascript" language="javascript">
 	originShipmentObj = new Object();
-	
-	
-	<?php 
+
+
+	<?php
 	//get origin shipment data, using in UPS XML module
 		foreach ($orShipArr as $key=>$val){
 			print "originShipmentObj['$key'] = new Object();\n";
 			foreach ($val as $code=>$label){
-				print "\toriginShipmentObj['$key']['$code'] = '$label';\n";		
+				print "\toriginShipmentObj['$key']['$code'] = '$label';\n";
 			}
 		}
 	?>
 	//get default shipment data, using in UPS module
-	<?php 
+	<?php
 		print "originShipmentObj['default'] = new Object();\n";
 		foreach ($defShipArr as $code=>$label){
-			print "\toriginShipmentObj['default']['$code'] = '$label';\n";		
+			print "\toriginShipmentObj['default']['$code'] = '$label';\n";
 		}
 	?>
 	//get stored Allowed Methods
 	<?php
 	print "stroredAllowedMethods = new Array();\n";
 		foreach ($stroredAllowedMethods as $code){
-			print "\tstroredAllowedMethods.push('$code');\n";		
+			print "\tstroredAllowedMethods.push('$code');\n";
 		}
 	?>
 	//set stored origin shipment
 	<?php
 		print "stroredOriginShipment='$stroredOriginShipment'";
 	?>
-	
+
 	//set stored Free origin shipment
 	<?php
 		print "stroredFreeShipment='$stroredFreeShipment'";
 	?>
-	
-	
+
+
 	function hideRowArrayElements(arr,method)
 	{
 		for(a=0;a<arr.length;a++){
 			$(arr[a]).up(1).hide();
 		}
 	}
-	
+
 	function showRowArrayElements(arr,method)
 	{
 		for(a=0;a<arr.length;a++){
 			$(arr[a]).up(1).show();
 		}
 	}
-	
+
 	function inArray(arr,value)
 	{
         var i;
@@ -108,12 +108,12 @@ if(!$storeCode && $websiteCode){
         }
         return false;
 	}
-	
+
 	var upsXml = Class.create();
 	upsXml.prototype = {
 		initialize : function()
 		{
-			
+
 			this.carriersUpsTypeId = 'carriers_ups_type';
 			if($(this.carriersUpsTypeId)){
 				this.checkingUpsXmlId = new Array('carriers_ups_gateway_xml_url','carriers_ups_username','carriers_ups_password','carriers_ups_access_license_number');
@@ -121,41 +121,41 @@ if(!$storeCode && $websiteCode){
 				this.originShipmentTitle = '';
 				this.allowedMethodsId = 'carriers_ups_allowed_methods';
 				this.freeShipmentId = 'carriers_ups_free_method';
-			    this.onlyUpsXmlElements = new Array('carriers_ups_gateway_xml_url','carriers_ups_tracking_xml_url','carriers_ups_username','carriers_ups_password','carriers_ups_access_license_number','carriers_ups_origin_shipment','carriers_ups_unit_of_measure');
+			    this.onlyUpsXmlElements = new Array('carriers_ups_gateway_xml_url','carriers_ups_tracking_xml_url','carriers_ups_username','carriers_ups_password','carriers_ups_access_license_number','carriers_ups_origin_shipment');
 			    this.onlyUpsElements = new Array('carriers_ups_gateway_url');
 				this.setFormValues();
 				Event.observe($('carriers_ups_type'), 'change', this.setFormValues.bind(this));
 			}
-			
+
 		},
 		updateAllowedMethods: function(originShipmentTitle)
 		{
 			selectFieldAllowedMethod = $(this.allowedMethodsId);
 			selectFieldFreeShipment = $(this.freeShipmentId);
-			
+
 			originShipment = originShipmentObj[originShipmentTitle];
-			
+
 			while (selectFieldAllowedMethod.length> 0) {
 			    selectFieldAllowedMethod.remove(0);
-			} 
+			}
 			while (selectFieldFreeShipment.length> 0) {
 			    selectFieldFreeShipment.remove(0);
-			} 
-			
+			}
+
 			var optionFree = document.createElement("OPTION");
 			optionFree.text = 'None';
 			optionFree.value = '';
 			try {
-				selectFieldFreeShipment.add(optionFree, null); 
+				selectFieldFreeShipment.add(optionFree, null);
 			} catch(ex) {
 				selectFieldFreeShipment.add(optionFree);
 			}
-				
+
 			for(code in originShipment){
 				var option = document.createElement("OPTION");
 				option.text = originShipment[code];
 				option.value = code;
-				
+
 				var optionFree = document.createElement("OPTION");
 				optionFree.text = originShipment[code];
 				optionFree.value = code;
@@ -168,7 +168,7 @@ if(!$storeCode && $websiteCode){
 				}
 				try {
 					selectFieldAllowedMethod.add(option, null); // standards compliant; doesn't work in IE
-					selectFieldFreeShipment.add(optionFree, null); 
+					selectFieldFreeShipment.add(optionFree, null);
 				} catch(ex) {
 					selectFieldAllowedMethod.add(option); // IE only
 					selectFieldFreeShipment.add(optionFree);
@@ -199,13 +199,13 @@ if(!$storeCode && $websiteCode){
 		    	showRowArrayElements(this.onlyUpsXmlElements);
 				hideRowArrayElements(this.onlyUpsElements);
 				this.changeOriginShipment();
-		    }	
+		    }
 		},
 		changeOriginShipment: function(Event,key)
 		{
 			if(key)
 				this.originShipmentTitle = key
-			else 
+			else
 				this.originShipmentTitle = $F('carriers_ups_origin_shipment');
 			this.updateAllowedMethods(this.originShipmentTitle);
 		}

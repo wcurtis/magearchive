@@ -240,17 +240,23 @@ function mageCoreErrorHandler($errno, $errstr, $errfile, $errline){
     return true;
 }
 
-function mageDebugBacktrace()
+function mageDebugBacktrace($return=false, $html=true, $showFirst=false)
 {
     $d = debug_backtrace();
-    echo "<pre>";
+    $out = '';
+    if ($html) $out .= "<pre>";
     foreach ($d as $i=>$r) {
-        if ($i==0) {
+        if (!$showFirst && $i==0) {
             continue;
         }
-        echo "[$i] {$r['file']}:{$r['line']}\n";
+        $out .= "[$i] {$r['file']}:{$r['line']}\n";
     }
-    echo "</pre>";
+    if ($html) $out .= "</pre>";
+    if ($return) {
+        return $out;
+    } else {
+        echo $out;
+    }
 }
 
 function mageSendErrorHeader()
@@ -281,9 +287,9 @@ function mageDelTree($path) {
                 mageDelTree($path.DS.$entry);
             }
         }
-        rmdir($path);
+        @rmdir($path);
     } else {
-        unlink($path);
+        @unlink($path);
     }
 }
 

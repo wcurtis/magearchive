@@ -156,6 +156,23 @@ class Mage_Wishlist_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Retrieve url for adding item to shoping cart with b64 referer
+     *
+     * @param   Mage_Wishlist_Model_Item $item
+     * @return  string
+     */
+    public function getAddToCartUrlBase64($item)
+    {
+        return $this->_getUrl('wishlist/index/cart', array(
+            'item'=>$item->getWishlistItemId(),
+            Mage_Core_Controller_Front_Action::PARAM_NAME_BASE64_URL => base64_encode(
+               $this->_getUrl('*/*/*', array('_current'=>true))
+            )
+        ));
+    }
+
+
+    /**
      * Retrieve customer wishlist url
      *
      * @return string
@@ -163,6 +180,24 @@ class Mage_Wishlist_Helper_Data extends Mage_Core_Helper_Abstract
     public function getListUrl()
     {
         return $this->_getUrl('wishlist');
+    }
+
+    public function getLinkLabel()
+    {echo"TEST";
+        if (!$this->helper('wishlist')->isAllow()) {
+            return false;
+        }
+
+        $count = $this->helper('wishlist')->getItemCount();
+        #$count = $this->getWishlistItems()->getSize();
+        if( $count > 1 ) {
+            $text = $this->__('My Wishlist (%d items)', $count);
+        } elseif( $count == 1 ) {
+            $text = $this->__('My Wishlist (%d item)', $count);
+        } else {
+            $text = $this->__('My Wishlist');
+        }
+        return $text;
     }
 
     public function isAllow()

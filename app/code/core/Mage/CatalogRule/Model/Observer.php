@@ -32,7 +32,11 @@ class Mage_CatalogRule_Model_Observer
             ->addFieldToFilter('is_active', 1);
 
         foreach ($rules as $rule) {
-            $ruleWebsiteIds = (array)explode(',', $rule->getWebsiteIds());
+            if (!is_array($rule->getWebsiteIds())) {
+                $ruleWebsiteIds = (array)explode(',', $rule->getWebsiteIds());
+            } else {
+                $ruleWebsiteIds = $rule->getWebsiteIds();
+            }
             $websiteIds = array_intersect($productWebsiteIds, $ruleWebsiteIds);
             $rule->applyToProduct($product, $websiteIds);
         }
@@ -92,7 +96,7 @@ class Mage_CatalogRule_Model_Observer
 
             $key = "$date|$wId|$gId|$pId";
         }
-        elseif ($product->getWebsiteId() && $product->getCustomerGroupId()) {
+        elseif ($product->getWebsiteId() != null && $product->getCustomerGroupId() != null) {
             $date = mktime(0,0,0);
             $wId = $product->getWebsiteId();
             $gId = $product->getCustomerGroupId();
@@ -121,5 +125,10 @@ class Mage_CatalogRule_Model_Observer
             $resource->formatDate(mktime(0,0,0)),
             $resource->formatDate(mktime(0,0,0,date('m'),date('d')+1))
         );
+    }
+
+    public function flushPriceCache()
+    {
+        $this->_rulePrices = array();
     }
 }

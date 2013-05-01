@@ -61,7 +61,8 @@ class Mage_Catalog_Model_Layer extends Varien_Object
             ->addAttributeToSelect('special_price')
             ->addAttributeToSelect('special_from_date')
             ->addAttributeToSelect('special_to_date')
-            ->joinMinimalPrice()
+            //->joinMinimalPrice()
+            ->addMinimalPrice()
 
             ->addAttributeToSelect('description')
             ->addAttributeToSelect('short_description')
@@ -77,6 +78,7 @@ class Mage_Catalog_Model_Layer extends Varien_Object
         Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);
         Mage::getSingleton('catalog/product_visibility')->addVisibleInCatalogFilterToCollection($collection);
         $collection->addUrlRewrite($this->getCurrentCategory()->getId());
+
         return $this;
     }
 
@@ -123,7 +125,8 @@ class Mage_Catalog_Model_Layer extends Varien_Object
         if (!$setIds)
             return array();
 
-        $collection = Mage::getModel('eav/entity_attribute')->getCollection();
+        $collection = Mage::getModel('eav/entity_attribute')->getCollection()
+            ->setItemObjectClass('catalog/resource_eav_attribute');
         /* @var $collection Mage_Eav_Model_Mysql4_Entity_Attribute_Collection */
         $collection->getSelect()->distinct(true);
         $collection->setEntityTypeFilter($entity->getTypeId())
@@ -132,6 +135,7 @@ class Mage_Catalog_Model_Layer extends Varien_Object
             ->setOrder('position', 'ASC')
             ->load();
         foreach ($collection as $item) {
+            Mage::getResourceSingleton('catalog/product')->getAttribute($item);
             $item->setEntity($entity);
         }
 

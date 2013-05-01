@@ -28,23 +28,41 @@ class Mage_CatalogIndex_Model_Price extends Mage_Core_Model_Abstract
     protected function _construct()
     {
         $this->_init('catalogindex/price');
-        $this->attribute = Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', 'price');
         $this->_getResource()->setStoreId(Mage::app()->getStore()->getId());
         $this->_getResource()->setRate(Mage::app()->getStore()->getCurrentCurrencyRate());
+        $this->_getResource()->setCustomerGroupId(Mage::getSingleton('customer/session')->getCustomerGroupId());
     }
 
-    public function getMaxValue($entityIdsFilter)
+    public function getMaxValue($attribute, $entityIdsFilter)
     {
-        return $this->_getResource()->getMaxValue($this->attribute, new Zend_Db_Expr($entityIdsFilter));
+        return $this->_getResource()->getMaxValue($attribute, new Zend_Db_Expr($entityIdsFilter));
     }
 
-    public function getCount($range, $entityIdsFilter)
+    public function getCount($attribute, $range, $entityIdsFilter)
     {
-        return $this->_getResource()->getCount($range, $this->attribute, new Zend_Db_Expr($entityIdsFilter));
+        return $this->_getResource()->getCount($range, $attribute, new Zend_Db_Expr($entityIdsFilter));
     }
 
-    public function getFilteredEntities($range, $index, $entityIdsFilter)
+    public function getFilteredEntities($attribute, $range, $index, $entityIdsFilter)
     {
-        return $this->_getResource()->getFilteredEntities($range, $index, $this->attribute, new Zend_Db_Expr($entityIdsFilter));
+        return $this->_getResource()->getFilteredEntities($range, $index, $attribute, new Zend_Db_Expr($entityIdsFilter));
+    }
+
+    public function addMinimalPrices(Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection $collection)
+    {
+        $productIds = $collection->getAllIds();
+
+        if (!count($productIds)) {
+            return;
+        }
+
+        $minimalPrices = $this->_getResource()->getMinimalPrices($productIds);
+
+        $indexValues = array();
+        foreach ($minimalPrices as $row) {
+            $item = $collection->getItemById($row['entity_id']);
+            if ($item)
+                $item->setData('minimal_price', $row['value']);
+        }
     }
 }

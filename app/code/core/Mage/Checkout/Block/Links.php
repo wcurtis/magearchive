@@ -39,11 +39,12 @@ class Mage_Checkout_Block_Links extends Mage_Core_Block_Template
             $text = $this->__('My Cart');
         }
 
-        $this->getParentBlock()->addLink(null, 'class="top-link-cart" href="'.Mage::getUrl('checkout/cart').'"', $text);
+        $this->getParentBlock()->addLink($text, 'checkout/cart', $text, true, array(), 50, null, 'class="top-link-cart"');
     }
 
     public function addCheckoutLink()
     {
-        $this->getParentBlock()->addLink(null, 'class="top-link-checkout" href="'.Mage::getUrl('checkout').'"', Mage::helper('checkout')->__('Checkout'));
+        $text = Mage::helper('checkout')->__('Checkout');
+        $this->getParentBlock()->addLink($text, 'checkout', $text, true, array(), 60, null, 'class="top-link-checkout"');
     }
 }

@@ -67,6 +67,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 			if ($rule->getIsValid()===false) {
 			    continue;
 			}
+
 			if ($rule->getIsValid()!==true) {
     			/**
     			 * too many times used in general
@@ -78,7 +79,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
                 /**
                  * too many times used for this customer
                  */
-                if ($ruleId = $rule->getId()) {
+                if ($ruleId = $rule->getId() && $rule->getUsesPerCustomer()) {
                     $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
                     if ($ruleCustomer->getId()) {
                         if ($ruleCustomer->getTimesUsed() >= $rule->getUsesPerCustomer()) {
@@ -99,6 +100,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
                  */
     			$rule->setIsValid(true);
 			}
+
 			/**
 			 * although the rule is valid, this item is not marked for action
 			 */
@@ -122,7 +124,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 					$discountAmount    = $qty*$item->getCalculationPrice()*$rulePercent/100;
 					$baseDiscountAmount= $qty*$item->getBaseCalculationPrice()*$rulePercent/100;
 
-					if ($rule->getDiscountQty()>$qty) {
+					if (!$rule->getDiscountQty() || $rule->getDiscountQty()>$qty) {
 						$discountPercent = min(100, $item->getDiscountPercent()+$rulePercent);
 						$item->setDiscountPercent($discountPercent);
 					}
@@ -149,6 +151,7 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 		                break;
 		            }
 					$cartRules[$rule->getId()] = true;
+					$address->setCartFixedRules($cartRules);
 
 					$quoteAmount = $quote->getStore()->convertPrice($rule->getDiscountAmount());
 					$discountAmount    = $quoteAmount;
@@ -180,8 +183,8 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
             $discountAmount     = $quote->getStore()->roundPrice($discountAmount);
             $baseDiscountAmount = $quote->getStore()->roundPrice($baseDiscountAmount);
 
-            $discountAmount     = min($discountAmount, $item->getRowTotal());
-            $baseDiscountAmount = min($baseDiscountAmount, $item->getBaseRowTotal());
+            $discountAmount     = min($item->getDiscountAmount()+$discountAmount, $item->getRowTotal());
+            $baseDiscountAmount = min($item->getBaseDiscountAmount()+$baseDiscountAmount, $item->getBaseRowTotal());
 
             $item->setDiscountAmount($discountAmount);
             $item->setBaseDiscountAmount($baseDiscountAmount);
@@ -198,31 +201,29 @@ class Mage_SalesRule_Model_Validator extends Mage_Core_Model_Abstract
 
 			$appliedRuleIds[$rule->getRuleId()] = $rule->getRuleId();
 
-			if ($rule->getStopRulesProcessing()) {
-				break;
-			}
-
 			if ($rule->getCouponCode() && ($rule->getCouponCode() == $this->getCouponCode())) {
                 $address->setCouponCode($this->getCouponCode());
 			}
-		}
 
+			if ($rule->getStopRulesProcessing()) {
+				break;
+			}
+		}
 		$item->setAppliedRuleIds(join(',',$appliedRuleIds));
 		$address->setAppliedRuleIds($this->mergeIds($address->getAppliedRuleIds(), $appliedRuleIds));
 		$quote->setAppliedRuleIds($this->mergeIds($quote->getAppliedRuleIds(), $appliedRuleIds));
-
 		return $this;
 	}
 
 	public function mergeIds($a1, $a2, $asString=true)
 	{
 	    if (!is_array($a1)) {
-	        $a1 = explode(',', $a1);
+	        $a1 = empty($a1) ? array() : explode(',', $a1);
 	    }
 	    if (!is_array($a2)) {
-	        $a2 = explode(',', $a2);
+	        $a2 = empty($a2) ? array() : explode(',', $a2);
 	    }
-	    $a = array_unique(array_merge($a1, $a1));
+	    $a = array_unique(array_merge($a1, $a2));
 	    if ($asString) {
 	       $a = implode(',', $a);
 	    }

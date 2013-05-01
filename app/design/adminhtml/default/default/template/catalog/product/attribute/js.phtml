@@ -179,13 +179,29 @@ function checkIsConfigurableVisibility()
     }
 }
 
+function updateRequriedOptions()
+{
+<?php if ($this->getIsPopup()):?>
+    if ($F('frontend_input')=='select' && $F('is_required')==1) {
+        $('option-count-check').addClassName('required-options-count');
+    } else {
+        $('option-count-check').removeClassName('required-options-count');
+    }
+<?php endif;?>
+}
+
 if($('frontend_input')){
+    Event.observe($('frontend_input'), 'change', updateRequriedOptions);
     Event.observe($('frontend_input'), 'change', bindAttributeInputType);
     Event.observe($('is_global'), 'change', checkIsConfigurableVisibility);
 }
 
 if ($('is_filterable')) {
     Event.observe($('is_filterable'), 'change', switchIsFilterable);
+}
+
+if ($('is_required')) {
+    Event.observe($('is_required'), 'change', updateRequriedOptions);
 }
 bindAttributeInputType();
 

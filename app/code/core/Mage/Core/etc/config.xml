@@ -22,7 +22,7 @@
 <config>
     <modules>
         <Mage_Core>
-             <version>0.8.4</version>
+             <version>0.8.5</version>
         </Mage_Core>
     </modules>
 
@@ -63,6 +63,7 @@
                 <block_html><label>Blocks HTML output</label></block_html>
                 <translate><label>Translations</label></translate>
                 <pear><label>PEAR Channels and Packages</label></pear>
+                <collections><label>Collections Data</label></collections>
             </types>
         </cache>
     </global>
@@ -94,53 +95,6 @@
       </layout>
     </frontend>
     <adminhtml>
-        <events>
-            <catalog_controller_product_delete>
-                <observers>
-                    <url_rewrite>
-                        <type>model</type>
-                        <class>core/observer</class>
-                        <method>removeProductRewrites</method>
-                    </url_rewrite>
-                </observers>
-            </catalog_controller_product_delete>
-            <catalog_controller_category_delete>
-                <observers>
-                    <url_rewrite>
-                        <type>model</type>
-                        <class>core/observer</class>
-                        <method>removeCategoryRewrites</method>
-                    </url_rewrite>
-                </observers>
-            </catalog_controller_category_delete>
-            <store_edit>
-                <observers>
-                    <cache>
-                        <type>model</type>
-                        <class>core/observer</class>
-                        <method>observeStoreEdit</method>
-                    </cache>
-                </observers>
-            </store_edit>
-            <store_add>
-                <observers>
-                    <cache>
-                        <type>model</type>
-                        <class>core/observer</class>
-                        <method>observeStoreAdd</method>
-                    </cache>
-                </observers>
-            </store_add>
-            <store_delete>
-                <observers>
-                    <cache>
-                        <type>model</type>
-                        <class>core/observer</class>
-                        <method>observeStoreDelete</method>
-                    </cache>
-                </observers>
-            </store_delete>
-        </events>
         <translate>
             <modules>
                 <Mage_Core>

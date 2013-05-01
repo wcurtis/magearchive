@@ -38,9 +38,9 @@
                 <?php echo $this->helper('checkout')->getQuoteItemProductName($_item) ?>
                 <?php echo $this->helper('checkout')->getQuoteItemProductDescription($_item) ?>
             </td>
-            <td class="a-right"><?php echo $_item->getPrice() ?></td>
+            <td class="a-right"><?php echo $this->helper('checkout')->formatPrice($_item->getCalculationPrice()); ?></td>
             <td class="a-center"><?php echo $_item->getQty() ?></td>
-            <td class="a-right"><?php echo $_item->getRowTotal() ?></td>
+            <td class="a-right"><?php echo $this->helper('checkout')->formatPrice($_item->getRowTotal()); ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -48,7 +48,7 @@
     <?php foreach ($this->getTotals() as $_total): ?>
         <tr>
             <td colspan="3" class="a-right"><?php echo $_total->getTitle() ?></td>
-            <td class="a-right"><?php echo $_total->getValue() ?></td>
+            <td class="a-right"><?php echo $this->helper('checkout')->formatPrice($_total->getValue()) ?></td>
         </tr>
     <?php endforeach; ?>
     </tfoot>

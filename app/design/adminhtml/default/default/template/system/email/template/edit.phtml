@@ -19,10 +19,8 @@
  */
 ?>
 <div class="content-header">
-    <table cellspacing="0">
-        <tr>
-            <td><h3 class="icon-head head-system-email-template"><?php echo $this->getHeaderText() ?></h3></td>
-            <td class="form-buttons">
+    <h3 class="icon-head head-system-email-template"><?php echo $this->getHeaderText() ?></h3></td>
+    <p class="content-buttons form-buttons">
                 <?php echo $this->getBackButtonHtml(); ?>
                 <?php echo $this->getResetButtonHtml(); ?>
                 <?php if($this->getEditMode()): ?>
@@ -34,9 +32,7 @@
                 <?php endif ?>
                 <?php echo $this->getPreviewButtonHtml(); ?>
                 <?php echo $this->getSaveButtonHtml(); ?>
-            </td>
-        </tr>
-    </table>
+    </p>
 </div>
 <?php if (!$this->getEditMode()): ?>
 <form action="<?php echo $this->getLoadUrl() ?>" method="post" id="email_template_load_form">

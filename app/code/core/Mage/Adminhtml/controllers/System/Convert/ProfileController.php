@@ -34,6 +34,11 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
 
         if ($profileId) {
             $profile->load($profileId);
+            if (!$profile->getId()) {
+                Mage::getSingleton('adminhtml/session')->addError('The profile you are trying to save no longer exists');
+                $this->_redirect('*/*');
+                return false;
+            }
         }
 
         Mage::register('current_convert_profile', $profile);
@@ -142,7 +147,9 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
     public function saveAction()
     {
         if ($data = $this->getRequest()->getPost()) {
-            $this->_initProfile('profile_id');
+            if (!$this->_initProfile('profile_id')) {
+                return ;
+            }
             $profile = Mage::registry('current_convert_profile');
 
             // Prepare profile saving data
@@ -185,6 +192,74 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
         #$this->renderLayout();
     }
 
+    public function batchRunAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $batchId = $this->getRequest()->getPost('batch_id',0);
+            $rowIds  = $this->getRequest()->getPost('rows');
+
+            $batchModel = Mage::getModel('dataflow/batch')->load($batchId);
+            /* @var $batchModel Mage_Dataflow_Model_Batch */
+
+            if (!$batchModel->getId()) {
+                //exit
+                return ;
+            }
+            if (!is_array($rowIds) || count($rowIds) < 1) {
+                //exit
+                return ;
+            }
+            if (!$batchModel->getAdapter()) {
+                //exit
+                return ;
+            }
+
+            $batchImportModel = $batchModel->getBatchImportModel();
+            $importIds = $batchImportModel->getIdCollection();
+
+            $adapter = Mage::getModel($batchModel->getAdapter());
+
+            $errors = array();
+            $saved  = 0;
+
+            foreach ($rowIds as $importId) {
+                $batchImportModel->load($importId);
+                if (!$batchImportModel->getId()) {
+                    $errors[] = Mage::helper('dataflow')->__('Skip undefined row');
+                    continue;
+                }
+
+                $importData = $batchImportModel->getBatchData();
+                try {
+                    $adapter->saveRow($importData);
+                }
+                catch (Exception $e) {
+                    $errors[] = $e->getMessage();
+                    continue;
+                }
+                $saved ++;
+            }
+
+            $result = array(
+                'savedRows' => $saved,
+                'errors'    => $errors
+            );
+            $this->getResponse()->setBody(Zend_Json::encode($result));
+        }
+    }
+
+    public function batchFinishAction()
+    {
+        if ($batchId = $this->getRequest()->getParam('id')) {
+            $batchModel = Mage::getModel('dataflow/batch')->load($batchId);
+            /* @var $batchModel Mage_Dataflow_Model_Batch */
+
+            if ($batchModel->getId()) {
+                $batchModel->delete();
+            }
+        }
+    }
+
     /**
      * Customer orders grid
      *
@@ -196,9 +271,21 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
 
     protected function _isAllowed()
     {
-    	//print $this->getRequest()->getActionName();
-        return Mage::getSingleton('admin/session')->isAllowed('system/convert');
+        switch ($this->getRequest()->getActionName()) {
+            case 'index':
+                $aclResource = 'admin/system/convert/profiles';
+                break;
+            case 'grid':
+                $aclResource = 'admin/system/convert/profiles';
+                break;
+            case 'run':
+                $aclResource = 'admin/system/convert/profiles/run';
+                break;
+            default:
+                $aclResource = 'admin/system/convert/profiles/edit';
+                break;
+        }
+
+        return Mage::getSingleton('admin/session')->isAllowed($aclResource);
     }
-
 }
-

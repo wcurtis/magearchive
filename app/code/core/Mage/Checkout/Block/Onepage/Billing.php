@@ -71,4 +71,22 @@ class Mage_Checkout_Block_Onepage_Billing extends Mage_Checkout_Block_Onepage_Ab
             return Mage::getModel('sales/quote_address');
         }
     }
+
+    public function getFirstname()
+    {
+        $firstname = $this->getAddress()->getFirstname();
+        if (empty($firstname) && $this->getQuote()->getCustomer()) {
+            return $this->getQuote()->getCustomer()->getFirstname();
+        }
+        return $firstname;
+    }
+
+    public function getLastname()
+    {
+        $lastname = $this->getAddress()->getLastname();
+        if (empty($lastname) && $this->getQuote()->getCustomer()) {
+            return $this->getQuote()->getCustomer()->getLastname();
+        }
+        return $lastname;
+    }
 }

@@ -36,7 +36,7 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canCapturePartial       = false;
-    protected $_canRefund               = true;
+    protected $_canRefund               = false;
     protected $_canVoid                 = true;
     protected $_canUseInternal          = false;
     protected $_canUseCheckout          = true;
@@ -167,8 +167,8 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
     {
         $this->getApi()
             ->setPaymentType($this->getPaymentAction())
-            ->setAmount($this->getQuote()->getGrandTotal())
-            ->setCurrencyCode($this->getQuote()->getStoreCurrencyCode())
+            ->setAmount($this->getQuote()->getBaseGrandTotal())
+            ->setCurrencyCode($this->getQuote()->getBaseCurrencyCode())
             ->callSetExpressCheckout();
 
         $this->catchError();
@@ -181,8 +181,8 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
         $address = $this->getQuote()->getShippingAddress();
         $this->getApi()
             ->setPaymentType($this->getPaymentAction())
-            ->setAmount($address->getGrandTotal())
-            ->setCurrencyCode($this->getQuote()->getStoreCurrencyCode())
+            ->setAmount($address->getBaseGrandTotal())
+            ->setCurrencyCode($this->getQuote()->getBaseCurrencyCode())
             ->setShippingAddress($address)
             ->callSetExpressCheckout();
 
@@ -199,7 +199,7 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
         } catch (Exception $e) {
             $error=$e->getMessage();
              Mage::getSingleton('paypal/session')->addError($e->getMessage());
-             $this->_redirect('paypal/express/review');
+             $this->getApi()->setRedirectUrl('paypal/express/review');
         }
         switch ($this->getApi()->getUserAction()) {
             case Mage_Paypal_Model_Api_Nvp::USER_ACTION_CONTINUE:
@@ -267,9 +267,9 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
             $result = $api->callDoCapture()!==false;
 
             if ($result) {
-                $payment
-                    ->setStatus('APPROVED')
-                    ->setCcTransId($api->getTransactionId());
+                $payment->setStatus('APPROVED');
+                //$payment->setCcTransId($api->getTransactionId());
+                $payment->setLastTransId($api->getTransactionId());
             } else {
                 $e = $api->getError();
                 if (isset($e['short_message'])) {
@@ -289,13 +289,17 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
     public function placeOrder(Varien_Object $payment)
     {
         $api = $this->getApi();
-        $api->setAmount($payment->getOrder()->getGrandTotal())
-            ->setCurrencyCode($payment->getOrder()->getOrderCurrencyCode());
+        $api->setAmount($payment->getOrder()->getBaseGrandTotal())
+            ->setCurrencyCode($payment->getOrder()->getBaseCurrencyCode());
 
         if ($api->callDoExpressCheckoutPayment()!==false) {
             $payment->setStatus('APPROVED')
-                ->setCcTransId($api->getTransactionId())
                 ->setPayerId($api->getPayerId());
+            if ($this->getPaymentAction()== Mage_Paypal_Model_Api_Nvp::PAYMENT_TYPE_AUTH) {
+                $payment->setCcTransId($api->getTransactionId());
+            } else {
+                $payment->setLastTransId($api->getTransactionId());
+            }
         } else {
             $e = $api->getError();
             Mage::throwException($e['short_message'].': '.$e['long_message']);
@@ -303,18 +307,13 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
         return $this;
     }
 
-    public function onInvoiceCreate(Mage_Sales_Model_Invoice_Payment $payment)
-    {
-
-    }
-
-      /**
-      * void
-      *
-      * @access public
-      * @param string $payment Varien_Object object
-      * @return Mage_Payment_Model_Abstract
-      */
+    /**
+     * void
+     *
+     * @access public
+     * @param string $payment Varien_Object object
+     * @return Mage_Payment_Model_Abstract
+     */
     public function void(Varien_Object $payment)
     {
         $error = false;
@@ -338,37 +337,37 @@ class Mage_Paypal_Model_Express extends Mage_Payment_Model_Method_Abstract
         return $this;
     }
 
-      /**
-      * refund the amount with transaction id
-      *
-      * @access public
-      * @param string $payment Varien_Object object
-      * @return Mage_Payment_Model_Abstract
-      */
-      public function refund(Varien_Object $payment, $amount)
-      {
-          $error = false;
-          if ($payment->getRefundTransactionId() && $amount>0) {
-              $api = $this->getApi();
-              //we can refund the amount full or partial so it is good to set up as partial refund
-              $api->setTransactionId($payment->getRefundTransactionId())
+    /**
+     * refund the amount with transaction id
+     *
+     * @access public
+     * @param string $payment Varien_Object object
+     * @return Mage_Payment_Model_Abstract
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        $error = false;
+        if ($payment->getRefundTransactionId() && $amount>0) {
+            $api = $this->getApi();
+            //we can refund the amount full or partial so it is good to set up as partial refund
+            $api->setTransactionId($payment->getRefundTransactionId())
                 ->setRefundType(Mage_Paypal_Model_Api_Nvp::REFUND_TYPE_PARTIAL)
                 ->setAmount($amount);
 
-             if ($api->callRefundTransaction()!==false){
-                 $payment->setStatus('SUCCESS')
+            if ($api->callRefundTransaction()!==false){
+                $payment->setStatus('SUCCESS')
                     ->setCcTransId($api->getTransactionId());
-             }else{
-               $e = $api->getError();
-               $error = $e['short_message'].': '.$e['long_message'];
-             }
-          }else{
+            } else {
+                $e = $api->getError();
+                $error = $e['short_message'].': '.$e['long_message'];
+            }
+        }else{
             $error = Mage::helper('paypal')->__('Error in refunding the payment');
-          }
+        }
 
-          if ($error !== false) {
+        if ($error !== false) {
             Mage::throwException($error);
-          }
-          return $this;
-      }
+        }
+        return $this;
+    }
 }

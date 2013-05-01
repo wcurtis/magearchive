@@ -153,6 +153,9 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             }
 
             $tree->move($node, $newParentNode, $prevNode);
+
+            Mage::dispatchEvent('category_move', array('category_id' => $nodeId));
+
             $this->getResponse()->setBody("SUCCESS");
         }
         catch (Exception $e){
@@ -194,5 +197,4 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
 	    return Mage::getSingleton('admin/session')->isAllowed('catalog/categories');
     }
-
 }

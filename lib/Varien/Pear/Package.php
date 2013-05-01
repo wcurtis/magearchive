@@ -128,6 +128,16 @@ class Varien_Pear_Package
         return $this->_pfm;
     }
 
+    public function clearPackage()
+    {
+        $pfm = $this->getPfm();
+        $pfm->clearContents();
+        $pfm->clearCompatible();
+        $pfm->clearDeps();
+        $pfm->clearChangeLog();
+        return $this;
+    }
+
     public function generatePackage($make=false)
     {
         PEAR::setErrorHandling(PEAR_ERROR_DIE);
