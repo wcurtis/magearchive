@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_Report_Product_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -44,7 +43,9 @@ class Mage_Adminhtml_Block_Report_Product_Grid extends Mage_Adminhtml_Block_Widg
 
         $this->setCollection($collection);
 
-        return parent::_prepareCollection();
+        parent::_prepareCollection();
+
+        return $this;
     }
 
     protected function _afterLoadCollection()

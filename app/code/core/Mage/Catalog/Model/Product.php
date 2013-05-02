@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
 {
@@ -44,9 +43,6 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
 
     protected $_priceModel = null;
     protected $_urlModel = null;
-
-    const CACHE_TAG         = 'catalog_product';
-    protected $_cacheTag    = 'catalog_product';
 
     protected $_eventPrefix = 'catalog_product';
     protected $_eventObject = 'product';
@@ -87,21 +83,6 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
     {
         $this->_getResource()->validate($this);
         return $this;
-    }
-
-    public function getName()
-    {
-        return $this->_getData('name');
-    }
-
-    public function getPrice()
-    {
-        return $this->_getData('price');
-    }
-
-    public function getTypeId()
-    {
-        return $this->_getData('type_id');
     }
 
     /**
@@ -263,7 +244,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         if ($groupId) {
             $attributes = array();
             foreach ($productAttributes as $attribute) {
-                if ($attribute->isInGroup($this->getAttributeSetId(), $groupId)) {
+                if ($attribute->getAttributeGroupId() == $groupId) {
                     $attributes[] = $attribute;
                 }
             }
@@ -296,8 +277,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
     protected function _beforeDelete()
     {
         $this->cleanCache();
-        $this->_protectFromNonAdmin();
-        return parent::_beforeDelete();
+        parent::_beforeDelete();
     }
 
     public function cleanCache()

@@ -22,7 +22,6 @@
 /**
  * Price index resource model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_CatalogIndex_Model_Mysql4_Price extends Mage_CatalogIndex_Model_Mysql4_Abstract
 {

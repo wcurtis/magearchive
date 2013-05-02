@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Checkout
- * @author      Magento Core Team <core@magentocommerce.com>
  */
  class Mage_Checkout_Block_Cart_Item_Super extends Mage_Core_Block_Abstract
  {

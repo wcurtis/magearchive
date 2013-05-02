@@ -268,19 +268,14 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
     public function couponPostAction()
     {
         $couponCode = (string) $this->getRequest()->getParam('coupon_code');
-        if ($this->getRequest()->getParam('remove') == 1) {
-            $couponCode = '';
-        }
-        $oldCouponCode = $this->getQuote()->getCouponCode();
-
-        if (!strlen($couponCode) && !strlen($oldCouponCode)) {
+        if (!strlen($couponCode)) {
             $this->_goBack();
             return;
         }
 
         try {
             $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
-            $this->getQuote()->setCouponCode(strlen($couponCode) ? $couponCode : null)
+            $this->getQuote()->setCouponCode($couponCode)
                 ->collectTotals()
                 ->save();
             if ($couponCode) {
@@ -294,10 +289,6 @@ class Mage_Checkout_CartController extends Mage_Core_Controller_Front_Action
                         $this->__('Coupon code "%s" is not valid.', Mage::helper('core')->htmlEscape($couponCode))
                     );
                 }
-            } else {
-                Mage::getSingleton('checkout/session')->addSuccess(
-                    $this->__('Coupon code was canceled successfully.')
-                );
             }
 
         }

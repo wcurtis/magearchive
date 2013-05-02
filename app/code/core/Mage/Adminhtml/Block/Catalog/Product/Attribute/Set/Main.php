@@ -21,7 +21,6 @@
 /**
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Adminhtml_Block_Template
@@ -86,7 +85,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Admin
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData(array(
                     'label'     => Mage::helper('catalog')->__('Delete Attribute Set'),
-                    'onclick'   => 'deleteConfirm(\''. $this->jsQuoteEscape(Mage::helper('catalog')->__('Are you sure you want to delete this attribute set?')) . '\', \'' . $this->getUrl('*/*/delete', array('id' => $setId)) . '\')',
+                    'onclick'   => 'deleteConfirm(\''. Mage::helper('catalog')->__('Are you sure you want to delete this attribute set?') . '\', \'' . $this->getUrl('*/*/delete', array('id' => $setId)) . '\')',
                     'class' => 'delete'
         )));
 

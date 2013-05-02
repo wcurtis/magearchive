@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Sales
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Sales_Model_Entity_Quote extends Mage_Eav_Model_Entity_Abstract
 {
@@ -81,10 +80,5 @@ class Mage_Sales_Model_Entity_Quote extends Mage_Eav_Model_Entity_Abstract
             }
         }
         return $this;
-    }
-
-    public function getReservedOrderId($quote)
-    {
-        return Mage::getSingleton('eav/config')->getEntityType('order')->fetchNewIncrementId($quote->getStoreId());
     }
 }

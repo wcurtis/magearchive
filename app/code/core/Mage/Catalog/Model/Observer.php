@@ -35,7 +35,6 @@ class Mage_Catalog_Model_Observer
         $store = $observer->getEvent()->getStore();
         /* @var $store Mage_Core_Model_Store */
         Mage::app()->reinitStores();
-        Mage::getConfig()->reinit();
         Mage::getModel('catalog/url')->refreshRewrites($store->getId());
     }
 
@@ -55,10 +54,5 @@ class Mage_Catalog_Model_Observer
     {
         $categoryId = $observer->getEvent()->getCategoryId();
         Mage::getModel('catalog/url')->refreshCategoryRewrite($categoryId);
-    }
-
-    public function catalogProductImportAfter($observer)
-    {
-        Mage::getModel('catalog/url')->refreshRewrites();
     }
 }

@@ -27,42 +27,18 @@ class Mage_Core_Model_Mysql4_Website extends Mage_Core_Model_Mysql4_Abstract
         $this->_uniqueFields = array(array('field' => 'code', 'title' => Mage::helper('core')->__('Website with the same code')));
     }
 
-    /**
-     * Perform actions before object save
-     *
-     * @param Mage_Core_Model_Abstract $object
-     * @return Mage_Core_Model_Mysql4_Website
-     */
-    protected function _beforeSave(Mage_Core_Model_Abstract $object)
+    protected function _beforeSave(Mage_Core_Model_Abstract $model)
     {
-        if(!preg_match('/^[a-z]+[a-z0-9_]*$/', $object->getCode())) {
+        if(!preg_match('/^[a-z]+[a-z0-9_]*$/',$model->getCode())) {
             Mage::throwException(Mage::helper('core')->__('Website code should contain only letters (a-z), numbers (0-9) or underscore(_), first character should be a letter'));
         }
 
-        return parent::_beforeSave($object);
+        return $this;
     }
 
-    /**
-     * Perform actions after object save
-     *
-     * @param Mage_Core_Model_Abstract $object
-     * @return Mage_Core_Model_Mysql4_Website
-     */
-    protected function _afterSave(Mage_Core_Model_Abstract $object)
+    protected function _afterSave(Mage_Core_Model_Abstract $model)
     {
-        if ($object->getIsDefault()) {
-            $this->_getWriteAdapter()->update(
-                $this->getMainTable(),
-                array('is_default' => 0),
-                1
-            );
-            $this->_getWriteAdapter()->update(
-                $this->getMainTable(),
-                array('is_default' => 1),
-                $this->_getWriteAdapter()->quoteInto('website_id=?', $object->getId())
-            );
-        }
-        return parent::_afterSave($object);
+        return $this;
     }
 
     protected function _afterDelete(Mage_Core_Model_Abstract $model)

@@ -990,10 +990,6 @@ class Zend_Locale_Data
                 $temp = self::_getFile($locale, '/ldml/numbers/currencies/currency[@type=\'' . $value . '\']/symbol', '', $value);
                 break;
 
-            case 'currencysymbolchoice':
-                $temp = self::_getFile($locale, '/ldml/numbers/currencies/currency[@type=\'' . $value . '\']/symbol/@choice', '', $value);
-                break;
-
             case 'question':
                 $temp = self::_getFile($locale, '/ldml/posix/messages/' . $value . 'str',  '', $value);
                 break;

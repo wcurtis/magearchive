@@ -22,7 +22,11 @@
 <config>
     <modules>
         <Mage_Tax>
-            <version>0.7.5</version>
+            <version>0.7.4</version>
+            <depends>
+                <Mage_Catalog />
+                <Mage_Customer />
+            </depends>
         </Mage_Tax>
     </modules>
     <global>

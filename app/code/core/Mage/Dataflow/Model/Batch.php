@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Dataflow
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Dataflow_Model_Batch extends Mage_Core_Model_Abstract
 {
@@ -150,19 +149,5 @@ class Mage_Dataflow_Model_Batch extends Mage_Core_Model_Abstract
             $this->_batchImport = Varien_Object_Cache::singleton()->save($object);
         }
         return Varien_Object_Cache::singleton()->load($this->_batchImport);
-    }
-
-    /**
-     * Run finish actions for Adapter
-     *
-     */
-    public function beforeFinish()
-    {
-        if ($this->getAdapter()) {
-            $adapter = Mage::getModel($this->getAdapter());
-            if (method_exists($adapter, 'finish')) {
-                $adapter->finish();
-            }
-        }
     }
 }

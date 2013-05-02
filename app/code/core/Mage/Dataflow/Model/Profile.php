@@ -21,7 +21,6 @@
 /**
  * Convert profile
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
 {
@@ -50,7 +49,7 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
         parent::_beforeSave();
 
         $actionsXML = $this->getData('actions_xml');
-        if (strlen($actionsXML) < 0 && @simplexml_load_string('<data>'.$actionsXML.'</data>', null, LIBXML_NOERROR) === false) {
+        if (0 < strlen($actionsXML) && false === simplexml_load_string('<data>'.$actionsXML.'</data>', null, LIBXML_NOERROR)) {
             Mage::throwException(Mage::helper("dataflow")->__("Actions XML is not valid."));
         }
 
@@ -73,10 +72,6 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
             $this->_parseGuiData();
 
             $this->setGuiData(serialize($this->getGuiData()));
-        }
-
-        if ($this->_getResource()->isProfileExists($this->getName(), $this->getId())) {
-            Mage::throwException(Mage::helper("dataflow")->__("Profile with such name already exists."));
         }
     }
 
@@ -313,9 +308,6 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
 
         // Need to rewrite the whole xml action format
         if ($import) {
-            $numberOfRecords = isset($p['import']['number_of_records']) ? $p['import']['number_of_records'] : 1;
-            $parseFileXmlInter .= '    <var name="number_of_records">'
-                . $numberOfRecords . '</var>' . $nl;
         	if ($this->getDataTransfer()==='interactive') {
         		$xml = $parseFileXmlInter;
                 $xml .= '    <var name="adapter">'.$adapters[$this->getEntityType()].'</var>'.$nl;

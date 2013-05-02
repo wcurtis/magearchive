@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Controller_Action
 {
@@ -73,8 +72,8 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
         /**
          * Add breadcrumb item
          */
-        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Import/Export'), Mage::helper('adminhtml')->__('Import/Export Advanced'));
-        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Advanced Profiles'), Mage::helper('adminhtml')->__('Advanced Profiles'));
+        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Import/Export Profiles'), Mage::helper('adminhtml')->__('Import/Export Advanced Profiles'));
+        $this->_addBreadcrumb(Mage::helper('adminhtml')->__('Manage Profiles'), Mage::helper('adminhtml')->__('Manage Profiles'));
 
         $this->renderLayout();
     }
@@ -256,17 +255,7 @@ class Mage_Adminhtml_System_Convert_ProfileController extends Mage_Adminhtml_Con
             /* @var $batchModel Mage_Dataflow_Model_Batch */
 
             if ($batchModel->getId()) {
-                try {
-                    $batchModel->beforeFinish();
-                }
-                catch (Mage_Core_Exception $e) {
-                    $result['error'] = $e->getMessage();
-                }
-                catch (Exception $e) {
-                    $result['error'] = Mage::helper('adminhtml')->__('Error while finished process. Please refresh cache');
-                }
                 $batchModel->delete();
-                $this->getResponse()->setBody(Zend_Json::encode($result));
             }
         }
     }

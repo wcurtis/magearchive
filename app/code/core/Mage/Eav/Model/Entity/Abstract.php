@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Eav
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class Mage_Eav_Model_Entity_Abstract
     extends Mage_Core_Model_Resource_Abstract
@@ -88,13 +87,6 @@ abstract class Mage_Eav_Model_Entity_Abstract
     protected $_entityTable;
 
     /**
-     * Describe data for tables
-     *
-     * @var array
-     */
-    protected $_describeTable = array();
-
-    /**
      * Enter description here...
      *
      * @var string
@@ -128,13 +120,6 @@ abstract class Mage_Eav_Model_Entity_Abstract
      * @var boolean
      */
     protected $_isPartialSave = false;
-
-    /**
-     * Attribute set id which used for get sorted attributes
-     *
-     * @var int
-     */
-    protected $_sortingSetId = null;
 
     /**
      * Set connections for entity operations
@@ -344,6 +329,9 @@ abstract class Mage_Eav_Model_Entity_Abstract
             $attributeInstance = $attribute;
             $attributeCode = $attributeInstance->getAttributeCode();
             if (isset($this->_attributesByCode[$attributeCode])) {
+                $this->_attributesByCode[$attributeCode]->setAttributeSetId(
+                    $attribute->getAttributeSetId()
+                );
                 return $this->_attributesByCode[$attributeCode];
             }
         }
@@ -355,7 +343,7 @@ abstract class Mage_Eav_Model_Entity_Abstract
             return false;
         }
 
-        $attribute = $attributeInstance;
+        $attribute = clone $attributeInstance;
 
         if (empty($attributeId)) {
             $attributeId = $attribute->getAttributeId();
@@ -434,12 +422,6 @@ abstract class Mage_Eav_Model_Entity_Abstract
      */
     public function loadAllAttributes($object=null)
     {
-        $attributeCodes = Mage::getSingleton('eav/config')->getEntityAttributeCodes($this->getEntityType());
-        foreach ($attributeCodes as $code) {
-        	$this->getAttribute($code);
-        }
-        return $this;
-        /*
         if (is_null($object)) {
             $attributeCodes = Mage::getSingleton('eav/config')->getEntityAttributeCodes($this->getEntityType());
             foreach ($attributeCodes as $code) {
@@ -459,36 +441,8 @@ abstract class Mage_Eav_Model_Entity_Abstract
 
         foreach ($attributes->getItems() as $attribute) {
             $this->getAttribute($attribute);
-        }*/
+        }
         return $this;
-    }
-
-    public function getSortedAttributes($setId=null)
-    {
-        $attributes =$this->getAttributesByCode();
-        if (is_null($setId)) {
-            $setId = $this->getEntityType()->getDefaultAttributeSetId();
-        }
-        $this->_sortingSetId = $setId;
-        uasort($attributes, array($this, 'attributesCompare'));
-        return $attributes;
-    }
-
-    public function attributesCompare($attribute1, $attribute2)
-    {
-        $sortPath      = 'attribute_set_info/' . $this->_sortingSetId . '/sort';
-        $groupSortPath = 'attribute_set_info/' . $this->_sortingSetId . '/group_sort';
-
-        $sort1 =  ($attribute1->getData($groupSortPath) * 1000) + ($attribute1->getData($sortPath) * 0.0001);
-        $sort2 =  ($attribute2->getData($groupSortPath) * 1000) + ($attribute2->getData($sortPath) * 0.0001);
-
-        if ($sort1 > $sort2) {
-            return 1;
-        } elseif ($sort1 < $sort2) {
-            return -1;
-        }
-
-        return 0;
     }
 
     /**
@@ -917,7 +871,7 @@ abstract class Mage_Eav_Model_Entity_Abstract
              * if attribute is static add to entity row and continue
              */
             if ($this->isAttributeStatic($k)) {
-                $entityRow[$k] = $this->_prepareStaticValue($k, $v);
+                $entityRow[$k] = $v;
                 continue;
             }
 
@@ -945,47 +899,6 @@ abstract class Mage_Eav_Model_Entity_Abstract
 
         $result = compact('newObject', 'entityRow', 'insert', 'update', 'delete');
         return $result;
-    }
-
-    /**
-     * Retrieve static field properties
-     *
-     * @param string $field
-     * @return array
-     */
-    protected function _getStaticFieldProperties($field)
-    {
-        if (empty($this->_describeTable[$this->getEntityTable()])) {
-            $this->_describeTable[$this->getEntityTable()] = $this->_getWriteAdapter()->describeTable($this->getEntityTable());
-        }
-
-        if (isset($this->_describeTable[$this->getEntityTable()][$field])) {
-            return $this->_describeTable[$this->getEntityTable()][$field];
-        }
-
-        return false;
-    }
-
-    /**
-     * Prepare static value for save
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function _prepareStaticValue($key, $value)
-    {
-        $fieldProp = $this->_getStaticFieldProperties($key);
-
-        if (!$fieldProp) {
-            return $value;
-        }
-
-        if ($fieldProp['DATA_TYPE'] == 'decimal') {
-            $value = Mage::app()->getLocale()->getNumber($value);
-        }
-
-        return $value;
     }
 
     /**
@@ -1069,7 +982,7 @@ abstract class Mage_Eav_Model_Entity_Abstract
             $entityIdField  => $object->getId(),
             'entity_type_id'=> $object->getEntityTypeId(),
             'attribute_id'  => $attribute->getId(),
-            'value'         => $this->_prepareValueForSave($value, $attribute),
+            'value'         => $value,
         );
         $this->_getWriteAdapter()->insert($attribute->getBackend()->getTable(), $row);
         return $this;
@@ -1087,25 +1000,10 @@ abstract class Mage_Eav_Model_Entity_Abstract
     protected function _updateAttribute($object, $attribute, $valueId, $value)
     {
         $this->_getWriteAdapter()->update($attribute->getBackend()->getTable(),
-            array('value' => $this->_prepareValueForSave($value, $attribute)),
+            array('value'=>$value),
             'value_id='.(int)$valueId
         );
         return $this;
-    }
-
-    /**
-     * Prepare value for save
-     *
-     * @param mixed $value
-     * @param Mage_Eav_Model_Entity_Attribute_Abstract $attribute
-     * @return mixed
-     */
-    protected function _prepareValueForSave($value, Mage_Eav_Model_Entity_Attribute_Abstract $attribute)
-    {
-        if ($attribute->getBackendType() == 'decimal') {
-            return Mage::app()->getLocale()->getNumber($value);
-        }
-        return $value;
     }
 
     /**

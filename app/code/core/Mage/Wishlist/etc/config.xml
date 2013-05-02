@@ -23,6 +23,10 @@
     <modules>
         <Mage_Wishlist>
             <version>0.7.3</version>
+            <depends>
+                <Mage_Customer />
+                <Mage_Catalog />
+            </depends>
         </Mage_Wishlist>
     </modules>
     <global>

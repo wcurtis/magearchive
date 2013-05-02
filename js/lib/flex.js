@@ -409,7 +409,7 @@ function FABridge__bridgeInitialized(bridgeName)
 {
     var searchStr = "bridgeName="+ bridgeName;
 
-    if (Prototype.Browser.IE)
+    if (/Explorer/.test(navigator.appName))
     {
         var flashInstances = $$('object');
         if (flashInstances.size() == 1)

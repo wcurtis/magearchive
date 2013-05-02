@@ -21,7 +21,6 @@
 /**
  * Directory module observer
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Directory_Model_Observer
 {

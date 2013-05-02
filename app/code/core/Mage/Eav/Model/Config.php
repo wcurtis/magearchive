@@ -136,8 +136,7 @@ class Mage_Eav_Model_Config
         $useCache = Mage::app()->useCache('eav');
 
         $attributes = Mage::getResourceModel('eav/entity_attribute_collection')
-            ->setEntityTypeFilter($entityType->getId())
-            ->addSetInfo();
+            ->setEntityTypeFilter($entityType->getId());
 
         $defaultAttributeModel = $entityType->getAttributeModel();
         $codes = array();

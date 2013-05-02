@@ -24,7 +24,6 @@ Product.Zoom = Class.create();
 /**
  * Image zoom control
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 Product.Zoom.prototype = {
     initialize: function(imageEl, trackEl, handleEl, zoomInEl, zoomOutEl){
@@ -391,8 +390,6 @@ Product.Config.prototype = {
                 price+= parseFloat(selected.config.price);
             }
         }
-        if (price < 0)
-            price = 0;
         price = this.formatPrice(price);
 
         if($('product-price-'+this.config.productId)){
@@ -412,8 +409,6 @@ Product.Config.prototype = {
                     price+= parseFloat(selected.config.price);
                 }
             }
-            if (price < 0)
-                price = 0;
             price = this.formatPrice(price);
 
             if($('old-price-'+this.config.productId)){

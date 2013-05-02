@@ -21,7 +21,6 @@
 /**
  * Paypal Standard Checkout Controller
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Paypal_StandardController extends Mage_Core_Controller_Front_Action
 {
@@ -97,9 +96,9 @@ class Mage_Paypal_StandardController extends Mage_Core_Controller_Front_Action
             $order->sendNewOrderEmail();
         }
 
-        //Mage::getSingleton('checkout/session')->unsQuoteId();
+        Mage::getSingleton('checkout/session')->unsQuoteId();
 
-        $this->_redirect('checkout/onepage/success', array('_secure'=>true));
+        $this->_redirect('checkout/onepage/success');
     }
 
     /**

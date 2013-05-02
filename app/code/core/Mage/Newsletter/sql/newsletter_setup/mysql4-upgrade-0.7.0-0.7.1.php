@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Newsletter
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 $installer = $this;

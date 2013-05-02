@@ -21,7 +21,6 @@
 /**
  * Multishipping checkout controller
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_Action
 {
@@ -96,7 +95,6 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
      */
     public function indexAction()
     {
-        Mage::getSingleton('checkout/session')->setCartWasUpdated(false);
         $this->_getCheckout()->getCheckoutSession()->setCheckoutState(
             Mage_Checkout_Model_Session::CHECKOUT_STATE_BEGIN
         );
@@ -372,12 +370,10 @@ class Mage_Checkout_MultishippingController extends Mage_Core_Controller_Front_A
             $this->_redirect('*/*/success');
         }
         catch (Mage_Core_Exception $e){
-            Mage::helper('checkout')->sendPaymentFailedEmail($this->getOnepage()->getQuote(), $e->getMessage(), 'multi-shipping');
             Mage::getSingleton('checkout/session')->addError($e->getMessage());
             $this->_redirect('*/*/billing');
         }
         catch (Exception $e){
-            Mage::helper('checkout')->sendPaymentFailedEmail($this->getOnepage()->getQuote(), $e->getMessage(), 'multi-shipping');
             Mage::getSingleton('checkout/session')->addError('Order place error.');
             $this->_redirect('*/*/billing');
         }

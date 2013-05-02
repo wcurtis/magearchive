@@ -21,6 +21,7 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('BP', dirname(dirname(__FILE__)));
+define('DEVELOPER_MODE', FALSE);
 
 /**
  * Error reporting
@@ -54,7 +55,6 @@ checkMagicQuotes();
 /**
  * Main Mage hub class
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 final class Mage {
     /**
@@ -77,11 +77,9 @@ final class Mage {
 
     static private $_isDownloader = false;
 
-    static private $_isDeveloperMode = false;
-
     public static function getVersion()
     {
-        return '1.0.19870.6';
+        return '1.0';
     }
 
     /**
@@ -177,9 +175,9 @@ final class Mage {
      *
      * @return string
      */
-    public static function getBaseDir($type='base')
+    public static function getBaseDir($type='', array $params=array())
     {
-        return Mage::getConfig()->getOptions()->getDir($type);
+        return Mage::getConfig()->getBaseDir($type, $params);
     }
 
     public static function getModuleDir($type, $moduleName)
@@ -387,12 +385,12 @@ final class Mage {
      *
      * @param   string $code
      * @param   string $type
-     * @param   string|array $options
+     * @param   string $etcDir
      * @return  Mage_Core_Model_App
      */
-    public static function app($code = '', $type = 'store', $options=array())
+    public static function app($code = '', $type = 'store', $etcDir=null)
     {
-        if (null === self::$_app) {
+        if (is_null(self::$_app)) {
             Varien_Profiler::start('app/init');
 
             self::$_app = new Mage_Core_Model_App();
@@ -401,7 +399,7 @@ final class Mage {
             Mage::register('events', new Varien_Event_Collection());
             Mage::register('config', new Mage_Core_Model_Config());
 
-            self::$_app->init($code, $type, $options);
+            self::$_app->init($code, $type, $etcDir);
             self::$_app->loadAreaPart(Mage_Core_Model_App_Area::AREA_GLOBAL, Mage_Core_Model_App_Area::PART_EVENTS);
         }
         return self::$_app;
@@ -412,27 +410,20 @@ final class Mage {
      *
      * @param string $code
      * @param string $type
-     * @param string|array $options
+     * @param string $etcDir
      */
-    public static function run($code = '', $type = 'store', $options=array())
+    public static function run($code='', $type = 'store', $etcDir=null)
     {
         try {
             Varien_Profiler::start('app');
 
-            Varien_Profiler::start('app::init');
-            self::app($code, $type, $options);
-            Varien_Profiler::stop('app::init');
+            self::loadRequiredExtensions();
 
-            Varien_Profiler::start('app::dispatch');
+            self::app($code, $type, $etcDir);
+            //print self::app()->getStore();
             self::app()->getFrontController()->dispatch();
-            Varien_Profiler::stop('app::dispatch');
 
             Varien_Profiler::stop('app');
-        }
-        catch (Mage_Core_Model_Store_Exception $e) {
-            $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-            header('Location: ' . $baseUrl.'/404/');
-            die();
         }
         catch (Exception $e) {
             if (self::app()->isInstalled() || self::$_isDownloader) {
@@ -440,16 +431,18 @@ final class Mage {
                 exit();
             }
             try {
-                self::dispatchEvent('mage_run_exception', array('exception' => $e));
+                self::dispatchEvent('mage_run_exception', array('exception'=>$e));
                 if (!headers_sent()) {
+                    //header('Location:'.Mage::getBaseUrl().'install/');
                     header('Location:'.self::getUrl('install'));
                 }
                 else {
                     self::printException($e);
                 }
             }
-            catch (Exception $ne) {
-                self::printException($ne, $e->getMessage());
+            catch (Exception $ne){
+                self::printException($e);
+                self::printException($ne);
             }
         }
     }
@@ -520,79 +513,69 @@ final class Mage {
     }
 
     /**
-     * Set enabled developer mode
-     *
-     * @param bool $mode
-     * @return bool
-     */
-    public static function setIsDeveloperMode($mode)
-    {
-        self::$_isDeveloperMode = (bool)$mode;
-        return self::$_isDeveloperMode;
-    }
-
-    /**
-     * Retrieve enabled developer mode
-     *
-     * @return bool
-     */
-    public static function getIsDeveloperMode()
-    {
-        return self::$_isDeveloperMode;
-    }
-
-    /**
      * Display exception
      *
      * @param Exception $e
      */
     public static function printException(Exception $e, $extra = '')
     {
-        if (self::$_isDeveloperMode) {
-            print '<pre>';
-
-            if (!empty($extra)) {
-                print $extra . "\n\n";
-            }
-
-            print $e->getMessage() . "\n\n";
-            print $e->getTraceAsString();
-            print '</pre>';
+        ob_start();
+        mageSendErrorHeader();
+        if ($extra != '') {
+            echo $extra."\n";
         }
-        else {
-            self::getConfig()->createDirIfNotExists(self::getBaseDir('var') . DS . 'report');
-            $reportId   = intval(microtime(true) * rand(100, 1000));
-            $reportFile = self::getBaseDir('var') . DS . 'report' . DS . $reportId;
-            $reportData = array(
-                !empty($extra) ? $extra . "\n\n" : '' . $e->getMessage(),
-                $e->getTraceAsString()
-            );
-            $reportData = serialize($reportData);
-
-            file_put_contents($reportFile, $reportData);
-            chmod($reportFile, 0777);
-
-            $storeCode = 'default';
-            try {
-                $storeCode = self::app()->getStore()->getCode();
-            }
-            catch (Exception $e) {}
-
-            $baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-            $reportUrl = $baseUrl . '/report/?id='
-                . $reportId . '&s=' . $storeCode;
-
+        echo $e->getMessage();
+        mageSendErrorFooter();
+        $trace = ob_get_clean();
+	#exit;
+        if ( DEVELOPER_MODE ) {
+            echo '<pre>'.$trace.'</pre>';
+        } else {
+            $file = microtime(true)*100;
+            $traceFile = Mage::getBaseDir('var').DS.$file;
+            file_put_contents($traceFile, $trace);
+            chmod($traceFile, 0777);
+            $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB).'report?id='.$file.'&s='.Mage::app()->getStore()->getCode();
             if (!headers_sent()) {
-                header('Location: ' . $reportUrl);
+                header('Location: '.$url);
+            } else {
+                echo "<script type='text/javascript'>location.href='".$url."'</script>";
             }
-            else {
-                print '<script type="text/javascript">';
-                print "window.location.href = '{$reportUrl}';";
-                print '</script>';
+            die;
+        }
+    }
+
+
+    /**
+    * Tries to dynamically load an extension if not loaded
+    *
+    * @param string $ext
+    * @return boolean
+    */
+    public static function loadExtension($ext)
+    {
+        if (extension_loaded($ext)) {
+            return true;
+        }
+
+        if (ini_get('enable_dl') !== 1 || ini_get('safe_mode') === 1) {
+            return false;
+        }
+
+        $file = (PHP_SHLIB_SUFFIX === 'dll' ? 'php_' : '') . $ext . '.' . PHP_SHLIB_SUFFIX;
+        return @dl($file);
+    }
+
+    public static function loadRequiredExtensions()
+    {
+        $result = true;
+        foreach (array('mcrypt', 'simplexml', 'pdo_mysql', 'curl', 'iconv') as $ext) {
+            if (!self::loadExtension($ext)) {
+                $result = false;
             }
         }
 
-        die();
+        return $result;
     }
 
     public static function setIsDownloader($flag=true)

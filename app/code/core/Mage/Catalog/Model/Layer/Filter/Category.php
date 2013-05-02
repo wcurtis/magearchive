@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Catalog_Model_Layer_Filter_Category extends Mage_Catalog_Model_Layer_Filter_Abstract
 {
@@ -83,7 +82,6 @@ class Mage_Catalog_Model_Layer_Filter_Category extends Mage_Catalog_Model_Layer_
             ->addAttributeToSelect('all_children')
             ->addAttributeToSelect('is_anchor')
             ->addAttributeToFilter('is_active', 1)
-            ->addAttributeToSort('position', 'asc')
             ->joinUrlRewrite()
             ->addIdFilter($categoty->getChildren())
             ->load();

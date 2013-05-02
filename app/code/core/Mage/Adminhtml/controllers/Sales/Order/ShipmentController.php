@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Controller_Action
 {
@@ -110,7 +109,6 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
 
     protected function _saveShipment($shipment)
     {
-        $shipment->getOrder()->setIsInProcess(true);
         $transactionSave = Mage::getModel('core/resource_transaction')
             ->addObject($shipment)
             ->addObject($shipment->getOrder())
@@ -127,7 +125,7 @@ class Mage_Adminhtml_Sales_Order_ShipmentController extends Mage_Adminhtml_Contr
         if ($shipment = $this->_initShipment()) {
             $this->loadLayout()
                 ->_setActiveMenu('sales/order')
-                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_shipment_view')->updateBackButtonUrl($this->getRequest()->getParam('come_from')))
+                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_shipment_view')->updateBackButtonUrl())
                 ->renderLayout();
         }
         else {

@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_CatalogInventory
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_CatalogInventory_Model_Observer
 {
@@ -215,24 +214,13 @@ class Mage_CatalogInventory_Model_Observer
     public function cancelOrderItem($observer)
     {
         $item = $observer->getEvent()->getItem();
-        if ($item->getId() && ($productId = $item->getProductId()) && ($qty = $item->getQtyToShip())) {
-            Mage::getSingleton('cataloginventory/stock')->backItemQty($productId, $qty);
+        /**
+         * Before cancel order item need add qty to product stock
+         */
+        if ($item->getId()) {
+            Mage::getSingleton('cataloginventory/stock')->cancelItemSale($item);
         }
         return $this;
     }
 
-    /**
-     * Back refunded item qty to stock
-     *
-     * @param   Varien_Event_Observer $observer
-     * @return  Mage_CatalogInventory_Model_Observer
-     */
-    public function refundOrderItem($observer)
-    {
-        $item = $observer->getEvent()->getCreditmemoItem();
-        if ($item->getId() && $item->getBackToStock() && ($productId = $item->getProductId()) && ($qty = $item->getQty())) {
-            Mage::getSingleton('cataloginventory/stock')->backItemQty($productId, $qty);
-        }
-        return $this;
-    }
 }

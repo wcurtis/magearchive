@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -40,17 +39,17 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
         $model = Mage::getModel('review/review');
         $collection = $model->getProductCollection();
 
-        if ($this->getProductId() || $this->getRequest()->getParam('productId', false)) {
-            $this->setProductId(($this->getProductId() ? $this->getProductId() : $this->getRequest()->getParam('productId')));
+        if( $this->getProductId() || $this->getRequest()->getParam('productId', false) ) {
+            $this->setProductId( ( $this->getProductId() ? $this->getProductId() : $this->getRequest()->getParam('productId') ) );
             $collection->addEntityFilter($this->getProductId());
         }
 
-        if ($this->getCustomerId() || $this->getRequest()->getParam('customerId', false)) {
-            $this->setCustomerId(($this->getCustomerId() ? $this->getCustomerId() : $this->getRequest()->getParam('customerId')));
+        if( $this->getCustomerId() || $this->getRequest()->getParam('customerId', false) ) {
+            $this->setCustomerId( ( $this->getCustomerId() ? $this->getCustomerId() : $this->getRequest()->getParam('customerId') ) );
             $collection->addCustomerFilter($this->getCustomerId());
         }
 
-        if (Mage::registry('usePendingFilter') === true) {
+        if( Mage::registry('usePendingFilter') === true ) {
             $collection->addStatusFilter($model->getPendingStatus());
         }
 
@@ -239,7 +238,7 @@ class Mage_Adminhtml_Block_Review_Grid extends Mage_Adminhtml_Block_Widget_Grid
     public function getGridUrl()
     {
         if( $this->getProductId() || $this->getCustomerId() ) {
-            return $this->getUrl('*/catalog_product_review/' . (Mage::registry('usePendingFilter') ? 'pending' : ''), array(
+            return $this->getUrl('*/catalog_product_review/reviewGrid', array(
                 'productId' => $this->getProductId(),
                 'customerId' => $this->getCustomerId(),
             ));

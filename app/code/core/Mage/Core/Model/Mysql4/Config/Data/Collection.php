@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Core
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Core_Model_Mysql4_Config_Data_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
@@ -45,12 +44,6 @@ class Mage_Core_Model_Mysql4_Config_Data_Collection extends Mage_Core_Model_Mysq
     {
         $this->_select
             ->where('path like ?', $section . '/%');
-        return $this;
-    }
-
-    public function addValueFilter($value)
-    {
-        $this->getSelect()->where('value=?', $value);
         return $this;
     }
 }

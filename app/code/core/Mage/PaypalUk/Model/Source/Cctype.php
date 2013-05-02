@@ -18,10 +18,19 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Mage_PaypalUk_Model_Source_Cctype extends Mage_Payment_Model_Source_Cctype
+class Mage_PaypalUk_Model_Source_Cctype
 {
-    public function getAllowedTypes()
+    public function toOptionArray()
     {
-        return array('VI', 'MC', 'AE', 'DI', 'SS', 'OT');
+        $options =  array();       ;
+        foreach (Mage::getSingleton('paypaluk/direct')->getApi()->getCcTypes() as $code => $name) {
+            $options[] = array(
+            	   'value' => $code,
+            	   'label' => $name
+            );
+        }
+
+        return $options;
     }
+
 }

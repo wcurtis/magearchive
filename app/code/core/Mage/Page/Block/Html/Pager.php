@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Page
- * @author      Magento Core Team <core@magentocommerce.com>
  *
  * @todo        separate order, mode and pager
  */
@@ -37,9 +36,9 @@ class Mage_Page_Block_Html_Pager extends Mage_Core_Block_Template
     protected $_displayPages    = 5;
     protected $_showPerPage		= true;
 
-    protected function _construct()
+    public function __construct()
     {
-        parent::_construct();
+        parent::__construct();
         $this->setTemplate('page/html/pager.phtml');
     }
 
@@ -240,7 +239,6 @@ class Mage_Page_Block_Html_Pager extends Mage_Core_Block_Template
     public function getPagerUrl($params=array())
     {
         $params['_current'] = true;
-        $params['_escape'] = true;
         return $this->getUrl('*/*/*', $params);
     }
 }

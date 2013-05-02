@@ -110,8 +110,7 @@ class Mage_Core_Model_Resource
      */
     public function getEntity($model, $entity)
     {
-        //return Mage::getConfig()->getNode("global/models/$model/entities/$entity");
-        return Mage::getConfig()->getNode()->global->models->{$model}->entities->{$entity};
+        return Mage::getConfig()->getNode("global/models/$model/entities/$entity");
     }
 
     /**
@@ -126,8 +125,7 @@ class Mage_Core_Model_Resource
         $arr = explode('/', $modelEntity);
         if (isset($arr[1])) {
             list($model, $entity) = $arr;
-            //$resourceModel = (string)Mage::getConfig()->getNode('global/models/'.$model.'/resourceModel');
-            $resourceModel = (string) Mage::getConfig()->getNode()->global->models->{$model}->resourceModel;
+            $resourceModel = (string)Mage::getConfig()->getNode('global/models/'.$model.'/resourceModel');
             $entityConfig = $this->getEntity($resourceModel, $entity);
             if ($entityConfig) {
                 $tableName = (string)$entityConfig->table;
@@ -138,7 +136,7 @@ class Mage_Core_Model_Resource
             $tableName = $modelEntity;
         }
 
-        $tablePrefix = (string)Mage::getConfig()->getTablePrefix();
+        $tablePrefix = (string)Mage::getConfig()->getNode('global/resources/db/table_prefix');
         return $tablePrefix . $tableName;
     }
 

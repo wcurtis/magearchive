@@ -23,15 +23,9 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Report_ProductController extends Mage_Adminhtml_Controller_Action
 {
-    /**
-     * init
-     *
-     * @return Mage_Adminhtml_Report_ProductController
-     */
     public function _initAction()
     {
         $this->loadLayout()
@@ -122,7 +116,6 @@ class Mage_Adminhtml_Report_ProductController extends Mage_Adminhtml_Controller_
     {
         $fileName   = 'products_lowstock.csv';
         $content    = $this->getLayout()->createBlock('adminhtml/report_product_lowstock_grid')
-            ->setSaveParametersInSession(true)
             ->getCsv();
 
         $this->_prepareDownloadResponse($fileName, $content);
@@ -135,7 +128,6 @@ class Mage_Adminhtml_Report_ProductController extends Mage_Adminhtml_Controller_
     {
         $fileName   = 'products_lowstock.xml';
         $content    = $this->getLayout()->createBlock('adminhtml/report_product_lowstock_grid')
-            ->setSaveParametersInSession(true)
             ->getExcel($fileName);
 
         $this->_prepareDownloadResponse($fileName, $content);

@@ -21,7 +21,6 @@
 /**
  * Convert history
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Dataflow_Model_Profile_History extends Mage_Core_Model_Abstract
 {

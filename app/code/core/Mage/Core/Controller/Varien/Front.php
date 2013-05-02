@@ -106,6 +106,8 @@ class Mage_Core_Controller_Varien_Front extends Varien_Object
 
         Varien_Profiler::start('ctrl/init');
 
+        Mage::getModel('core/url_rewrite')->rewrite();
+
         // init admin modules router
         $admin = new Mage_Core_Controller_Varien_Router_Admin();
         $admin->collectRoutes('admin', 'admin');
@@ -136,7 +138,6 @@ class Mage_Core_Controller_Varien_Front extends Varien_Object
         $request->setPathInfo()->setDispatched(false);
 
         $this->rewrite();
-        Mage::getModel('core/url_rewrite')->rewrite();
 
         Varien_Profiler::stop('app/init');
 
@@ -147,9 +148,6 @@ class Mage_Core_Controller_Varien_Front extends Varien_Object
                     break;
                 }
             }
-        }
-        if ($i>100) {
-            Mage::throwException('Front controller reached 100 router match iterations');
         }
 
         Varien_Profiler::stop('ctrl/dispatch');

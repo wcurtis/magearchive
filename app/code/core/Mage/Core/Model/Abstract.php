@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Core
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class Mage_Core_Model_Abstract extends Varien_Object
 {
@@ -139,10 +138,10 @@ abstract class Mage_Core_Model_Abstract extends Varien_Object
      */
     public function getId()
     {
-        if ($fieldName = $this->getIdFieldName()) {
-            return $this->_getData($fieldName);
+        if ($this->getIdFieldName()) {
+            return $this->getData($this->getIdFieldName());
         } else {
-            return $this->_getData('id');
+            return $this->getData('id');
         }
     }
 
@@ -311,18 +310,6 @@ abstract class Mage_Core_Model_Abstract extends Varien_Object
         Mage::dispatchEvent('model_delete_before', array('object'=>$this));
         Mage::dispatchEvent($this->_eventPrefix.'_delete_before', array($this->_eventObject=>$this));
         return $this;
-    }
-
-    /**
-     * Safeguard func that will check, if we are in admin area
-     *
-     * @throws Mage_Core_Exception
-     */
-    protected function _protectFromNonAdmin()
-    {
-        if (!Mage::app()->getStore()->isAdmin()) {
-            Mage::throwException(Mage::helper('core')->__('Cannot complete this operation from non-admin area.'));
-        }
     }
 
     /**

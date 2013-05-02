@@ -21,9 +21,8 @@
 /**
  * Product list toolbar
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @category   Mage
+ * @package    Mage_Catalog
  */
 class Mage_Catalog_Block_Product_List_Toolbar extends Mage_Page_Block_Html_Pager
 {
@@ -35,30 +34,30 @@ class Mage_Catalog_Block_Product_List_Toolbar extends Mage_Page_Block_Html_Pager
     protected $_enableViewSwitcher  = true;
     protected $_isExpanded          = true;
 
-    protected function _construct()
+    public function __construct()
     {
-        parent::_construct();
+        parent::__construct();
         $this->_availableOrder = array(
-            'position'  => $this->__('Best Value'),
-            'name'      => $this->__('Name'),
-            'price'     => $this->__('Price')
+            'position'  => Mage::helper('catalog')->__('Best Value'),
+            'name'      => Mage::helper('catalog')->__('Name'),
+            'price'     => Mage::helper('catalog')->__('Price')
         );
 
         switch (Mage::getStoreConfig('catalog/frontend/list_mode')) {
         	case 'grid':
-		        $this->_availableMode = array('grid' => $this->__('Grid'));
+		        $this->_availableMode = array('grid' => Mage::helper('catalog')->__('Grid'));
         		break;
 
         	case 'list':
-		        $this->_availableMode = array('list' => $this->__('List'));
+		        $this->_availableMode = array('list' => Mage::helper('catalog')->__('List'));
         		break;
 
         	case 'grid-list':
-		        $this->_availableMode = array('grid' => $this->__('Grid'), 'list' =>  $this->__('List'));
+		        $this->_availableMode = array('grid' => Mage::helper('catalog')->__('Grid'), 'list' =>  Mage::helper('catalog')->__('List'));
         		break;
 
         	case 'list-grid':
-		        $this->_availableMode = array('list' => $this->__('List'), 'grid' => $this->__('Grid'));
+		        $this->_availableMode = array('list' => Mage::helper('catalog')->__('List'), 'grid' => Mage::helper('catalog')->__('Grid'));
         		break;
         }
         $this->setTemplate('catalog/product/list/toolbar.phtml');
@@ -214,48 +213,27 @@ class Mage_Catalog_Block_Product_List_Toolbar extends Mage_Page_Block_Html_Pager
     public function getDefaultPerPageValue()
     {
         if ($this->getCurrentMode() == 'list') {
-            if ($default = $this->getDefaultListPerPage()) {
-                return $default;
-            }
             return Mage::getStoreConfig('catalog/frontend/list_per_page');
         }
         elseif ($this->getCurrentMode() == 'grid') {
-            if ($default = $this->getDefaultGridPerPage()) {
-                return $default;
-            }
             return Mage::getStoreConfig('catalog/frontend/grid_per_page');
         }
         return 0;
     }
 
-    public function addPagerLimit($mode, $value, $label='')
-    {
-        if (!isset($this->_availableLimit[$mode])) {
-            $this->_availableLimit[$mode] = array();
-        }
-        $this->_availableLimit[$mode][$value] = empty($label) ? $value : $label;
-        return $this;
-    }
-
     public function getAvailableLimit()
     {
         if ($this->getCurrentMode() == 'list') {
-            if (isset($this->_availableLimit['list'])) {
-                return $this->_availableLimit['list'];
-            }
-            $perPageValues = (string)Mage::getStoreConfig('catalog/frontend/list_per_page_values');
+            $perPageValues = (string) Mage::getConfig()->getNode('frontend/catalog/per_page_values/list');
             $perPageValues = explode(',', $perPageValues);
             $perPageValues = array_combine($perPageValues, $perPageValues);
-            return ($perPageValues + array('all'=>$this->__('All')));
+            return ($perPageValues + array('all'=>Mage::helper('catalog')->__('All')));
         }
         elseif ($this->getCurrentMode() == 'grid') {
-            if (isset($this->_availableLimit['grid'])) {
-                return $this->_availableLimit['grid'];
-            }
-            $perPageValues = (string)Mage::getStoreConfig('catalog/frontend/grid_per_page_values');
+            $perPageValues = (string) Mage::getConfig()->getNode('frontend/catalog/per_page_values/grid');
             $perPageValues = explode(',', $perPageValues);
             $perPageValues = array_combine($perPageValues, $perPageValues);
-            return ($perPageValues + array('all'=>$this->__('All')));
+            return ($perPageValues + array('all'=>Mage::helper('catalog')->__('All')));
         }
         return parent::getAvailableLimit();
     }

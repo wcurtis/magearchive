@@ -21,7 +21,6 @@
 /**
  * Json controller
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_JsonController extends Mage_Adminhtml_Controller_Action
 {

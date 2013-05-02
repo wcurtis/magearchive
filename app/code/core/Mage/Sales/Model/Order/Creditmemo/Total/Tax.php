@@ -46,14 +46,6 @@ class Mage_Sales_Model_Order_Creditmemo_Total_Tax extends Mage_Sales_Model_Order
             }
         }
 
-        if ($invoice = $creditmemo->getInvoice()) {
-            $totalTax += $invoice->getShippingTaxAmount();
-            $baseTotalTax += $invoice->getBaseShippingTaxAmount();
-
-            $creditmemo->setShippingTaxAmount($invoice->getShippingTaxAmount());
-            $creditmemo->setBaseShippingTaxAmount($invoice->getBaseShippingTaxAmount());
-        }
-
         $creditmemo->setTaxAmount($totalTax);
         $creditmemo->setBaseTaxAmount($baseTotalTax);
 

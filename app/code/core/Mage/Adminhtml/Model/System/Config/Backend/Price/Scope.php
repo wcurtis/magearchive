@@ -21,7 +21,6 @@
 /**
  * Price scope configuration option backend model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Model_System_Config_Backend_Price_Scope extends Mage_Core_Model_Config_Data
 {

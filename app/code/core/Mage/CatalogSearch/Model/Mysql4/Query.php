@@ -21,7 +21,6 @@
 /**
  * Catalog search query resource model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_CatalogSearch_Model_Mysql4_Query extends Mage_Core_Model_Mysql4_Abstract
 {

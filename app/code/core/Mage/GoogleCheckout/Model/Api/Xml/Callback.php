@@ -106,94 +106,80 @@ class Mage_GoogleCheckout_Model_Api_Xml_Callback extends Mage_GoogleCheckout_Mod
 
     protected function _responseMerchantCalculationCallback()
     {
-        $merchantCalculations = new GoogleMerchantCalculations($this->getCurrency());
-
         $quoteId = $this->getData('root/shopping-cart/merchant-private-data/quote-id/VALUE');
         $quote = Mage::getModel('sales/quote')->load($quoteId);
 
         $address = $quote->getShippingAddress();
+
         $googleAddress = $this->getData('root/calculate/addresses/anonymous-address');
+        $addressId = $googleAddress['id'];
 
-        $googleAddresses = array();
-        if ( isset( $googleAddress['id'] ) ) {
-            $googleAddresses[] = $googleAddress;
-        } else {
-            $googleAddresses = $googleAddress;
-        }
+        $address->setCountryId($googleAddress['country-code']['VALUE'])
+            ->setRegion($googleAddress['region']['VALUE'])
+            ->setCity($googleAddress['city']['VALUE'])
+            ->setPostcode($googleAddress['postal-code']['VALUE']);
 
-        foreach($googleAddresses as $googleAddress) {
-            $addressId = $googleAddress['id'];
+        $merchantCalculations = new GoogleMerchantCalculations($this->getCurrency());
 
-            $address->setCountryId($googleAddress['country-code']['VALUE'])
-                ->setRegion($googleAddress['region']['VALUE'])
-                ->setCity($googleAddress['city']['VALUE'])
-                ->setPostcode($googleAddress['postal-code']['VALUE']);
-
-            if ($gRequestMethods = $this->getData('root/calculate/shipping/method')) {
-                $carriers = array();
-                foreach (Mage::getStoreConfig('carriers') as $carrierCode=>$carrierConfig) {
-                    if (!isset($carrierConfig['title'])) {
-                        continue;
-                    }
-                    $title = $carrierConfig['title'];
-                    foreach ($gRequestMethods as $method) {
-                        $methodName = is_array($method) ? $method['name'] : $method;
-                        if ($title && $method && strpos($methodName, $title)===0) {
-                            $carriers[$carrierCode] = $title;
-                        }
-                    }
+        if ($gRequestMethods = $this->getData('root/calculate/shipping/method')) {
+            $carriers = array();
+            foreach (Mage::getStoreConfig('carriers') as $carrierCode=>$carrierConfig) {
+                if (!isset($carrierConfig['title'])) {
+                    continue;
                 }
-
-                $result = Mage::getModel('shipping/shipping')
-                    ->collectRatesByAddress($address, array_keys($carriers))
-                    ->getResult();
-
-                $errors = array();
-                $rates = array();
-                foreach ($result->getAllRates() as $rate) {
-                    if ($rate instanceof Mage_Shipping_Model_Rate_Result_Error) {
-                        $errors[$rate->getCarrierTitle()] = 1;
-                    } else {
-                        $rates[$rate->getCarrierTitle().' - '.$rate->getMethodTitle()] = $rate->getPrice();
-                    }
-                }
-
+                $title = $carrierConfig['title'];
                 foreach ($gRequestMethods as $method) {
                     $methodName = is_array($method) ? $method['name'] : $method;
-                    $result = new GoogleResult($addressId);
-
-                    if ($this->getData('root/calculate/tax/VALUE')=='true') {
-                        $address->setCollectShippingRates(false)->collectTotals();
-                        $taxAmount = $address->getTaxAmount();
-                        $result->setTaxDetails($taxAmount);
-                    }
-
-                    if (!empty($errors)) {
-                        $continue = false;
-                        foreach ($errors as $carrier=>$dummy) {
-                            if (strpos($methodName, $carrier)===0) {
-                                $result->SetShippingDetails($methodName, 0, "false");
-                                $merchantCalculations->AddResult($result);
-                                $continue = true;
-                                break;
-                            }
-                        }
-                        if ($continue) {
-                            continue;
-                        }
-                    }
-                    if (!empty($rates[$methodName])) {
-                        $result->SetShippingDetails($methodName, $rates[$methodName], "true");
-                        $merchantCalculations->AddResult($result);
+                    if ($title && $method && strpos($methodName, $title)===0) {
+                        $carriers[$carrierCode] = $title;
                     }
                 }
-            } elseif ($this->getData('root/calculate/tax/VALUE')=='true') {
-                $address->setCollectShippingRates(false)->collectTotals();
-                $taxAmount = $address->getTaxAmount();
-                $result = new GoogleResult($addressId);
-                $result->setTaxDetails($taxAmount);
-                $merchantCalculations->addResult($result);
             }
+
+            $result = Mage::getModel('shipping/shipping')
+                ->collectRatesByAddress($address, array_keys($carriers))
+                ->getResult();
+
+            $errors = array();
+            $rates = array();
+            foreach ($result->getAllRates() as $rate) {
+                if ($rate instanceof Mage_Shipping_Model_Rate_Result_Error) {
+                    $errors[$rate->getCarrierTitle()] = 1;
+                } else {
+                    $rates[$rate->getCarrierTitle().' - '.$rate->getMethodTitle()] = $rate->getPrice();
+                }
+            }
+
+            foreach ($gRequestMethods as $method) {
+                $methodName = is_array($method) ? $method['name'] : $method;
+                $result = new GoogleResult($addressId);
+                if (!empty($errors)) {
+                    $continue = false;
+                    foreach ($errors as $carrier=>$dummy) {
+                        if (strpos($methodName, $carrier)===0) {
+                            $result->SetShippingDetails($methodName, 0, "false");
+                            $merchantCalculations->AddResult($result);
+                            $continue = true;
+                            break;
+                        }
+                    }
+                    if ($continue) {
+                        continue;
+                    }
+                }
+                if (!empty($rates[$methodName])) {
+                    $result->SetShippingDetails($methodName, $rates[$methodName], "true");
+                    $merchantCalculations->AddResult($result);
+                }
+            }
+        }
+
+        if ($this->getData('root/calculate/tax/VALUE')=='true') {
+            $address->setCollectShippingRates(false)->collectTotals();
+            $taxAmount = $address->getTaxAmount();
+            $result = new GoogleResult($addressId);
+            $result->setTaxDetails($taxAmount);
+            $merchantCalculations->addResult($result);
         }
 
         $this->getGResponse()->ProcessMerchantCalculations($merchantCalculations);

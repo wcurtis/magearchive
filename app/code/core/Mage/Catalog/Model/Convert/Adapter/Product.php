@@ -114,7 +114,7 @@ class Mage_Catalog_Model_Convert_Adapter_Product
             $qtyAttr['cond']        = "{{table}}.qty between '{$qtyFrom}' AND '{$qtyTo}'";
             $qtyAttr['joinType']    = 'inner';
 
-            $this->setJoinField($qtyAttr);
+            $this->setJoinFeild($qtyAttr);
         }
 
         parent::setFilter($attrFilterArray, $attrToDb);
@@ -407,10 +407,7 @@ class Mage_Catalog_Model_Convert_Adapter_Product
     public function saveRow($importData)
     {
         $product = $this->getProductModel();
-        $product->setData(array());
-        if ($stockItem = $product->getStockItem()) {
-            $stockItem->setData(array());
-        }
+        $product->setId(null);
 
         if (empty($importData['store'])) {
             $message = Mage::helper('catalog')->__('Skip import row, required field "%s" not defined', 'store');
@@ -457,8 +454,7 @@ class Mage_Catalog_Model_Convert_Adapter_Product
             $product->setAttributeSetId($productAttributeSets[$importData['attribute_set']]);
 
             foreach ($this->_requiredFields as $field) {
-                $attribute = $this->getAttribute($field);
-                if (!isset($importData[$field]) && $attribute && $attribute->getIsRequired()) {
+                if (!isset($importData[$field])) {
                     $message = Mage::helper('catalog')->__('Skip import row, required field "%s" for new products not defined', $field);
                     Mage::throwException($message);
                 }
@@ -561,9 +557,6 @@ class Mage_Catalog_Model_Convert_Adapter_Product
             catch (Exception $e) {}
         }
 
-        $product->setIsMassupdate(true);
-        $product->setExcludeUrlRewrite(true);
-
         $product->save();
 
         return true;
@@ -582,7 +575,7 @@ class Mage_Catalog_Model_Convert_Adapter_Product
         $product = $this->getProduct();
         $stockItem = $this->getStockItem();
 
-        @set_time_limit(240);
+        set_time_limit(240);
 
 //        $row = unserialize($args['row']['value']);
         $row = $args;
@@ -650,7 +643,7 @@ class Mage_Catalog_Model_Convert_Adapter_Product
         $product = $this->getProduct();
         $stockItem = $this->getStockItem();
 
-        @set_time_limit(240);
+        set_time_limit(240);
 
 //        $row = unserialize($args['row']['value']);
         $row = $args;
@@ -717,10 +710,5 @@ class Mage_Catalog_Model_Convert_Adapter_Product
     function getProductId()
     {
         return $this->_productId;
-    }
-
-    public function finish()
-    {
-        Mage::dispatchEvent('catalog_product_import_after');
     }
 }

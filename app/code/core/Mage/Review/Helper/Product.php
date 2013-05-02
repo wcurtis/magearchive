@@ -21,7 +21,6 @@
 /**
  * Product review helper
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Review_Helper_Product extends Mage_Core_Helper_Url
 {
@@ -156,20 +155,22 @@ class Mage_Review_Helper_Product extends Mage_Core_Helper_Url
                 <div class="rating-box">
                     <div class="rating" style="width:'.$this->getSummaryRating($product).'%"></div>
                 </div>
+                <div class="clear"></div>
                 <a href="'.$this->getListUrl($product).'">
-                    '.$this->__('%d Review(s)', $this->getReviewCount($product)).'
-                </a><span class="pipe">|</span>
+                    <small class="count">'.$this->__('%d Review(s)', $this->getReviewCount($product)).'</small>
+                </a><br/>
                 <a href="'.$this->getNewUrl($product).'#review-form">
-                    '.$this->__('Add Your Review').'
+                    <small>'.$this->__('Add Your Review').'</small>
                 </a>
             </div>';
         } elseif($this->getReviewCount($product)) {
             $html.= '<div class="ratings">
+                <div class="clear"></div>
                 <a href="'.$this->getListUrl($product).'">
-                    '.$this->__('%d Review(s)', $this->getReviewCount($product)).'
-                </a><span class="pipe">|</span>
+                    <small class="count">'.$this->__('%d Review(s)', $this->getReviewCount($product)).'</small>
+                </a><br/>
                 <a href="'.$this->getNewUrl($product).'#review-form">
-                    '.$this->__('Add Your Review').'
+                    <small>'.$this->__('Add Your Review').'</small>
                 </a>
             </div>';
         } else {

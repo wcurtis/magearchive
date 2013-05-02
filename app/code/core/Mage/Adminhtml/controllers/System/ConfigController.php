@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_Action
 {
@@ -149,7 +148,7 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
                 $this->getRequest()->getParam('container') => $this->getRequest()->getParam('value')
             );
             $this->_saveState($configState);
-            $this->getResponse()->setBody('success');
+
         }
     }
 
@@ -242,12 +241,10 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
             foreach ($configState as $fieldset => $state) {
                 $extra['configState'][$fieldset] = $state;
             }
-            $id = $adminUser->getId();
-            $adminUser->setData(array('extra'=>$extra))
-                ->setId($id);
-            $adminUser->save();
+            $adminUser->setExtra($extra);
         }
-
+        $adminUser->unsPassword();
+        $adminUser->save();
         return true;
     }
 }

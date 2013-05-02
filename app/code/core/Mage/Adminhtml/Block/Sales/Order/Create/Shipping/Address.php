@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Adminhtml_Block_Sales_Order_Create_Shipping_Address extends Mage_Adminhtml_Block_Sales_Order_Create_Form_Address
@@ -48,7 +47,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Shipping_Address extends Mage_Admi
         if (!$this->_form) {
             parent::_prepareForm();
             $this->_form->addFieldNameSuffix('order[shipping_address]');
-            $this->_form->setHtmlNamePrefix('order[shipping_address]');
             $this->_form->setHtmlIdPrefix('order:shipping_address_');
         }
         return $this;

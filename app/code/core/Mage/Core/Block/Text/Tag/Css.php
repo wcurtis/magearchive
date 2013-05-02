@@ -22,7 +22,6 @@
 /**
  * Base html block
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Core_Block_Text_Tag_Css extends Mage_Core_Block_Text_Tag
 {

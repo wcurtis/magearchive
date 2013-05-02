@@ -37,4 +37,4 @@ if (!file_exists($mageFilename)) {
 require_once $mageFilename;
 
 umask(0);
-Mage::run();
+Mage::run('default');

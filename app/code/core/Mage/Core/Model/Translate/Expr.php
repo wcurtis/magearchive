@@ -21,7 +21,6 @@
 /**
  * Translate expression object
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Core_Model_Translate_Expr
 {

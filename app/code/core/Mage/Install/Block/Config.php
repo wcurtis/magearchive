@@ -21,7 +21,6 @@
 /**
  * Config installation block
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Install_Block_Config extends Mage_Install_Block_Abstract
 {
@@ -66,10 +65,4 @@ class Mage_Install_Block_Config extends Mage_Install_Block_Abstract
     {
         return Mage::getSingleton('install/session')->getSkipUrlValidation();
     }
-
-    public function getSkipBaseUrlValidation()
-    {
-        return Mage::getSingleton('install/session')->getSkipBaseUrlValidation();
-    }
-
 }

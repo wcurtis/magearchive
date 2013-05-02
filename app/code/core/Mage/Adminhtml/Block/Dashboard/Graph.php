@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboard_Abstract
@@ -36,9 +35,7 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
 
     protected $_simpleEncoding = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     protected $_extendedEncoding = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.';
-
-    const API_URL = 'http://chart.apis.google.com/chart';
-
+    protected $_apiUrl = 'http://chart.apis.google.com/chart?';
     protected $_width = '587';
     protected $_height = '300';
     // Google Chart Api Data Encoding
@@ -81,15 +78,8 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
         return $this->_allSeries;
     }
 
-    public function getChartUrl($directUrl = true)
+    public function getChartUrl()
     {
-        $params = array(
-            'cht' => 'lc',
-            'chf' => 'bg,s,f4f4f4|c,lg,90,ffffff,0.1,ededed,0',
-            'chm' => 'B,f4d4b2,0,0,0',
-            'chco' => 'db4814'
-        );
-
         $this->_allSeries = $this->getRowsData($this->_dataRows);
 
         foreach ($this->_axisMaps as $axis => $attr){
@@ -161,13 +151,13 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
         //Google encoding values
         if ($this->_encoding == "s") {
             // simple encoding
-            $params['chd'] = "s:";
+            $dataHeader .= "&chd=s:";
             $dataDelimiter = "";
             $dataSetdelimiter = ",";
             $dataMissing = "_";
         } else {
             // extended encoding
-            $params['chd'] = "e:";
+            $dataHeader = "&chd=e:";
             $dataDelimiter = "";
             $dataSetdelimiter = ",";
             $dataMissing = "__";
@@ -250,14 +240,12 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
         $buffer = rtrim($buffer, $dataDelimiter);
         $buffer = str_replace(($dataDelimiter . $dataSetdelimiter), $dataSetdelimiter, $buffer);
 
-        $params['chd'] .= $buffer;
-
         $labelBuffer = "";
         $valueBuffer = array();
         $rangeBuffer = "";
 
         if (sizeof($this->_axisLabels) > 0) {
-            $params['chxt'] = implode(',', array_keys($this->_axisLabels));
+            $labelBuffer .= "&chxt=" . implode(',', array_keys($this->_axisLabels));
             $indexid = 0;
             foreach ($this->_axisLabels as $idx=>$labels){
                 if ($idx == 'x') {
@@ -285,10 +273,10 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
                         } else {
                             $this->_axisLabels[$idx][$_index] = '';
                         }
-
                     }
+                    array_map('urlencode', $this->_axisLabels[$idx]);
 
-                    $valueBuffer[] = $indexid . ":|" . str_replace('/', '\\', implode('|', $this->_axisLabels[$idx]));
+                    $valueBuffer[] = $indexid . ":|" . implode('|', $this->_axisLabels[$idx]);
                     if (sizeof($this->_axisLabels[$idx]) > 1) {
                         $deltaX = 100/(sizeof($this->_axisLabels[$idx])-1);
                     } else {
@@ -306,26 +294,21 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
                 }
                 $indexid++;
             }
-            $params['chxl'] = implode('|', $valueBuffer);
+            $labelBuffer .= "&chxl=" . implode('|', $valueBuffer);
         };
 
         // chart size
-        $params['chs'] = $this->getWidth().'x'.$this->getHeight();
+        $chartSize = "&chs=".$this->getWidth().'x'.$this->getHeight();
 
         if (isset($deltaX) && isset($deltaY)) {
-            $params['chg'] = $deltaX . ',' . $deltaY . ',1,0';
-        }
-
-        // return the encoded data
-        if ($directUrl) {
-            $p = array();
-            foreach ($params as $name => $value) {
-                $p[] = $name . '=' .urlencode($value);
-            }
-            return self::API_URL . '?' . implode('&', $p);
+            $gridLines = "&chg={$deltaX},{$deltaY},1,0";
         } else {
-            return $this->getUrl('*/*/tunnel', $params);
+            $gridLines = "";
         }
+        // return the encoded data
+        return $this->_apiUrl . $labelBuffer . $dataHeader . $buffer . $gridLines .
+            $chartSize . "&cht=lc&chf=bg,s,f4f4f4|c,lg,90,ffffff,0.1,ededed,0" .
+            "&chm=B,f4d4b2,0,0,0&chco=db4814&".rand();
     }
 
     protected function getRowsData($attributes, $single = false)
@@ -344,24 +327,20 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
         return $options;
     }
 
-
     public function setAxisLabels($axis, $labels)
     {
         $this->_axisLabels[$axis] = $labels;
     }
-
 
     public function setHtmlId($htmlId)
     {
         $this->_htmlId = $htmlId;
     }
 
-
     public function getHtmlId()
     {
         return $this->_htmlId;
     }
-
 
     protected function _getPow($number)
     {
@@ -373,12 +352,10 @@ class Mage_Adminhtml_Block_Dashboard_Graph extends Mage_Adminhtml_Block_Dashboar
         return $pow;
     }
 
-
     protected function getWidth()
     {
         return $this->_width;
     }
-
 
     protected function getHeight()
     {

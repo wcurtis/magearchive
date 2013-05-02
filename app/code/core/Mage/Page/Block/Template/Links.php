@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Core
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Page_Block_Template_Links extends Mage_Core_Block_Template
 {
@@ -68,7 +67,7 @@ class Mage_Page_Block_Template_Links extends Mage_Core_Block_Template
      * @param string|array $aParams
      * @param string $beforeText
      * @param string $afterText
-     * @return Mage_Page_Block_Template_Links
+     * @return Mage_Page_Block_Html_Toplinks
      */
     public function addLink($label, $url='', $title='', $prepare=false, $urlParams=array(),
         $position=null, $liParams=null, $aParams=null, $beforeText='', $afterText='')
@@ -86,7 +85,7 @@ class Mage_Page_Block_Template_Links extends Mage_Core_Block_Template
             'after_text'    => $afterText,
         ));
 
-        if (intval($position) > 0) {
+        if (is_int($position)) {
             while (isset($this->_links[$position])) {
                 $position++;
             }
@@ -126,7 +125,7 @@ class Mage_Page_Block_Template_Links extends Mage_Core_Block_Template
     /**
      * Set first/last
      *
-     * @return Mage_Page_Block_Template_Links
+     * @return Mage_Page_Block_Html_Toplinks
      */
     protected function _beforeToHtml()
     {

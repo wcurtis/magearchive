@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Shipping
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Shipping_Model_Carrier_Freeshipping
     extends Mage_Shipping_Model_Carrier_Abstract

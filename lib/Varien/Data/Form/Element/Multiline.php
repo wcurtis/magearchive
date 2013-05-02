@@ -21,7 +21,6 @@
 /**
  * Form multiline text elements
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Varien_Data_Form_Element_Multiline extends Varien_Data_Form_Element_Abstract
 {

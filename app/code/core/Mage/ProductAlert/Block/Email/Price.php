@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_ProductAlert
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_ProductAlert_Block_Email_Price extends Mage_Core_Block_Template
 {

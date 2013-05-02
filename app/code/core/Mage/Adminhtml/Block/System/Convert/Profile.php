@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_System_Convert_Profile extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
@@ -31,7 +30,7 @@ class Mage_Adminhtml_Block_System_Convert_Profile extends Mage_Adminhtml_Block_W
     public function __construct()
     {
         $this->_controller = 'system_convert_profile';
-        $this->_headerText = Mage::helper('adminhtml')->__('Advanced Profiles');
+        $this->_headerText = Mage::helper('adminhtml')->__('Manage Advanced Import/Export Profiles');
         $this->_addButtonLabel = Mage::helper('adminhtml')->__('Add New Profile');
 
         parent::__construct();

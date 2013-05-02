@@ -678,11 +678,10 @@ class Mage_Customer_Model_Convert_Parser_Customer
             ->load()->getIterator();
 
         $attributes = array(
-            'website'       => 'website',
-            'email'         => 'email',
-            'group'         => 'group',
-            'create_in'     => 'create_in',
-            'is_subscribed' => 'is_subscribed'
+            'website'   => 'website',
+            'email'     => 'email',
+            'group'     => 'group',
+            'create_in' => 'create_in'
         );
 
         foreach ($customerAttributes as $attr) {

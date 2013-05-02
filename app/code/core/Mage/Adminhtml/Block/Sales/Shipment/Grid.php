@@ -21,7 +21,6 @@
 /**
  * Adminhtml sales orders grid
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_Sales_Shipment_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -112,9 +111,10 @@ class Mage_Adminhtml_Block_Sales_Shipment_Grid extends Mage_Adminhtml_Block_Widg
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/*/view',
+        return $this->getUrl('*/sales_order_shipment/view',
             array(
                 'shipment_id'=> $row->getId(),
+                'order_id'  => $row->getOrderId()
             )
         );
     }

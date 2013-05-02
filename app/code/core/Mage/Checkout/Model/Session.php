@@ -98,8 +98,7 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
             ->setStoreId(Mage::app()->getStore()->getId())
             ->setCacheKey(true)
             ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomerId());
-
-        if ($this->getQuoteId() != $customerQuote->getId()) {
+        if ($customerQuote) {
             if ($this->getQuoteId()) {
                 foreach ($this->getQuote()->getAllItems() as $item) {
                     $found = false;
@@ -122,9 +121,7 @@ class Mage_Checkout_Model_Session extends Mage_Core_Model_Session_Abstract
                 $customerQuote->collectTotals();
                 $customerQuote->save();
             }
-
             $this->setQuoteId($customerQuote->getId());
-
             if ($this->_quote) {
                 $this->_quote->delete();
             }

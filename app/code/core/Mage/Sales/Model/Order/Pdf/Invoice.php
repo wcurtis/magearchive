@@ -21,7 +21,6 @@
 /**
  * Payment method abstract model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Sales_Model_Order_Pdf_Invoice extends Mage_Sales_Model_Order_Pdf_Abstract
 {
@@ -64,7 +63,7 @@ class Mage_Sales_Model_Order_Pdf_Invoice extends Mage_Sales_Model_Order_Pdf_Abst
             $page->drawText(Mage::helper('sales')->__('QTY'), 35, $this->y, 'UTF-8');
             $page->drawText(Mage::helper('sales')->__('Products'), 60, $this->y, 'UTF-8');
             $page->drawText(Mage::helper('sales')->__('SKU'), 380, $this->y, 'UTF-8');
-            $page->drawText(Mage::helper('sales')->__('Subtotal'), 530, $this->y, 'UTF-8');
+            $page->drawText(Mage::helper('sales')->__('Total(inc)'), 530, $this->y, 'UTF-8');
 
             $this->y -=15;
 
@@ -90,7 +89,7 @@ class Mage_Sales_Model_Order_Pdf_Invoice extends Mage_Sales_Model_Order_Pdf_Abst
                     $page->drawText(Mage::helper('sales')->__('QTY'), 35, $this->y, 'UTF-8');
                     $page->drawText(Mage::helper('sales')->__('Products'), 60, $this->y, 'UTF-8');
                     $page->drawText(Mage::helper('sales')->__('SKU'), 380, $this->y, 'UTF-8');
-                    $page->drawText(Mage::helper('sales')->__('Subtotal'), 530, $this->y, 'UTF-8');
+                    $page->drawText(Mage::helper('sales')->__('Price'), 530, $this->y, 'UTF-8');
 
                     $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
                     $this->y -=20;
@@ -146,7 +145,7 @@ class Mage_Sales_Model_Order_Pdf_Invoice extends Mage_Sales_Model_Order_Pdf_Abst
                 }
 
                 $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_BOLD);
-                $row_total = $order->formatPriceTxt($item->getRowTotal());
+                $row_total = $order->formatPriceTxt($item->getRowTotal()+$item->getTaxAmount()-$item->getDiscountAmount());
 
                 $page->drawText($row_total, 565-$this->widthForStringUsingFontSize($row_total, $font, 7), $this->y, 'UTF-8');
                 $this->y -= max($shift)+10;

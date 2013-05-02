@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Adminhtml_Block_Report_Tag_Popular_Detail extends Mage_Adminhtml_Block_Widget_Grid_Container
@@ -38,8 +37,6 @@ class Mage_Adminhtml_Block_Report_Tag_Popular_Detail extends Mage_Adminhtml_Bloc
         $this->_headerText = Mage::helper('reports')->__('Tag "%s" details', $tag->getName());
         parent::__construct();
         $this->_removeButton('add');
-        $this->setBackUrl($this->getUrl('*/report_tag/popular/'));
-        $this->_addBackButton();
     }
 
 }

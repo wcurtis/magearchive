@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Catalog_Model_Product_Type_Grouped extends Mage_Catalog_Model_Product_Type_Abstract
 {
@@ -40,8 +39,7 @@ class Mage_Catalog_Model_Product_Type_Grouped extends Mage_Catalog_Model_Product
         if (is_null($this->_associatedProducts)) {
             $this->_associatedProducts = array();
             $collection = $this->getAssociatedProductCollection()
-                ->addAttributeToSelect('*')
-                ->setPositionOrder();
+                ->addAttributeToSelect('*');
             foreach ($collection as $product) {
             	$this->_associatedProducts[] = $product;
             }

@@ -23,6 +23,9 @@
     <modules>
         <Mage_GoogleCheckout>
             <version>0.7.0</version>
+            <depends>
+                <Mage_Sales />
+            </depends>
         </Mage_GoogleCheckout>
     </modules>
     <global>

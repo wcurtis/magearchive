@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_ProductAlert
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
 {
@@ -37,13 +36,6 @@ class Mage_ProductAlert_AddController extends Mage_Core_Controller_Front_Action
                 Mage::getSingleton('customer/session')->setBeforeUrl($this->_getRefererUrl());
             }
         }
-    }
-
-    public function testObserverAction()
-    {
-        $object = new Varien_Object();
-        $observer = Mage::getSingleton('productalert/observer');
-        $observer->process($object);
     }
 
     public function priceAction()

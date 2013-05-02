@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Wishlist
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
 {
@@ -79,7 +78,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     {
         if(is_null($this->_itemCollection)) {
             $this->_itemCollection =  Mage::getResourceModel('wishlist/item_collection')
-                ->setStoreId($this->getStore()->getId())
                 ->addWishlistFilter($this);
         }
 
@@ -91,7 +89,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         $collection = $this->getData('product_collection');
         if (is_null($collection)) {
             $collection = Mage::getResourceModel('wishlist/product_collection')
-                ->setStoreId($this->getStore()->getId())
                 ->addWishlistFilter($this)
                 ->addWishListSortOrder()
 	        ;
@@ -178,13 +175,4 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         return $this->_getResource()->fetchItemsCount($this);
     }
 
-    public function isSalable()
-    {
-        foreach ($this->getProductCollection() as $product) {
-            if ($product->getIsSalable()) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

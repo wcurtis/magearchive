@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute extends Mage_Core_Helper_Data
 {
@@ -60,7 +59,7 @@ class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute extends Mage_C
     /**
      * Retrive product collection
      *
-     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
+     * @return Mage_Catalog_Model_Entity_Product_Collection
      */
     public function getProducts()
     {
@@ -73,8 +72,8 @@ class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute extends Mage_C
 
             $this->_products = Mage::getResourceModel('catalog/product_collection')
                 ->setStoreId($this->getSelectedStoreId())
-                ->addIdFilter($productsIds);
-                //->load();
+                ->addIdFilter($productsIds)
+                ->load();
                 //->addStoreNamesToResult();
         }
 
@@ -151,12 +150,12 @@ class Mage_Adminhtml_Helper_Catalog_Product_Edit_Action_Attribute extends Mage_C
     {
         if (is_null($this->_productsNotInStore)) {
             $this->_productsNotInStoreIds = array();
-            /*foreach ($this->getProducts() as $product) {
+            foreach ($this->getProducts() as $product) {
                 $stores = $product->getStores();
                 if (!isset($stores[$this->getSelectedStoreId()]) && $this->getSelectedStoreId() != 0) {
-                    $this->_productsNotInStoreIds[] = $product->getId();
+                    $this->_productsNotInStoreIds[] = $product->getIds();
                 }
-            }*/
+            }
         }
 
         return $this->_productsNotInStoreIds;

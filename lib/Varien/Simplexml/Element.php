@@ -24,7 +24,6 @@
  *
  * @category   Varien
  * @package    Varien_Simplexml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Varien_Simplexml_Element extends SimpleXMLElement
 {
@@ -280,16 +279,7 @@ class Varien_Simplexml_Element extends SimpleXMLElement
     public function appendChild($source)
     {
         if ($source->children()) {
-            /**
-             * @see http://bugs.php.net/bug.php?id=41867 , fixed in 5.2.4
-             */
-            if (version_compare(phpversion(), '5.2.4', '<')===true) {
-                $name = $source->children()->getName();
-            }
-            else {
-                $name = $source->getName();
-            }
-            $child = $this->addChild($name);
+            $child = $this->addChild($source->getName());
         } else {
             $child = $this->addChild($source->getName(), $this->xmlentities($source));
         }
@@ -300,7 +290,7 @@ class Varien_Simplexml_Element extends SimpleXMLElement
             $child->addAttribute($key, $this->xmlentities($value));
         }
 
-        foreach ($source->children() as $sourceChild) {
+        foreach ($source as $sourceChild) {
             $child->appendChild($sourceChild);
         }
         return $this;

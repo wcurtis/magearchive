@@ -21,7 +21,6 @@
 /**
  * Create random order
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Model_Sales_Order_Random
 {

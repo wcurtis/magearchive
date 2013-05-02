@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Core
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
@@ -421,15 +420,5 @@ class Mage_Core_Model_Website extends Mage_Core_Model_Abstract
     public function getWebsiteGroupStore()
     {
         return join('-', array($this->getWebsiteId(), $this->getGroupId(), $this->getStoreId()));
-    }
-
-    public function getDefaultGroupId()
-    {
-        return $this->_getData('default_group_id');
-    }
-    protected function _beforeDelete()
-    {
-        $this->_protectFromNonAdmin();
-        return parent::_beforeDelete();
     }
 }

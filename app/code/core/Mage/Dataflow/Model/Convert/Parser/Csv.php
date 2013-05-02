@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Dataflow
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert_Parser_Abstract
 {
@@ -39,7 +38,7 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
 
         $fDel = $this->getVar('delimiter', ',');
         $fEnc = $this->getVar('enclose', '"');
-        if ($fDel == '\t') {
+        if ($fDel == '\\t') {
             $fDel = "\t";
         }
 
@@ -227,7 +226,7 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
         $fEsc = $this->getVar('escape', '\\');
         $lDel = "\r\n";
 
-        if ($fDel == '\t') {
+        if ($fDel=='\\t') {
             $fDel = "\t";
         }
 
@@ -250,10 +249,6 @@ class Mage_Dataflow_Model_Convert_Parser_Csv extends Mage_Dataflow_Model_Convert
         $delimiter  = $this->getVar('delimiter', ',');
         $enclosure  = $this->getVar('enclose', '"');
         $escapeChar = $this->getVar('escape', '\\');
-
-        if ($delimiter == '\t') {
-            $delimiter = "\t";
-        }
 
         $str = '';
 

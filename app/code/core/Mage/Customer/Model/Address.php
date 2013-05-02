@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Customer
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Customer_Model_Address extends Mage_Customer_Model_Address_Abstract
 {
@@ -33,7 +32,7 @@ class Mage_Customer_Model_Address extends Mage_Customer_Model_Address_Abstract
     {
         $this->_init('customer/address');
     }
-
+    
     /**
      * Retrieve address customer identifier
      *
@@ -43,7 +42,7 @@ class Mage_Customer_Model_Address extends Mage_Customer_Model_Address_Abstract
     {
         return $this->_getResource()->getCustomerId($this);
     }
-
+    
     /**
      * Declare address customer identifier
      *
@@ -55,7 +54,7 @@ class Mage_Customer_Model_Address extends Mage_Customer_Model_Address_Abstract
         $this->_getResource()->setCustomerId($this, $id);
         return $this;
     }
-
+    
     /**
      * Retrieve address customer
      *
@@ -96,7 +95,7 @@ class Mage_Customer_Model_Address extends Mage_Customer_Model_Address_Abstract
         if (is_null($attributes)) {
             $attributes = $this->_getResource()
                 ->loadAllAttributes($this)
-                ->getSortedAttributes();
+                ->getAttributesByCode();
             $this->setData('attributes', $attributes);
         }
         return $attributes;

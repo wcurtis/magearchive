@@ -23,12 +23,9 @@
  *
  * @category   Mage
  * @package    Mage_Core
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Page_Block_Switch extends Mage_Core_Block_Template
 {
-    protected $_storeInUrl;
-
     public function getCurrentWebsiteId()
     {
         return Mage::app()->getStore()->getWebsiteId();
@@ -68,11 +65,7 @@ class Mage_Page_Block_Switch extends Mage_Core_Block_Template
                     continue;
                 }
                 $store->setLocaleCode(Mage::getStoreConfig('general/locale/code', $store->getId()));
-                $baseUrl = $store->getBaseUrl();
-                if (!$this->isStoreInUrl()) {
-                    $baseUrl .= '?store='.$store->getCode();
-                }
-                $store->setHomeUrl($baseUrl);
+                $store->setHomeUrl($store->getBaseUrl().'?store='.$store->getCode());
                 $stores[$store->getGroupId()][$store->getId()] = $store;
             }
             $this->setData('raw_stores', $stores);
@@ -135,13 +128,5 @@ class Mage_Page_Block_Switch extends Mage_Core_Block_Template
     public function getCurrentStoreCode()
     {
         return Mage::app()->getStore()->getCode();
-    }
-
-    public function isStoreInUrl()
-    {
-        if (is_null($this->_storeInUrl)) {
-            $this->_storeInUrl = Mage::getStoreConfigFlag(Mage_Core_Model_Store::XML_PATH_STORE_IN_URL);
-        }
-        return $this->_storeInUrl;
     }
 }

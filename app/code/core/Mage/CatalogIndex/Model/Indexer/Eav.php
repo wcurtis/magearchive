@@ -22,7 +22,6 @@
 /**
  * Catalog indexer eav processor
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_CatalogIndex_Model_Indexer_Eav extends Mage_CatalogIndex_Model_Indexer_Abstract
 {

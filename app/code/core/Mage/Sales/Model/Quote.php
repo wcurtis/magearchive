@@ -28,7 +28,6 @@
  *  sales_quote_delete_before
  *  sales_quote_delete_after
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
 {
@@ -342,14 +341,10 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
 
     public function getCustomerTaxClassId()
     {
-        /*
-        * tax class can vary at any time. so instead of using the value from session, we need to retrieve from db everytime
-        * to get the correct tax class
-        */
-        //if (!$this->getData('customer_group_id') && !$this->getData('customer_tax_class_id')) {
+        if (!$this->getData('customer_group_id') && !$this->getData('customer_tax_class_id')) {
             $classId = Mage::getModel('customer/group')->getTaxClassId($this->getCustomerGroupId());
             $this->setCustomerTaxClassId($classId);
-        //}
+        }
         return $this->getData('customer_tax_class_id');
     }
 
@@ -558,20 +553,20 @@ Varien_Profiler::start('TEST1/2: '.__METHOD__);
 Varien_Profiler::stop('TEST1/2: '.__METHOD__);
             $this->_items->setQuote($this);
 
-            if ($useCache) {
+        if ($useCache) {
                 if ($key = $this->getCacheKey($this->getId())) {
-                    $this->_items->initCache(Mage::app()->getCache(), $key.'_ITEMS', $this->getCacheTags());
+                $this->_items->initCache(Mage::app()->getCache(), $key.'_ITEMS', $this->getCacheTags());
                 }
 
-                if ($this->getId()) {
+            if ($this->getId()) {
 Varien_Profiler::start('TEST3: '.__METHOD__);
                     $items = $this->_items->getIterator();
 Varien_Profiler::stop('TEST3: '.__METHOD__);
-                    foreach ($items as $item) {
+                foreach ($items as $item) {
                         $item->setQuote($this);
                     }
-                }
             }
+        }
         }
         return $this->_items;
     }
@@ -740,7 +735,7 @@ Varien_Profiler::stop('TEST3: '.__METHOD__);
                 }
             }
             else {
-                if ($item->getProductId() == $productId && is_null($superProductId)) {
+                if ($item->getProductId() == $productId) {
                     return $item;
                 }
             }
@@ -937,11 +932,5 @@ Varien_Profiler::stop('TEST3: '.__METHOD__);
         $this->getAddressesCollection()->walk('delete');
         $this->getItemsCollection()->walk('delete');
         $this->getPaymentsCollection()->walk('delete');
-    }
-
-    public function reserveOrderId()
-    {
-        $this->setReservedOrderId($this->_getResource()->getReservedOrderId($this));
-        return $this;
     }
 }

@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Core
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Core_Model_Mysql4_Session implements Zend_Session_SaveHandler_Interface 
 {

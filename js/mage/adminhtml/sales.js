@@ -63,8 +63,7 @@ AdminOrder.prototype = {
         this.loadArea(['data'], true);
     },
 
-    selectAddress : function(el, container){
-        id = el.value;
+    selectAddress : function(id, container){
         if(this.addresses[id]){
             this.fillAddressFields(container, this.addresses[id]);
         }
@@ -73,7 +72,7 @@ AdminOrder.prototype = {
         }
 
         var data = this.serializeData(container);
-        data[el.name] = id;
+        data['order[customer_address_id]'] = id;
         if(this.isShippingField(container) && !this.isShippingMethodReseted){
             this.resetShippingMethod(data);
         }
@@ -121,8 +120,6 @@ AdminOrder.prototype = {
                 data['reset_shipping'] = true;
             }
         }
-
-        data['order['+type+'_address][customer_address_id]'] = $('order:'+type+'_address_customer_address_id').value;
 
         if (data['reset_shipping']) {
             this.resetShippingMethod(data);

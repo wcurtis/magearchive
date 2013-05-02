@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_GiftMessage
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_GiftMessage_Model_Mysql4_Setup extends Mage_Eav_Model_Entity_Setup
 {

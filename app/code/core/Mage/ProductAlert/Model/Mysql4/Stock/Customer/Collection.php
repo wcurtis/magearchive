@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_ProductAlert
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_ProductAlert_Model_Mysql4_Stock_Customer_Collection extends Mage_Customer_Model_Entity_Customer_Collection
 {

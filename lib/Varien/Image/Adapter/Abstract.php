@@ -20,7 +20,6 @@
 
 /**
  * @file        Abstract.php
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 abstract class Varien_Image_Adapter_Abstract

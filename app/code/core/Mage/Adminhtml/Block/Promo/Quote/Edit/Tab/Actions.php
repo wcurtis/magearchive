@@ -24,7 +24,6 @@
  * @category    Mage
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Actions extends Mage_Adminhtml_Block_Widget_Form
 {
@@ -49,10 +48,10 @@ class Mage_Adminhtml_Block_Promo_Quote_Edit_Tab_Actions extends Mage_Adminhtml_B
                 'buy_x_get_y' => Mage::helper('salesrule')->__('Buy X get Y free (discount amount is Y)'),
             ),
         ));
+
         $fieldset->addField('discount_amount', 'text', array(
             'name' => 'discount_amount',
             'required' => true,
-            'class' => 'validate-not-negative-number',
             'label' => Mage::helper('salesrule')->__('Discount amount'),
         ));
         $model->setDiscountAmount($model->getDiscountAmount()*1);

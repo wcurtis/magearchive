@@ -22,7 +22,10 @@
 <config>
     <modules>
         <Mage_Catalog>
-            <version>0.7.34</version>
+            <version>0.7.32</version>
+            <depends>
+                <Mage_Customer />
+            </depends>
         </Mage_Catalog>
     </modules>
     <global>
@@ -101,6 +104,10 @@
                     </product_attribute_media_gallery_image>
                 </entities>
             </catalog_resource_eav_mysql4>
+
+            <catalog_mysql4>
+                <class>Mage_Catalog_Model_Mysql4</class>
+            </catalog_mysql4>
         </models>
         <resources>
             <catalog_setup>
@@ -300,15 +307,6 @@
                     </catalog>
                 </observers>
             </category_move>
-            <catalog_product_import_after>
-                <observers>
-                    <catalogindex>
-                        <type>singleton</type>
-                        <class>catalog/observer</class>
-                        <method>catalogProductImportAfter</method>
-                    </catalogindex>
-                </observers>
-            </catalog_product_import_after>
         </events>
         <translate>
             <modules>
@@ -373,8 +371,6 @@
         <catalog>
             <frontend>
                 <list_mode>grid-list</list_mode>
-                <grid_per_page_values>9,15,30</grid_per_page_values>
-                <list_per_page_values>5,10,15,20,25</list_per_page_values>
                 <grid_per_page>9</grid_per_page>
                 <list_per_page>10</list_per_page>
             </frontend>
@@ -388,11 +384,6 @@
                 <product_use_categories>1</product_use_categories>
                 <title_separator>-</title_separator>
             </seo>
-<!--
-            <layer>
-                <configurable_children>1</configurable_children>
-            </layer>
--->
         </catalog>
     </default>
 </config>

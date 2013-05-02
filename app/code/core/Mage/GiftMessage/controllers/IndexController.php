@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_GiftMessage
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_GiftMessage_IndexController extends Mage_Core_Controller_Front_Action
 {

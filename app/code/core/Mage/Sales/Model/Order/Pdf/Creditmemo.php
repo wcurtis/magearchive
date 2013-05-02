@@ -21,7 +21,6 @@
 /**
  * Payment method abstract model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Sales_Model_Order_Pdf_Creditmemo extends Mage_Sales_Model_Order_Pdf_Abstract
 {

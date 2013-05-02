@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Rule
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Rule_Model_Mysql4_Rule_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {

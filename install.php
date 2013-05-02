@@ -112,7 +112,8 @@ if (version_compare(phpversion(), '5.2.0', '<')===true) {
 require 'app/Mage.php';
 
 try {
-    Mage::setIsDeveloperMode(true);
+
+    Mage::loadRequiredExtensions();
 
     $app = Mage::app('default');
 
@@ -132,10 +133,8 @@ try {
     Mage::printException($e);
 }
 
-print get_class($app);
-
 // print all errors if there were any
-if ($installer instanceof Mage_Core_Model_Installer_Console) {
+if ($app instanceof Mage_Core_Model_Installer_Console) {
     foreach ($installer->getErrors() as $error) {
         echo 'ERROR: ' . $error . "\n";
     }

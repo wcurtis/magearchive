@@ -23,6 +23,10 @@
     <modules>
         <Mage_CatalogIndex>
             <version>0.7.4</version>
+            <depends>
+                <Mage_Catalog />
+                <Mage_Eav />
+            </depends>
         </Mage_CatalogIndex>
     </modules>
 
@@ -81,15 +85,6 @@
         </catalogindex>
 
         <events>
-            <store_add>
-                <observers>
-                    <catalogindex>
-                        <type>singleton</type>
-                        <class>catalogindex/observer</class>
-                        <method>processStoreAdd</method>
-                    </catalogindex>
-                </observers>
-            </store_add>
             <catalog_product_save_after>
                 <observers>
                     <catalogindex>
@@ -99,21 +94,12 @@
                     </catalogindex>
                 </observers>
             </catalog_product_save_after>
-            <catalog_product_massupdate_after>
-                <observers>
-                    <catalogindex>
-                        <type>singleton</type>
-                        <class>catalogindex/observer</class>
-                        <method>processAfterMassupdate</method>
-                    </catalogindex>
-                </observers>
-            </catalog_product_massupdate_after>
             <catalog_entity_attribute_save_after>
                 <observers>
                     <catalogindex>
                         <type>singleton</type>
-                        <class>catalogindex/observer</class>
-                        <method>processAttributeChangeEvent</method>
+                        <class>catalogindex/indexer</class>
+                        <method>plainReindex</method>
                     </catalogindex>
                 </observers>
             </catalog_entity_attribute_save_after>
@@ -139,8 +125,8 @@
                 <observers>
                     <catalogindex>
                         <type>singleton</type>
-                        <class>catalogindex/observer</class>
-                        <method>processPriceScopeChange</method>
+                        <class>catalogindex/indexer</class>
+                        <method>plainReindex</method>
                     </catalogindex>
                 </observers>
             </system_config_price_scope_save_after>
@@ -148,20 +134,11 @@
                 <observers>
                     <catalogindex>
                         <type>singleton</type>
-                        <class>catalogindex/observer</class>
-                        <method>processPriceRuleApplication</method>
+                        <class>catalogindex/indexer</class>
+                        <method>plainReindex</method>
                     </catalogindex>
                 </observers>
             </catalogrule_after_apply>
-            <catalog_product_import_after>
-                <observers>
-                    <catalogindex>
-                        <type>singleton</type>
-                        <class>catalogindex/observer</class>
-                        <method>catalogProductImportAfter</method>
-                    </catalogindex>
-                </observers>
-            </catalog_product_import_after>
         </events>
     </global>
 

@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Catalog_Model_Product_Attribute_Backend_Media extends Mage_Eav_Model_Entity_Attribute_Backend_Abstract
 {
@@ -73,10 +72,6 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Media extends Mage_Eav_Model_
 
         if(!is_array($value['images']) && strlen($value['images']) > 0) {
            $value['images'] = Zend_Json::decode($value['images']);
-        }
-
-        if (!is_array($value['images'])) {
-           $value['images'] = array();
         }
 
 
@@ -296,6 +291,6 @@ class Mage_Catalog_Model_Product_Attribute_Backend_Media extends Mage_Eav_Model_
             $this->_getConfig()->getMediaPath($destFile)
         );
 
-        return str_replace($ioObject->dirsep(), '/', $destFile);
+        return $destFile;
     }
 } // Class Mage_Catalog_Model_Product_Attribute_Backend_Media End

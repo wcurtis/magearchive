@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Catalog_Model_Resource_Eav_Mysql4_Setup extends Mage_Eav_Model_Entity_Setup
 {
@@ -62,7 +61,7 @@ class Mage_Catalog_Model_Resource_Eav_Mysql4_Setup extends Mage_Eav_Model_Entity
                         'unique'            => false,
                     ),
                     'is_active' => array(
-                        'type'              => 'int',
+                        'type'              => 'static',
                         'backend'           => '',
                         'frontend'          => '',
                         'label'             => 'Is Active',

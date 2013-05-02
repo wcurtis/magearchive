@@ -21,7 +21,6 @@
 /**
  * Abstract USA shipping carrier model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class Mage_Usa_Model_Shipping_Carrier_Abstract extends Mage_Shipping_Model_Carrier_Abstract
 {

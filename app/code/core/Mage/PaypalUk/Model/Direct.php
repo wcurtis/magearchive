@@ -22,7 +22,6 @@
  *
  * PayPalUk Direct Module
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
 {
@@ -55,13 +54,10 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
         }
         parent::assignData($data);
         $info = $this->getInfoInstance();
-
-        if ($data->getCcType()=='SS') {
-            $info->setCcSsIssue($data->getCcSsIssue())
-                ->setCcSsStartMonth($data->getCcSsStartMonth())
-                ->setCcSsStartYear($data->getCcSsStartYear())
-            ;
-        }
+        $info->setCcSsIssue($data->getCcSsIssue())
+            ->setCcSsStartMonth($data->getCcSsStartMonth())
+            ->setCcSsStartYear($data->getCcSsStartYear())
+        ;
         return $this;
     }
 
@@ -153,9 +149,9 @@ class Mage_PaypalUk_Model_Direct extends Mage_Payment_Model_Method_Cc
     public function void(Varien_Object $payment)
     {
         $error = false;
-        if ($payment->getVoidTransactionId()) {
+        if ($payment->getCcTransId()) {
              $api = $this->getApi()
-                ->setTransactionId($payment->getVoidTransactionId())
+                ->setTransactionId($payment->getCcTransId())
                 ->setPayment($payment);
 
              if ($api->void()!==false) {

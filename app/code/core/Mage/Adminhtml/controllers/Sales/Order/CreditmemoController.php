@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Controller_Action
 {
@@ -35,7 +34,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
         $this->setUsedModuleName('Mage_Sales');
     }
 
-    protected function _getItemData()
+    protected function _getItemQtys()
     {
         $data = $this->getRequest()->getParam('creditmemo');
         if (isset($data['items'])) {
@@ -98,7 +97,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
             $creditmemo = $convertor->toCreditmemo($order)
                 ->setInvoice($invoice);
 
-            $savedData = $this->_getItemData();
+            $savedQtys = $this->_getItemQtys();
 
             if ($invoice && $invoice->getId()) {
                 foreach ($invoice->getAllItems() as $invoiceItem) {
@@ -107,14 +106,13 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
                         continue;
                     }
                     $item = $convertor->itemToCreditmemoItem($orderItem);
-                    if (isset($savedData[$orderItem->getId()]['qty'])) {
-                        $qty = $savedData[$orderItem->getId()]['qty'];
+                    if (isset($savedQtys[$orderItem->getId()])) {
+                        $qty = $savedQtys[$orderItem->getId()];
                     }
                     else {
                         $qty = min($orderItem->getQtyToRefund(), $invoiceItem->getQty());
                     }
                     $item->setQty($qty);
-                    $item->setBackToStock(isset($savedData[$orderItem->getId()]['back_to_stock']));
                     $creditmemo->addItem($item);
                 }
             } else {
@@ -123,14 +121,13 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
                         continue;
                     }
                     $item = $convertor->itemToCreditmemoItem($orderItem);
-                    if (isset($savedData[$orderItem->getId()]['qty'])) {
-                        $qty = $savedData[$orderItem->getId()]['qty'];
+                    if (isset($savedQtys[$orderItem->getId()])) {
+                        $qty = $savedQtys[$orderItem->getId()];
                     }
                     else {
                         $qty = $orderItem->getQtyToRefund();
                     }
                     $item->setQty($qty);
-                    $item->setBackToStock(isset($savedData[$orderItem->getId()]['back_to_stock']));
                     $creditmemo->addItem($item);
                 }
             }
@@ -176,7 +173,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
         if ($creditmemo = $this->_initCreditmemo()) {
             $this->loadLayout()
                 ->_setActiveMenu('sales/order')
-                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_creditmemo_view')->updateBackButtonUrl($this->getRequest()->getParam('come_from')))
+                ->_addContent($this->getLayout()->createBlock('adminhtml/sales_order_creditmemo_view')->updateBackButtonUrl())
                 ->renderLayout();
         }
         else {
@@ -272,7 +269,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
 
                 $this->_saveCreditmemo($creditmemo);
                 $creditmemo->sendEmail(!empty($data['send_email']), $comment);
-                $this->_getSession()->addSuccess($this->__('Credit Memo was successfully created'));
+                $this->_getSession()->addSuccess($this->__('Creditmemo was successfully created'));
                 $this->_redirect('*/sales_order/view', array('order_id' => $creditmemo->getOrderId()));
                 return;
             }
@@ -285,7 +282,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
             $this->_getSession()->addError($e->getMessage());
         }
         catch (Exception $e) {
-            $this->_getSession()->addError($this->__('Can not save credit memo'));
+            $this->_getSession()->addError($this->__('Can not save creditmemo'));
         }
         $this->_redirect('*/*/new', array('_current' => true));
     }
@@ -299,13 +296,13 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
             try {
                 $creditmemo->cancel();
                 $this->_saveCreditmemo($creditmemo);
-                $this->_getSession()->addSuccess($this->__('Credit Memo was successfully canceled.'));
+                $this->_getSession()->addSuccess($this->__('Creditmemo was successfully canceled.'));
             }
             catch (Mage_Core_Exception $e) {
                 $this->_getSession()->addError($e->getMessage());
             }
             catch (Exception $e) {
-                $this->_getSession()->addError($this->__('Credit Memo cancel error.'));
+                $this->_getSession()->addError($this->__('Creditmemo cancel error.'));
             }
             $this->_redirect('*/*/view', array('creditmemo_id'=>$creditmemo->getId()));
         }
@@ -323,13 +320,13 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
             try {
                 $creditmemo->void();
                 $this->_saveCreditmemo($creditmemo);
-                $this->_getSession()->addSuccess($this->__('Credit Memo was successfully voided'));
+                $this->_getSession()->addSuccess($this->__('Creditmemo was successfully voided'));
             }
             catch (Mage_Core_Exception $e) {
                 $this->_getSession()->addError($e->getMessage());
             }
             catch (Exception $e) {
-                $this->_getSession()->addError($this->__('Credit Memo void error'));
+                $this->_getSession()->addError($this->__('Creditmemo void error'));
             }
             $this->_redirect('*/*/view', array('creditmemo_id'=>$creditmemo->getId()));
         }
@@ -350,7 +347,7 @@ class Mage_Adminhtml_Sales_Order_CreditmemoController extends Mage_Adminhtml_Con
             $this->_forward('noRoute');
         }
     }
-
+    
     public function addCommentAction()
     {
         try {

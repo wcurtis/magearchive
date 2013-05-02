@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_CatalogInventory
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
 {
@@ -48,11 +47,6 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
     public function getStockId()
     {
         return 1;
-    }
-
-    public function getProductId()
-    {
-        return $this->_getData('product_id');
     }
 
     /**
@@ -223,7 +217,7 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
         $qty    = $item->getQty();
         $helper = Mage::helper('cataloginventory');
         if (!is_numeric($qty)) {
-            $qty = Mage::app()->getLocale()->getNumber($qty);
+            $qty = floatval($qty);
         }
 
         if (!$this->getIsInStock()) {
@@ -281,9 +275,8 @@ class Mage_CatalogInventory_Model_Stock_Item extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Check quantity type
+         * Check quontity type
          */
-        $item->setIsQtyDecimal($this->getIsQtyDecimal());
         if (!$this->getIsQtyDecimal()) {
             $qty = intval($qty);
         }

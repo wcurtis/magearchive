@@ -21,7 +21,6 @@
 /**
  * Customer address helper
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Customer_Helper_Address extends Mage_Core_Helper_Abstract
 {

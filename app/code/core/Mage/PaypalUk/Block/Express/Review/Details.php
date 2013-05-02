@@ -21,7 +21,6 @@
  *
  * @category   Mage
  * @package    Mage_PaypalUk
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_PaypalUk_Block_Express_Review_Details extends Mage_Core_Block_Template
 {

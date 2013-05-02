@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Catalog_Model_Layer extends Varien_Object
 {
@@ -38,8 +37,8 @@ class Mage_Catalog_Model_Layer extends Varien_Object
     {
         $collection = $this->getData('product_collection');
         if (is_null($collection)) {
-            $collection = $this->getCurrentCategory()->getProductCollection();
-                //->addCategoryFilter($this->getCurrentCategory());
+            $collection = $this->getCurrentCategory()->getProductCollection()
+                ->addCategoryFilter($this->getCurrentCategory());
             $this->prepareProductCollection($collection);
             $this->setData('product_collection', $collection);
         }

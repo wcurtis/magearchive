@@ -21,7 +21,6 @@
 /**
  * Payment method abstract model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
 {
@@ -278,18 +277,6 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
         return $this;
     }
 
-    public function processInvoice($invoice, $payment)
-    {
-        $invoice->setTransactionId($payment->getLastTransId());
-        return $this;
-    }
-
-    public function processBeforeRefund($invoice, $payment)
-    {
-        $payment->setRefundTransactionId($invoice->getTransactionId());
-        return $this;
-    }
-
     /**
      * Refund money
      *
@@ -308,12 +295,6 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
         return $this;
     }
 
-    public function processCreditmemo($creditmemo, $payment)
-    {
-        $creditmemo->setTransactionId($payment->getLastTransId());
-        return $this;
-    }
-
     /**
      * Cancel payment (GoogleCheckout)
      *
@@ -325,11 +306,6 @@ abstract class Mage_Payment_Model_Method_Abstract extends Varien_Object
         return $this;
     }
 
-    public function processBeforeVoid($invoice, $payment)
-    {
-        $payment->setVoidTransactionId($invoice->getTransactionId());
-        return $this;
-    }
 
     /**
      * Void payment

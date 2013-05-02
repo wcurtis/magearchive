@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Adminhtml_Block_Abstract
 {
@@ -40,7 +39,6 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Adminhtml_Blo
 
         $headBlock = $this->getLayout()->createBlock('page/html_head');
         $headBlock->addJs('prototype/prototype.js');
-        $headBlock->addJs('mage/adminhtml/loader.js');
         echo $headBlock->getCssJsHtml();
 
         echo '<style type="text/css">
@@ -112,11 +110,8 @@ class Mage_Adminhtml_Block_System_Convert_Profile_Run extends Mage_Adminhtml_Blo
 
             $showFinished = true;
             $batchModel = Mage::getSingleton('dataflow/batch');
-            /* @var $batchModel Mage_Dataflow_Model_Batch */
             if ($batchModel->getId()) {
                 if ($batchModel->getAdapter()) {
-                    $numberOfRecords = $profile->getData('gui_data/import/number_of_records');
-                    $numberOfRecords = $numberOfRecords ? $numberOfRecords : 1;
 
                     $showFinished = false;
                     $batchImportModel = $batchModel->getBatchImportModel();
@@ -168,19 +163,7 @@ function execImportData() {
             id: "updatedFinish"
         }));
         new Ajax.Request("' . $this->getUrl('*/*/batchFinish', array('id' => $batchModel->getId())) .'", {
-            onComplete: function(transport) {
-                if (transport.responseText.isJSON()) {
-                    var response = transport.responseText.evalJSON();
-                    if (response.error) {
-                        new Insertion.Before($("liFinished"), config.tpl.evaluate({
-                            style: "background-color:"+config.styles.error.bg,
-                            image: config.styles.error.icon,
-                            text: response.error.escapeHTML(),
-                            id: "error-finish"
-                        }));
-                    }
-                }
-
+            onComplete: function() {
                 $(\'liFinished\').show();
             }
         });
@@ -250,7 +233,7 @@ function addProfileRow(data) {
 ';
 
 
-                    $jsonIds = array_chunk($importIds, $numberOfRecords);
+                    $jsonIds = array_chunk($importIds, 1);
                     foreach ($jsonIds as $part => $ids) {
                         $data = array(
                             'batch_id'   => $batchModel->getId(),

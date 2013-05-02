@@ -23,6 +23,9 @@
    <modules>
       <Mage_Sendfriend>
          <version>0.7.1</version>
+         <depends>
+            <Mage_Catalog />
+         </depends>
       </Mage_Sendfriend>
    </modules>
    <global>
@@ -76,19 +79,7 @@
         </template>
    </global>
 
-    <adminhtml>
-      <translate>
-        <modules>
-            <Mage_Sendfriend>
-                <files>
-                    <default>Mage_Sendfriend.csv</default>
-                </files>
-            </Mage_Sendfriend>
-        </modules>
-      </translate>
-    </adminhtml>
-    
-    <frontend>
+   <frontend>
       <events>
           <catalog_controller_product_view>
               <observers>

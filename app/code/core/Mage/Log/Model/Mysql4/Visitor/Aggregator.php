@@ -21,7 +21,6 @@
 /**
  * Log visitor aggregator resource
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Log_Model_Mysql4_Visitor_Aggregator

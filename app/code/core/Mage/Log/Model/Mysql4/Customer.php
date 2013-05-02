@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Log
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 class Mage_Log_Model_Mysql4_Customer

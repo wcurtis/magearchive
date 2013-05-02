@@ -26,7 +26,6 @@
  *
  * @category   Varien
  * @package    Varien_Data
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Varien_Data_Tree_Db extends Varien_Data_Tree
 {

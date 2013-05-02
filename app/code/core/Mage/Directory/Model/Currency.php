@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Directory
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Directory_Model_Currency extends Mage_Core_Model_Abstract
 {
@@ -49,17 +48,7 @@ class Mage_Directory_Model_Currency extends Mage_Core_Model_Abstract
      */
     public function getCode()
     {
-        return $this->_getData('currency_code');
-    }
-
-    public function getCurrencyCode()
-    {
-        return $this->_getData('currency_code');
-    }
-
-    public function getRates()
-    {
-        return $this->_getData('rates');
+        return $this->getData('currency_code');
     }
 
     /**
@@ -145,7 +134,7 @@ class Mage_Directory_Model_Currency extends Mage_Core_Model_Abstract
 
     public function formatTxt($price, $options=array())
     {
-        $price = Mage::app()->getLocale()->getNumber($price);
+        $price = floatval($price);
         /**
          * Fix problem with 12 000 000, 1 200 000
          */

@@ -70,10 +70,7 @@ class Mage_Adminhtml_System_DesignController extends Mage_Adminhtml_Controller_A
         	    $design->load($id);
         	}
 
-            $design->setData($data['design']);
-        	if ($id) {
-        	    $design->setId($id);
-        	}
+            $design->addData($data['design']);
             try {
                 $design->save();
 

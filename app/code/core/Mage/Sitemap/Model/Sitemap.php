@@ -24,7 +24,6 @@
  *
  * @category   Mage
  * @package    Mage_Sitemap
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
 {
@@ -51,7 +50,7 @@ class Mage_Sitemap_Model_Sitemap extends Mage_Core_Model_Abstract
     protected function getPath()
     {
         if (is_null($this->_filePath)) {
-            $this->_filePath = str_replace('//', '/', Mage::getBaseDir() . '/'
+            $this->_filePath = str_replace('//', '/', Mage::getBaseDir('base') . '/'
                 . $this->getSitemapPath());
         }
         return $this->_filePath;

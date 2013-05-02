@@ -23,7 +23,6 @@
  *
  * @category   Mage
  * @package    Mage_Adminhtml
- * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
@@ -127,7 +126,6 @@ class Mage_Adminhtml_Block_Customer_Online_Grid extends Mage_Adminhtml_Block_Wid
             'type' => 'wrapline',
             'lineLength' => '60',
             'default' => Mage::helper('customer')->__('n/a'),
-            'renderer'=>'adminhtml/customer_online_grid_renderer_url',
             'index'=>'url')
         );
 

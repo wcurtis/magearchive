@@ -21,7 +21,6 @@
 /**
  * Abstract class for Paypal API wrappers
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class Mage_PaypalUk_Model_Api_Abstract extends Varien_Object
 {
@@ -252,7 +251,7 @@ abstract class Mage_PaypalUk_Model_Api_Abstract extends Varien_Object
 
     public function setAmount($data)
     {
-        $data = sprintf('%.2f', $data);
+	    $data = sprintf('%.2f', $data);
         return $this->setSessionData('amount', $data);
     }
 
@@ -270,12 +269,12 @@ abstract class Mage_PaypalUk_Model_Api_Abstract extends Varien_Object
 
     public function getButtonSourceEc()
     {
-        return $this->getConfigData('button_source', 'Varien_Cart_EC_UK');
+        return $this->getConfigData('button_source', 'Varien_Cart_EC_US');
     }
 
     public function getButtonSourceDp()
     {
-        return $this->getConfigData('button_source', 'Varien_Cart_DP_UK');
+        return $this->getConfigData('button_source', 'Varien_Cart_DP_US');
     }
 
     /**
@@ -293,8 +292,18 @@ abstract class Mage_PaypalUk_Model_Api_Abstract extends Varien_Object
      */
     public function getCcTypes()
     {
+        $added = false;
         foreach (Mage::getSingleton('payment/config')->getCcTypes() as $code => $name) {
+            if ($code=='OT') {
+                $added = true;
+                //want to show switch/solo card type before other
+                $ccTypes['SS'] = Mage::helper('paypalUk')->__('Switch/Solo');
+            }
             $ccTypes[$code] = $name;
+        }
+        if (!$added) {
+             //if OTHER card type was not existed
+            $ccTypes['SS'] = Mage::helper('paypalUk')->__('Switch/Solo');
         }
         return $ccTypes;
     }

@@ -24,7 +24,6 @@
  *
  * @category   Varien
  * @package    Varien_Db
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 
 

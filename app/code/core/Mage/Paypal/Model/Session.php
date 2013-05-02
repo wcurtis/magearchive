@@ -22,7 +22,6 @@
  *
  * Paypal transaction session namespace
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Paypal_Model_Session extends Mage_Core_Model_Session_Abstract
 {
